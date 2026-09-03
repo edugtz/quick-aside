@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+
+# Gradle / Kotlin
+.gradle/
+.kotlin/
+**/build/
+
+# Local Android SDK configuration
+local.properties
+
+# Android / NDK generated files
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Local secrets / signing
+*.jks
+*.keystore
+keystore.properties
+
+# Project bootstrap handoff only - not repository source of truth
+/BOOTSTRAP_NOTES.md
