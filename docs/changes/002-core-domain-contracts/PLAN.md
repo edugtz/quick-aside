@@ -21,7 +21,8 @@ Add a small package tree under `com.edu.quickaside.domain`:
 
 - `common` — typed local ID wrappers.
 - `capture` — capture input boundary and timestamped Capture.
-- `lists` — list definition behavior, sessions, and items.
+- `lists` — extensible list definitions carrying behavior, sessions, and
+  items; Mandado and Compras are predefined values, not an exhaustive type.
 - `tasks` — task spaces, date-only due dates, and Task.
 - `memory` — Note and deliberately minimal StructuredLog.
 - `reminders` — Task/Note target and exact scheduled time.
@@ -70,4 +71,3 @@ implementation unexpectedly crosses into Android-dependent behavior.
 Stop and split into a later change if implementation requires Room/schema
 decisions, Android scheduling/notifications, STT, AI/CapturePlan/routing,
 Google integration, repositories/use cases, undo execution, or any UI change.
-

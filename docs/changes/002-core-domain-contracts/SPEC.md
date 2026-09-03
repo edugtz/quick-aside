@@ -15,8 +15,8 @@ application/domain concepts only; they are not the final Room schema.
   need them.
 - Text and voice captures with their original textual input/transcript,
   identity, and capture timestamp.
-- List definitions, sessions, and items, including the accepted Mandado
-  session-based and Compras continuous semantics.
+- Extensible list definitions, sessions, and items, including the accepted
+  initial Mandado session-based and Compras continuous semantics.
 - Personal and Trabajo task spaces with a date-only due date.
 - Minimal Note and StructuredLog contracts that can point back to an
   originating Capture.
@@ -50,7 +50,10 @@ application/domain concepts only; they are not the final Room schema.
 3. A Capture distinguishes Text from Voice and retains the original textual
    input/transcript needed for later correction. It does not claim to persist
    raw audio.
-4. Mandado is `SESSION_BASED`; Compras is `CONTINUOUS`. The model can attach
+4. Mandado and Compras are initial predefined list definitions. Their
+   `ListDefinition` values carry `SESSION_BASED` and `CONTINUOUS` behavior,
+   respectively; the data model is not an exhaustive enum and can represent
+   future definitions without changing the contract. The model can attach
    items to a ListSession so historical Mandado sessions can be represented
    later, without implementing history behavior here.
 5. Task spaces are `PERSONAL` and `TRABAJO`. A Task due date is a
@@ -65,15 +68,17 @@ application/domain concepts only; they are not the final Room schema.
 
 ## Acceptance scenarios
 
-1. `ListDefinitionType.MANDADO` exposes `SESSION_BASED` behavior.
-2. `ListDefinitionType.COMPRAS` exposes `CONTINUOUS` behavior.
-3. `TaskSpace.PERSONAL` and `TaskSpace.TRABAJO` are distinct values.
-4. A Task can carry a `LocalDate` due date while a Reminder carries a separate
+1. The predefined `Mandado` ListDefinition exposes `SESSION_BASED` behavior.
+2. The predefined `Compras` ListDefinition exposes `CONTINUOUS` behavior.
+3. A future named ListDefinition can be represented without adding an enum
+   value.
+4. `TaskSpace.PERSONAL` and `TaskSpace.TRABAJO` are distinct values.
+5. A Task can carry a `LocalDate` due date while a Reminder carries a separate
    exact `Instant` scheduled time.
-5. A Reminder can target a Note and the target remains a Note identity.
-6. Text and Voice captures are distinguishable and retain their original
+6. A Reminder can target a Note and the target remains a Note identity.
+7. Text and Voice captures are distinguishable and retain their original
    textual input/transcript.
-7. JVM unit tests compile and run, and a source-boundary review finds no
+8. JVM unit tests compile and run, and a source-boundary review finds no
    Android/Room/Google/AI dependency in `com.edu.quickaside.domain`.
 
 ## Evidence required
@@ -84,4 +89,3 @@ application/domain concepts only; they are not the final Room schema.
 - `git diff --check`, repository status, and the applicable diff-stat output.
 - Source inspection confirming the domain package imports only pure Kotlin and
   `java.time` types; no visual evidence is required because UI is unchanged.
-

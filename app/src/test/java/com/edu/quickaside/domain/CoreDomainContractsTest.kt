@@ -12,7 +12,6 @@ import com.edu.quickaside.domain.common.ReminderId
 import com.edu.quickaside.domain.common.TaskId
 import com.edu.quickaside.domain.lists.ListBehavior
 import com.edu.quickaside.domain.lists.ListDefinition
-import com.edu.quickaside.domain.lists.ListDefinitionType
 import com.edu.quickaside.domain.lists.ListItem
 import com.edu.quickaside.domain.lists.ListSession
 import com.edu.quickaside.domain.memory.Note
@@ -33,27 +32,44 @@ class CoreDomainContractsTest {
     fun mandadoIsSessionBased() {
         val definition = ListDefinition(
             id = ListDefinitionId("list-mandado"),
-            type = ListDefinitionType.MANDADO,
+            name = "Mandado",
+            behavior = ListBehavior.SESSION_BASED,
         )
 
-        assertEquals(ListBehavior.SESSION_BASED, definition.type.behavior)
+        assertEquals(ListBehavior.SESSION_BASED, definition.behavior)
+        assertEquals("Mandado", definition.name)
     }
 
     @Test
     fun comprasIsContinuous() {
         val definition = ListDefinition(
             id = ListDefinitionId("list-compras"),
-            type = ListDefinitionType.COMPRAS,
+            name = "Compras",
+            behavior = ListBehavior.CONTINUOUS,
         )
 
-        assertEquals(ListBehavior.CONTINUOUS, definition.type.behavior)
+        assertEquals(ListBehavior.CONTINUOUS, definition.behavior)
+        assertEquals("Compras", definition.name)
+    }
+
+    @Test
+    fun futureListDefinitionCanBeRepresentedWithoutAddingAnEnumValue() {
+        val definition = ListDefinition(
+            id = ListDefinitionId("list-viajes"),
+            name = "Viajes",
+            behavior = ListBehavior.CONTINUOUS,
+        )
+
+        assertEquals("Viajes", definition.name)
+        assertEquals(ListBehavior.CONTINUOUS, definition.behavior)
     }
 
     @Test
     fun mandadoItemsCanBeAssociatedWithAHistoricalSession() {
         val definition = ListDefinition(
             id = ListDefinitionId("list-mandado"),
-            type = ListDefinitionType.MANDADO,
+            name = "Mandado",
+            behavior = ListBehavior.SESSION_BASED,
         )
         val session = ListSession(
             id = ListSessionId("session-2026-09-03"),
@@ -137,4 +153,3 @@ class CoreDomainContractsTest {
         assertEquals(capturedAt, voiceCapture.capturedAt)
     }
 }
-

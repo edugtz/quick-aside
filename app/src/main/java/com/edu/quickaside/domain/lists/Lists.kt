@@ -10,14 +10,10 @@ enum class ListBehavior {
     CONTINUOUS,
 }
 
-enum class ListDefinitionType(val behavior: ListBehavior) {
-    MANDADO(ListBehavior.SESSION_BASED),
-    COMPRAS(ListBehavior.CONTINUOUS),
-}
-
 data class ListDefinition(
     val id: ListDefinitionId,
-    val type: ListDefinitionType,
+    val name: String,
+    val behavior: ListBehavior,
 )
 
 data class ListSession(
@@ -33,4 +29,3 @@ data class ListItem(
     val text: String,
     val listSessionId: ListSessionId? = null,
 )
-
