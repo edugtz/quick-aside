@@ -42,6 +42,7 @@ import com.edu.quickaside.ui.navigation.AppDestination
 fun QuickAsideApp() {
     var currentDestination by remember { mutableStateOf(AppDestination.Inicio) }
     var captureRequested by remember { mutableStateOf(false) }
+    val requestCapture = { captureRequested = true }
 
     Scaffold(
         topBar = {
@@ -64,7 +65,7 @@ fun QuickAsideApp() {
         floatingActionButton = {
             if (!captureRequested) {
                 FloatingActionButton(
-                    onClick = { captureRequested = true },
+                    onClick = requestCapture,
                     modifier = Modifier.semantics { contentDescription = "Capturar" },
                 ) {
                     Icon(Icons.Outlined.KeyboardVoice, contentDescription = null)
@@ -78,13 +79,17 @@ fun QuickAsideApp() {
                 onDismiss = { captureRequested = false },
             )
         } else {
-            ManagementScreen(currentDestination, padding)
+            ManagementScreen(currentDestination, padding, requestCapture)
         }
     }
 }
 
 @Composable
-private fun ManagementScreen(destination: AppDestination, padding: PaddingValues) {
+private fun ManagementScreen(
+    destination: AppDestination,
+    padding: PaddingValues,
+    onCapture: () -> Unit,
+) {
     val (headline, description) = when (destination) {
         AppDestination.Inicio -> "Captura lo que recuerdas" to "Habla o escribe algo rápido; la organización llegará en una próxima etapa."
         AppDestination.Pendientes -> "Tus pendientes" to "Personal y Trabajo aparecerán aquí cuando la gestión de tareas esté lista."
@@ -103,7 +108,7 @@ private fun ManagementScreen(destination: AppDestination, padding: PaddingValues
         Text(description, style = MaterialTheme.typography.bodyLarge)
         if (destination == AppDestination.Inicio) {
             FilledIconButton(
-                onClick = {},
+                onClick = onCapture,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .size(104.dp)

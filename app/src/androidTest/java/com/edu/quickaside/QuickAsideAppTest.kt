@@ -18,18 +18,23 @@ class QuickAsideAppTest {
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun shellShowsFourManagementDestinationsAndGlobalCaptureAction() {
+    fun inicioMicrophoneOpensCaptureWithoutAddingNavigationDestination() {
         composeRule.onAllNodesWithText("Inicio").assertCountEquals(2)
         listOf("Pendientes", "Listas", "Memoria").forEach { label ->
             composeRule.onAllNodesWithText(label).assertCountEquals(1)
         }
 
         composeRule.onNodeWithContentDescription("Capturar").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Hablar").assertIsDisplayed()
         composeRule.onNodeWithText("Captura").assertDoesNotExist()
 
-        composeRule.onNodeWithContentDescription("Capturar").performClick()
+        composeRule.onNodeWithContentDescription("Hablar").performClick()
 
         composeRule.onNodeWithText("Capturar").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Capturar").assertDoesNotExist()
+        composeRule.onAllNodesWithText("Inicio").assertCountEquals(2)
+        listOf("Pendientes", "Listas", "Memoria").forEach { label ->
+            composeRule.onAllNodesWithText(label).assertCountEquals(1)
+        }
     }
 }
