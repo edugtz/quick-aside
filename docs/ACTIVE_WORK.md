@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/002-core-domain-contracts/`
+`docs/changes/003-local-capture-persistence/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
+Status: **IN PROGRESS**
 Governance: **STANDARD**
 
 ## Proven baseline
@@ -17,13 +17,6 @@ Governance: **STANDARD**
 
 ## Exact next gate
 
-Implement and verify the pure-Kotlin domain contracts in
-`docs/changes/002-core-domain-contracts/`:
-
-1. add the minimal typed identities and Capture, Lists, Tasks, Memory,
-   Reminder, and Action Ledger contracts;
-2. add deterministic JVM unit tests for the accepted invariants;
-3. run the required unit-test, assemble, lint, and diff checks.
-
-Keep Android/UI, Room, integrations, runtime AI, persistence schema, and undo
-execution deferred to later changes.
+Implement and verify the Room-backed Capture-only persistence slice described
+in `docs/changes/003-local-capture-persistence/`, including schema export,
+deterministic tests, Android close/reopen evidence, and explicit backup rules.
