@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/001-project-bootstrap/`
+`docs/changes/002-core-domain-contracts/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
+Status: **IN PROGRESS**
 Governance: **STANDARD**
 
 ## Proven baseline
@@ -17,11 +17,13 @@ Governance: **STANDARD**
 
 ## Exact next gate
 
-Implement the accepted Change 001 project foundation:
+Implement and verify the pure-Kotlin domain contracts in
+`docs/changes/002-core-domain-contracts/`:
 
-1. convert the staged Android Studio Views scaffold to a Compose + Material 3 shell;
-2. provide Inicio, Pendientes, Listas, and Memoria with a global Capture action;
-3. defer Room/persistence implementation until a real persistence change;
-4. verify build, tests, lint, and device visual evidence.
+1. add the minimal typed identities and Capture, Lists, Tasks, Memory,
+   Reminder, and Action Ledger contracts;
+2. add deterministic JVM unit tests for the accepted invariants;
+3. run the required unit-test, assemble, lint, and diff checks.
 
-Do not begin AI, Google sync, reminders, final domain schema, or post-MVP system surfaces during Change 001.
+Keep Android/UI, Room, integrations, runtime AI, persistence schema, and undo
+execution deferred to later changes.
