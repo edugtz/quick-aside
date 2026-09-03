@@ -4,7 +4,7 @@
 
 `docs/changes/001-project-bootstrap/`
 
-Status: **PLANNED — READY FOR PREFLIGHT**
+Status: **IN PROGRESS — PREFLIGHT ACCEPTED**
 Governance: **STANDARD**
 
 ## Proven baseline
@@ -17,12 +17,11 @@ Governance: **STANDARD**
 
 ## Exact next gate
 
-Run Change 001 preflight:
+Implement the accepted Change 001 project foundation:
 
-1. inspect/initialize the actual repository and branch state;
-2. verify current official Android/Kotlin/Compose/Room toolchain requirements;
-3. resolve application/package ID and SDK choices;
-4. confirm deterministic build/test/lint commands;
-5. only then implement the minimal bootstrap shell described by Change 001.
+1. convert the staged Android Studio Views scaffold to a Compose + Material 3 shell;
+2. provide Inicio, Pendientes, Listas, and Memoria with a global Capture action;
+3. defer Room/persistence implementation until a real persistence change;
+4. verify build, tests, lint, and device visual evidence.
 
 Do not begin AI, Google sync, reminders, final domain schema, or post-MVP system surfaces during Change 001.

@@ -11,7 +11,7 @@ Create a minimal, reviewable Android project foundation for Quick Aside that bui
 - Android app repository bootstrap using the accepted display/project name **Quick Aside**.
 - Kotlin + Compose baseline.
 - Material 3 baseline.
-- Room dependency/foundation without implementing the final domain schema prematurely.
+- Architecture readiness for future Room persistence, while deferring Room dependencies and implementation until a real schema change.
 - Basic test/build/lint infrastructure supported by the chosen Android tooling.
 - Package/module structure suitable for feature/domain/data separation without speculative over-abstraction.
 - App theme/design tokens sufficient to implement a simple UI shell.

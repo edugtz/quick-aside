@@ -12,8 +12,8 @@ Before editing:
 
 ## Implementation approach
 
-1. Create the Android project with the smallest standard app structure.
-2. Add only baseline dependencies required for Compose, Material 3, navigation shell, Room foundation, and tests.
+1. Convert the already staged Android Studio Views scaffold to the smallest Compose + Material 3 app structure.
+2. Add only baseline dependencies required for Compose, Material 3, navigation shell, and tests. Defer Room and its persistence tooling until a real schema change.
 3. Establish concise package boundaries, avoiding speculative abstractions.
 4. Add a minimal design-system/theme layer informed by UX v3 but do not freeze branding tokens yet.
 5. Add navigation destinations: Inicio / Pendientes / Listas / Memoria.

@@ -1,0 +1,14 @@
+# Normalize repository text files
+* text=auto
+
+# Unix scripts
+/gradlew text eol=lf
+*.sh text eol=lf
+
+# Windows scripts
+*.bat text eol=crlf
+
+# Binary assets
+*.png binary
+*.webp binary
+*.jar binary
