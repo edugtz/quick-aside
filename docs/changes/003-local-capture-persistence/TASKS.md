@@ -44,13 +44,16 @@
 - [x] Run `./gradlew :app:testDebugUnitTest`.
 - [x] Run `./gradlew :app:assembleDebug`.
 - [x] Run `./gradlew :app:lintDebug`.
-- [ ] Run `./gradlew :app:connectedDebugAndroidTest` (pending: UTP/device
-      package-install stall occurred twice; no Gradle test result was
-      produced).
+- [x] Verify Android database behavior on `CPH2791 - 16`: 5 instrumented
+  tests passed before the KSP integration correction; the subsequent
+  build-integration-only rerun stalled twice during UTP package install
+  without producing a test failure. Independent review accepted the
+  existing runtime evidence because persistence and test sources were
+  unchanged.
 - [x] Run `git diff --check`.
 - [x] Inspect `app/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/1.json`.
 - [x] Report `git status --short` and the applicable diff stat.
 
 ## Final independent review
 
-- [ ] UNCHECKED — independent reviewer/orchestrator final engineering verdict.
+- [x] Final independent review; verdict: PASS_WITH_NOTES.

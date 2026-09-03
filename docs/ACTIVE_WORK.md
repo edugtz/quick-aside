@@ -4,7 +4,7 @@
 
 `docs/changes/003-local-capture-persistence/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 Governance: **STANDARD**
 
 ## Proven baseline
