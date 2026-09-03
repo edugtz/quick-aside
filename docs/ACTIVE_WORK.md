@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/003-local-capture-persistence/`
+`docs/changes/004-local-text-capture/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
+Status: **IN PROGRESS**
 Governance: **STANDARD**
 
 ## Proven baseline
@@ -17,6 +17,7 @@ Governance: **STANDARD**
 
 ## Exact next gate
 
-Implement and verify the Room-backed Capture-only persistence slice described
-in `docs/changes/003-local-capture-persistence/`, including schema export,
-deterministic tests, Android close/reopen evidence, and explicit backup rules.
+Implement and verify the local text capture flow described in
+`docs/changes/004-local-text-capture/`, including deterministic application
+tests, real production Room wiring, UI evidence, and all required build/test
+gates without changing the version-1 Capture-only schema.

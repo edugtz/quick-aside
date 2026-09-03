@@ -11,7 +11,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             QuickAsideTheme {
-                QuickAsideApp()
+                QuickAsideApp(
+                    captureSubmission = (application as QuickAsideApplication).captureSubmission,
+                )
             }
         }
     }
