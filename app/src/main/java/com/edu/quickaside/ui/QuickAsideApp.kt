@@ -247,7 +247,7 @@ private fun CapturePlaceholder(padding: PaddingValues, onDismiss: () -> Unit) {
         )
         Spacer(Modifier.height(20.dp))
         Text("Capturar", style = MaterialTheme.typography.headlineSmall)
-        Text("La captura de voz y texto se incorporará en una próxima etapa.")
+        Text("La captura por voz se incorporará en una próxima etapa.")
         Spacer(Modifier.height(16.dp))
         AssistChip(onClick = onDismiss, label = { Text("Volver a gestionar") })
     }
