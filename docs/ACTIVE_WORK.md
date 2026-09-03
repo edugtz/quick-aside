@@ -4,7 +4,7 @@
 
 `docs/changes/002-core-domain-contracts/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 Governance: **STANDARD**
 
 ## Proven baseline
