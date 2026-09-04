@@ -4,7 +4,7 @@
 
 `docs/changes/005-recent-capture-history/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 Governance: **STANDARD**
 
 ## Proven baseline
@@ -15,12 +15,6 @@ Governance: **STANDARD**
 - Canonical visual-direction reference: `docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png`.
 - Architecture and roadmap are proposed/accepted baselines pending implementation evidence.
 
-## Current gate
+## Exact next gate
 
-Implement and verify the recent Capture history surface described in
-`docs/changes/005-recent-capture-history/` without changing the version-1
-Capture-only schema, navigation destinations, or deferred AI/STT/Google
-scope. Implementation and local/emulator evidence are complete; independent
-review remains pending. The required physical-device connected gate is
-recorded as blocked by UTP split-APK installation timeouts before test
-execution.
+Change 005 is complete. The next reviewable M1 change has not started yet.
