@@ -2,10 +2,10 @@
 
 ## Active change
 
-`docs/changes/006-basic-voice-capture/`
+`docs/changes/007-transcript-correction-persistence/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
-Governance: **STANDARD**
+Status: **IN PROGRESS**
+Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
 
@@ -15,13 +15,14 @@ Governance: **STANDARD**
 - Canonical visual-direction reference: `docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png`.
 - Architecture and roadmap are proposed/accepted baselines pending implementation evidence.
 
-## Completed implementation
+## Current implementation focus
 
-The first usable Voice/STT capture path is implemented and verified without
-interpretation, routing, or Room schema changes. Unit, lint, build, connected
-instrumentation, and required physical-device QA evidence are recorded in the
-Change 006 package.
+Change 007 adds durable transcript-correction support while preserving the
+original Voice recognition result. It is persistence/domain support only; the
+transcript-editing UI remains deferred to Change 008.
 
 ## Exact next gate
 
-Change 006 is complete. The next reviewable M1 change has not started yet.
+Complete and independently review the explicit Room 1→2 migration, correction
+write boundary, effective-transcript read behavior, and required migration,
+regression, build, lint, and connected-test evidence.

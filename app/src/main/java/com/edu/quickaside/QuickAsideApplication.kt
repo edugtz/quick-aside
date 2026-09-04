@@ -3,11 +3,13 @@ package com.edu.quickaside
 import android.app.Application
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
+import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
 import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
 import com.edu.quickaside.application.speech.SpeechTranscriberFactory
 import com.edu.quickaside.data.local.CaptureWriter
 import com.edu.quickaside.data.local.QuickAsideDatabase
 import com.edu.quickaside.data.local.RoomCaptureReader
+import com.edu.quickaside.data.local.RoomCaptureTranscriptCorrector
 import com.edu.quickaside.data.local.RoomCaptureWriter
 
 class QuickAsideApplication : Application() {
@@ -25,6 +27,10 @@ class QuickAsideApplication : Application() {
 
     val captureSubmission: CaptureSubmission by lazy {
         CaptureSubmission(captureWriter)
+    }
+
+    val captureTranscriptCorrector: CaptureTranscriptCorrector by lazy {
+        RoomCaptureTranscriptCorrector(database.captureDao())
     }
 
     val speechTranscriberFactory: SpeechTranscriberFactory by lazy {

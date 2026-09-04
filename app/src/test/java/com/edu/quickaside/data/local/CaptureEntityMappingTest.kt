@@ -38,6 +38,25 @@ class CaptureEntityMappingTest {
     }
 
     @Test
+    fun correctedVoiceCaptureRoundTripsWithOriginalAndCorrection() {
+        val capture = Capture(
+            id = CaptureId("capture-corrected-voice"),
+            originalInput = CaptureInput.Voice("comprar leche manana"),
+            capturedAt = Instant.parse("2026-09-03T12:34:56.789Z"),
+            transcriptCorrection = "Comprar leche mañana",
+        )
+
+        val entity = capture.toEntity()
+        val restored = entity.toDomain()
+
+        assertEquals("comprar leche manana", entity.originalText)
+        assertEquals("Comprar leche mañana", entity.correctedTranscript)
+        assertEquals(capture, restored)
+        assertEquals("comprar leche manana", (restored.originalInput as CaptureInput.Voice).originalTranscript)
+        assertEquals("Comprar leche mañana", restored.effectiveTranscript)
+    }
+
+    @Test
     fun persistenceRepresentationUsesDeterministicStorageValues() {
         val capture = Capture(
             id = CaptureId("capture-deterministic"),

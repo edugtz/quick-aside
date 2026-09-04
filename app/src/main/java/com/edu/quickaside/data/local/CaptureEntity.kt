@@ -18,6 +18,8 @@ data class CaptureEntity(
     val originalText: String,
     @ColumnInfo(name = "captured_at_epoch_millis")
     val capturedAtEpochMillis: Long,
+    @ColumnInfo(name = "corrected_transcript")
+    val correctedTranscript: String? = null,
 )
 
 fun Capture.toEntity(): CaptureEntity = when (val input = originalInput) {
@@ -26,6 +28,7 @@ fun Capture.toEntity(): CaptureEntity = when (val input = originalInput) {
         kind = CaptureKind.TEXT.name,
         originalText = input.originalText,
         capturedAtEpochMillis = capturedAt.toEpochMilli(),
+        correctedTranscript = null,
     )
 
     is CaptureInput.Voice -> CaptureEntity(
@@ -33,6 +36,7 @@ fun Capture.toEntity(): CaptureEntity = when (val input = originalInput) {
         kind = CaptureKind.VOICE.name,
         originalText = input.originalTranscript,
         capturedAtEpochMillis = capturedAt.toEpochMilli(),
+        correctedTranscript = transcriptCorrection,
     )
 }
 
@@ -47,5 +51,6 @@ fun CaptureEntity.toDomain(): Capture {
         id = CaptureId(id),
         originalInput = input,
         capturedAt = Instant.ofEpochMilli(capturedAtEpochMillis),
+        transcriptCorrection = correctedTranscript,
     )
 }

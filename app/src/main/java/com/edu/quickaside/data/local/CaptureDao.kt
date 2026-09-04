@@ -15,6 +15,15 @@ interface CaptureDao {
 
     @Query(
         """
+        UPDATE captures
+        SET corrected_transcript = :correctedTranscript
+        WHERE id = :id AND kind = 'VOICE'
+        """,
+    )
+    suspend fun updateCorrectedTranscript(id: String, correctedTranscript: String): Int
+
+    @Query(
+        """
         SELECT * FROM captures
         ORDER BY captured_at_epoch_millis DESC, id DESC
         LIMIT :limit

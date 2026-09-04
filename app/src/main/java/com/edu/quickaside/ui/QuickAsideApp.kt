@@ -400,7 +400,11 @@ private fun CaptureHistoryCard(
 ) {
     val (kindLabel, icon, originalText) = when (val input = capture.originalInput) {
         is CaptureInput.Text -> Triple("Texto", Icons.Outlined.Description, input.originalText)
-        is CaptureInput.Voice -> Triple("Voz", Icons.Outlined.KeyboardVoice, input.originalTranscript)
+        is CaptureInput.Voice -> Triple(
+            "Voz",
+            Icons.Outlined.KeyboardVoice,
+            capture.effectiveTranscript ?: input.originalTranscript,
+        )
     }
 
     Card(
