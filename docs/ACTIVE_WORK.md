@@ -4,8 +4,8 @@
 
 `docs/changes/008-transcript-correction-ui/`
 
-Status: **IN PROGRESS**
-Governance: **STANDARD**
+- [x] Final independent review; verdict: PASS_WITH_NOTES.
+- Governance: **STANDARD**
 
 ## Proven baseline
 
@@ -23,5 +23,4 @@ recognized transcript; the Voice capture happy path remains automatic.
 
 ## Exact next gate
 
-Complete the Change 008 UI, integration tests, build/lint/instrumentation
-checks, and screenshot evidence for independent review.
+Change 008 is complete. The next reviewable M1 change has not started yet.
