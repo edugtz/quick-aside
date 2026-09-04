@@ -2,10 +2,10 @@
 
 ## Active change
 
-`docs/changes/007-transcript-correction-persistence/`
+`docs/changes/008-transcript-correction-ui/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
-Governance: **HIGH-ASSURANCE**
+Status: **IN PROGRESS**
+Governance: **STANDARD**
 
 ## Proven baseline
 
@@ -17,10 +17,11 @@ Governance: **HIGH-ASSURANCE**
 
 ## Current implementation focus
 
-Change 007 adds durable transcript-correction support while preserving the
-original Voice recognition result. It is persistence/domain support only; the
-transcript-editing UI remains deferred to Change 008.
+Change 008 adds explicit-management transcript correction for saved Voice
+Captures. It uses the existing Change 007 corrector and preserves the original
+recognized transcript; the Voice capture happy path remains automatic.
 
 ## Exact next gate
 
-Change 007 is complete. The next reviewable M1 change has not started yet.
+Complete the Change 008 UI, integration tests, build/lint/instrumentation
+checks, and screenshot evidence for independent review.

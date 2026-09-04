@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.KeyboardVoice
 import androidx.compose.material3.Card
@@ -54,12 +55,14 @@ import androidx.compose.ui.unit.dp
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
+import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
 import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
 import com.edu.quickaside.application.speech.MicrophonePermissionController
 import com.edu.quickaside.application.speech.SpeechTranscriberFactory
 import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
+import com.edu.quickaside.ui.memory.TranscriptCorrectionEditor
 import com.edu.quickaside.ui.navigation.AppDestination
 import com.edu.quickaside.ui.voice.VoiceCaptureScreen
 import com.edu.quickaside.ui.voice.rememberAndroidMicrophonePermissionController
@@ -71,6 +74,7 @@ import kotlinx.coroutines.launch
 fun QuickAsideApp(
     captureSubmission: CaptureSubmission,
     captureReader: CaptureReader,
+    captureTranscriptCorrector: CaptureTranscriptCorrector? = null,
     speechTranscriberFactory: SpeechTranscriberFactory? = null,
     microphonePermissionController: MicrophonePermissionController? = null,
 ) {
@@ -145,6 +149,7 @@ fun QuickAsideApp(
                 onCapture = requestCapture,
                 captureSubmission = captureSubmission,
                 captureReader = captureReader,
+                captureTranscriptCorrector = captureTranscriptCorrector,
                 historyRefreshToken = historyRefreshToken,
                 onCaptureSaved = { historyRefreshToken += 1 },
                 snackbarHostState = snackbarHostState,
@@ -160,6 +165,7 @@ private fun ManagementScreen(
     onCapture: () -> Unit,
     captureSubmission: CaptureSubmission,
     captureReader: CaptureReader,
+    captureTranscriptCorrector: CaptureTranscriptCorrector?,
     historyRefreshToken: Int,
     onCaptureSaved: () -> Unit,
     snackbarHostState: SnackbarHostState,
@@ -168,6 +174,8 @@ private fun ManagementScreen(
         CaptureHistoryScreen(
             padding = padding,
             captureReader = captureReader,
+            captureTranscriptCorrector = captureTranscriptCorrector,
+            snackbarHostState = snackbarHostState,
             refreshToken = historyRefreshToken,
         )
         return
@@ -284,10 +292,14 @@ private sealed interface CaptureHistoryState {
 private fun CaptureHistoryScreen(
     padding: PaddingValues,
     captureReader: CaptureReader,
+    captureTranscriptCorrector: CaptureTranscriptCorrector?,
+    snackbarHostState: SnackbarHostState,
     refreshToken: Int,
 ) {
     var state by remember { mutableStateOf<CaptureHistoryState>(CaptureHistoryState.Loading) }
+    var editorCapture by remember { mutableStateOf<Capture?>(null) }
     val timestampFormatter = remember { CaptureTimestampFormatter() }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(captureReader, refreshToken) {
         state = CaptureHistoryState.Loading
@@ -357,12 +369,42 @@ private fun CaptureHistoryScreen(
                             CaptureHistoryCard(
                                 capture = capture,
                                 timestampFormatter = timestampFormatter,
+                                onEdit = if (captureTranscriptCorrector != null) {
+                                    { editorCapture = capture }
+                                } else {
+                                    null
+                                },
                             )
                         }
                     }
                 }
             }
         }
+    }
+
+    val selectedCapture = editorCapture
+    val corrector = captureTranscriptCorrector
+    if (selectedCapture != null && corrector != null) {
+        TranscriptCorrectionEditor(
+            capture = selectedCapture,
+            corrector = corrector,
+            onDismiss = { editorCapture = null },
+            onSaved = { savedCapture ->
+                state = when (val currentState = state) {
+                    is CaptureHistoryState.Loaded -> CaptureHistoryState.Loaded(
+                        currentState.captures.map { capture ->
+                            if (capture.id == savedCapture.id) savedCapture else capture
+                        },
+                    )
+
+                    else -> currentState
+                }
+                editorCapture = null
+                scope.launch {
+                    snackbarHostState.showSnackbar("Corrección guardada")
+                }
+            },
+        )
     }
 }
 
@@ -397,6 +439,7 @@ private fun CaptureHistoryEmptyState() {
 private fun CaptureHistoryCard(
     capture: Capture,
     timestampFormatter: CaptureTimestampFormatter,
+    onEdit: (() -> Unit)?,
 ) {
     val (kindLabel, icon, originalText) = when (val input = capture.originalInput) {
         is CaptureInput.Text -> Triple("Texto", Icons.Outlined.Description, input.originalText)
@@ -438,6 +481,19 @@ private fun CaptureHistoryCard(
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+            if (onEdit != null && capture.originalInput is CaptureInput.Voice) {
+                IconButton(
+                    onClick = onEdit,
+                    modifier = Modifier.semantics {
+                        contentDescription = "Editar transcript"
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = null,
+                    )
+                }
             }
         }
     }
