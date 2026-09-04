@@ -4,7 +4,7 @@
 
 `docs/changes/008-transcript-correction-ui/`
 
-- [x] Final independent review; verdict: PASS_WITH_NOTES.
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **STANDARD**
 
 ## Proven baseline
