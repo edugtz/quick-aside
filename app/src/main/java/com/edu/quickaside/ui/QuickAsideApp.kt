@@ -19,7 +19,6 @@ import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.KeyboardVoice
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -55,10 +54,15 @@ import androidx.compose.ui.unit.dp
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
+import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
+import com.edu.quickaside.application.speech.MicrophonePermissionController
+import com.edu.quickaside.application.speech.SpeechTranscriberFactory
 import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
 import com.edu.quickaside.ui.navigation.AppDestination
+import com.edu.quickaside.ui.voice.VoiceCaptureScreen
+import com.edu.quickaside.ui.voice.rememberAndroidMicrophonePermissionController
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
@@ -67,29 +71,50 @@ import kotlinx.coroutines.launch
 fun QuickAsideApp(
     captureSubmission: CaptureSubmission,
     captureReader: CaptureReader,
+    speechTranscriberFactory: SpeechTranscriberFactory? = null,
+    microphonePermissionController: MicrophonePermissionController? = null,
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val resolvedSpeechTranscriberFactory = speechTranscriberFactory ?: remember(context) {
+        AndroidSpeechTranscriberFactory(context)
+    }
+    val resolvedMicrophonePermissionController = microphonePermissionController
+        ?: rememberAndroidMicrophonePermissionController()
     var currentDestination by remember { mutableStateOf(AppDestination.Inicio) }
     var captureRequested by remember { mutableStateOf(false) }
     var historyRefreshToken by remember { mutableStateOf(0) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     val requestCapture = { captureRequested = true }
+    val onVoiceCaptureSaved = {
+        historyRefreshToken += 1
+        captureRequested = false
+        scope.launch {
+            snackbarHostState.showSnackbar("Captura guardada")
+        }
+        Unit
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            CenterAlignedTopAppBar(title = { Text(currentDestination.label) })
+            if (!captureRequested) {
+                CenterAlignedTopAppBar(title = { Text(currentDestination.label) })
+            }
         },
         bottomBar = {
-            NavigationBar {
-                AppDestination.entries.forEach { destination ->
-                    NavigationBarItem(
-                        selected = destination == currentDestination,
-                        onClick = { currentDestination = destination },
-                        icon = {
-                            Icon(destination.icon, contentDescription = destination.label)
-                        },
-                        label = { Text(destination.label) },
-                    )
+            if (!captureRequested) {
+                NavigationBar {
+                    AppDestination.entries.forEach { destination ->
+                        NavigationBarItem(
+                            selected = destination == currentDestination,
+                            onClick = { currentDestination = destination },
+                            icon = {
+                                Icon(destination.icon, contentDescription = destination.label)
+                            },
+                            label = { Text(destination.label) },
+                        )
+                    }
                 }
             }
         },
@@ -105,9 +130,13 @@ fun QuickAsideApp(
         },
     ) { padding ->
         if (captureRequested) {
-            CapturePlaceholder(
+            VoiceCaptureScreen(
                 padding = padding,
+                captureSubmission = captureSubmission,
+                speechTranscriberFactory = resolvedSpeechTranscriberFactory,
+                microphonePermissionController = resolvedMicrophonePermissionController,
                 onDismiss = { captureRequested = false },
+                onSaved = onVoiceCaptureSaved,
             )
         } else {
             ManagementScreen(
@@ -427,29 +456,5 @@ private fun SummaryCard(destination: AppDestination) {
             Spacer(Modifier.height(4.dp))
             Text(detail)
         }
-    }
-}
-
-@Composable
-private fun CapturePlaceholder(padding: PaddingValues, onDismiss: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.KeyboardVoice,
-            contentDescription = null,
-            modifier = Modifier.size(88.dp),
-            tint = MaterialTheme.colorScheme.primary,
-        )
-        Spacer(Modifier.height(20.dp))
-        Text("Capturar", style = MaterialTheme.typography.headlineSmall)
-        Text("La captura por voz se incorporará en una próxima etapa.")
-        Spacer(Modifier.height(16.dp))
-        AssistChip(onClick = onDismiss, label = { Text("Volver a gestionar") })
     }
 }

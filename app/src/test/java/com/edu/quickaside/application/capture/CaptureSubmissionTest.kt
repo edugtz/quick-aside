@@ -40,6 +40,45 @@ class CaptureSubmissionTest {
     }
 
     @Test
+    fun validVoiceSubmissionCreatesOneVoiceCaptureAndPreservesOriginalTranscript() = runBlocking {
+        val savedCaptures = mutableListOf<Capture>()
+        val submission = CaptureSubmission(
+            writer = CaptureWriter { capture -> savedCaptures += capture },
+            idProvider = { CaptureId("capture-voice-1") },
+            capturedAtProvider = { capturedAt },
+        )
+
+        val transcript = "  Comprar leche mañana  "
+        val result = submission.submitVoice(transcript) as CaptureSubmissionResult.Saved
+
+        assertEquals(1, savedCaptures.size)
+        assertEquals(
+            Capture(
+                id = CaptureId("capture-voice-1"),
+                originalInput = CaptureInput.Voice(transcript),
+                capturedAt = capturedAt,
+            ),
+            savedCaptures.single(),
+        )
+        assertEquals(savedCaptures.single(), result.capture)
+        assertEquals(CaptureKind.VOICE, savedCaptures.single().kind)
+    }
+
+    @Test
+    fun blankVoiceSubmissionCreatesNothing() = runBlocking {
+        val savedCaptures = mutableListOf<Capture>()
+        val submission = CaptureSubmission(
+            writer = CaptureWriter { capture -> savedCaptures += capture },
+            idProvider = { CaptureId("should-not-be-created") },
+            capturedAtProvider = { capturedAt },
+        )
+
+        assertTrue(submission.submitVoice(" \t\n ") is CaptureSubmissionResult.Blank)
+
+        assertTrue(savedCaptures.isEmpty())
+    }
+
+    @Test
     fun blankAndWhitespaceOnlySubmissionsCreateNothing() = runBlocking {
         val savedCaptures = mutableListOf<Capture>()
         val submission = CaptureSubmission(

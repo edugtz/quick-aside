@@ -27,14 +27,26 @@ class CaptureSubmission(
     },
     private val capturedAtProvider: () -> Instant = Instant::now,
 ) {
-    suspend fun submit(originalText: String): CaptureSubmissionResult {
+    suspend fun submit(originalText: String): CaptureSubmissionResult = submitInput(
+        input = CaptureInput.Text(originalText),
+    )
+
+    suspend fun submitVoice(originalTranscript: String): CaptureSubmissionResult = submitInput(
+        input = CaptureInput.Voice(originalTranscript),
+    )
+
+    private suspend fun submitInput(input: CaptureInput): CaptureSubmissionResult {
+        val originalText = when (input) {
+            is CaptureInput.Text -> input.originalText
+            is CaptureInput.Voice -> input.originalTranscript
+        }
         if (originalText.isBlank()) {
             return CaptureSubmissionResult.Blank
         }
 
         val capture = Capture(
             id = idProvider(),
-            originalInput = CaptureInput.Text(originalText),
+            originalInput = input,
             capturedAt = capturedAtProvider(),
         )
 
