@@ -4,7 +4,7 @@
 
 `docs/changes/006-basic-voice-capture/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 Governance: **STANDARD**
 
 ## Proven baseline
@@ -24,4 +24,4 @@ Change 006 package.
 
 ## Exact next gate
 
-Independent review and final engineering verdict for Change 006.
+Change 006 is complete. The next reviewable M1 change has not started yet.
