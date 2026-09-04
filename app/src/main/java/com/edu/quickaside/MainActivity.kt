@@ -13,6 +13,7 @@ class MainActivity : ComponentActivity() {
             QuickAsideTheme {
                 QuickAsideApp(
                     captureSubmission = (application as QuickAsideApplication).captureSubmission,
+                    captureReader = (application as QuickAsideApplication).captureReader,
                 )
             }
         }

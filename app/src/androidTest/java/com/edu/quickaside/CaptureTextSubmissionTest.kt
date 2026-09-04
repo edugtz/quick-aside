@@ -15,6 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.data.local.CaptureWriter
 import com.edu.quickaside.data.local.QuickAsideDatabase
+import com.edu.quickaside.data.local.RoomCaptureReader
 import com.edu.quickaside.data.local.RoomCaptureWriter
 import com.edu.quickaside.data.local.toDomain
 import com.edu.quickaside.domain.capture.Capture
@@ -101,10 +102,14 @@ class CaptureTextSubmissionTest {
     }
 
     private fun setContent(submission: CaptureSubmission) {
+        val database = checkNotNull(testDatabase)
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 QuickAsideTheme {
-                    QuickAsideApp(captureSubmission = submission)
+                    QuickAsideApp(
+                        captureSubmission = submission,
+                        captureReader = RoomCaptureReader(database),
+                    )
                 }
             }
         }

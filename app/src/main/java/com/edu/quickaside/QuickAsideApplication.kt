@@ -1,9 +1,11 @@
 package com.edu.quickaside
 
 import android.app.Application
+import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.data.local.CaptureWriter
 import com.edu.quickaside.data.local.QuickAsideDatabase
+import com.edu.quickaside.data.local.RoomCaptureReader
 import com.edu.quickaside.data.local.RoomCaptureWriter
 
 class QuickAsideApplication : Application() {
@@ -13,6 +15,10 @@ class QuickAsideApplication : Application() {
 
     val captureWriter: CaptureWriter by lazy {
         RoomCaptureWriter(database)
+    }
+
+    val captureReader: CaptureReader by lazy {
+        RoomCaptureReader(database)
     }
 
     val captureSubmission: CaptureSubmission by lazy {

@@ -12,4 +12,13 @@ interface CaptureDao {
 
     @Query("SELECT * FROM captures WHERE id = :id")
     suspend fun getById(id: String): CaptureEntity?
+
+    @Query(
+        """
+        SELECT * FROM captures
+        ORDER BY captured_at_epoch_millis DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun getRecent(limit: Int): List<CaptureEntity>
 }
