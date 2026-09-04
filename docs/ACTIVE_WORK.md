@@ -4,7 +4,7 @@
 
 `docs/changes/007-transcript-correction-persistence/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
@@ -23,6 +23,4 @@ transcript-editing UI remains deferred to Change 008.
 
 ## Exact next gate
 
-Complete and independently review the explicit Room 1→2 migration, correction
-write boundary, effective-transcript read behavior, and required migration,
-regression, build, lint, and connected-test evidence.
+Change 007 is complete. The next reviewable M1 change has not started yet.
