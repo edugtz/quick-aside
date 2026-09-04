@@ -4,7 +4,7 @@
 
 `docs/changes/004-local-text-capture/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 Governance: **STANDARD**
 
 ## Proven baseline
