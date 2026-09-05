@@ -2,10 +2,10 @@
 
 ## Active change
 
-`docs/changes/008-transcript-correction-ui/`
+`docs/changes/009-list-persistence-foundation/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
-- Governance: **STANDARD**
+Status: **IN PROGRESS**
+- Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
 
@@ -17,10 +17,11 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 008 adds explicit-management transcript correction for saved Voice
-Captures. It uses the existing Change 007 corrector and preserves the original
-recognized transcript; the Voice capture happy path remains automatic.
+Change 009 adds the durable list persistence/application foundation for
+session-based Mandado and continuous Compras. It preserves the existing
+Capture/transcript-correction model and does not add Lists UI.
 
 ## Exact next gate
 
-Change 008 is complete. The next reviewable M1 change has not started yet.
+Complete the Change 009 migration, list persistence, and regression gates;
+then perform independent review before any Lists UI work begins.
