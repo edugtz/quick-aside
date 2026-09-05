@@ -4,7 +4,7 @@
 
 `docs/changes/009-list-persistence-foundation/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
@@ -23,5 +23,4 @@ Capture/transcript-correction model and does not add Lists UI.
 
 ## Exact next gate
 
-Complete the Change 009 migration, list persistence, and regression gates;
-then perform independent review before any Lists UI work begins.
+Change 009 is complete. The next reviewable M1 change has not started yet.
