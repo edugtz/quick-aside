@@ -14,8 +14,11 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
         ListDefinitionEntity::class,
         ListSessionEntity::class,
         ListItemEntity::class,
+        NoteEntity::class,
+        StructuredLogEntity::class,
+        StructuredLogFieldEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class QuickAsideDatabase : RoomDatabase() {
@@ -26,6 +29,12 @@ abstract class QuickAsideDatabase : RoomDatabase() {
     abstract fun listSessionDao(): ListSessionDao
 
     abstract fun listItemDao(): ListItemDao
+
+    abstract fun noteDao(): NoteDao
+
+    abstract fun structuredLogDao(): StructuredLogDao
+
+    abstract fun structuredLogFieldDao(): StructuredLogFieldDao
 
     companion object {
         const val DATABASE_NAME = "quick_aside.db"
@@ -39,7 +48,7 @@ abstract class QuickAsideDatabase : RoomDatabase() {
             databaseName,
         )
             .setDriver(BundledSQLiteDriver())
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
             .addCallback(BuiltInListDefinitionBootstrapper)
             .build()
 
@@ -108,6 +117,56 @@ abstract class QuickAsideDatabase : RoomDatabase() {
                         "ON `list_items` (`list_session_id`) ",
                 ).use { statement -> statement.step() }
                 BuiltInListDefinitionBootstrapper.seed(connection)
+            }
+        }
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override suspend fun migrate(connection: SQLiteConnection) {
+                connection.prepare(
+                    """
+                    CREATE TABLE IF NOT EXISTS `notes` (
+                        `id` TEXT NOT NULL,
+                        `text` TEXT NOT NULL,
+                        `source_capture_id` TEXT,
+                        `created_at_epoch_millis` INTEGER NOT NULL,
+                        PRIMARY KEY(`id`),
+                        FOREIGN KEY(`source_capture_id`) REFERENCES `captures`(`id`)
+                            ON UPDATE NO ACTION ON DELETE NO ACTION
+                    )
+                    """.trimIndent(),
+                ).use { statement -> statement.step() }
+                connection.prepare(
+                    """
+                    CREATE TABLE IF NOT EXISTS `structured_logs` (
+                        `id` TEXT NOT NULL,
+                        `source_capture_id` TEXT,
+                        `created_at_epoch_millis` INTEGER NOT NULL,
+                        PRIMARY KEY(`id`),
+                        FOREIGN KEY(`source_capture_id`) REFERENCES `captures`(`id`)
+                            ON UPDATE NO ACTION ON DELETE NO ACTION
+                    )
+                    """.trimIndent(),
+                ).use { statement -> statement.step() }
+                connection.prepare(
+                    """
+                    CREATE TABLE IF NOT EXISTS `structured_log_fields` (
+                        `structured_log_id` TEXT NOT NULL,
+                        `field_key` TEXT NOT NULL,
+                        `field_value` TEXT NOT NULL,
+                        PRIMARY KEY(`structured_log_id`, `field_key`),
+                        FOREIGN KEY(`structured_log_id`) REFERENCES `structured_logs`(`id`)
+                            ON UPDATE NO ACTION ON DELETE NO ACTION
+                    )
+                    """.trimIndent(),
+                ).use { statement -> statement.step() }
+                connection.prepare(
+                    "CREATE INDEX IF NOT EXISTS `index_notes_source_capture_id` " +
+                        "ON `notes` (`source_capture_id`) ",
+                ).use { statement -> statement.step() }
+                connection.prepare(
+                    "CREATE INDEX IF NOT EXISTS `index_structured_logs_source_capture_id` " +
+                        "ON `structured_logs` (`source_capture_id`) ",
+                ).use { statement -> statement.step() }
             }
         }
     }

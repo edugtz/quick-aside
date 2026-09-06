@@ -2,10 +2,10 @@
 
 ## Active change
 
-`docs/changes/012-mandado-history-ui/`
+`docs/changes/013-memory-persistence-foundation/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
-- Governance: **STANDARD**
+Status: **IN PROGRESS**
+- Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
 
@@ -17,10 +17,11 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 012 exposes completed Mandado sessions through a read-only nested
-history surface. It filters active sessions at the presentation boundary,
-retains the existing ListStore/Room contracts, and adds no schema or migration.
+Change 013 adds durable local Note and StructuredLog persistence on Room schema
+version 4. It preserves existing Capture/List tables and behavior, with no new
+visible UI, search, AI extraction, reminders, or routing.
 
 ## Exact next gate
 
-Change 012 is complete. The next reviewable M1 change has not started yet.
+Complete the explicit 3→4 migration, deterministic memory persistence tests,
+schema inspection, and required build/lint/connected-test evidence.

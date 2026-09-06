@@ -117,6 +117,7 @@ class CoreDomainContractsTest {
         val note = Note(
             id = NoteId("note-1"),
             text = "Llamar al taller",
+            createdAt = Instant.parse("2026-09-04T12:00:00Z"),
         )
         val reminder = Reminder(
             id = ReminderId("reminder-1"),
