@@ -35,10 +35,12 @@
       including zero-write/read-only and navigation scenarios.
 - [x] Add a unique named-database Room integration flow for A/B completed and
       C active sessions, close/reopen, order, attachments, and completion.
-- [ ] Preserve green Mandado, Compras, text capture, voice capture, and
-      transcript correction coverage. Mandado/Compras and most capture tests
-      passed; seven existing startup failures remain in TranscriptCorrectionUiTest
-      and VoiceCaptureTest during the full connected run.
+- [x] Preserve green Mandado, Compras, text capture, voice capture, and
+  transcript correction coverage. The full connected run had seven
+  transient Compose-startup failures; the affected TranscriptCorrectionUiTest
+  and VoiceCaptureTest classes were rerun on CPH2791 / Android 16 with
+  23/23 tests passing.
+- [x] Final independent review; verdict: PASS_WITH_NOTES.
 - [x] Capture and inspect the three representative screenshots.
 - [x] Run unit tests, assemble, lint, and connected Android tests.
 - [x] Run `git diff --check`, `git status --short`, and diff stats.
@@ -52,4 +54,4 @@
 - [x] Do not add reopen/delete/copy/edit/export/search/filter/pagination,
       Compras history, AI, sync, reminders, or schema changes.
 - [x] Do not merge or push.
-- [ ] Final independent review remains required.
+- [x] Final independent review; verdict: PASS_WITH_NOTES.

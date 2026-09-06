@@ -4,7 +4,7 @@
 
 `docs/changes/012-mandado-history-ui/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -23,5 +23,4 @@ retains the existing ListStore/Room contracts, and adds no schema or migration.
 
 ## Exact next gate
 
-Independent reviewer/orchestrator assessment of the Change 012 evidence,
-including the seven unrelated full connected-run startup failures.
+Change 012 is complete. The next reviewable M1 change has not started yet.
