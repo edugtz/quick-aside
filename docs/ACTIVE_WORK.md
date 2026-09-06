@@ -2,10 +2,10 @@
 
 ## Active change
 
-`docs/changes/009-list-persistence-foundation/`
+`docs/changes/010-mandado-ui/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
-- Governance: **HIGH-ASSURANCE**
+Status: **IN PROGRESS**
+- Governance: **STANDARD**
 
 ## Proven baseline
 
@@ -17,10 +17,13 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 009 adds the durable list persistence/application foundation for
-session-based Mandado and continuous Compras. It preserves the existing
-Capture/transcript-correction model and does not add Lists UI.
+Change 010 exposes the Change 009 durable list foundation through the existing
+Listas destination. It adds the explicit current Mandado management flow and
+keeps Compras visibly deferred; it does not add history UI, AI routing, or
+schema changes.
 
 ## Exact next gate
 
-Change 009 is complete. The next reviewable M1 change has not started yet.
+Implementation and required verification evidence are complete. Await
+independent review; report every unavailable or failed gate without declaring
+the final engineering verdict.

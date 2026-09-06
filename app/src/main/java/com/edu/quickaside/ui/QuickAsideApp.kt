@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Edit
@@ -56,6 +57,7 @@ import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
+import com.edu.quickaside.application.lists.ListStore
 import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
 import com.edu.quickaside.application.speech.MicrophonePermissionController
 import com.edu.quickaside.application.speech.SpeechTranscriberFactory
@@ -63,17 +65,25 @@ import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
 import com.edu.quickaside.ui.memory.TranscriptCorrectionEditor
+import com.edu.quickaside.ui.lists.ListsScreen
+import com.edu.quickaside.ui.lists.MandadoScreen
 import com.edu.quickaside.ui.navigation.AppDestination
 import com.edu.quickaside.ui.voice.VoiceCaptureScreen
 import com.edu.quickaside.ui.voice.rememberAndroidMicrophonePermissionController
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
+private enum class ListsRoute {
+    Root,
+    Mandado,
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuickAsideApp(
     captureSubmission: CaptureSubmission,
     captureReader: CaptureReader,
+    listStore: ListStore? = null,
     captureTranscriptCorrector: CaptureTranscriptCorrector? = null,
     speechTranscriberFactory: SpeechTranscriberFactory? = null,
     microphonePermissionController: MicrophonePermissionController? = null,
@@ -85,6 +95,7 @@ fun QuickAsideApp(
     val resolvedMicrophonePermissionController = microphonePermissionController
         ?: rememberAndroidMicrophonePermissionController()
     var currentDestination by remember { mutableStateOf(AppDestination.Inicio) }
+    var listsRoute by remember { mutableStateOf(ListsRoute.Root) }
     var captureRequested by remember { mutableStateOf(false) }
     var historyRefreshToken by remember { mutableStateOf(0) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -103,7 +114,26 @@ fun QuickAsideApp(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             if (!captureRequested) {
-                CenterAlignedTopAppBar(title = { Text(currentDestination.label) })
+                val showingMandado =
+                    currentDestination == AppDestination.Listas && listsRoute == ListsRoute.Mandado
+                CenterAlignedTopAppBar(
+                    title = { Text(if (showingMandado) "Mandado" else currentDestination.label) },
+                    navigationIcon = {
+                        if (showingMandado) {
+                            IconButton(
+                                onClick = { listsRoute = ListsRoute.Root },
+                                modifier = Modifier.semantics {
+                                    contentDescription = "Volver a Listas"
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                    },
+                )
             }
         },
         bottomBar = {
@@ -112,7 +142,10 @@ fun QuickAsideApp(
                     AppDestination.entries.forEach { destination ->
                         NavigationBarItem(
                             selected = destination == currentDestination,
-                            onClick = { currentDestination = destination },
+                            onClick = {
+                                currentDestination = destination
+                                listsRoute = ListsRoute.Root
+                            },
                             icon = {
                                 Icon(destination.icon, contentDescription = destination.label)
                             },
@@ -145,6 +178,7 @@ fun QuickAsideApp(
         } else {
             ManagementScreen(
                 destination = currentDestination,
+                listsRoute = listsRoute,
                 padding = padding,
                 onCapture = requestCapture,
                 captureSubmission = captureSubmission,
@@ -153,6 +187,9 @@ fun QuickAsideApp(
                 historyRefreshToken = historyRefreshToken,
                 onCaptureSaved = { historyRefreshToken += 1 },
                 snackbarHostState = snackbarHostState,
+                listStore = listStore,
+                onOpenMandado = { listsRoute = ListsRoute.Mandado },
+                onBackToLists = { listsRoute = ListsRoute.Root },
             )
         }
     }
@@ -161,6 +198,7 @@ fun QuickAsideApp(
 @Composable
 private fun ManagementScreen(
     destination: AppDestination,
+    listsRoute: ListsRoute,
     padding: PaddingValues,
     onCapture: () -> Unit,
     captureSubmission: CaptureSubmission,
@@ -169,7 +207,27 @@ private fun ManagementScreen(
     historyRefreshToken: Int,
     onCaptureSaved: () -> Unit,
     snackbarHostState: SnackbarHostState,
+    listStore: ListStore?,
+    onOpenMandado: () -> Unit,
+    onBackToLists: () -> Unit,
 ) {
+    if (destination == AppDestination.Listas) {
+        when (listsRoute) {
+            ListsRoute.Root -> ListsScreen(
+                padding = padding,
+                onOpenMandado = onOpenMandado,
+            )
+
+            ListsRoute.Mandado -> MandadoScreen(
+                padding = padding,
+                listStore = listStore,
+                snackbarHostState = snackbarHostState,
+                onBack = onBackToLists,
+            )
+        }
+        return
+    }
+
     if (destination == AppDestination.Memoria) {
         CaptureHistoryScreen(
             padding = padding,

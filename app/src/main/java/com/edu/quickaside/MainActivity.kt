@@ -14,6 +14,7 @@ class MainActivity : ComponentActivity() {
                 QuickAsideApp(
                     captureSubmission = (application as QuickAsideApplication).captureSubmission,
                     captureReader = (application as QuickAsideApplication).captureReader,
+                    listStore = (application as QuickAsideApplication).listStore,
                     captureTranscriptCorrector =
                         (application as QuickAsideApplication).captureTranscriptCorrector,
                     speechTranscriberFactory =
