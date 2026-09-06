@@ -48,7 +48,7 @@
 
 ## Authority and deferred scope
 
-- [ ] Do not modify historical Change 001–009 packages or schema files.
-- [ ] Do not implement history, Compras behavior, AI, routing, sync,
-      reminders, delete, reorder, editing, or schema changes.
-- [ ] Do not merge or push.
+- [x] Historical Change 001–009 packages and schema files remain untouched.
+- [x] History, Compras behavior, AI, routing, sync, reminders, delete,
+  reorder, editing, and schema changes remain deferred.
+- [x] Final independent review; verdict: PASS_WITH_NOTES.

@@ -4,7 +4,7 @@
 
 `docs/changes/010-mandado-ui/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -24,6 +24,4 @@ schema changes.
 
 ## Exact next gate
 
-Implementation and required verification evidence are complete. Await
-independent review; report every unavailable or failed gate without declaring
-the final engineering verdict.
+Change 010 is complete. The next reviewable M1 change has not started yet.
