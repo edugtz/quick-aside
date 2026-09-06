@@ -4,7 +4,7 @@
 
 `docs/changes/011-compras-ui/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -24,5 +24,4 @@ schema, or adding history/delete behavior.
 
 ## Exact next gate
 
-Complete the Change 011 implementation and required verification evidence,
-then hand it to the independent reviewer/orchestrator for the final verdict.
+Change 011 is complete. The next reviewable M1 change has not started yet.

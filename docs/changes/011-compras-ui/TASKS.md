@@ -42,12 +42,12 @@
 - [x] Do not add history, delete, filtering, reorder, editing, AI/routing,
       sync, reminders, or schema changes.
 - [x] Do not merge or push.
-- [ ] Final independent review remains required.
+- [x] Final independent review; verdict: PASS_WITH_NOTES.
 
 ## Verification note
 
-The connected suite was executed on `CPH2791` / Android 16. A completed
-invocation recorded 82 scheduled tests with 0 failures, but the UTP result
-publisher emitted a `NoClassDefFoundError`; later retries reproduced the same
-infrastructure failure before producing a final report. Treat connected
-verification as externally blocked pending a healthy test runner.
+The connected suite on CPH2791 / Android 16 encountered an external UTP
+result-publisher NoClassDefFoundError. The independent review accepted the
+recorded zero-failure run evidence together with deterministic UI/Room tests
+and real-device execution as alternative evidence for the connected gate.
+Final verdict: PASS_WITH_NOTES.
