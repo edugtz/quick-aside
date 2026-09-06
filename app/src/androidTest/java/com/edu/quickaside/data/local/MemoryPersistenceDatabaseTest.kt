@@ -238,6 +238,11 @@ class MemoryPersistenceDatabaseTest {
     @Test
     fun structuredLogParentAndFieldsCreationIsAtomic() = runBlocking {
         openFreshDatabase()
+
+        // Force Room to open/create the physical v4 database before
+        // installing the raw SQLite trigger.
+        assertTrue(database.structuredLogDao().getRecent(1).isEmpty())
+
         database.close()
         addFailingStructuredLogFieldTrigger()
         openProductionDatabase()
