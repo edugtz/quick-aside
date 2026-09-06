@@ -54,13 +54,14 @@ class MandadoUiTest {
     }
 
     @Test
-    fun listasExposesMandadoAndDeferredComprasWithoutAFifthDestination() {
+    fun listasExposesInteractiveMandadoAndComprasWithoutAFifthDestination() {
         setContent(store)
         openLists()
 
         composeRule.onNodeWithText("Mandado").assertIsDisplayed()
         composeRule.onNodeWithText("Compras").assertIsDisplayed()
-        composeRule.onNodeWithText("disponible próximamente.", substring = true).assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Abrir Mandado").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Abrir Compras").assertIsDisplayed()
         composeRule.onAllNodesWithText("Inicio").assertCountEquals(1)
         composeRule.onAllNodesWithText("Pendientes").assertCountEquals(1)
         composeRule.onAllNodesWithText("Listas").assertCountEquals(2)

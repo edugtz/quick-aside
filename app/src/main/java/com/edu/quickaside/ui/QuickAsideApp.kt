@@ -65,6 +65,7 @@ import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
 import com.edu.quickaside.ui.memory.TranscriptCorrectionEditor
+import com.edu.quickaside.ui.lists.ComprasScreen
 import com.edu.quickaside.ui.lists.ListsScreen
 import com.edu.quickaside.ui.lists.MandadoScreen
 import com.edu.quickaside.ui.navigation.AppDestination
@@ -76,6 +77,7 @@ import kotlinx.coroutines.launch
 private enum class ListsRoute {
     Root,
     Mandado,
+    Compras,
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,10 +118,21 @@ fun QuickAsideApp(
             if (!captureRequested) {
                 val showingMandado =
                     currentDestination == AppDestination.Listas && listsRoute == ListsRoute.Mandado
+                val showingCompras =
+                    currentDestination == AppDestination.Listas && listsRoute == ListsRoute.Compras
+                val showingNestedList = showingMandado || showingCompras
                 CenterAlignedTopAppBar(
-                    title = { Text(if (showingMandado) "Mandado" else currentDestination.label) },
+                    title = {
+                        Text(
+                            when {
+                                showingMandado -> "Mandado"
+                                showingCompras -> "Compras"
+                                else -> currentDestination.label
+                            },
+                        )
+                    },
                     navigationIcon = {
-                        if (showingMandado) {
+                        if (showingNestedList) {
                             IconButton(
                                 onClick = { listsRoute = ListsRoute.Root },
                                 modifier = Modifier.semantics {
@@ -189,6 +202,7 @@ fun QuickAsideApp(
                 snackbarHostState = snackbarHostState,
                 listStore = listStore,
                 onOpenMandado = { listsRoute = ListsRoute.Mandado },
+                onOpenCompras = { listsRoute = ListsRoute.Compras },
                 onBackToLists = { listsRoute = ListsRoute.Root },
             )
         }
@@ -209,6 +223,7 @@ private fun ManagementScreen(
     snackbarHostState: SnackbarHostState,
     listStore: ListStore?,
     onOpenMandado: () -> Unit,
+    onOpenCompras: () -> Unit,
     onBackToLists: () -> Unit,
 ) {
     if (destination == AppDestination.Listas) {
@@ -216,9 +231,17 @@ private fun ManagementScreen(
             ListsRoute.Root -> ListsScreen(
                 padding = padding,
                 onOpenMandado = onOpenMandado,
+                onOpenCompras = onOpenCompras,
             )
 
             ListsRoute.Mandado -> MandadoScreen(
+                padding = padding,
+                listStore = listStore,
+                snackbarHostState = snackbarHostState,
+                onBack = onBackToLists,
+            )
+
+            ListsRoute.Compras -> ComprasScreen(
                 padding = padding,
                 listStore = listStore,
                 snackbarHostState = snackbarHostState,

@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/010-mandado-ui/`
+`docs/changes/011-compras-ui/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
+Status: **IN PROGRESS**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -17,11 +17,12 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 010 exposes the Change 009 durable list foundation through the existing
-Listas destination. It adds the explicit current Mandado management flow and
-keeps Compras visibly deferred; it does not add history UI, AI routing, or
-schema changes.
+Change 011 exposes the existing continuous Compras list through the Listas
+destination. It adds persistent item loading, exact-text insertion, completion
+updates, and nested navigation without creating sessions, changing Room
+schema, or adding history/delete behavior.
 
 ## Exact next gate
 
-Change 010 is complete. The next reviewable M1 change has not started yet.
+Complete the Change 011 implementation and required verification evidence,
+then hand it to the independent reviewer/orchestrator for the final verdict.

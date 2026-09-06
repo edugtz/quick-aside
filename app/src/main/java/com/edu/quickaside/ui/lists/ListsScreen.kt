@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 fun ListsScreen(
     padding: PaddingValues,
     onOpenMandado: () -> Unit,
+    onOpenCompras: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -55,9 +56,9 @@ fun ListsScreen(
         )
         ListHubCard(
             title = "Compras",
-            description = "Lista continua — disponible próximamente.",
+            description = "Mantén aquí lo que necesitas comprar y márcalo al conseguirlo.",
             icon = Icons.Outlined.ShoppingCart,
-            onClick = null,
+            onClick = onOpenCompras,
         )
     }
 }
