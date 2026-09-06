@@ -57,6 +57,7 @@ import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
+import com.edu.quickaside.application.lists.ListSessionWithItems
 import com.edu.quickaside.application.lists.ListStore
 import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
 import com.edu.quickaside.application.speech.MicrophonePermissionController
@@ -67,6 +68,9 @@ import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
 import com.edu.quickaside.ui.memory.TranscriptCorrectionEditor
 import com.edu.quickaside.ui.lists.ComprasScreen
 import com.edu.quickaside.ui.lists.ListsScreen
+import com.edu.quickaside.ui.lists.MandadoHistoryDetailScreen
+import com.edu.quickaside.ui.lists.MandadoHistoryScreen
+import com.edu.quickaside.ui.lists.MandadoHistoryTimestampFormatter
 import com.edu.quickaside.ui.lists.MandadoScreen
 import com.edu.quickaside.ui.navigation.AppDestination
 import com.edu.quickaside.ui.voice.VoiceCaptureScreen
@@ -77,6 +81,8 @@ import kotlinx.coroutines.launch
 private enum class ListsRoute {
     Root,
     Mandado,
+    MandadoHistory,
+    MandadoHistoryDetail,
     Compras,
 }
 
@@ -89,6 +95,8 @@ fun QuickAsideApp(
     captureTranscriptCorrector: CaptureTranscriptCorrector? = null,
     speechTranscriberFactory: SpeechTranscriberFactory? = null,
     microphonePermissionController: MicrophonePermissionController? = null,
+    mandadoHistoryTimestampFormatter: MandadoHistoryTimestampFormatter =
+        MandadoHistoryTimestampFormatter(),
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val resolvedSpeechTranscriberFactory = speechTranscriberFactory ?: remember(context) {
@@ -98,11 +106,30 @@ fun QuickAsideApp(
         ?: rememberAndroidMicrophonePermissionController()
     var currentDestination by remember { mutableStateOf(AppDestination.Inicio) }
     var listsRoute by remember { mutableStateOf(ListsRoute.Root) }
+    var historyDetailSession by remember { mutableStateOf<ListSessionWithItems?>(null) }
     var captureRequested by remember { mutableStateOf(false) }
     var historyRefreshToken by remember { mutableStateOf(0) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val requestCapture = { captureRequested = true }
+    val resetListsRoute = {
+        historyDetailSession = null
+        listsRoute = ListsRoute.Root
+    }
+    val backFromListsRoute = {
+        when (listsRoute) {
+            ListsRoute.Root -> Unit
+            ListsRoute.Mandado,
+            ListsRoute.Compras,
+            -> resetListsRoute()
+
+            ListsRoute.MandadoHistory -> listsRoute = ListsRoute.Mandado
+            ListsRoute.MandadoHistoryDetail -> {
+                historyDetailSession = null
+                listsRoute = ListsRoute.MandadoHistory
+            }
+        }
+    }
     val onVoiceCaptureSaved = {
         historyRefreshToken += 1
         captureRequested = false
@@ -120,13 +147,22 @@ fun QuickAsideApp(
                     currentDestination == AppDestination.Listas && listsRoute == ListsRoute.Mandado
                 val showingCompras =
                     currentDestination == AppDestination.Listas && listsRoute == ListsRoute.Compras
-                val showingNestedList = showingMandado || showingCompras
+                val showingMandadoHistory =
+                    currentDestination == AppDestination.Listas &&
+                        listsRoute == ListsRoute.MandadoHistory
+                val showingMandadoHistoryDetail =
+                    currentDestination == AppDestination.Listas &&
+                        listsRoute == ListsRoute.MandadoHistoryDetail
+                val showingNestedList = showingMandado || showingCompras ||
+                    showingMandadoHistory || showingMandadoHistoryDetail
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
                             when {
                                 showingMandado -> "Mandado"
                                 showingCompras -> "Compras"
+                                showingMandadoHistory -> "Historial"
+                                showingMandadoHistoryDetail -> "Detalle de mandado"
                                 else -> currentDestination.label
                             },
                         )
@@ -134,9 +170,13 @@ fun QuickAsideApp(
                     navigationIcon = {
                         if (showingNestedList) {
                             IconButton(
-                                onClick = { listsRoute = ListsRoute.Root },
+                                onClick = backFromListsRoute,
                                 modifier = Modifier.semantics {
-                                    contentDescription = "Volver a Listas"
+                                    contentDescription = when {
+                                        showingMandadoHistoryDetail -> "Volver al historial"
+                                        showingMandadoHistory -> "Volver a Mandado"
+                                        else -> "Volver a Listas"
+                                    }
                                 },
                             ) {
                                 Icon(
@@ -157,7 +197,7 @@ fun QuickAsideApp(
                             selected = destination == currentDestination,
                             onClick = {
                                 currentDestination = destination
-                                listsRoute = ListsRoute.Root
+                                resetListsRoute()
                             },
                             icon = {
                                 Icon(destination.icon, contentDescription = destination.label)
@@ -201,9 +241,24 @@ fun QuickAsideApp(
                 onCaptureSaved = { historyRefreshToken += 1 },
                 snackbarHostState = snackbarHostState,
                 listStore = listStore,
+                historyDetailSession = historyDetailSession,
+                mandadoHistoryTimestampFormatter = mandadoHistoryTimestampFormatter,
                 onOpenMandado = { listsRoute = ListsRoute.Mandado },
                 onOpenCompras = { listsRoute = ListsRoute.Compras },
-                onBackToLists = { listsRoute = ListsRoute.Root },
+                onOpenHistory = {
+                    historyDetailSession = null
+                    listsRoute = ListsRoute.MandadoHistory
+                },
+                onOpenHistoryDetail = { sessionWithItems ->
+                    historyDetailSession = sessionWithItems
+                    listsRoute = ListsRoute.MandadoHistoryDetail
+                },
+                onBackToHistory = {
+                    historyDetailSession = null
+                    listsRoute = ListsRoute.MandadoHistory
+                },
+                onBackToMandado = { listsRoute = ListsRoute.Mandado },
+                onBackToLists = resetListsRoute,
             )
         }
     }
@@ -222,8 +277,14 @@ private fun ManagementScreen(
     onCaptureSaved: () -> Unit,
     snackbarHostState: SnackbarHostState,
     listStore: ListStore?,
+    historyDetailSession: ListSessionWithItems?,
+    mandadoHistoryTimestampFormatter: MandadoHistoryTimestampFormatter,
     onOpenMandado: () -> Unit,
     onOpenCompras: () -> Unit,
+    onOpenHistory: () -> Unit,
+    onOpenHistoryDetail: (ListSessionWithItems) -> Unit,
+    onBackToHistory: () -> Unit,
+    onBackToMandado: () -> Unit,
     onBackToLists: () -> Unit,
 ) {
     if (destination == AppDestination.Listas) {
@@ -239,7 +300,36 @@ private fun ManagementScreen(
                 listStore = listStore,
                 snackbarHostState = snackbarHostState,
                 onBack = onBackToLists,
+                onOpenHistory = onOpenHistory,
             )
+
+            ListsRoute.MandadoHistory -> MandadoHistoryScreen(
+                padding = padding,
+                listStore = listStore,
+                onBack = onBackToMandado,
+                onOpenDetail = onOpenHistoryDetail,
+                timestampFormatter = mandadoHistoryTimestampFormatter,
+            )
+
+            ListsRoute.MandadoHistoryDetail -> {
+                val selectedSession = historyDetailSession
+                if (selectedSession == null) {
+                    MandadoHistoryScreen(
+                        padding = padding,
+                        listStore = listStore,
+                        onBack = onBackToMandado,
+                        onOpenDetail = onOpenHistoryDetail,
+                        timestampFormatter = mandadoHistoryTimestampFormatter,
+                    )
+                } else {
+                    MandadoHistoryDetailScreen(
+                        padding = padding,
+                        sessionWithItems = selectedSession,
+                        onBack = onBackToHistory,
+                        timestampFormatter = mandadoHistoryTimestampFormatter,
+                    )
+                }
+            }
 
             ListsRoute.Compras -> ComprasScreen(
                 padding = padding,

@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/011-compras-ui/`
+`docs/changes/012-mandado-history-ui/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
+Status: **IN PROGRESS**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -17,11 +17,11 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 011 exposes the existing continuous Compras list through the Listas
-destination. It adds persistent item loading, exact-text insertion, completion
-updates, and nested navigation without creating sessions, changing Room
-schema, or adding history/delete behavior.
+Change 012 exposes completed Mandado sessions through a read-only nested
+history surface. It filters active sessions at the presentation boundary,
+retains the existing ListStore/Room contracts, and adds no schema or migration.
 
 ## Exact next gate
 
-Change 011 is complete. The next reviewable M1 change has not started yet.
+Independent reviewer/orchestrator assessment of the Change 012 evidence,
+including the seven unrelated full connected-run startup failures.

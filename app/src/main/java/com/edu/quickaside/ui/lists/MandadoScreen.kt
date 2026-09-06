@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -18,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Checklist
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.AlertDialog
@@ -77,16 +79,14 @@ private sealed interface MandadoState {
     data object Failed : MandadoState
 }
 
-/**
- * Current Mandado management only. History and Compras intentionally stay
- * outside this surface for Change 010.
- */
+/** Current Mandado management surface; completed history is a separate route. */
 @Composable
 fun MandadoScreen(
     padding: PaddingValues,
     listStore: ListStore?,
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
+    onOpenHistory: () -> Unit,
 ) {
     var state by remember(listStore) { mutableStateOf<MandadoState>(MandadoState.Loading) }
     var itemText by rememberSaveable { mutableStateOf("") }
@@ -304,11 +304,27 @@ fun MandadoScreen(
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(
-            text = "Mandado actual",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.SemiBold,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = "Mandado actual",
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold,
+            )
+            TextButton(
+                onClick = onOpenHistory,
+                modifier = Modifier.semantics {
+                    contentDescription = "Abrir historial de mandados"
+                },
+            ) {
+                Icon(Icons.Outlined.History, contentDescription = null)
+                Text("Historial")
+            }
+        }
         when (val currentState = state) {
             MandadoState.Loading -> LoadingState()
             MandadoState.NoActiveSession -> NoActiveSessionState(
