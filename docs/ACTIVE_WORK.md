@@ -4,7 +4,7 @@
 
 `docs/changes/014-notes-ui/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -20,3 +20,7 @@ Status: **IN PROGRESS**
 Change 014 exposes durable local Notes through the existing Memoria destination
 without changing Room schema version 4 or adding AI routing, search, reminders,
 or broader memory management.
+
+## Exact next gate
+
+Change 014 is complete. The next reviewable M1 change has not started yet.
