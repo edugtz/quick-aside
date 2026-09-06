@@ -33,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -59,12 +60,15 @@ import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
 import com.edu.quickaside.application.lists.ListSessionWithItems
 import com.edu.quickaside.application.lists.ListStore
+import com.edu.quickaside.application.memory.MemoryStore
 import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
 import com.edu.quickaside.application.speech.MicrophonePermissionController
 import com.edu.quickaside.application.speech.SpeechTranscriberFactory
 import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
+import com.edu.quickaside.ui.memory.NoteTimestampFormatter
+import com.edu.quickaside.ui.memory.NotesScreen
 import com.edu.quickaside.ui.memory.TranscriptCorrectionEditor
 import com.edu.quickaside.ui.lists.ComprasScreen
 import com.edu.quickaside.ui.lists.ListsScreen
@@ -86,17 +90,24 @@ private enum class ListsRoute {
     Compras,
 }
 
+private enum class MemoryRoute {
+    History,
+    Notes,
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuickAsideApp(
     captureSubmission: CaptureSubmission,
     captureReader: CaptureReader,
     listStore: ListStore? = null,
+    memoryStore: MemoryStore? = null,
     captureTranscriptCorrector: CaptureTranscriptCorrector? = null,
     speechTranscriberFactory: SpeechTranscriberFactory? = null,
     microphonePermissionController: MicrophonePermissionController? = null,
     mandadoHistoryTimestampFormatter: MandadoHistoryTimestampFormatter =
         MandadoHistoryTimestampFormatter(),
+    noteTimestampFormatter: NoteTimestampFormatter = NoteTimestampFormatter(),
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val resolvedSpeechTranscriberFactory = speechTranscriberFactory ?: remember(context) {
@@ -106,6 +117,7 @@ fun QuickAsideApp(
         ?: rememberAndroidMicrophonePermissionController()
     var currentDestination by remember { mutableStateOf(AppDestination.Inicio) }
     var listsRoute by remember { mutableStateOf(ListsRoute.Root) }
+    var memoryRoute by remember { mutableStateOf(MemoryRoute.History) }
     var historyDetailSession by remember { mutableStateOf<ListSessionWithItems?>(null) }
     var captureRequested by remember { mutableStateOf(false) }
     var historyRefreshToken by remember { mutableStateOf(0) }
@@ -116,6 +128,7 @@ fun QuickAsideApp(
         historyDetailSession = null
         listsRoute = ListsRoute.Root
     }
+    val resetMemoryRoute = { memoryRoute = MemoryRoute.History }
     val backFromListsRoute = {
         when (listsRoute) {
             ListsRoute.Root -> Unit
@@ -130,6 +143,7 @@ fun QuickAsideApp(
             }
         }
     }
+    val backFromMemoryRoute = { memoryRoute = MemoryRoute.History }
     val onVoiceCaptureSaved = {
         historyRefreshToken += 1
         captureRequested = false
@@ -153,8 +167,12 @@ fun QuickAsideApp(
                 val showingMandadoHistoryDetail =
                     currentDestination == AppDestination.Listas &&
                         listsRoute == ListsRoute.MandadoHistoryDetail
+                val showingMemoryNotes =
+                    currentDestination == AppDestination.Memoria &&
+                        memoryRoute == MemoryRoute.Notes
                 val showingNestedList = showingMandado || showingCompras ||
                     showingMandadoHistory || showingMandadoHistoryDetail
+                val showingNestedRoute = showingNestedList || showingMemoryNotes
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
@@ -163,16 +181,22 @@ fun QuickAsideApp(
                                 showingCompras -> "Compras"
                                 showingMandadoHistory -> "Historial"
                                 showingMandadoHistoryDetail -> "Detalle de mandado"
+                                showingMemoryNotes -> "Notas"
                                 else -> currentDestination.label
                             },
                         )
                     },
                     navigationIcon = {
-                        if (showingNestedList) {
+                        if (showingNestedRoute) {
                             IconButton(
-                                onClick = backFromListsRoute,
+                                onClick = if (showingMemoryNotes) {
+                                    backFromMemoryRoute
+                                } else {
+                                    backFromListsRoute
+                                },
                                 modifier = Modifier.semantics {
                                     contentDescription = when {
+                                        showingMemoryNotes -> "Volver a Memoria"
                                         showingMandadoHistoryDetail -> "Volver al historial"
                                         showingMandadoHistory -> "Volver a Mandado"
                                         else -> "Volver a Listas"
@@ -198,6 +222,7 @@ fun QuickAsideApp(
                             onClick = {
                                 currentDestination = destination
                                 resetListsRoute()
+                                resetMemoryRoute()
                             },
                             icon = {
                                 Icon(destination.icon, contentDescription = destination.label)
@@ -232,6 +257,7 @@ fun QuickAsideApp(
             ManagementScreen(
                 destination = currentDestination,
                 listsRoute = listsRoute,
+                memoryRoute = memoryRoute,
                 padding = padding,
                 onCapture = requestCapture,
                 captureSubmission = captureSubmission,
@@ -241,8 +267,10 @@ fun QuickAsideApp(
                 onCaptureSaved = { historyRefreshToken += 1 },
                 snackbarHostState = snackbarHostState,
                 listStore = listStore,
+                memoryStore = memoryStore,
                 historyDetailSession = historyDetailSession,
                 mandadoHistoryTimestampFormatter = mandadoHistoryTimestampFormatter,
+                noteTimestampFormatter = noteTimestampFormatter,
                 onOpenMandado = { listsRoute = ListsRoute.Mandado },
                 onOpenCompras = { listsRoute = ListsRoute.Compras },
                 onOpenHistory = {
@@ -259,6 +287,8 @@ fun QuickAsideApp(
                 },
                 onBackToMandado = { listsRoute = ListsRoute.Mandado },
                 onBackToLists = resetListsRoute,
+                onOpenNotes = { memoryRoute = MemoryRoute.Notes },
+                onBackToMemoryHistory = backFromMemoryRoute,
             )
         }
     }
@@ -268,6 +298,7 @@ fun QuickAsideApp(
 private fun ManagementScreen(
     destination: AppDestination,
     listsRoute: ListsRoute,
+    memoryRoute: MemoryRoute,
     padding: PaddingValues,
     onCapture: () -> Unit,
     captureSubmission: CaptureSubmission,
@@ -277,8 +308,10 @@ private fun ManagementScreen(
     onCaptureSaved: () -> Unit,
     snackbarHostState: SnackbarHostState,
     listStore: ListStore?,
+    memoryStore: MemoryStore?,
     historyDetailSession: ListSessionWithItems?,
     mandadoHistoryTimestampFormatter: MandadoHistoryTimestampFormatter,
+    noteTimestampFormatter: NoteTimestampFormatter,
     onOpenMandado: () -> Unit,
     onOpenCompras: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -286,6 +319,8 @@ private fun ManagementScreen(
     onBackToHistory: () -> Unit,
     onBackToMandado: () -> Unit,
     onBackToLists: () -> Unit,
+    onOpenNotes: () -> Unit,
+    onBackToMemoryHistory: () -> Unit,
 ) {
     if (destination == AppDestination.Listas) {
         when (listsRoute) {
@@ -342,13 +377,24 @@ private fun ManagementScreen(
     }
 
     if (destination == AppDestination.Memoria) {
-        CaptureHistoryScreen(
-            padding = padding,
-            captureReader = captureReader,
-            captureTranscriptCorrector = captureTranscriptCorrector,
-            snackbarHostState = snackbarHostState,
-            refreshToken = historyRefreshToken,
-        )
+        when (memoryRoute) {
+            MemoryRoute.History -> CaptureHistoryScreen(
+                padding = padding,
+                captureReader = captureReader,
+                captureTranscriptCorrector = captureTranscriptCorrector,
+                snackbarHostState = snackbarHostState,
+                refreshToken = historyRefreshToken,
+                onOpenNotes = onOpenNotes,
+            )
+
+            MemoryRoute.Notes -> NotesScreen(
+                padding = padding,
+                memoryStore = memoryStore,
+                timestampFormatter = noteTimestampFormatter,
+                snackbarHostState = snackbarHostState,
+                onBack = onBackToMemoryHistory,
+            )
+        }
         return
     }
 
@@ -466,6 +512,7 @@ private fun CaptureHistoryScreen(
     captureTranscriptCorrector: CaptureTranscriptCorrector?,
     snackbarHostState: SnackbarHostState,
     refreshToken: Int,
+    onOpenNotes: () -> Unit,
 ) {
     var state by remember { mutableStateOf<CaptureHistoryState>(CaptureHistoryState.Loading) }
     var editorCapture by remember { mutableStateOf<Capture?>(null) }
@@ -500,6 +547,14 @@ private fun CaptureHistoryScreen(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        OutlinedButton(
+            onClick = onOpenNotes,
+            modifier = Modifier.semantics { contentDescription = "Abrir notas" },
+        ) {
+            Icon(imageVector = Icons.Outlined.Description, contentDescription = null)
+            Spacer(Modifier.size(8.dp))
+            Text("Notas")
+        }
 
         when (val currentState = state) {
             CaptureHistoryState.Loading -> {

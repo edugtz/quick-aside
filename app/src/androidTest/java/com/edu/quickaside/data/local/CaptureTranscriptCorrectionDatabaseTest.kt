@@ -91,7 +91,7 @@ class CaptureTranscriptCorrectionDatabaseTest {
         assertEquals(2, database.captureDao().getRecent(50).size)
 
         database.close()
-        assertEquals(3L, readUserVersion())
+        assertEquals(4L, readUserVersion())
         assertEquals(
             listOf(
                 "id",

@@ -2,10 +2,10 @@
 
 ## Active change
 
-`docs/changes/013-memory-persistence-foundation/`
+`docs/changes/014-notes-ui/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
-- Governance: **HIGH-ASSURANCE**
+Status: **IN PROGRESS**
+- Governance: **STANDARD**
 
 ## Proven baseline
 
@@ -17,10 +17,6 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 013 adds durable local Note and StructuredLog persistence on Room schema
-version 4. It preserves existing Capture/List tables and behavior, with no new
-visible UI, search, AI extraction, reminders, or routing.
-
-## Exact next gate
-
-Change 013 is complete. The next reviewable M1 change has not started yet.
+Change 014 exposes durable local Notes through the existing Memoria destination
+without changing Room schema version 4 or adding AI routing, search, reminders,
+or broader memory management.
