@@ -44,7 +44,18 @@ Status: **IN PROGRESS**
 
 ## Scope and authority
 
-- [ ] Do not modify historical Change 001–012 packages or schemas.
-- [ ] Do not add UI, search, FTS, AI, reminders, Action Ledger, delete/update,
-      export/archive, Google integration, or dependencies.
-- [ ] Do not merge or push.
+- [x] Do not modify historical Change 001–012 packages or schemas.
+- [x] Do not add UI, search, FTS, AI, reminders, Action Ledger, delete/update,
+  export/archive, Google integration, or dependencies.
+- [x] Do not merge or push during implementation.
+- [x] Final independent review; verdict: PASS_WITH_NOTES.
+
+## Verification note
+
+The initial connected run was blocked before test execution by a device APK
+installation timeout. A later focused run executed
+MemoryPersistenceDatabaseTest successfully on CPH2791 / Android 16 with
+18/18 tests passing, including the real v3→v4 migration fixture and forced
+StructuredLog atomic rollback test.
+
+Final verdict: PASS_WITH_NOTES.

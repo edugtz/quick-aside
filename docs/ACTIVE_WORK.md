@@ -4,7 +4,7 @@
 
 `docs/changes/013-memory-persistence-foundation/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
@@ -23,5 +23,4 @@ visible UI, search, AI extraction, reminders, or routing.
 
 ## Exact next gate
 
-Complete the explicit 3→4 migration, deterministic memory persistence tests,
-schema inspection, and required build/lint/connected-test evidence.
+Change 013 is complete. The next reviewable M1 change has not started yet.
