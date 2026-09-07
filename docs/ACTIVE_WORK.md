@@ -4,7 +4,7 @@
 
 `docs/changes/017-search-ui/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **STANDARD**
 
 ## Proven baseline
