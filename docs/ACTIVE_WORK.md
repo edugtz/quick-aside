@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/015-structured-logs-ui/`
+`docs/changes/016-local-search-foundation/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
+Status: **PLAN/DOCS ONLY — IN PROGRESS**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -17,11 +17,14 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 015 exposes durable local Structured Logs through the existing Memoria
-destination without changing Room schema version 4 or adding AI routing,
-search, reminders, or broader memory management. Change 014 is complete and
-remains the proven Notes baseline.
+Change 016 defines the smallest deterministic local-search foundation for M1.
+It will search durable Room history across Captures, Notes, Structured Logs,
+and all List Items through a focused application boundary. It does not add
+Search UI, FTS, a schema migration, or broader memory-management behavior.
+Changes 001–015 are the completed baseline for this change.
 
 ## Exact next gate
 
-Change 015 is complete. The next reviewable M1 change has not started yet.
+Complete and review the Change 016 SPEC/PLAN/TASKS package before implementing
+production code. The current turn is deliberately limited to planning and
+documentation.
