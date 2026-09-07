@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.DataObject
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.KeyboardVoice
@@ -69,6 +70,7 @@ import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
 import com.edu.quickaside.ui.memory.NoteTimestampFormatter
 import com.edu.quickaside.ui.memory.NotesScreen
+import com.edu.quickaside.ui.memory.StructuredLogsScreen
 import com.edu.quickaside.ui.memory.TranscriptCorrectionEditor
 import com.edu.quickaside.ui.lists.ComprasScreen
 import com.edu.quickaside.ui.lists.ListsScreen
@@ -93,6 +95,7 @@ private enum class ListsRoute {
 private enum class MemoryRoute {
     History,
     Notes,
+    StructuredLogs,
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -170,9 +173,13 @@ fun QuickAsideApp(
                 val showingMemoryNotes =
                     currentDestination == AppDestination.Memoria &&
                         memoryRoute == MemoryRoute.Notes
+                val showingMemoryStructuredLogs =
+                    currentDestination == AppDestination.Memoria &&
+                        memoryRoute == MemoryRoute.StructuredLogs
                 val showingNestedList = showingMandado || showingCompras ||
                     showingMandadoHistory || showingMandadoHistoryDetail
-                val showingNestedRoute = showingNestedList || showingMemoryNotes
+                val showingNestedRoute = showingNestedList || showingMemoryNotes ||
+                    showingMemoryStructuredLogs
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
@@ -182,6 +189,7 @@ fun QuickAsideApp(
                                 showingMandadoHistory -> "Historial"
                                 showingMandadoHistoryDetail -> "Detalle de mandado"
                                 showingMemoryNotes -> "Notas"
+                                showingMemoryStructuredLogs -> "Registros"
                                 else -> currentDestination.label
                             },
                         )
@@ -191,12 +199,15 @@ fun QuickAsideApp(
                             IconButton(
                                 onClick = if (showingMemoryNotes) {
                                     backFromMemoryRoute
+                                } else if (showingMemoryStructuredLogs) {
+                                    backFromMemoryRoute
                                 } else {
                                     backFromListsRoute
                                 },
                                 modifier = Modifier.semantics {
                                     contentDescription = when {
                                         showingMemoryNotes -> "Volver a Memoria"
+                                        showingMemoryStructuredLogs -> "Volver a Memoria"
                                         showingMandadoHistoryDetail -> "Volver al historial"
                                         showingMandadoHistory -> "Volver a Mandado"
                                         else -> "Volver a Listas"
@@ -288,6 +299,7 @@ fun QuickAsideApp(
                 onBackToMandado = { listsRoute = ListsRoute.Mandado },
                 onBackToLists = resetListsRoute,
                 onOpenNotes = { memoryRoute = MemoryRoute.Notes },
+                onOpenStructuredLogs = { memoryRoute = MemoryRoute.StructuredLogs },
                 onBackToMemoryHistory = backFromMemoryRoute,
             )
         }
@@ -320,6 +332,7 @@ private fun ManagementScreen(
     onBackToMandado: () -> Unit,
     onBackToLists: () -> Unit,
     onOpenNotes: () -> Unit,
+    onOpenStructuredLogs: () -> Unit,
     onBackToMemoryHistory: () -> Unit,
 ) {
     if (destination == AppDestination.Listas) {
@@ -385,9 +398,18 @@ private fun ManagementScreen(
                 snackbarHostState = snackbarHostState,
                 refreshToken = historyRefreshToken,
                 onOpenNotes = onOpenNotes,
+                onOpenStructuredLogs = onOpenStructuredLogs,
             )
 
             MemoryRoute.Notes -> NotesScreen(
+                padding = padding,
+                memoryStore = memoryStore,
+                timestampFormatter = noteTimestampFormatter,
+                snackbarHostState = snackbarHostState,
+                onBack = onBackToMemoryHistory,
+            )
+
+            MemoryRoute.StructuredLogs -> StructuredLogsScreen(
                 padding = padding,
                 memoryStore = memoryStore,
                 timestampFormatter = noteTimestampFormatter,
@@ -513,6 +535,7 @@ private fun CaptureHistoryScreen(
     snackbarHostState: SnackbarHostState,
     refreshToken: Int,
     onOpenNotes: () -> Unit,
+    onOpenStructuredLogs: () -> Unit,
 ) {
     var state by remember { mutableStateOf<CaptureHistoryState>(CaptureHistoryState.Loading) }
     var editorCapture by remember { mutableStateOf<Capture?>(null) }
@@ -547,13 +570,30 @@ private fun CaptureHistoryScreen(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        OutlinedButton(
-            onClick = onOpenNotes,
-            modifier = Modifier.semantics { contentDescription = "Abrir notas" },
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Icon(imageVector = Icons.Outlined.Description, contentDescription = null)
-            Spacer(Modifier.size(8.dp))
-            Text("Notas")
+            OutlinedButton(
+                onClick = onOpenNotes,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = "Abrir notas" },
+            ) {
+                Icon(imageVector = Icons.Outlined.Description, contentDescription = null)
+                Spacer(Modifier.size(8.dp))
+                Text("Notas")
+            }
+            OutlinedButton(
+                onClick = onOpenStructuredLogs,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = "Abrir registros" },
+            ) {
+                Icon(imageVector = Icons.Outlined.DataObject, contentDescription = null)
+                Spacer(Modifier.size(8.dp))
+                Text("Registros")
+            }
         }
 
         when (val currentState = state) {

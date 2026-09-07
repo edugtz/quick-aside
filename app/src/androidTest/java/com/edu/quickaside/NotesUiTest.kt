@@ -15,8 +15,10 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.core.app.ApplicationProvider
@@ -238,6 +240,33 @@ class NotesUiTest {
         waitForText("Capturas recientes")
         composeRule.onNodeWithContentDescription("Abrir notas").assertIsDisplayed()
         composeRule.onNodeWithText("Aún no tienes notas.").assertDoesNotExist()
+    }
+
+    @Test
+    fun finalNoteCanScrollAboveGlobalCaptureFab() {
+        store.recentNotes = (1..8).map { index ->
+            note(
+                id = "scroll-note-$index",
+                text = if (index == 8) "Nota final" else "Nota $index",
+                createdAt = "2026-09-06T${(12 - index).toString().padStart(2, '0')}:00:00Z",
+            )
+        }
+        setContent()
+        openNotes()
+
+        waitForText("Notas recientes")
+        composeRule.onNodeWithTag("NotesList")
+            .performScrollToNode(hasText("Nota final"))
+
+        val finalNoteBottom = composeRule.onNodeWithText("Nota final")
+            .fetchSemanticsNode()
+            .boundsInRoot
+            .bottom
+        val fabTop = composeRule.onNodeWithContentDescription("Capturar")
+            .fetchSemanticsNode()
+            .boundsInRoot
+            .top
+        assertTrue("The final Note card must scroll above the Capture FAB", finalNoteBottom <= fabTop)
     }
 
     @Test
