@@ -133,6 +133,37 @@ class LocalSearchRoomIntegrationTest {
     }
 
     @Test
+    fun structuredLogMatchingMultipleFieldsReturnsSingleResult() = runBlocking {
+        openDatabase()
+        database.structuredLogDao().insert(
+            StructuredLogEntity(
+                id = "log-dedup",
+                createdAtEpochMillis = 700L,
+            ),
+        )
+        database.structuredLogFieldDao().insertAll(
+            listOf(
+                StructuredLogFieldEntity("log-dedup", "shared-token-key", "shared-token"),
+                StructuredLogFieldEntity("log-dedup", "shared-token", "another shared-token value"),
+            ),
+        )
+
+        val results = RoomLocalSearch(database).search("shared-token")
+        assertEquals(1, results.size)
+        val single = results.single() as LocalSearchResult.StructuredLog
+        assertEquals("log-dedup", single.structuredLogId.value)
+        assertEquals("log-dedup", single.sourceId)
+        assertEquals(
+            listOf("shared-token", "shared-token-key"),
+            single.fields.map { it.key },
+        )
+        assertEquals(
+            listOf("another shared-token value", "shared-token"),
+            single.fields.map { it.value },
+        )
+    }
+
+    @Test
     fun allPersistedListItemsSearchWithDefinitionAndSessionContext() = runBlocking {
         openDatabase()
         database.listSessionDao().insert(
