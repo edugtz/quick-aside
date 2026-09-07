@@ -247,7 +247,8 @@ class SearchUiTest {
         setContent()
         search("ejercicio")
 
-        waitForText("Registro")
+        scrollToResultCard(0)
+        waitForExactText("Registro")
         composeRule.onNodeWithText("zeta").assertIsDisplayed()
         composeRule.onNodeWithText("último").assertIsDisplayed()
         composeRule.onNodeWithText("alpha").assertIsDisplayed()
@@ -271,10 +272,10 @@ class SearchUiTest {
         setContent()
         search("Detergente")
 
-        waitForText("Detergente")
+        scrollToResultCard(0)
         composeRule.onNodeWithText("Mandado").assertIsDisplayed()
         composeRule.onNodeWithText("Completado").assertIsDisplayed()
-        composeRule.onNodeWithText("Sesión histórica · Ayer, 09:00").assertIsDisplayed()
+        composeRule.onNodeWithText("Sesión histórica · 4 Sep, 09:00").assertIsDisplayed()
     }
 
     @Test
@@ -291,7 +292,7 @@ class SearchUiTest {
         setContent()
         search("Pan")
 
-        waitForText("Pan")
+        scrollToResultCard(0)
         composeRule.onNodeWithText("Pendiente").assertIsDisplayed()
     }
 
@@ -444,7 +445,9 @@ class SearchUiTest {
 
         composeRule.onNode(hasSetTextAction()).performTextReplacement("mezcla")
         composeRule.onNodeWithContentDescription("Buscar").performClick()
-        waitForText("Registro")
+        waitForResultsState()
+        composeRule.onNodeWithTag("SearchResultsList")
+            .performScrollToNode(hasTestTag("SearchResultCard-2"))
         saveScreenshot("search-results-mixed.png")
 
         search.results = emptyList()
@@ -460,7 +463,11 @@ class SearchUiTest {
         openSearch()
 
         composeRule.onNodeWithText("Buscar en Memoria").assertIsDisplayed()
-        composeRule.onNodeWithText("Escribe para buscar").assertIsDisplayed()
+        composeRule.onNode(hasSetTextAction()).performClick()
+        composeRule.onNodeWithText(
+            "Escribe para buscar",
+            useUnmergedTree = true,
+        ).assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Buscar").assertIsDisplayed()
     }
 
@@ -579,7 +586,8 @@ class SearchUiTest {
         setContent()
         search("registro")
 
-        waitForText("Registro")
+        scrollToResultCard(0)
+        waitForExactText("Registro")
         composeRule.onNodeWithText("Registro · Ayer, 18:30").assertIsDisplayed()
     }
 
@@ -680,6 +688,25 @@ class SearchUiTest {
                 composeRule.onNodeWithText(text, substring = true).assertIsDisplayed()
             }.isSuccess
         }
+    }
+
+    private fun waitForExactText(text: String) {
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            runCatching {
+                composeRule.onNodeWithText(text, substring = false).assertIsDisplayed()
+            }.isSuccess
+        }
+    }
+
+    private fun waitForResultsState() {
+        waitForText("Resultados para")
+    }
+
+    private fun scrollToResultCard(index: Int) {
+        waitForResultsState()
+        composeRule.onNodeWithTag("SearchResultsList")
+            .performScrollToNode(hasTestTag("SearchResultCard-$index"))
+        composeRule.waitForIdle()
     }
 
     private fun noteResult(id: String, text: String): LocalSearchResult.Note =
