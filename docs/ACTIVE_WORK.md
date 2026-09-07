@@ -2,10 +2,10 @@
 
 ## Active change
 
-`docs/changes/017-search-ui/`
+`docs/changes/018-action-ledger-foundation/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
-- Governance: **STANDARD**
+Status: **PLAN/DOCS ONLY — IN PROGRESS**
+- Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
 
@@ -17,15 +17,15 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 017 defines the smallest deterministic local-search UI for M1. It
-consumes the completed Change 016 `LocalSearch` boundary from the existing
-Memoria destination, adds a nested Search route and prominent History
-affordance, and keeps results flat, read-only, and in boundary order. It does
-not add AI search, semantic/fuzzy behavior, mutations, filters, a new bottom
-destination, a schema change, or a dependency.
+Change 018 defines the durable local Action Ledger foundation required by M1
+and later reversible mutations. It evolves the minimal domain entry contract,
+adds a focused application store, and moves Room from version 4 to version 5
+with only the new Action Ledger tables and their required indexes. It does not
+wire existing product mutations into the ledger or implement Undo execution.
 
-Changes 001–016 are the completed baseline for this change.
+Changes 001–017 are the completed baseline for this change.
 
 ## Exact next gate
 
-Change 017 is complete. The next reviewable M1 change has not started yet.
+The Change 018 planning package must be independently reviewed and committed
+before production implementation begins.
