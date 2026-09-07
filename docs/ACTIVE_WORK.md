@@ -4,7 +4,7 @@
 
 `docs/changes/017-search-ui/`
 
-Status: **PLAN/DOCS ONLY — IN PROGRESS**
+Status: **IN PROGRESS**
 - Governance: **STANDARD**
 
 ## Proven baseline

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.DataObject
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.KeyboardVoice
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -62,6 +63,7 @@ import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
 import com.edu.quickaside.application.lists.ListSessionWithItems
 import com.edu.quickaside.application.lists.ListStore
 import com.edu.quickaside.application.memory.MemoryStore
+import com.edu.quickaside.application.search.LocalSearch
 import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
 import com.edu.quickaside.application.speech.MicrophonePermissionController
 import com.edu.quickaside.application.speech.SpeechTranscriberFactory
@@ -70,6 +72,7 @@ import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
 import com.edu.quickaside.ui.memory.NoteTimestampFormatter
 import com.edu.quickaside.ui.memory.NotesScreen
+import com.edu.quickaside.ui.memory.SearchScreen
 import com.edu.quickaside.ui.memory.StructuredLogsScreen
 import com.edu.quickaside.ui.memory.TranscriptCorrectionEditor
 import com.edu.quickaside.ui.lists.ComprasScreen
@@ -96,6 +99,7 @@ private enum class MemoryRoute {
     History,
     Notes,
     StructuredLogs,
+    Search,
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,6 +109,7 @@ fun QuickAsideApp(
     captureReader: CaptureReader,
     listStore: ListStore? = null,
     memoryStore: MemoryStore? = null,
+    localSearch: LocalSearch? = null,
     captureTranscriptCorrector: CaptureTranscriptCorrector? = null,
     speechTranscriberFactory: SpeechTranscriberFactory? = null,
     microphonePermissionController: MicrophonePermissionController? = null,
@@ -176,10 +181,13 @@ fun QuickAsideApp(
                 val showingMemoryStructuredLogs =
                     currentDestination == AppDestination.Memoria &&
                         memoryRoute == MemoryRoute.StructuredLogs
+                val showingMemorySearch =
+                    currentDestination == AppDestination.Memoria &&
+                        memoryRoute == MemoryRoute.Search
                 val showingNestedList = showingMandado || showingCompras ||
                     showingMandadoHistory || showingMandadoHistoryDetail
                 val showingNestedRoute = showingNestedList || showingMemoryNotes ||
-                    showingMemoryStructuredLogs
+                    showingMemoryStructuredLogs || showingMemorySearch
                 CenterAlignedTopAppBar(
                     title = {
                         Text(
@@ -190,6 +198,7 @@ fun QuickAsideApp(
                                 showingMandadoHistoryDetail -> "Detalle de mandado"
                                 showingMemoryNotes -> "Notas"
                                 showingMemoryStructuredLogs -> "Registros"
+                                showingMemorySearch -> "Buscar"
                                 else -> currentDestination.label
                             },
                         )
@@ -201,6 +210,8 @@ fun QuickAsideApp(
                                     backFromMemoryRoute
                                 } else if (showingMemoryStructuredLogs) {
                                     backFromMemoryRoute
+                                } else if (showingMemorySearch) {
+                                    backFromMemoryRoute
                                 } else {
                                     backFromListsRoute
                                 },
@@ -208,6 +219,7 @@ fun QuickAsideApp(
                                     contentDescription = when {
                                         showingMemoryNotes -> "Volver a Memoria"
                                         showingMemoryStructuredLogs -> "Volver a Memoria"
+                                        showingMemorySearch -> "Volver a Memoria"
                                         showingMandadoHistoryDetail -> "Volver al historial"
                                         showingMandadoHistory -> "Volver a Mandado"
                                         else -> "Volver a Listas"
@@ -279,6 +291,7 @@ fun QuickAsideApp(
                 snackbarHostState = snackbarHostState,
                 listStore = listStore,
                 memoryStore = memoryStore,
+                localSearch = localSearch,
                 historyDetailSession = historyDetailSession,
                 mandadoHistoryTimestampFormatter = mandadoHistoryTimestampFormatter,
                 noteTimestampFormatter = noteTimestampFormatter,
@@ -298,6 +311,7 @@ fun QuickAsideApp(
                 },
                 onBackToMandado = { listsRoute = ListsRoute.Mandado },
                 onBackToLists = resetListsRoute,
+                onOpenSearch = { memoryRoute = MemoryRoute.Search },
                 onOpenNotes = { memoryRoute = MemoryRoute.Notes },
                 onOpenStructuredLogs = { memoryRoute = MemoryRoute.StructuredLogs },
                 onBackToMemoryHistory = backFromMemoryRoute,
@@ -321,6 +335,7 @@ private fun ManagementScreen(
     snackbarHostState: SnackbarHostState,
     listStore: ListStore?,
     memoryStore: MemoryStore?,
+    localSearch: LocalSearch?,
     historyDetailSession: ListSessionWithItems?,
     mandadoHistoryTimestampFormatter: MandadoHistoryTimestampFormatter,
     noteTimestampFormatter: NoteTimestampFormatter,
@@ -331,6 +346,7 @@ private fun ManagementScreen(
     onBackToHistory: () -> Unit,
     onBackToMandado: () -> Unit,
     onBackToLists: () -> Unit,
+    onOpenSearch: () -> Unit,
     onOpenNotes: () -> Unit,
     onOpenStructuredLogs: () -> Unit,
     onBackToMemoryHistory: () -> Unit,
@@ -397,6 +413,7 @@ private fun ManagementScreen(
                 captureTranscriptCorrector = captureTranscriptCorrector,
                 snackbarHostState = snackbarHostState,
                 refreshToken = historyRefreshToken,
+                onOpenSearch = onOpenSearch,
                 onOpenNotes = onOpenNotes,
                 onOpenStructuredLogs = onOpenStructuredLogs,
             )
@@ -414,6 +431,13 @@ private fun ManagementScreen(
                 memoryStore = memoryStore,
                 timestampFormatter = noteTimestampFormatter,
                 snackbarHostState = snackbarHostState,
+                onBack = onBackToMemoryHistory,
+            )
+
+            MemoryRoute.Search -> SearchScreen(
+                padding = padding,
+                localSearch = localSearch,
+                timestampFormatter = noteTimestampFormatter,
                 onBack = onBackToMemoryHistory,
             )
         }
@@ -534,6 +558,7 @@ private fun CaptureHistoryScreen(
     captureTranscriptCorrector: CaptureTranscriptCorrector?,
     snackbarHostState: SnackbarHostState,
     refreshToken: Int,
+    onOpenSearch: () -> Unit,
     onOpenNotes: () -> Unit,
     onOpenStructuredLogs: () -> Unit,
 ) {
@@ -570,6 +595,16 @@ private fun CaptureHistoryScreen(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        OutlinedButton(
+            onClick = onOpenSearch,
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { contentDescription = "Abrir búsqueda en Memoria" },
+        ) {
+            Icon(imageVector = Icons.Outlined.Search, contentDescription = null)
+            Spacer(Modifier.size(8.dp))
+            Text("Buscar en Memoria")
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
