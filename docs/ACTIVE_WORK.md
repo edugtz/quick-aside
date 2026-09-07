@@ -28,5 +28,4 @@ Changes 001–016 are the completed baseline for this change.
 
 ## Exact next gate
 
-The Change 017 package must be independently reviewed and committed before
-production implementation begins.
+Change 017 is complete. The next reviewable M1 change has not started yet.

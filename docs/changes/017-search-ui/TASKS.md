@@ -120,8 +120,7 @@ Expected branch: `chg-017-search-ui`
 
 ## Exact next gate
 
-The Change 017 package must be independently reviewed and committed before
-production implementation begins.
+Change 017 is complete. The next reviewable M1 change has not started yet.
 
 ## Verification note
 
