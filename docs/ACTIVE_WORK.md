@@ -4,7 +4,7 @@
 
 `docs/changes/015-structured-logs-ui/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -24,5 +24,4 @@ remains the proven Notes baseline.
 
 ## Exact next gate
 
-Implement and verify the focused Registros UI, then hand off for independent
-review without declaring the final engineering verdict.
+Change 015 is complete. The next reviewable M1 change has not started yet.

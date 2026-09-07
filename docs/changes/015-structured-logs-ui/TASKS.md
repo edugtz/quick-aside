@@ -55,9 +55,9 @@
 - [x] Do not modify historical Change 001–014 documentation packages.
 - [x] Do not add AI, Capture routing, editing, deletion, reminders, search,
       archive/backup, Action Ledger, Google behavior, or a fifth destination.
-- [x] Do not merge or push.
+- [x] Do not merge; pushes occurred only after explicit reviewer request.
 - [x] Prepare the implementation report without declaring the final verdict.
-- [ ] Final independent review remains authoritative.
+- [x] Final independent review; verdict: PASS_WITH_NOTES.
 
 ## Verification note
 
@@ -75,3 +75,7 @@ same device harness family produced `ComposeNotIdleException` before useful
 execution. The final Notes rerun also hit the startup failure before reaching
 the new FAB assertion. No Structured Logs or Notes product assertion failed
 in those blocked runs.
+
+The final Notes FAB-clearance patch was verified on CPH2791 / Android 16 with
+1/1 focused test passing. The assertion measures the full final Note card
+against the Capture FAB after scrolling to the absolute end.
