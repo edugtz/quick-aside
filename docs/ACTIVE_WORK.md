@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/014-notes-ui/`
+`docs/changes/015-structured-logs-ui/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
+Status: **IN PROGRESS**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -17,10 +17,12 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 014 exposes durable local Notes through the existing Memoria destination
-without changing Room schema version 4 or adding AI routing, search, reminders,
-or broader memory management.
+Change 015 exposes durable local Structured Logs through the existing Memoria
+destination without changing Room schema version 4 or adding AI routing,
+search, reminders, or broader memory management. Change 014 is complete and
+remains the proven Notes baseline.
 
 ## Exact next gate
 
-Change 014 is complete. The next reviewable M1 change has not started yet.
+Implement and verify the focused Registros UI, then hand off for independent
+review without declaring the final engineering verdict.
