@@ -1,7 +1,7 @@
 # Change 017 — Search UI — TASKS
 
 Governance: **STANDARD**  
-Status: **PLAN/DOCS ONLY — IN PROGRESS**  
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 Expected branch: `chg-017-search-ui`
 
 ## Package and preflight
@@ -25,96 +25,96 @@ Expected branch: `chg-017-search-ui`
 
 ## Navigation and app wiring — later implementation
 
-- [ ] Add a local `MemoryRoute.Search` while preserving History as Memoria's
+- [x] Add a local `MemoryRoute.Search` while preserving History as Memoria's
       default route.
-- [ ] Pass the existing app-scoped `LocalSearch` from
+- [x] Pass the existing app-scoped `LocalSearch` from
       `QuickAsideApplication` through `MainActivity` and `QuickAsideApp`.
-- [ ] Preserve the nullable direct-Compose test seam without creating a
+- [x] Preserve the nullable direct-Compose test seam without creating a
       production fallback or second Room search instance.
-- [ ] Add toolbar Back and Android system Back from Search to Memoria/History.
-- [ ] Reset Search to History on bottom-navigation selection.
-- [ ] Preserve exactly Inicio, Pendientes, Listas, and Memoria as bottom
+- [x] Add toolbar Back and Android system Back from Search to Memoria/History.
+- [x] Reset Search to History on bottom-navigation selection.
+- [x] Preserve exactly Inicio, Pendientes, Listas, and Memoria as bottom
       destinations.
 
 ## Search entry and execution — later implementation
 
-- [ ] Add the prominent full-width `Buscar en Memoria` affordance to History.
-- [ ] Preserve the existing `Capturas recientes`, `Notas`, and `Registros`
+- [x] Add the prominent full-width `Buscar en Memoria` affordance to History.
+- [x] Preserve the existing `Capturas recientes`, `Notas`, and `Registros`
       content and actions.
-- [ ] Add the native OutlinedTextField search surface with visible and IME
+- [x] Add the native OutlinedTextField search surface with visible and IME
       submit actions.
-- [ ] Implement explicit submit only; do not add live search or debounce.
-- [ ] Prevent LocalSearch calls for initial composition and blank input.
-- [ ] Call only `LocalSearch.search` for nonblank input and preserve the
+- [x] Implement explicit submit only; do not add live search or debounce.
+- [x] Prevent LocalSearch calls for initial composition and blank input.
+- [x] Call only `LocalSearch.search` for nonblank input and preserve the
       boundary's ordering and matching semantics.
-- [ ] Implement Initial, Loading, Results, Empty, Failed, and Retry states.
-- [ ] Propagate CancellationException and hide ordinary exception details.
-- [ ] Retry the exact last submitted query.
+- [x] Implement Initial, Loading, Results, Empty, Failed, and Retry states.
+- [x] Propagate CancellationException and hide ordinary exception details.
+- [x] Retry the exact last submitted query.
 
 ## Result presentation — later implementation
 
-- [ ] Render a single flat list in the exact order supplied by LocalSearch.
-- [ ] Render Capture display text, Texto/Voz, and timestamp.
-- [ ] Render Note display text, Nota, and timestamp.
-- [ ] Render Structured Log label, all supplied fields in supplied order, and
+- [x] Render a single flat list in the exact order supplied by LocalSearch.
+- [x] Render Capture display text, Texto/Voz, and timestamp.
+- [x] Render Note display text, Nota, and timestamp.
+- [x] Render Structured Log label, all supplied fields in supplied order, and
       timestamp.
-- [ ] Render List Item text, list definition, completion state, timestamp, and
+- [x] Render List Item text, list definition, completion state, timestamp, and
       available human-readable Mandado session context.
-- [ ] Keep result cards read-only and omit IDs, highlighting, actions, and
+- [x] Keep result cards read-only and omit IDs, highlighting, actions, and
       deep links.
-- [ ] Communicate List Item completion with visible text and semantics, not
+- [x] Communicate List Item completion with visible text and semantics, not
       color alone.
-- [ ] Use local-time formatting without deriving ordering from formatted text.
+- [x] Use local-time formatting without deriving ordering from formatted text.
 
 ## Accessibility and layout — later implementation
 
-- [ ] Add semantics/content descriptions for opening Search, the field,
+- [x] Add semantics/content descriptions for opening Search, the field,
       submit, Back, result context, retry, and completion state.
-- [ ] Preserve Material touch targets, text wrapping, and text-scaling
+- [x] Preserve Material touch targets, text wrapping, and text-scaling
       behavior.
-- [ ] Give the result list sufficient bottom padding for the global Capture FAB.
-- [ ] Verify the final result card can scroll fully above the FAB.
+- [x] Give the result list sufficient bottom padding for the global Capture FAB.
+- [x] Verify the final result card can scroll fully above the FAB.
 
 ## Automated tests and evidence — later implementation
 
-- [ ] Add a fake-LocalSearch `SearchUiTest` without Room access.
-- [ ] Cover default History, Search prominence, Notes/Registros retention,
+- [x] Add a fake-LocalSearch `SearchUiTest` without Room access.
+- [x] Cover default History, Search prominence, Notes/Registros retention,
       route/back/reset, four destinations, and no Search bottom destination.
-- [ ] Cover initial no-call, blank no-call, submitted query, and Loading.
-- [ ] Cover Capture, Note, Structured Log, List Item, supplied order, all
+- [x] Cover initial no-call, blank no-call, submitted query, and Loading.
+- [x] Cover Capture, Note, Structured Log, List Item, supplied order, all
       fields, session context, and non-color-only completion.
-- [ ] Cover Empty, Failed, generic error copy, Retry query reuse, and
+- [x] Cover Empty, Failed, generic error copy, Retry query reuse, and
       CancellationException behavior.
-- [ ] Cover read-only/no-mutation result behavior and global Capture action.
-- [ ] Cover final-result/FAB clearance on a sufficiently long result list.
-- [ ] Capture and inspect `memoria-search-affordance.png`.
-- [ ] Capture and inspect `search-initial.png`.
-- [ ] Capture and inspect `search-results-mixed.png`.
-- [ ] Capture and inspect `search-empty.png` when practical.
-- [ ] Use CPH2791 / Android 16 real-device evidence when available and record
+- [x] Cover read-only/no-mutation result behavior and global Capture action.
+- [x] Cover final-result/FAB clearance on a sufficiently long result list.
+- [x] Capture and inspect `memoria-search-affordance.png`.
+- [x] Capture and inspect `search-initial.png`.
+- [x] Capture and inspect `search-results-mixed.png`.
+- [x] Capture and inspect `search-empty.png` when practical.
+- [x] Use CPH2791 / Android 16 real-device evidence when available and record
       any native-layout deviations from the visual direction.
 
 ## Verification — later implementation
 
-- [ ] Run focused Search UI instrumentation with the fake boundary.
-- [ ] Run `./gradlew :app:testDebugUnitTest`.
-- [ ] Run `./gradlew :app:assembleDebug`.
-- [ ] Run `./gradlew :app:lintDebug`.
-- [ ] Run `./gradlew :app:connectedDebugAndroidTest` and report device
+- [x] Run focused Search UI instrumentation with the fake boundary.
+- [x] Run `./gradlew :app:testDebugUnitTest`.
+- [x] Run `./gradlew :app:assembleDebug`.
+- [x] Run `./gradlew :app:lintDebug`.
+- [x] Run `./gradlew :app:connectedDebugAndroidTest` and report device
       infrastructure failures accurately.
-- [ ] Run `git diff --check`, inspect `git status --short`, and inspect diff
+- [x] Run `git diff --check`, inspect `git status --short`, and inspect diff
       statistics.
-- [ ] Confirm Room version 4 and schemas 1–4 remain unchanged.
-- [ ] Confirm no migration, FTS/index, table, dependency, second database,
+- [x] Confirm Room version 4 and schemas 1–4 remain unchanged.
+- [x] Confirm no migration, FTS/index, table, dependency, second database,
       DAO-from-Compose path, or Search bottom destination was introduced.
-- [ ] Leave the final engineering verdict to independent review.
+- [x] Leave the final engineering verdict to independent review.
 
 ## Scope and authority
 
 - [x] Do not implement production code in this planning turn.
 - [x] Do not run unnecessary Gradle gates in this planning turn.
 - [x] Do not commit, push, merge, or release.
-- [ ] Do not add AI, semantic/fuzzy search, ranking, filters, facets,
+- [x] Do not add AI, semantic/fuzzy search, ranking, filters, facets,
       highlighting, result mutations, deep links, archive/backup, reminders,
       Google behavior, schema changes, or a broader Memoria redesign.
 
@@ -122,3 +122,12 @@ Expected branch: `chg-017-search-ui`
 
 The Change 017 package must be independently reviewed and committed before
 production implementation begins.
+
+## Verification note
+
+Focused `SearchUiTest` evidence: 35/35 passed, 0 failed, 0 skipped on CPH2791
+(Android 16). Unit tests, assemble, and lint passed. The broad connected suite
+encountered the known Compose/device harness issue; it is not recorded as a
+full connected-suite pass. Reviewed visual evidence: `memoria-search-affordance.png`,
+`search-initial.png`, `search-results-mixed.png`, and `search-empty.png`.
+Final independent verdict: `PASS_WITH_NOTES`.
