@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/016-local-search-foundation/`
+`docs/changes/017-search-ui/`
 
-Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
+Status: **PLAN/DOCS ONLY — IN PROGRESS**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -17,12 +17,16 @@ Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 
 ## Current implementation focus
 
-Change 016 defines the smallest deterministic local-search foundation for M1.
-It will search durable Room history across Captures, Notes, Structured Logs,
-and all List Items through a focused application boundary. It does not add
-Search UI, FTS, a schema migration, or broader memory-management behavior.
-Changes 001–015 are the completed baseline for this change.
+Change 017 defines the smallest deterministic local-search UI for M1. It
+consumes the completed Change 016 `LocalSearch` boundary from the existing
+Memoria destination, adds a nested Search route and prominent History
+affordance, and keeps results flat, read-only, and in boundary order. It does
+not add AI search, semantic/fuzzy behavior, mutations, filters, a new bottom
+destination, a schema change, or a dependency.
+
+Changes 001–016 are the completed baseline for this change.
 
 ## Exact next gate
 
-Change 016 is complete. The next reviewable M1 change has not started yet.
+The Change 017 package must be independently reviewed and committed before
+production implementation begins.
