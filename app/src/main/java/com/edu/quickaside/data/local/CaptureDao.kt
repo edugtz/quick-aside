@@ -30,4 +30,19 @@ interface CaptureDao {
         """,
     )
     suspend fun getRecent(limit: Int): List<CaptureEntity>
+
+    @Query(
+        """
+        SELECT * FROM captures
+        WHERE (
+            (kind = 'TEXT' AND original_text COLLATE NOCASE LIKE :pattern ESCAPE '\')
+            OR
+            (kind = 'VOICE' AND COALESCE(corrected_transcript, original_text)
+                COLLATE NOCASE LIKE :pattern ESCAPE '\')
+        )
+        ORDER BY captured_at_epoch_millis DESC, id DESC
+        LIMIT :limit
+        """,
+    )
+    suspend fun search(pattern: String, limit: Int): List<CaptureEntity>
 }

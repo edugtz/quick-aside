@@ -4,7 +4,7 @@
 
 `docs/changes/016-local-search-foundation/`
 
-Status: **PLAN/DOCS ONLY — IN PROGRESS**
+Status: **IN PROGRESS**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -25,6 +25,5 @@ Changes 001–015 are the completed baseline for this change.
 
 ## Exact next gate
 
-Complete and review the Change 016 SPEC/PLAN/TASKS package before implementing
-production code. The current turn is deliberately limited to planning and
-documentation.
+Implement and verify the committed Change 016 local-search foundation without
+adding Search UI, FTS, schema changes, migrations, or broader memory behavior.
