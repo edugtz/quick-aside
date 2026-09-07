@@ -17,8 +17,10 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
         NoteEntity::class,
         StructuredLogEntity::class,
         StructuredLogFieldEntity::class,
+        ActionLedgerEntryEntity::class,
+        ActionLedgerMutationEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 abstract class QuickAsideDatabase : RoomDatabase() {
@@ -36,6 +38,10 @@ abstract class QuickAsideDatabase : RoomDatabase() {
 
     abstract fun structuredLogFieldDao(): StructuredLogFieldDao
 
+    abstract fun actionLedgerEntryDao(): ActionLedgerEntryDao
+
+    abstract fun actionLedgerMutationDao(): ActionLedgerMutationDao
+
     companion object {
         const val DATABASE_NAME = "quick_aside.db"
 
@@ -48,7 +54,7 @@ abstract class QuickAsideDatabase : RoomDatabase() {
             databaseName,
         )
             .setDriver(BundledSQLiteDriver())
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
             .addCallback(BuiltInListDefinitionBootstrapper)
             .build()
 
@@ -166,6 +172,45 @@ abstract class QuickAsideDatabase : RoomDatabase() {
                 connection.prepare(
                     "CREATE INDEX IF NOT EXISTS `index_structured_logs_source_capture_id` " +
                         "ON `structured_logs` (`source_capture_id`) ",
+                ).use { statement -> statement.step() }
+            }
+        }
+
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override suspend fun migrate(connection: SQLiteConnection) {
+                connection.prepare(
+                    """
+                    CREATE TABLE IF NOT EXISTS `action_ledger_entries` (
+                        `id` TEXT NOT NULL,
+                        `occurred_at_epoch_millis` INTEGER NOT NULL,
+                        `source_capture_id` TEXT,
+                        `undone_at_epoch_millis` INTEGER,
+                        PRIMARY KEY(`id`),
+                        FOREIGN KEY(`source_capture_id`) REFERENCES `captures`(`id`)
+                            ON UPDATE NO ACTION ON DELETE NO ACTION
+                    )
+                    """.trimIndent(),
+                ).use { statement -> statement.step() }
+                connection.prepare(
+                    """
+                    CREATE TABLE IF NOT EXISTS `action_ledger_mutations` (
+                        `action_ledger_entry_id` TEXT NOT NULL,
+                        `position` INTEGER NOT NULL,
+                        `operation` TEXT NOT NULL,
+                        `target_type` TEXT NOT NULL,
+                        `target_id` TEXT NOT NULL,
+                        `payload_version` INTEGER NOT NULL,
+                        `before_state` TEXT,
+                        `after_state` TEXT,
+                        PRIMARY KEY(`action_ledger_entry_id`, `position`),
+                        FOREIGN KEY(`action_ledger_entry_id`) REFERENCES `action_ledger_entries`(`id`)
+                            ON UPDATE NO ACTION ON DELETE NO ACTION
+                    )
+                    """.trimIndent(),
+                ).use { statement -> statement.step() }
+                connection.prepare(
+                    "CREATE INDEX IF NOT EXISTS `index_action_ledger_entries_source_capture_id` " +
+                        "ON `action_ledger_entries` (`source_capture_id`) ",
                 ).use { statement -> statement.step() }
             }
         }

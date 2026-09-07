@@ -1,6 +1,7 @@
 package com.edu.quickaside
 
 import android.app.Application
+import com.edu.quickaside.application.actions.ActionLedgerStore
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
@@ -14,6 +15,7 @@ import com.edu.quickaside.data.local.QuickAsideDatabase
 import com.edu.quickaside.data.local.RoomCaptureReader
 import com.edu.quickaside.data.local.RoomCaptureTranscriptCorrector
 import com.edu.quickaside.data.local.RoomCaptureWriter
+import com.edu.quickaside.data.local.RoomActionLedgerStore
 import com.edu.quickaside.data.local.RoomListStore
 import com.edu.quickaside.data.local.RoomMemoryStore
 import com.edu.quickaside.data.local.RoomLocalSearch
@@ -45,6 +47,10 @@ class QuickAsideApplication : Application() {
 
     val memoryStore: MemoryStore by lazy {
         RoomMemoryStore(database)
+    }
+
+    val actionLedgerStore: ActionLedgerStore by lazy {
+        RoomActionLedgerStore(database)
     }
 
     val localSearch: LocalSearch by lazy {

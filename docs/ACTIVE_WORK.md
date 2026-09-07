@@ -4,7 +4,7 @@
 
 `docs/changes/018-action-ledger-foundation/`
 
-Status: **PLAN/DOCS ONLY — IN PROGRESS**
+Status: **IMPLEMENTATION IN PROGRESS — VERIFICATION PENDING**
 - Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
@@ -25,7 +25,24 @@ wire existing product mutations into the ledger or implement Undo execution.
 
 Changes 001–017 are the completed baseline for this change.
 
+Implementation evidence so far:
+
+- Action Ledger domain, application, Room, migration, and app-scoped wiring
+  are present on this branch.
+- Focused JVM domain/mapping tests pass (10 tests).
+- The full debug JVM suite passes (63 tests); debug assemble and lint pass.
+- Focused Android test sources compile, and schema 5 is generated with only
+  the two planned Action Ledger tables and their required metadata.
+- Focused connected execution was attempted with no connected device and
+  stopped before test execution with `DeviceException: No connected devices!`.
+
+The deterministic Room persistence and real 4→5 migration tests remain
+unverified until a supported connected Android device is available. Generated
+schema and migration-source scope, diff, and status evidence are otherwise
+inspected locally.
+
 ## Exact next gate
 
-The Change 018 planning package must be independently reviewed and committed
-before production implementation begins.
+Run the remaining Change 018 verification contract, then leave the final
+engineering verdict to independent review. Commit/push/merge authority remains
+with the user.

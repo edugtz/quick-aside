@@ -324,7 +324,7 @@ class MemoryPersistenceDatabaseTest {
         assertTrue(RoomMemoryStore(database).readRecentStructuredLogs().isEmpty())
 
         database.close()
-        assertEquals(4L, readUserVersion())
+        assertEquals(5L, readUserVersion())
         assertTrue(
             readTables().containsAll(
                 listOf(
