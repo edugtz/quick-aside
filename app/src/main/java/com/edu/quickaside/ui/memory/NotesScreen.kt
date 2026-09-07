@@ -141,7 +141,7 @@ fun NotesScreen(
             start = 20.dp,
             top = 16.dp,
             end = 20.dp,
-            bottom = 112.dp,
+            bottom = 160.dp,
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -315,7 +315,7 @@ private fun NoteRow(
     timestampFormatter: NoteTimestampFormatter,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().testTag("NoteCard-${note.id.value}"),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),

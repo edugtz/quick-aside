@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.compose.setContent
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -19,6 +20,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.core.app.ApplicationProvider
@@ -257,8 +259,15 @@ class NotesUiTest {
         waitForText("Notas recientes")
         composeRule.onNodeWithTag("NotesList")
             .performScrollToNode(hasText("Nota final"))
+        // Scroll to the absolute end so the measurement reflects the best the
+        // user can do; ScrollBy clamps at the list's maximum scroll position.
+        composeRule.onNodeWithTag("NotesList")
+            .performSemanticsAction(SemanticsActions.ScrollBy) { action ->
+                action(0f, 10_000_000f)
+            }
+        composeRule.waitForIdle()
 
-        val finalNoteBottom = composeRule.onNodeWithText("Nota final")
+        val finalCardBottom = composeRule.onNodeWithTag("NoteCard-scroll-note-8")
             .fetchSemanticsNode()
             .boundsInRoot
             .bottom
@@ -266,7 +275,11 @@ class NotesUiTest {
             .fetchSemanticsNode()
             .boundsInRoot
             .top
-        assertTrue("The final Note card must scroll above the Capture FAB", finalNoteBottom <= fabTop)
+        assertTrue(
+            "The final Note card must scroll above the Capture FAB " +
+                "(cardBottom=$finalCardBottom fabTop=$fabTop)",
+            finalCardBottom <= fabTop,
+        )
     }
 
     @Test
