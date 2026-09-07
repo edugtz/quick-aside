@@ -4,7 +4,7 @@
 
 `docs/changes/016-local-search-foundation/`
 
-Status: **IN PROGRESS**
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 - Governance: **STANDARD**
 
 ## Proven baseline
@@ -25,5 +25,4 @@ Changes 001–015 are the completed baseline for this change.
 
 ## Exact next gate
 
-Implement and verify the committed Change 016 local-search foundation without
-adding Search UI, FTS, schema changes, migrations, or broader memory behavior.
+Change 016 is complete. The next reviewable M1 change has not started yet.

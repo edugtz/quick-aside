@@ -13,49 +13,54 @@
 
 ## Search contract
 
-- [ ] Add the focused `LocalSearch` application boundary.
-- [ ] Add the closed typed result contract for Capture, Note, Structured Log,
+- [x] Add the focused `LocalSearch` application boundary.
+- [x] Add the closed typed result contract for Capture, Note, Structured Log,
       and List Item.
-- [ ] Define and test trim/blank behavior, literal SQL escaping, ASCII case,
+- [x] Define and test trim/blank behavior, literal SQL escaping, ASCII case,
       Unicode/Spanish behavior, result limit, and deterministic ordering.
-- [ ] Preserve source IDs and the minimum source context needed later.
+- [x] Preserve source IDs and the minimum source context needed later.
 
 ## Durable DAO and Room implementation
 
-- [ ] Add direct durable-table Capture search using effective Voice text.
-- [ ] Add direct durable-table Note search.
-- [ ] Add Structured Log field key/value search with one result per log.
-- [ ] Add List Item text search covering current, completed, historical
+- [x] Add direct durable-table Capture search using effective Voice text.
+- [x] Add direct durable-table Note search.
+- [x] Add Structured Log field key/value search with one result per log.
+- [x] Add List Item text search covering current, completed, historical
       Mandado, and continuous Compras items with context.
-- [ ] Implement `RoomLocalSearch` with one read transaction, per-source
+- [x] Implement `RoomLocalSearch` with one read transaction, per-source
       bounded queries, global merge/order, and final limit.
-- [ ] Wire the production boundary without adding UI or changing `MemoryStore`.
+- [x] Wire the production boundary without adding UI or changing `MemoryStore`.
 
 ## Automated tests and evidence
 
-- [ ] Add JVM tests for query construction/escaping and result ordering.
-- [ ] Add a named v4 Room integration test for all four sources and durable
+- [x] Add JVM tests for query construction/escaping and result ordering.
+- [x] Add a named v4 Room integration test for all four sources and durable
       history beyond recent-screen limits.
-- [ ] Verify Voice correction fallback, Structured Log de-duplication, List
+- [x] Verify Voice correction fallback, Structured Log de-duplication, List
       context, literal `%`/`_`/backslash`, blank input, Unicode behavior, and
       caller limits.
-- [ ] Run `./gradlew :app:testDebugUnitTest`.
-- [ ] Run `./gradlew :app:assembleDebug`.
-- [ ] Run `./gradlew :app:lintDebug`.
-- [ ] Run `./gradlew :app:connectedDebugAndroidTest`.
-- [ ] Run `git diff --check`, `git status --short`, and diff statistics.
-- [ ] Confirm Room version 4 and schemas 1–4 remain unchanged and no FTS,
+- [x] Run `./gradlew :app:testDebugUnitTest`.
+- [x] Run `./gradlew :app:assembleDebug`.
+- [x] Run `./gradlew :app:lintDebug`.
+- [x] Run `./gradlew :app:connectedDebugAndroidTest`.
+- [x] Run `git diff --check`, `git status --short`, and diff statistics.
+- [x] Confirm Room version 4 and schemas 1–4 remain unchanged and no FTS,
       migration, dependency, or UI artifacts were introduced.
 
 ## Scope and authority
 
-- [ ] Do not add Search UI, FTS, fuzzy/semantic search, AI, ranking
+- [x] Do not add Search UI, FTS, fuzzy/semantic search, AI, ranking
       heuristics, highlighting, filters, tags, archive/backup, reminders,
       Action Ledger, Undo, Google behavior, or new schema objects.
-- [ ] Do not modify historical Change 001–015 documentation packages.
-- [ ] Do not merge or push during implementation.
-- [ ] Prepare the implementation report without declaring the final verdict.
-- [ ] Final independent review.
+- [x] Do not modify historical Change 001–015 documentation packages.
+- [x] Do not merge or push during implementation.
+- [x] Prepare the implementation report without declaring the final verdict.
+- [x] Final independent review.
+      - Verdict: PASS_WITH_NOTES.
+      - Full connected suite: 147/147 passed.
+      - Final focused LocalSearch integration suite: 8/8 passed on CPH2791 / Android 16.
+      - StructuredLog multi-field de-duplication was explicitly verified by the final focused test.
+      - GitHub has no CI/status checks; deterministic local/device evidence is authoritative for this change.
 
 ## Current-turn boundary
 
