@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/018-action-ledger-foundation/`
+`docs/changes/019-list-item-create-undo/`
 
-Status: **COMPLETE — REVIEW PASS**
+Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
 - Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
@@ -17,29 +17,35 @@ Status: **COMPLETE — REVIEW PASS**
 
 ## Current implementation focus
 
-Change 018 defines the durable local Action Ledger foundation required by M1
-and later reversible mutations. It evolves the minimal domain entry contract,
-adds a focused application store, and moves Room from version 4 to version 5
-with only the new Action Ledger tables and their required indexes. It does not
-wire existing product mutations into the ledger or implement Undo execution.
+Change 019 is the first user-visible Action Ledger integration. It adds a
+narrow atomic create/undo boundary for manual Mandado and Compras items while
+preserving the completed Change 018 version-5 database and schema. The changed
+UI uses the existing shared Material snackbar and keeps the four-destination
+navigation and global Capture action unchanged.
 
-Changes 001–017 are the completed baseline for this change.
+Preflight evidence:
 
-Implementation evidence so far:
+- Required project contracts and Change 018 guidance read.
+- Current Action Ledger/list implementation, Room DAOs, app wiring, list UI,
+  and focused tests inspected.
+- docs/UX_UI_REFERENCE.md and the canonical v3 PNG inspected.
+- No Room version, schema, migration, dependency, or historical package
+  modification is planned.
 
-- Action Ledger domain, application, Room, migration, and app-scoped wiring
-  are present on this branch.
-- Focused JVM domain/mapping tests pass (10 tests).
-- The full debug JVM suite passes (63 tests); debug assemble and lint pass.
-- Focused connected `ActionLedgerPersistenceDatabaseTest` passed 10/10 on
-  CPH2791 / Android 16 (Started 10 / Finished 10 / BUILD SUCCESSFUL in 16s).
-- Real v4→v5 migration evidence passed; schema 5 inspection confirmed only
-  the planned Action Ledger structures.
-- Final independent review verdict: PASS (BLOCKER: 0 / MAJOR: 0 / MINOR: 0).
+Implementation evidence:
 
-Change 018 verification is complete. Generated schema and migration-source
-scope, diff, and status evidence are otherwise inspected locally.
+- The narrow reversible list-item boundary, Room transactions, app wiring, UI
+  receipt/Undo flow, and fake/integration tests are implemented.
+- Focused JVM and full debug JVM tests pass; the focused Room suite passes 9/9
+  on CPH2791 / Android 16; assemble, lint, Android-test compilation, schema,
+  and diff checks pass.
+- Focused Mandado and Compras UI runs remain BLOCKED device evidence, not PASS:
+  Mandado hit the same Compose timeout twice while resolving the preserved-
+  whitespace row, and the Compras run was externally aborted after losing
+  Compose hierarchies. No screenshots were captured.
 
 ## Exact next gate
 
-Change 018 is complete. The next reviewable M1 change has not started yet.
+Independent engineering review after the user commits/pushes. The reviewer
+must treat the blocked device/UI evidence as blocked rather than as a passing
+gate and may require a clean rerun before approval.

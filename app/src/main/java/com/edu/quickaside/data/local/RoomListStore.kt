@@ -188,47 +188,36 @@ class RoomListStore(
 
         return try {
             database.withWriteTransaction {
-                val definitionEntity = database.listDefinitionDao().getById(listDefinitionId.value)
-                    ?: return@withWriteTransaction AddListItemResult.MissingDefinition
-                val definition = definitionEntity.toDomain()
-                val itemSessionId = when (definition.behavior) {
-                    ListBehavior.CONTINUOUS -> {
-                        if (listSessionId != null) {
-                            return@withWriteTransaction AddListItemResult.SessionNotAllowed
-                        }
-                        null
-                    }
-
-                    ListBehavior.SESSION_BASED -> {
-                        val session = if (listSessionId == null) {
-                            database.listSessionDao()
-                                .getActiveByDefinitionId(definition.id.value)
-                                ?.toDomain()
-                                ?: return@withWriteTransaction AddListItemResult.NoActiveSession
-                        } else {
-                            database.listSessionDao().getById(listSessionId.value)?.toDomain()
-                                ?: return@withWriteTransaction AddListItemResult.MissingSession
-                        }
-                        if (session.listDefinitionId != definition.id) {
-                            return@withWriteTransaction AddListItemResult.SessionDefinitionMismatch
-                        }
-                        if (session.endedAt != null) {
-                            return@withWriteTransaction AddListItemResult.SessionNotActive
-                        }
-                        session.id
-                    }
-                }
-
-                val item = ListItem(
-                    id = idProvider.nextItemId(),
-                    listDefinitionId = definition.id,
+                when (val validation = database.validateListItemCreate(
+                    listDefinitionId = listDefinitionId,
                     text = text,
-                    listSessionId = itemSessionId,
-                    isCompleted = false,
-                    createdAt = clock.now(),
-                )
-                database.listItemDao().insert(item.toEntity())
-                AddListItemResult.Saved(item)
+                    listSessionId = listSessionId,
+                )) {
+                    is ListItemCreateValidation.Valid -> {
+                        val item = ListItem(
+                            id = idProvider.nextItemId(),
+                            listDefinitionId = validation.definition.id,
+                            text = text,
+                            listSessionId = validation.listSessionId,
+                            isCompleted = false,
+                            createdAt = clock.now(),
+                        )
+                        database.listItemDao().insert(item.toEntity())
+                        AddListItemResult.Saved(item)
+                    }
+
+                    ListItemCreateValidation.BlankText -> AddListItemResult.BlankText
+                    ListItemCreateValidation.MissingDefinition ->
+                        AddListItemResult.MissingDefinition
+                    ListItemCreateValidation.NoActiveSession -> AddListItemResult.NoActiveSession
+                    ListItemCreateValidation.MissingSession -> AddListItemResult.MissingSession
+                    ListItemCreateValidation.SessionNotActive ->
+                        AddListItemResult.SessionNotActive
+                    ListItemCreateValidation.SessionDefinitionMismatch ->
+                        AddListItemResult.SessionDefinitionMismatch
+                    ListItemCreateValidation.SessionNotAllowed ->
+                        AddListItemResult.SessionNotAllowed
+                }
             }
         } catch (cancellation: CancellationException) {
             throw cancellation

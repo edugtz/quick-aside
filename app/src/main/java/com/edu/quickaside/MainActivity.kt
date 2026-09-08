@@ -15,6 +15,8 @@ class MainActivity : ComponentActivity() {
                     captureSubmission = (application as QuickAsideApplication).captureSubmission,
                     captureReader = (application as QuickAsideApplication).captureReader,
                     listStore = (application as QuickAsideApplication).listStore,
+                    reversibleListItemActions =
+                        (application as QuickAsideApplication).reversibleListItemActions,
                     memoryStore = (application as QuickAsideApplication).memoryStore,
                     localSearch = (application as QuickAsideApplication).localSearch,
                     captureTranscriptCorrector =

@@ -18,11 +18,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.lists.AddListItemResult
+import com.edu.quickaside.application.lists.CreateListItemActionResult
 import com.edu.quickaside.application.lists.ItemCompletionResult
 import com.edu.quickaside.application.lists.ListStore
 import com.edu.quickaside.application.lists.ListSessionWithItems
 import com.edu.quickaside.application.lists.SessionFinishResult
 import com.edu.quickaside.application.lists.SessionStartResult
+import com.edu.quickaside.application.lists.UndoListItemCreateResult
+import com.edu.quickaside.domain.common.ActionLedgerEntryId
 import com.edu.quickaside.data.local.CaptureWriter
 import com.edu.quickaside.domain.common.ListDefinitionId
 import com.edu.quickaside.domain.common.ListItemId
@@ -47,10 +50,12 @@ class MandadoUiTest {
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var store: FakeMandadoListStore
+    private lateinit var actions: FakeReversibleListItemActions
 
     @Before
     fun setUp() {
         store = FakeMandadoListStore()
+        actions = FakeReversibleListItemActions()
     }
 
     @Test
@@ -67,6 +72,7 @@ class MandadoUiTest {
         composeRule.onAllNodesWithText("Listas").assertCountEquals(2)
         composeRule.onAllNodesWithText("Memoria").assertCountEquals(1)
         composeRule.onNodeWithText("Captura").assertDoesNotExist()
+        composeRule.onNodeWithContentDescription("Capturar").assertIsDisplayed()
     }
 
     @Test
@@ -118,7 +124,7 @@ class MandadoUiTest {
     }
 
     @Test
-    fun exactItemTextReachesStoreAndSavedItemClearsInput() {
+    fun exactItemTextUsesReversibleBoundaryShowsReceiptAndUndoRemovesExactItem() {
         store.activeSession = session("active-session")
         setContent(store)
         openMandado()
@@ -128,9 +134,27 @@ class MandadoUiTest {
         composeRule.onNode(hasSetTextAction()).performTextInput(exactText)
         composeRule.onNodeWithContentDescription("Agregar producto").performClick()
 
-        composeRule.waitUntil(timeoutMillis = 5_000) { store.addedTexts.size == 1 }
-        assertEquals(listOf(exactText), store.addedTexts)
+        composeRule.waitUntil(timeoutMillis = 5_000) { actions.createCalls.size == 1 }
+        assertEquals(exactText, actions.createCalls.single().text)
+        assertEquals(BuiltInListDefinitions.MANDADO.id, actions.createCalls.single().listDefinitionId)
+        assertEquals(store.activeSession?.id, actions.createCalls.single().listSessionId)
+        assertTrue(store.addedTexts.isEmpty())
         assertEquals("", editableText())
+        waitForContentDescription("Marcar $exactText como completado")
+        waitForText("Producto agregado")
+        composeRule.onNodeWithText("Deshacer").assertIsDisplayed()
+
+        composeRule.onNodeWithText("Deshacer").performClick()
+        composeRule.waitUntil(timeoutMillis = 5_000) { actions.undoCalls.size == 1 }
+        assertEquals(ActionLedgerEntryId("created-entry-1"), actions.undoCalls.single().actionLedgerEntryId)
+        assertEquals(ListItemId("created-item-1"), actions.undoCalls.single().expectedItemId)
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            runCatching {
+                composeRule.onNodeWithContentDescription(
+                    "Marcar $exactText como completado",
+                ).assertDoesNotExist()
+            }.isSuccess
+        }
     }
 
     @Test
@@ -143,12 +167,13 @@ class MandadoUiTest {
         composeRule.onNode(hasSetTextAction()).performTextInput(" \t\n ")
         composeRule.onNodeWithContentDescription("Agregar producto").assertIsNotEnabled()
         assertTrue(store.addedTexts.isEmpty())
+        assertTrue(actions.createCalls.isEmpty())
     }
 
     @Test
     fun addFailureRetainsInputAndShowsError() {
         store.activeSession = session("active-session")
-        store.addResult = AddListItemResult.Failed(IllegalStateException("unavailable"))
+        actions.createResult = CreateListItemActionResult.Failed(IllegalStateException("unavailable"))
         setContent(store)
         openMandado()
         waitForText("Aún no hay productos.")
@@ -159,6 +184,25 @@ class MandadoUiTest {
 
         waitForText("No se pudo agregar el producto.")
         assertEquals(entered, editableText())
+    }
+
+    @Test
+    fun undoFailureReloadsVisibleStateAndShowsConciseError() {
+        store.activeSession = session("active-session")
+        actions.undoResult = UndoListItemCreateResult.Failed(IllegalStateException("unavailable"))
+        actions.onUndo = { itemId -> store.items = store.items.filterNot { it.id == itemId } }
+        setContent(store)
+        openMandado()
+        waitForText("Aún no hay productos.")
+
+        composeRule.onNode(hasSetTextAction()).performTextInput("No borrar tras undo")
+        composeRule.onNodeWithContentDescription("Agregar producto").performClick()
+        waitForText("No borrar tras undo")
+        waitForText("Deshacer")
+        composeRule.onNodeWithText("Deshacer").performClick()
+
+        waitForText("No se pudo deshacer.")
+        composeRule.onNodeWithText("No borrar tras undo", substring = true).assertDoesNotExist()
     }
 
     @Test
@@ -231,7 +275,7 @@ class MandadoUiTest {
         composeRule.onNodeWithContentDescription("Abrir Mandado").assertIsDisplayed()
     }
 
-    private fun setContent(listStore: ListStore) {
+    private fun setContent(listStore: ListStore, reversibleActions: FakeReversibleListItemActions = actions) {
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 QuickAsideTheme {
@@ -239,6 +283,7 @@ class MandadoUiTest {
                         captureSubmission = CaptureSubmission(CaptureWriter { }),
                         captureReader = CaptureReader { emptyList() },
                         listStore = listStore,
+                        reversibleListItemActions = reversibleActions,
                     )
                 }
             }
@@ -260,6 +305,14 @@ class MandadoUiTest {
         composeRule.waitUntil(timeoutMillis = 5_000) {
             runCatching {
                 composeRule.onNodeWithText(text, substring = true).assertIsDisplayed()
+            }.isSuccess
+        }
+    }
+
+    private fun waitForContentDescription(description: String) {
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            runCatching {
+                composeRule.onNodeWithContentDescription(description).assertIsDisplayed()
             }.isSuccess
         }
     }

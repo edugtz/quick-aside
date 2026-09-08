@@ -36,6 +36,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,11 +54,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.edu.quickaside.application.lists.AddListItemResult
+import com.edu.quickaside.application.lists.CreateListItemActionResult
 import com.edu.quickaside.application.lists.ItemCompletionResult
 import com.edu.quickaside.application.lists.ListStore
+import com.edu.quickaside.application.lists.ReversibleListItemActions
 import com.edu.quickaside.application.lists.SessionFinishResult
 import com.edu.quickaside.application.lists.SessionStartResult
+import com.edu.quickaside.application.lists.UndoListItemCreateResult
 import com.edu.quickaside.domain.common.ListItemId
 import com.edu.quickaside.domain.lists.BuiltInListDefinitions
 import com.edu.quickaside.domain.lists.ListItem
@@ -84,6 +88,7 @@ private sealed interface MandadoState {
 fun MandadoScreen(
     padding: PaddingValues,
     listStore: ListStore?,
+    reversibleListItemActions: ReversibleListItemActions?,
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -122,6 +127,57 @@ fun MandadoScreen(
 
     fun showFeedback(message: String) {
         scope.launch { snackbarHostState.showSnackbar(message) }
+    }
+
+    fun showCreateReceipt(result: CreateListItemActionResult.Saved) {
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            val snackbarResult = snackbarHostState.showSnackbar(
+                message = "Producto agregado",
+                actionLabel = "Deshacer",
+                duration = SnackbarDuration.Long,
+            )
+            if (snackbarResult != SnackbarResult.ActionPerformed) return@launch
+
+            isMutating = true
+            try {
+                when {
+                    reversibleListItemActions == null -> {
+                        loadState()
+                        showFeedback("No se pudo deshacer.")
+                    }
+                    else -> {
+                        val undoResult = reversibleListItemActions.undoCreate(
+                            actionLedgerEntryId = result.actionLedgerEntryId,
+                            expectedItemId = result.item.id,
+                        )
+                        when (undoResult) {
+                            is UndoListItemCreateResult.Undone -> {
+                                state = when (val current = state) {
+                                    is MandadoState.Active -> current.copy(
+                                        items = current.items.filterNot { it.id == result.item.id },
+                                    )
+
+                                    else -> current
+                                }
+                            }
+
+                            else -> {
+                                loadState()
+                                showFeedback("No se pudo deshacer.")
+                            }
+                        }
+                    }
+                }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (_: Exception) {
+                loadState()
+                showFeedback("No se pudo deshacer.")
+            } finally {
+                isMutating = false
+            }
+        }
     }
 
     fun startMandado() {
@@ -177,15 +233,16 @@ fun MandadoScreen(
             isMutating = true
             try {
                 val store = listStore
-                if (store == null) {
+                val actions = reversibleListItemActions
+                if (store == null || actions == null) {
                     showFeedback("No se pudo agregar el producto.")
                 } else {
-                    when (val result = store.addItem(
+                    when (val result = actions.create(
                         mandadoDefinitionId,
                         submittedText,
                         active.session.id,
                     )) {
-                        is AddListItemResult.Saved -> {
+                        is CreateListItemActionResult.Saved -> {
                             state = when (val current = state) {
                                 is MandadoState.Active -> current.copy(
                                     items = current.items.upsert(result.item),
@@ -194,16 +251,17 @@ fun MandadoScreen(
                                 else -> current
                             }
                             itemText = ""
+                            showCreateReceipt(result)
                         }
 
-                        AddListItemResult.BlankText,
-                        AddListItemResult.MissingDefinition,
-                        AddListItemResult.NoActiveSession,
-                        AddListItemResult.MissingSession,
-                        AddListItemResult.SessionNotActive,
-                        AddListItemResult.SessionDefinitionMismatch,
-                        AddListItemResult.SessionNotAllowed,
-                        is AddListItemResult.Failed,
+                        CreateListItemActionResult.BlankText,
+                        CreateListItemActionResult.MissingDefinition,
+                        CreateListItemActionResult.NoActiveSession,
+                        CreateListItemActionResult.MissingSession,
+                        CreateListItemActionResult.SessionNotActive,
+                        CreateListItemActionResult.SessionDefinitionMismatch,
+                        CreateListItemActionResult.SessionNotAllowed,
+                        is CreateListItemActionResult.Failed,
                         -> showFeedback("No se pudo agregar el producto.")
                     }
                 }

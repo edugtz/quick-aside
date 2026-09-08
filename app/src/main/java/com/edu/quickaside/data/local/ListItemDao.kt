@@ -11,6 +11,9 @@ interface ListItemDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(item: ListItemEntity)
 
+    @Query("DELETE FROM list_items WHERE id = :id")
+    suspend fun deleteById(id: String): Int
+
     @Query("SELECT * FROM list_items WHERE id = :id")
     suspend fun getById(id: String): ListItemEntity?
 

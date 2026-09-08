@@ -6,6 +6,7 @@ import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
 import com.edu.quickaside.application.lists.ListStore
+import com.edu.quickaside.application.lists.ReversibleListItemActions
 import com.edu.quickaside.application.memory.MemoryStore
 import com.edu.quickaside.application.search.LocalSearch
 import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
@@ -17,6 +18,7 @@ import com.edu.quickaside.data.local.RoomCaptureTranscriptCorrector
 import com.edu.quickaside.data.local.RoomCaptureWriter
 import com.edu.quickaside.data.local.RoomActionLedgerStore
 import com.edu.quickaside.data.local.RoomListStore
+import com.edu.quickaside.data.local.RoomReversibleListItemActions
 import com.edu.quickaside.data.local.RoomMemoryStore
 import com.edu.quickaside.data.local.RoomLocalSearch
 
@@ -43,6 +45,10 @@ class QuickAsideApplication : Application() {
 
     val listStore: ListStore by lazy {
         RoomListStore(database)
+    }
+
+    val reversibleListItemActions: ReversibleListItemActions by lazy {
+        RoomReversibleListItemActions(database)
     }
 
     val memoryStore: MemoryStore by lazy {

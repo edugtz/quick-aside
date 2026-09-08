@@ -62,6 +62,7 @@ import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
 import com.edu.quickaside.application.lists.ListSessionWithItems
 import com.edu.quickaside.application.lists.ListStore
+import com.edu.quickaside.application.lists.ReversibleListItemActions
 import com.edu.quickaside.application.memory.MemoryStore
 import com.edu.quickaside.application.search.LocalSearch
 import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
@@ -108,6 +109,7 @@ fun QuickAsideApp(
     captureSubmission: CaptureSubmission,
     captureReader: CaptureReader,
     listStore: ListStore? = null,
+    reversibleListItemActions: ReversibleListItemActions? = null,
     memoryStore: MemoryStore? = null,
     localSearch: LocalSearch? = null,
     captureTranscriptCorrector: CaptureTranscriptCorrector? = null,
@@ -290,6 +292,7 @@ fun QuickAsideApp(
                 onCaptureSaved = { historyRefreshToken += 1 },
                 snackbarHostState = snackbarHostState,
                 listStore = listStore,
+                reversibleListItemActions = reversibleListItemActions,
                 memoryStore = memoryStore,
                 localSearch = localSearch,
                 historyDetailSession = historyDetailSession,
@@ -334,6 +337,7 @@ private fun ManagementScreen(
     onCaptureSaved: () -> Unit,
     snackbarHostState: SnackbarHostState,
     listStore: ListStore?,
+    reversibleListItemActions: ReversibleListItemActions?,
     memoryStore: MemoryStore?,
     localSearch: LocalSearch?,
     historyDetailSession: ListSessionWithItems?,
@@ -362,6 +366,7 @@ private fun ManagementScreen(
             ListsRoute.Mandado -> MandadoScreen(
                 padding = padding,
                 listStore = listStore,
+                reversibleListItemActions = reversibleListItemActions,
                 snackbarHostState = snackbarHostState,
                 onBack = onBackToLists,
                 onOpenHistory = onOpenHistory,
@@ -398,6 +403,7 @@ private fun ManagementScreen(
             ListsRoute.Compras -> ComprasScreen(
                 padding = padding,
                 listStore = listStore,
+                reversibleListItemActions = reversibleListItemActions,
                 snackbarHostState = snackbarHostState,
                 onBack = onBackToLists,
             )
