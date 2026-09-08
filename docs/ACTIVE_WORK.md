@@ -4,7 +4,7 @@
 
 `docs/changes/018-action-ledger-foundation/`
 
-Status: **IMPLEMENTATION IN PROGRESS — VERIFICATION PENDING**
+Status: **COMPLETE — REVIEW PASS**
 - Governance: **HIGH-ASSURANCE**
 
 ## Proven baseline
@@ -31,18 +31,15 @@ Implementation evidence so far:
   are present on this branch.
 - Focused JVM domain/mapping tests pass (10 tests).
 - The full debug JVM suite passes (63 tests); debug assemble and lint pass.
-- Focused Android test sources compile, and schema 5 is generated with only
-  the two planned Action Ledger tables and their required metadata.
-- Focused connected execution was attempted with no connected device and
-  stopped before test execution with `DeviceException: No connected devices!`.
+- Focused connected `ActionLedgerPersistenceDatabaseTest` passed 10/10 on
+  CPH2791 / Android 16 (Started 10 / Finished 10 / BUILD SUCCESSFUL in 16s).
+- Real v4→v5 migration evidence passed; schema 5 inspection confirmed only
+  the planned Action Ledger structures.
+- Final independent review verdict: PASS (BLOCKER: 0 / MAJOR: 0 / MINOR: 0).
 
-The deterministic Room persistence and real 4→5 migration tests remain
-unverified until a supported connected Android device is available. Generated
-schema and migration-source scope, diff, and status evidence are otherwise
-inspected locally.
+Change 018 verification is complete. Generated schema and migration-source
+scope, diff, and status evidence are otherwise inspected locally.
 
 ## Exact next gate
 
-Run the remaining Change 018 verification contract, then leave the final
-engineering verdict to independent review. Commit/push/merge authority remains
-with the user.
+Change 018 is complete. The next reviewable M1 change has not started yet.

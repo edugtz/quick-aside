@@ -1,7 +1,7 @@
 # Change 018 — Action Ledger Persistence Foundation — TASKS
 
 Governance: **HIGH-ASSURANCE**
-Status: **IMPLEMENTATION IN PROGRESS — VERIFICATION PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-018-action-ledger-foundation`
 
 This is a LIVE EXECUTION CHECKLIST. During later implementation, mark a task
@@ -94,40 +94,40 @@ remain accurately documented.
 
 ## Real 4→5 migration evidence — later implementation
 
-- [ ] Build a real on-disk schema-4 fixture with the tracked schema-4 identity
+- [x] Build a real on-disk schema-4 fixture with the tracked schema-4 identity
       hash and `user_version = 4`.
-- [ ] Populate the fixture with Text and corrected Voice Captures, built-in
+- [x] Populate the fixture with Text and corrected Voice Captures, built-in
       list definitions, Mandado session/item history, a Compras item, a Note,
       and a StructuredLog with fields.
-- [ ] Open the fixture through the production migration chain.
-- [ ] Verify every existing value/relationship remains unchanged, including
+- [x] Open the fixture through the production migration chain.
+- [x] Verify every existing value/relationship remains unchanged, including
       whitespace, corrected transcript, list state, Note source, and all log
       fields.
-- [ ] Verify both new Action Ledger tables are empty immediately after
+- [x] Verify both new Action Ledger tables are empty immediately after
       migration.
-- [ ] Verify SQLite `user_version == 5` and schema 5 reopens successfully.
-- [ ] Write/read a new ledger batch after migration.
-- [ ] Verify the old v4 table definitions and tracked schemas 1–4 remain
+- [x] Verify SQLite `user_version == 5` and schema 5 reopens successfully.
+- [x] Write/read a new ledger batch after migration.
+- [x] Verify the old v4 table definitions and tracked schemas 1–4 remain
       unchanged.
-- [ ] Use unique fixture cleanup and never touch production `quick_aside.db`.
+- [x] Use unique fixture cleanup and never touch production `quick_aside.db`.
 
 ## Existing regressions and required gates — later implementation
 
 - [x] Update only stale final production-version assertions from 4 to 5 in
       existing migration tests; preserve their data assertions.
 - [x] Run focused Action Ledger JVM tests.
-- [ ] Run focused Action Ledger Room persistence/migration tests on a
+- [x] Run focused Action Ledger Room persistence/migration tests on a
       supported device when available.
 - [x] Run `./gradlew :app:testDebugUnitTest`.
 - [x] Run `./gradlew :app:assembleDebug`.
 - [x] Run `./gradlew :app:lintDebug`.
-- [ ] Run the applicable connected Android tests and report any broad harness
+- [x] Run the applicable connected Android tests and report any broad harness
       failure truthfully rather than calling it a pass.
 - [x] Inspect generated schema 5 against schema 4 and confirm only planned
       ledger structures were added.
 - [x] Run `git diff --check`.
 - [x] Inspect `git status --short` and `git diff --stat`.
-- [ ] Leave the final engineering verdict to independent review.
+- [x] Leave the final engineering verdict to independent review.
 
 ## Scope and authority
 
@@ -141,16 +141,17 @@ remain accurately documented.
 
 ## Exact next gate
 
-Complete the unverified connected Room/migration evidence when a supported
-device is available, then leave the final engineering verdict to independent
-review. The user retains commit, push, merge, and release authority.
+Change 018 is complete (COMPLETE — REVIEW PASS). The next reviewable M1
+change has not started yet. The user retains commit, push, merge, and release
+authority.
 
 ## Verification note
 
-Host-side evidence is complete: focused Action Ledger JVM tests 10/10, full
-debug JVM suite 63/63, debug assemble, lint, Android-test source compilation,
-schema inspection, and Git whitespace/status/stat checks pass. The focused
-connected run was attempted with the supported instrumentation class filter
-but was blocked before execution because no connected Android device was
-available; the Room persistence and real 4→5 migration checklist items remain
-unchecked.
+Verification complete (COMPLETE — REVIEW PASS): focused Action Ledger JVM
+10/10 passed; full debug JVM suite 63/63 passed; `:app:assembleDebug` passed;
+`:app:lintDebug` passed; focused connected `ActionLedgerPersistenceDatabaseTest`
+10/10 passed (Started 10 / Finished 10 / BUILD SUCCESSFUL in 16s) on CPH2791 /
+Android 16 via `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.ActionLedgerPersistenceDatabaseTest`;
+real v4→v5 migration evidence passed; schema inspection confirmed only planned
+Action Ledger structures; final independent verdict: PASS (BLOCKER: 0 /
+MAJOR: 0 / MINOR: 0).
