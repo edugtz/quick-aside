@@ -46,15 +46,19 @@ Implementation evidence:
 - The authoritative focused Compras result is PASS 1/1 on CPH2791 / Android
   16 for `exactTextUsesReversibleBoundaryWithNullSessionAndUndoRemovesExactItem`;
   it was not rerun in this turn.
-- The existing `mandado-create-undo.png` was visually inspected against the
-  written UX contract and canonical v3 direction. It includes the product row,
-  `Producto agregado`/`Deshacer`, Capture FAB, and four-destination navigation;
-  no obvious snackbar/FAB/navigation collision or clipping was observed.
-- The required Compras screenshot remains blocked: after the focused test,
-  CPH2791 disconnected while launching the real app; `adb devices -l` returned
-  no devices and `adb mdns services` returned no discovered services. The CUA
-  surface reset before exposing a usable device session. No invalid frame is
-  counted as evidence.
+- The recovered `evidence/mandado-create-undo.png` was re-verified on
+  2026-09-09: valid PNG 1080 x 2354 RGBA, 165179 bytes. Visually inspected
+  against the written UX contract, canonical v3 direction, and SPEC.md. It
+  shows Mandado / Mandado actual, legible rows (Chobani, Arroz, Fruta),
+  `Producto agregado`/`Deshacer`, `Terminar mandado`, global mic Capture FAB,
+  and four-destination navigation with Listas selected; no snackbar/FAB/
+  navigation collision, clipping, or legibility defect was observed, and
+  Capture remains an action rather than a fifth destination.
+- The required Compras screenshot remains blocked and missing: prior CPH2791
+  disconnect after the focused test plus current 2026-09-09 `adb devices` /
+  `adb devices -l` returning no devices attached, so no real-production-app
+  Compras capture was possible. No fake/test-only UI was substituted and no
+  invalid frame is counted as evidence.
 
 ## Exact next gate
 

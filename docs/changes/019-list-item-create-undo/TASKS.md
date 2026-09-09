@@ -79,16 +79,26 @@ exists. Failed, skipped, blocked, and not-yet-run gates remain unchecked.
   -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.ComprasUiTest#exactTextUsesReversibleBoundaryWithNullSessionAndUndoRemovesExactItem`.
   PASS, 1/1 on CPH2791 / Android 16, BUILD SUCCESSFUL; this result was not
   rerun in this turn.
-- The existing `mandado-create-undo.png` artifact was inspected against the
-  written UX contract and canonical v3 direction. It shows Mandado, a legible
-  product row, `Producto agregado`/`Deshacer`, the Capture FAB, and all four
-  destinations; no obvious snackbar/FAB/navigation collision or clipping was
-  observed.
-- The required Compras screenshot remains blocked. After the focused test,
-  CPH2791 disconnected while launching the real app; `adb devices -l` returned
-  no devices and `adb mdns services` returned no discovered services. The CUA
-  surface also reset before it exposed a usable device session. No Compras
-  frame was fabricated or counted as evidence.
+- The recovered `evidence/mandado-create-undo.png` was re-verified on
+  2026-09-09: file exists, `file` reports PNG image data 1080 x 2354
+  8-bit/color RGBA, 165179 bytes; `sips` confirms 1080 x 2354 png. Inspected
+  against docs/UX_UI_REFERENCE.md,
+  docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png, and SPEC.md. It shows
+  Mandado / Mandado actual, legible product rows (Chobani, Arroz, Fruta),
+  native `Producto agregado` + `Deshacer` snackbar, `Terminar mandado`,
+  global mic Capture FAB, and exactly four destinations (Inicio, Pendientes,
+  Listas selected, Memoria); no snackbar/FAB/navigation collision, clipping,
+  or legibility defect observed; Capture remains an action, not a fifth
+  destination.
+- The required `evidence/compras-create-undo.png` remains missing and blocked.
+  Prior blocker: after the focused test, CPH2791 disconnected while launching
+  the real app; `adb devices -l` returned no devices and `adb mdns services`
+  returned no discovered services. Current 2026-09-09 evidence-closeout
+  check: `adb devices` and `adb devices -l` both return
+  `List of devices attached` with no devices attached, so no real-production
+  Compras capture was possible. No fake/test-only UI was used and no Compras
+  frame was fabricated or counted as evidence. The visual evidence task
+  therefore remains unchecked.
 
 ## Authority
 
