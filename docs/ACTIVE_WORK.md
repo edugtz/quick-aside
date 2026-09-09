@@ -2,14 +2,12 @@
 
 ## Active change
 
-`docs/changes/019-list-item-create-undo/`
+`docs/changes/020-capture-plan-foundation/`
 
-Status: **COMPLETE — REVIEW PASS**
-- Governance: **HIGH-ASSURANCE**
+Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+- Governance: **STANDARD**
 
-Final independent verdict: **PASS** — BLOCKER 0 / MAJOR 0 / MINOR 0.
-
-Change 019 is complete.
+Change 019 is complete. Change 020 is the active implementation.
 
 ## Proven baseline
 
@@ -21,59 +19,41 @@ Change 019 is complete.
 
 ## Current implementation focus
 
-Change 019 is the first user-visible Action Ledger integration. It adds a
-narrow atomic create/undo boundary for manual Mandado and Compras items while
-preserving the completed Change 018 version-5 database and schema. The changed
-UI uses the existing shared Material snackbar and keeps the four-destination
-navigation and global Capture action unchanged.
+Change 020 establishes the provider-independent typed intermediate
+representation between future capture interpretation and future action
+execution. It adds only pure-Kotlin CapturePlan/draft contracts, a focused
+validator, and deterministic JVM tests. It does not interpret captures, call a
+provider, execute actions, mutate Room, or change UI.
 
 Preflight evidence:
 
-- Required project contracts and Change 018 guidance read.
-- Current Action Ledger/list implementation, Room DAOs, app wiring, list UI,
-  and focused tests inspected.
-- docs/UX_UI_REFERENCE.md and the canonical v3 PNG inspected.
-- No Room version, schema, migration, dependency, or historical package
-  modification is planned.
+- Required project contracts and Change 002/018/019 guidance read.
+- Existing capture, list, task, memory, Action Ledger, and application
+  boundaries inspected.
+- Change 019 is present as complete on `chg-020-capture-plan-foundation`.
+- Room is version 5 and schemas 1–5 exist.
+- No CapturePlan, CaptureInterpreter, AIProvider, or ActionExecutor exists.
+- No dependency, schema, migration, UI, provider, executor, or historical
+  package modification is planned.
 
 Implementation evidence:
 
-- The narrow reversible list-item boundary, Room transactions, app wiring, UI
-  receipt/Undo flow, and fake/integration tests are implemented.
-- Focused JVM and full debug JVM tests pass; the focused Room suite passes 9/9
-  on CPH2791 / Android 16; assemble, lint, Android-test compilation, schema,
-  and diff checks pass.
-- Focused Mandado UI was re-run and passes 1/1 on CPH2791 / Android 16 with the
-  semantics-existence assertion for the preserved-whitespace row. The exact
-  command was `./gradlew :app:connectedDebugAndroidTest
-  -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.MandadoUiTest#exactItemTextUsesReversibleBoundaryShowsReceiptAndUndoRemovesExactItem`.
-- The authoritative focused Compras result is PASS 1/1 on CPH2791 / Android
-  16 for `exactTextUsesReversibleBoundaryWithNullSessionAndUndoRemovesExactItem`;
-  it was not rerun in this turn.
-- The recovered `evidence/mandado-create-undo.png` was re-verified on
-  2026-09-09: valid PNG 1080 x 2354 RGBA, 165179 bytes. Visually inspected
-  against the written UX contract, canonical v3 direction, and SPEC.md. It
-  shows Mandado / Mandado actual, legible rows (Chobani, Arroz, Fruta),
-  `Producto agregado`/`Deshacer`, `Terminar mandado`, global mic Capture FAB,
-  and four-destination navigation with Listas selected; no snackbar/FAB/
-  navigation collision, clipping, or legibility defect was observed, and
-  Capture remains an action rather than a fifth destination.
-- The required real-production-app Compras evidence was captured on
-  2026-09-09 after CPH2791 / Android 16 was confirmed attached. The app was
-  launched and used through Listas → Compras to add `Leche de avena`; the
-  direct device screenshot is saved as
-  `docs/changes/019-list-item-create-undo/evidence/compras-create-undo.png`.
-  Both saved evidence PNGs were visually inspected against the written UX
-  contract, canonical v3 direction, and SPEC.md and PASS all required checks.
-  No production code was modified and no JVM/Room/Compose tests, assemble,
-  or lint were rerun per the visual-evidence-only gate.
+- Added the pure-Kotlin typed CapturePlan/draft contracts and deterministic
+  validator with structured plan/action issues.
+- Added 21 focused JVM tests covering valid plans, all required invalid cases,
+  exact-content/order preservation, task/date semantics, UndoLast, issue
+  indexing/content, and source-boundary independence.
+- Focused test passed 21/21; full debug JVM suite passed 86/86 with no
+  failures/errors/skips.
+- `:app:assembleDebug`, `:app:lintDebug`, and `git diff --check` succeeded.
+- Room remains version 5 with schemas 1–5 unchanged. No schema 6, migration,
+  dependency, UI, provider, executor, or historical Change 001–019 change was
+  introduced.
 
 ## Exact next gate
 
-Change 019 is complete and ready for user-authorized merge.
+Independent engineering review after the user commits/pushes the combined
+Change 020 docs and implementation.
 
-After merge, the next planned reviewable change is:
-
-Change 020 — Typed CapturePlan + Validator Foundation
-
-M2 has not started yet.
+Implementation is complete; M2 runtime interpretation/provider work remains
+deferred to a later change. Do not mark independent review complete here.
