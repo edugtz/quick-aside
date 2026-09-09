@@ -39,13 +39,25 @@ Implementation evidence:
 - Focused JVM and full debug JVM tests pass; the focused Room suite passes 9/9
   on CPH2791 / Android 16; assemble, lint, Android-test compilation, schema,
   and diff checks pass.
-- Focused Mandado and Compras UI runs remain BLOCKED device evidence, not PASS:
-  Mandado hit the same Compose timeout twice while resolving the preserved-
-  whitespace row, and the Compras run was externally aborted after losing
-  Compose hierarchies. No screenshots were captured.
+- Focused Mandado UI was re-run and passes 1/1 on CPH2791 / Android 16 with the
+  semantics-existence assertion for the preserved-whitespace row. The exact
+  command was `./gradlew :app:connectedDebugAndroidTest
+  -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.MandadoUiTest#exactItemTextUsesReversibleBoundaryShowsReceiptAndUndoRemovesExactItem`.
+- The authoritative focused Compras result is PASS 1/1 on CPH2791 / Android
+  16 for `exactTextUsesReversibleBoundaryWithNullSessionAndUndoRemovesExactItem`;
+  it was not rerun in this turn.
+- The existing `mandado-create-undo.png` was visually inspected against the
+  written UX contract and canonical v3 direction. It includes the product row,
+  `Producto agregado`/`Deshacer`, Capture FAB, and four-destination navigation;
+  no obvious snackbar/FAB/navigation collision or clipping was observed.
+- The required Compras screenshot remains blocked: after the focused test,
+  CPH2791 disconnected while launching the real app; `adb devices -l` returned
+  no devices and `adb mdns services` returned no discovered services. The CUA
+  surface reset before exposing a usable device session. No invalid frame is
+  counted as evidence.
 
 ## Exact next gate
 
 Independent engineering review after the user commits/pushes. The reviewer
-must treat the blocked device/UI evidence as blocked rather than as a passing
-gate and may require a clean rerun before approval.
+must treat the missing Compras screenshot as blocked evidence rather than as
+a passing visual gate and may require a clean device capture before approval.

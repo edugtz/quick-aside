@@ -53,8 +53,9 @@ exists. Failed, skipped, blocked, and not-yet-run gates remain unchecked.
 
 - [x] Run focused JVM tests.
 - [x] Run focused Room test on CPH2791 / Android 16 when available.
-- [ ] Run focused Mandado UI test on CPH2791 / Android 16 when available.
-- [ ] Run focused Compras UI test on CPH2791 / Android 16 when available.
+- [x] Run focused Mandado UI test on CPH2791 / Android 16 when available.
+- [x] Record the authoritative focused Compras UI test result on CPH2791 /
+      Android 16.
 - [ ] Capture and inspect mandado-create-undo.png and compras-create-undo.png.
 - [x] Run testDebugUnitTest, assembleDebug, and lintDebug.
 - [x] Verify Room remains version 5, schemas 1–5 are unchanged, and no
@@ -67,14 +68,27 @@ exists. Failed, skipped, blocked, and not-yet-run gates remain unchecked.
 - Focused JVM contract test and full `:app:testDebugUnitTest`: BUILD SUCCESSFUL.
 - Focused Room `ReversibleListItemActionsDatabaseTest`: 9/9 passed on CPH2791 / Android 16.
 - `:app:compileDebugAndroidTestKotlin`, `:app:assembleDebug`, and `:app:lintDebug`: BUILD SUCCESSFUL.
-- Mandado create/receipt/Undo device evidence is BLOCKED: the row was present
-  in the captured hierarchy, but the focused test hit the same Compose timeout
-  twice while resolving the preserved-whitespace row; the project stop rule
-  prevented another blind retry.
-- Compras UI evidence is BLOCKED: the connected run lost Compose hierarchies
-  after an external UTP abort; this is not recorded as PASS.
-- Screenshots were not captured because the focused device evidence did not
-  reach a verified create/Undo checkpoint.
+- Focused Mandado UI command, re-run in this builder turn: `./gradlew
+  :app:connectedDebugAndroidTest
+  -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.MandadoUiTest#exactItemTextUsesReversibleBoundaryShowsReceiptAndUndoRemovesExactItem`.
+  PASS, 1/1 on CPH2791 / Android 16, BUILD SUCCESSFUL. The test uses
+  semantics-tree existence for the whitespace-bearing product row while
+  preserving the exact submitted text and exact Undo IDs.
+- Authoritative focused Compras UI command supplied for this change:
+  `./gradlew :app:connectedDebugAndroidTest
+  -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.ComprasUiTest#exactTextUsesReversibleBoundaryWithNullSessionAndUndoRemovesExactItem`.
+  PASS, 1/1 on CPH2791 / Android 16, BUILD SUCCESSFUL; this result was not
+  rerun in this turn.
+- The existing `mandado-create-undo.png` artifact was inspected against the
+  written UX contract and canonical v3 direction. It shows Mandado, a legible
+  product row, `Producto agregado`/`Deshacer`, the Capture FAB, and all four
+  destinations; no obvious snackbar/FAB/navigation collision or clipping was
+  observed.
+- The required Compras screenshot remains blocked. After the focused test,
+  CPH2791 disconnected while launching the real app; `adb devices -l` returned
+  no devices and `adb mdns services` returned no discovered services. The CUA
+  surface also reset before it exposed a usable device session. No Compras
+  frame was fabricated or counted as evidence.
 
 ## Authority
 

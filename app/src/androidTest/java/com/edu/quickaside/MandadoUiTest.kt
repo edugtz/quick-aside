@@ -140,7 +140,8 @@ class MandadoUiTest {
         assertEquals(store.activeSession?.id, actions.createCalls.single().listSessionId)
         assertTrue(store.addedTexts.isEmpty())
         assertEquals("", editableText())
-        waitForContentDescription("Marcar $exactText como completado")
+        waitForTextExists("Chobani")
+        assertTrue(productTextNodes("Chobani").isNotEmpty())
         waitForText("Producto agregado")
         composeRule.onNodeWithText("Deshacer").assertIsDisplayed()
 
@@ -149,12 +150,9 @@ class MandadoUiTest {
         assertEquals(ActionLedgerEntryId("created-entry-1"), actions.undoCalls.single().actionLedgerEntryId)
         assertEquals(ListItemId("created-item-1"), actions.undoCalls.single().expectedItemId)
         composeRule.waitUntil(timeoutMillis = 5_000) {
-            runCatching {
-                composeRule.onNodeWithContentDescription(
-                    "Marcar $exactText como completado",
-                ).assertDoesNotExist()
-            }.isSuccess
+            productTextNodes("Chobani").isEmpty()
         }
+        assertTrue(productTextNodes("Chobani").isEmpty())
     }
 
     @Test
@@ -301,21 +299,27 @@ class MandadoUiTest {
         composeRule.onNodeWithContentDescription("Abrir Mandado").performClick()
     }
 
-    private fun waitForText(text: String) {
+    private fun waitForText(text: String, useUnmergedTree: Boolean = false) {
         composeRule.waitUntil(timeoutMillis = 5_000) {
             runCatching {
-                composeRule.onNodeWithText(text, substring = true).assertIsDisplayed()
+                composeRule.onNodeWithText(
+                    text,
+                    substring = true,
+                    useUnmergedTree = useUnmergedTree,
+                ).assertIsDisplayed()
             }.isSuccess
         }
     }
 
-    private fun waitForContentDescription(description: String) {
+    private fun waitForTextExists(text: String) {
         composeRule.waitUntil(timeoutMillis = 5_000) {
-            runCatching {
-                composeRule.onNodeWithContentDescription(description).assertIsDisplayed()
-            }.isSuccess
+            productTextNodes(text).isNotEmpty()
         }
     }
+
+    private fun productTextNodes(text: String) = composeRule
+        .onAllNodesWithText(text, substring = true, useUnmergedTree = true)
+        .fetchSemanticsNodes()
 
     private fun editableText(): String = composeRule
         .onNode(hasSetTextAction())
