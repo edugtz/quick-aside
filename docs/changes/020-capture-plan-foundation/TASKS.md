@@ -1,7 +1,7 @@
 # Change 020 — Typed CapturePlan + Validator Foundation — TASKS
 
 Governance: **STANDARD**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-020-capture-plan-foundation`
 
 This is a LIVE EXECUTION CHECKLIST. Mark `[x]` only when actual work or
@@ -57,7 +57,8 @@ unchecked.
       changes.
 - [x] Run `git diff --check`, inspect `git status --short`, and inspect
       `git diff --stat`.
-- [x] Leave the final engineering verdict to independent review.
+- [x] Independent engineering review complete — PASS (BLOCKER 0 / MAJOR 0 /
+      MINOR 0).
 
 ## Authority
 
@@ -78,8 +79,10 @@ unchecked.
   or migration exists.
 - No dependency, UI, runtime AI/provider, action execution, reminder/Calendar,
   Google, or historical Change 001–019 files changed.
+- Independent engineering review: PASS — BLOCKER 0 / MAJOR 0 / MINOR 0.
 
 ## Exact next gate
 
-Independent engineering review after the user commits/pushes the combined
-Change 020 docs and implementation.
+Change 020 is complete and ready for user-authorized merge.
+
+After merge, M2 continues with the next reviewable change.

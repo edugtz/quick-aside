@@ -4,10 +4,17 @@
 
 `docs/changes/020-capture-plan-foundation/`
 
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 - Governance: **STANDARD**
 
-Change 019 is complete. Change 020 is the active implementation.
+Change 019 is complete. Change 020 is complete.
+
+Final independent verdict:
+
+PASS
+BLOCKER 0
+MAJOR 0
+MINOR 0
 
 ## Proven baseline
 
@@ -50,10 +57,13 @@ Implementation evidence:
   dependency, UI, provider, executor, or historical Change 001–019 change was
   introduced.
 
+## Final independent review
+
+Independent engineering review: PASS — BLOCKER 0 / MAJOR 0 / MINOR 0.
+
 ## Exact next gate
 
-Independent engineering review after the user commits/pushes the combined
-Change 020 docs and implementation.
+Change 020 is complete and ready for user-authorized merge.
 
-Implementation is complete; M2 runtime interpretation/provider work remains
-deferred to a later change. Do not mark independent review complete here.
+After merge, M2 continues with the next reviewable change. That change is not
+started or invented in this closeout.
