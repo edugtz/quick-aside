@@ -54,14 +54,17 @@ Implementation evidence:
   and four-destination navigation with Listas selected; no snackbar/FAB/
   navigation collision, clipping, or legibility defect was observed, and
   Capture remains an action rather than a fifth destination.
-- The required Compras screenshot remains blocked and missing: prior CPH2791
-  disconnect after the focused test plus current 2026-09-09 `adb devices` /
-  `adb devices -l` returning no devices attached, so no real-production-app
-  Compras capture was possible. No fake/test-only UI was substituted and no
-  invalid frame is counted as evidence.
+- The required real-production-app Compras evidence was captured on
+  2026-09-09 after CPH2791 / Android 16 was confirmed attached. The app was
+  launched and used through Listas → Compras to add `Leche de avena`; the
+  direct device screenshot is saved as
+  `docs/changes/019-list-item-create-undo/evidence/compras-create-undo.png`.
+  Both saved evidence PNGs were visually inspected against the written UX
+  contract, canonical v3 direction, and SPEC.md and PASS all required checks.
+  No production code was modified and no JVM/Room/Compose tests, assemble,
+  or lint were rerun per the visual-evidence-only gate.
 
 ## Exact next gate
 
-Independent engineering review after the user commits/pushes. The reviewer
-must treat the missing Compras screenshot as blocked evidence rather than as
-a passing visual gate and may require a clean device capture before approval.
+Independent final engineering/visual review after the user commits/pushes the
+completed Change 019 evidence package.

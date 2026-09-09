@@ -1,14 +1,17 @@
 # Change 019 — Visual Evidence
 
-Status: PARTIAL — Mandado recovered and inspected; Compras blocked (no device).
+Status: COMPLETE — both real-device screenshots captured and inspected.
 
 ## Device
 
 - Attributed capture device for recovered artifact: CPH2791 / Android 16
   (per authoritative Change 019 device-test evidence).
-- Evidence-closeout host check on 2026-09-09 (UTC): `adb devices` and
-  `adb devices -l` both return `List of devices attached` with no devices
-  attached. No new device capture was possible in this turn.
+- Evidence-closeout on 2026-09-09: `adb devices -l` confirmed CPH2791
+  (Android 16). Branch: `chg-019-list-item-create-undo`. The real production
+  app was launched and used through Listas → Compras; `Leche de avena` was
+  created and the screenshot was captured directly with adb. No production
+  code was modified and no JVM/Room/Compose tests, assemble, or lint were
+  rerun per the visual-evidence-only gate.
 
 ## Files
 
@@ -22,11 +25,11 @@ Status: PARTIAL — Mandado recovered and inspected; Compras blocked (no device)
     "Producto agregado" with action "Deshacer"; "Terminar mandado" button;
     global lavender mic Capture FAB bottom-right; bottom bar with exactly
     four destinations Inicio / Pendientes / Listas (selected) / Memoria.
-- `evidence/compras-create-undo.png` — MISSING (blocked).
-  - Required state (not captured): Compras screen; newly created product
-    visible; native snackbar "Producto agregado" with action "Deshacer";
-    global Capture FAB; four bottom destinations.
-  - No fake/test-only UI was used as a substitute. No file was fabricated.
+- `evidence/compras-create-undo.png` — PRESENT.
+  - State shown: Compras screen with newly created `Leche de avena` visible;
+    native snackbar "Producto agregado" with action "Deshacer"; global
+    lavender mic Capture FAB; and exactly four bottom destinations Inicio /
+    Pendientes / Listas (selected) / Memoria.
 
 ## Visual inspection (actual saved PNGs vs. contract)
 
@@ -56,14 +59,13 @@ Result for `mandado-create-undo.png`: PASS on all checked points.
 - Product row remains readable: Chobani and Arroz fully; Fruta text readable.
 - No unexpected visual regression observed.
 
-Result for `compras-create-undo.png`: N/A — file does not exist; nothing to
-inspect and nothing counted as PASS.
+Result for `compras-create-undo.png`: PASS. The product row, snackbar message,
+Deshacer action, Capture FAB, and four destinations are fully visible and
+legible. The snackbar does not materially collide with the FAB or navigation;
+no material clipping or unexpected visual regression was observed.
 
-## Limitation / blocker
+## Result
 
-Compras visual evidence could not be captured in this turn because the
-CPH2791 / Android 16 device is genuinely unavailable (`adb devices -l`
-empty). The visual evidence gate therefore remains incomplete. Independent
-review must treat the missing Compras screenshot as blocked evidence, not as
-a passing gate, and may require a clean real-production-app capture before
-approval.
+Both required real-device screenshots exist and pass visual inspection. The
+evidence gate is complete; independent engineering/visual review remains
+pending and unchecked.

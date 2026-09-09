@@ -56,7 +56,7 @@ exists. Failed, skipped, blocked, and not-yet-run gates remain unchecked.
 - [x] Run focused Mandado UI test on CPH2791 / Android 16 when available.
 - [x] Record the authoritative focused Compras UI test result on CPH2791 /
       Android 16.
-- [ ] Capture and inspect mandado-create-undo.png and compras-create-undo.png.
+- [x] Capture and inspect mandado-create-undo.png and compras-create-undo.png.
 - [x] Run testDebugUnitTest, assembleDebug, and lintDebug.
 - [x] Verify Room remains version 5, schemas 1–5 are unchanged, and no
       migration/dependency/old-table/out-of-scope mutation exists.
@@ -90,15 +90,18 @@ exists. Failed, skipped, blocked, and not-yet-run gates remain unchecked.
   Listas selected, Memoria); no snackbar/FAB/navigation collision, clipping,
   or legibility defect observed; Capture remains an action, not a fifth
   destination.
-- The required `evidence/compras-create-undo.png` remains missing and blocked.
-  Prior blocker: after the focused test, CPH2791 disconnected while launching
-  the real app; `adb devices -l` returned no devices and `adb mdns services`
-  returned no discovered services. Current 2026-09-09 evidence-closeout
-  check: `adb devices` and `adb devices -l` both return
-  `List of devices attached` with no devices attached, so no real-production
-  Compras capture was possible. No fake/test-only UI was used and no Compras
-  frame was fabricated or counted as evidence. The visual evidence task
-  therefore remains unchecked.
+- Evidence-closeout on 2026-09-09: CPH2791 / Android 16 was confirmed
+  attached. The real production app was launched and used through Listas →
+  Compras to add `Leche de avena`, and the direct device screenshot was saved.
+  `file` and `sips` confirm both evidence PNGs are 1080 x 2354.
+- Both saved screenshots were visually inspected against
+  docs/UX_UI_REFERENCE.md, the canonical v3 PNG direction, and SPEC.md.
+  Both PASS: product rows are readable; `Producto agregado` and `Deshacer`
+  are fully legible; snackbar, Capture FAB, and bottom navigation do not
+  materially collide; exactly four destinations remain with Listas selected;
+  Capture remains an action rather than a fifth destination; no material
+  clipping or unexpected visual regression was observed. Independent review
+  remains unchecked.
 
 ## Authority
 
