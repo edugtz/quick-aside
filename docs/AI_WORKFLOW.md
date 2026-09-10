@@ -35,14 +35,19 @@ Prefer deterministic tools (build/tests/lint/static analysis) over builder self-
 
 ## 3. Runtime interpretation models
 
-Initial personal-MVP choice based on the user's current OpenCode Go allowance/cost priorities:
+Runtime interpretation is currently **paused** at the provider/runtime boundary
+pending the shared private VPS runtime gateway (see `docs/ARCHITECTURE.md` §5 and
+`docs/adr/0001-private-remote-ai-runtime.md`).
 
-1. **MiMo-V2.5** — primary.
-2. **DeepSeek V4 Flash** — fallback if explicit failure/low-confidence policy warrants escalation.
-3. **LongCat-2.0** — next candidate if observed behavior warrants switching.
-4. **Qwen3.8 Flash** — reserve.
+Accepted decision after the completed runtime model evaluation (2026-09-09):
 
-Do not spend initial project time on broad comparative benchmarks. Start with MiMo and change only when real captures show unacceptable correctness, latency, or quota impact.
+1. **GPT-5.6 Luna — Low reasoning** — primary target, via ChatGPT Plus / Codex OAuth.
+2. **DeepSeek V4 Flash via OpenCode Go** — fallback candidate, evidence-triggered.
+3. MiMo-V2.5 was not selected as primary because observed schema/contract reliability was worse than the finalists.
+
+Do not restart broad comparative benchmarking unless real runtime use shows a
+concrete blocker. Provider auth and credentials belong to the personal runtime,
+not the Android app.
 
 Runtime code uses a provider abstraction. Stored domain records and CapturePlan schema must be provider-independent.
 
@@ -58,7 +63,7 @@ Useful local metrics without storing unnecessary sensitive content:
 - user correction occurred yes/no;
 - approximate request count/allowance use if available.
 
-The goal is to know when MiMo is insufficient without building a benchmark program first.
+The goal is to know when the primary provider is insufficient without building a benchmark program first.
 
 ## 5. Visual asset workflow
 

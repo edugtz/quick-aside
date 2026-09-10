@@ -1,6 +1,6 @@
 # Quick Aside — Architecture v0.2
 
-Status: proposed implementation baseline derived from accepted product/UX decisions. Exact Android/API versions must be verified during implementation preflight.
+Status: proposed implementation baseline derived from accepted product/UX decisions. Exact Android/API versions must be verified during implementation preflight. Runtime-AI sections reconciled 2026-09-10 (`docs/adr/0001-private-remote-ai-runtime.md`).
 
 ## 1. Architecture goals
 
@@ -10,7 +10,9 @@ Status: proposed implementation baseline derived from accepted product/UX decisi
 - AI is replaceable interpretation infrastructure, not persistence.
 - Fast capture path with optional correction.
 - Offline-tolerant local functionality.
-- No custom SaaS backend required for the initial personal MVP.
+- No custom multi-user/SaaS backend for the initial personal MVP. A small
+  private personal runtime gateway on shared personal VPS infrastructure is an
+  accepted exception for AI interpretation only (ADR-0001).
 - Future interaction surfaces reuse one capture pipeline rather than duplicating logic.
 
 ## 2. High-level topology
@@ -29,9 +31,15 @@ Interaction surfaces
       /                     \
 Local rules             AIProvider
                           |
-                  MiMo-V2.5 primary
-                  DeepSeek V4 Flash fallback
-                |
+                private runtime gateway
+                 (shared personal VPS)
+                          |
+              Codex / ChatGPT OAuth
+                          |
+                 GPT-5.6 Luna Low
+            (DeepSeek V4 Flash fallback
+              candidate, later)
+                          |
           CapturePlan (typed)
                 |
             Validator
@@ -116,31 +124,72 @@ Records user-visible mutations for activity/history and reversible operations wh
 
 ## 5. Runtime AI architecture
 
-Use an interface such as `AIProvider` / `CaptureInterpreter`, not model-specific calls throughout the app.
+Use an interface such as `AIProvider` / `CaptureInterpreter`, not model-specific calls throughout the app. `CapturePlan` and stored domain records remain provider-independent.
 
-Initial policy:
+Runtime direction after the completed model evaluation (2026-09-09):
 
-1. Try deterministic/local interpretation for simple known commands when safe.
-2. Use MiMo-V2.5 as the initial primary cloud model.
-3. Invoke DeepSeek V4 Flash only when the active fallback policy says a request failed validation or remains low-confidence and fallback is justified.
-4. LongCat-2.0 is the next candidate if observed usage warrants switching.
-5. Qwen3.8 Flash remains a reserve candidate.
+1. Primary target: **GPT-5.6 Luna — Low reasoning** — via ChatGPT Plus / Codex OAuth.
+2. Fallback candidate: **DeepSeek V4 Flash via OpenCode Go** — evidence-triggered only.
+3. MiMo-V2.5 is not primary; the evaluation observed worse schema/contract reliability.
+4. Deterministic/local interpretation for simple known commands remains preferred when safe.
 
-No broad benchmark program is required before MVP use. Collect lightweight local diagnostics such as model used, latency, validation outcome, and correction/fallback rate without storing sensitive prompt content unnecessarily.
+Provider/model choices are infrastructure concerns and must remain replaceable behind `AIProvider` without domain or stored-data changes. Do not restart broad comparative benchmarking without observed runtime evidence.
+
+**Current status: PAUSED.** Further AI-interpreter/runtime-provider implementation
+(real `AIProvider` implementation, Codex/OpenCode Go clients, provider wire
+protocol, provider authentication, Luna runtime integration, DeepSeek fallback,
+production prompts/schemas, runtime network integration, and provider-only
+interpreter-contract work) is paused until the shared private runtime gateway is
+planned and proven well enough to define the real remote integration boundary.
+Changes 020 and 021 remain accepted and complete. The pause and its roadmap
+consequences are recorded in `docs/changes/PLN-001-runtime-ai-realignment/`.
+
+### Remote runtime boundary
+
+The accepted target topology is:
+
+```text
+Quick Aside Android
+    → private interpretation request
+    → shared personal VPS
+        → private Quick Aside runtime gateway
+            → Codex / ChatGPT OAuth
+            → GPT-5.6 Luna Low
+```
+
+Quick Aside shares infrastructure with the Personal Admin/Hermes runtime but must
+not use the Hermes agent conversation/context as its interpretation service. The
+gateway is a separate, logically isolated consumer with bounded, fresh
+inference.
+
+The exact gateway endpoint, authentication/network mechanism (a
+private/Tailscale-style path is preferred if consistent with the Personal Admin
+architecture), deployment topology, process management, and Codex invocation
+contract remain unresolved and belong to Personal Admin/shared-runtime planning.
+Quick Aside must not freeze those details first.
 
 ### AI safety boundary
 
-The AI provider never receives Google OAuth credentials and never directly mutates external services.
-
-Flow:
-
-`input/context → model → typed CapturePlan → validator → ActionExecutor`
+- Remote model output is untrusted.
+- Flow: `remote interpretation → untrusted structured result → Quick Aside validation → future execution`.
+- The remote runtime never directly mutates Quick Aside Room, Google Tasks, Google Calendar, or local reminders.
+- Quick Aside Android never receives or stores ChatGPT/Codex OAuth tokens, Codex auth state, OpenCode Go credentials, or other provider secrets. Those stay on the personal VPS/runtime side.
 
 Model changes must not require domain-schema changes.
 
-### API credentials for personal MVP
+### Local-first failure behavior
 
-A direct personal/BYOK-style provider path may be acceptable for a private build if credentials are protected with Android Keystore-backed storage and the risk is documented. This is **not** an acceptable architecture for public distribution. Productization requires a server-side AI gateway or equivalent secure credential model.
+A remote AI dependency must not make capture lossy:
+
+```text
+capture → persist locally → attempt remote interpretation
+```
+
+If remote interpretation is unavailable, the original Capture remains durable and
+user intent must not silently disappear. Retry/deferred-interpretation policy is
+intentionally unspecified here and will be scoped in a future focused change.
+
+No broad benchmark program is required before MVP use. Collect lightweight local diagnostics such as model used, latency, validation outcome, and correction/fallback rate without storing sensitive prompt content unnecessarily.
 
 ## 6. Persistence
 
@@ -255,7 +304,10 @@ Future capture surfaces should call the same capture application/domain services
 
 ## 12. Backend strategy
 
-Personal MVP: no general-purpose custom backend unless an implementation constraint proves one necessary.
+Personal MVP: no general-purpose custom backend. The single accepted exception is
+a small private personal runtime gateway on shared personal VPS infrastructure
+for AI interpretation only (ADR-0001). It is not a general-purpose backend and
+must not grow into one.
 
 Avoid premature:
 
@@ -263,18 +315,19 @@ Avoid premature:
 - multi-user database;
 - realtime sync server;
 - SaaS billing;
-- AI gateway for a private build.
+- public/general-purpose AI gateway or public Quick Aside cloud.
 
-Productization would be a separate architectural phase and likely requires backend auth, AI gateway, cloud persistence/sync, abuse protection, billing/quotas, privacy/compliance review, and release hardening.
+Productization would be a separate architectural phase and likely requires backend auth, a hardened multi-user AI gateway, cloud persistence/sync, abuse protection, billing/quotas, privacy/compliance review, and release hardening.
 
 ## 13. Security/privacy baseline
 
 - Least-privilege Google OAuth scopes.
 - Secrets excluded from backup/export.
 - Provider credentials never logged.
+- Provider OAuth tokens, Codex auth state, and OpenCode Go credentials stay on the personal runtime; the Android app does not own provider secrets.
 - Captures/logs may contain sensitive personal/work information; logs and diagnostics should avoid raw content by default.
 - Backups/exports need explicit user-visible destination and security posture.
-- Public/commercial builds require re-review of direct API credentials and data handling.
+- Public/commercial builds require re-review of credential ownership, scopes, and data handling.
 
 ## 14. Key evidence requirements
 

@@ -73,16 +73,32 @@ For generative visual assets, follow the project AI workflow: Google AI Plus pri
 
 ## Runtime AI policy
 
-Runtime interpretation is provider-abstracted.
+Runtime interpretation is provider-abstracted and currently **paused** at the
+provider/runtime boundary.
 
-Current starting order for the personal MVP:
+Current runtime direction for the personal MVP (post Change 021):
 
-1. MiMo-V2.5 — primary.
-2. DeepSeek V4 Flash — fallback when explicitly required by failure/low-confidence policy.
-3. LongCat-2.0 — candidate if observed MiMo/DeepSeek behavior warrants a switch.
-4. Qwen3.8 Flash — reserve candidate.
+1. GPT-5.6 Luna — Low reasoning — primary target, via ChatGPT Plus / Codex OAuth
+   on shared personal runtime infrastructure.
+2. DeepSeek V4 Flash via OpenCode Go — fallback candidate only,
+   evidence-triggered.
+3. MiMo-V2.5 is not primary; the completed runtime model evaluation observed
+   worse schema/contract reliability than the finalists.
 
-Do not spend time on broad model benchmarking before there is observed product evidence requiring it. Model changes must not alter the domain contract or stored data format.
+Provider credentials and auth state (ChatGPT/Codex OAuth, OpenCode Go) stay on
+the personal VPS/runtime side and must never be stored in the Android app.
+Remote model output is untrusted and must be validated locally before any
+execution. A remote AI dependency must not make capture lossy: persist the
+capture locally first.
+
+Further AI-interpreter/runtime-provider implementation is paused until the
+shared private VPS runtime gateway is planned and proven enough to define the
+real integration boundary. Android-local Codex is deferred. See
+`docs/adr/0001-private-remote-ai-runtime.md`.
+
+Do not spend time on broad model benchmarking before there is observed product
+evidence requiring it. Model changes must not alter the domain contract or
+stored data format.
 
 ## Verification
 

@@ -14,6 +14,8 @@ Likely changes:
 
 ## M1 — Local capture and memory core
 
+Status: **NOT BLOCKED** — completed local work remains valid.
+
 Outcome: the app is useful locally without Google/AI dependencies.
 
 Capabilities:
@@ -30,21 +32,48 @@ Capabilities:
 
 ## M2 — AI interpretation and fast-capture flow
 
+Status: **PARTIALLY BLOCKED** — provider/runtime implementation paused.
+
 Outcome: natural-language input becomes validated structured actions with minimal friction.
 
-Capabilities:
+Already complete and valid:
 
-- typed CapturePlan schema;
-- MiMo-V2.5 provider integration;
-- low-confidence policy;
-- optional DeepSeek V4 Flash fallback;
-- adaptive receipt;
-- optional edit/review branch;
-- correction/routing examples.
+- typed CapturePlan schema + validator (Change 020);
+- provider-independent CaptureInterpreter / AIProvider boundary (Change 021).
+
+Deferred (not rejected) until the shared private VPS runtime gateway is planned
+and proven enough to define the real remote integration boundary:
+
+- real AIProvider implementation;
+- Codex/OpenCode Go provider clients, wire protocol, and provider authentication;
+- Luna runtime integration and DeepSeek V4 Flash fallback implementation;
+- production prompt/schema implementation and runtime network integration;
+- interpreter outcomes (PLAN/CLARIFY/UNSUPPORTED) + temporal-context work
+  formerly proposed as Change 022;
+- low-confidence policy, adaptive receipt, optional edit/review branch, and
+  correction/routing examples.
+
+Runtime model direction: GPT-5.6 Luna Low primary via ChatGPT Plus/Codex OAuth
+behind the private gateway; DeepSeek V4 Flash via OpenCode Go is an
+evidence-triggered fallback candidate.
+
+M2 cannot be considered complete until runtime interpretation resumes.
+Provider-independent execution/application foundations may be candidate work if
+independently justified, but they are not automatically scheduled here.
 
 ## M3 — Google Tasks + Calendar
 
+Status: **NOT globally blocked** — end-to-end natural-language path blocked until interpretation resumes.
+
 Outcome: Personal/Trabajo tasks and events synchronize reliably with Google.
+
+Google OAuth, sync contracts, local/external mapping, outbox/retry,
+idempotency/conflict behavior, and Calendar integration can be designed and
+implemented independently of the AI provider when scoped coherently.
+
+However, end-to-end natural-language capture → interpreted Task/Event → Google
+acceptance remains blocked until interpretation resumes. M3 as a whole must not
+wait for M2.
 
 Capabilities:
 
@@ -59,6 +88,8 @@ Because sync can create data-loss/idempotency risk, break this milestone into sm
 
 ## M4 — Reminders and daily reliability
 
+Status: **NOT globally blocked** — natural-language reminder creation blocked until interpretation resumes.
+
 Outcome: user-configured reminders reliably fire and are actionable.
 
 Capabilities:
@@ -70,6 +101,8 @@ Capabilities:
 - real-device QA.
 
 ## M5 — Durable history, backup, and archive
+
+Status: **NOT blocked by AI runtime.**
 
 Outcome: years of personal memory can be recovered/exported without silent loss.
 
@@ -84,6 +117,8 @@ Capabilities:
 
 ## M6 — Personal MVP polish
 
+Status: **FINAL COMPLETION BLOCKED** — the full north-star happy path requires automated natural-language interpretation. Other polish may continue independently.
+
 Outcome: the user can adopt Quick Aside as the default capture tool in everyday life.
 
 Capabilities driven by observed usage:
@@ -94,6 +129,58 @@ Capabilities driven by observed usage:
 - search/retrieval improvements;
 - UI polish against canonical reference;
 - real usage acceptance period.
+
+## Cross-project runtime dependency
+
+Quick Aside now depends on a shared personal runtime capability:
+
+```text
+Personal Admin / personal-runtime project
+    → shared private VPS runtime capability
+    → Quick Aside AI interpretation
+```
+
+The required external capability is a private, authenticated, bounded AI
+inference service available from the personal VPS — not Hermes-specific agent
+behavior. Quick Aside shares infrastructure with Personal Admin/Hermes but must
+not use the Hermes agent conversation/context as its interpretation service.
+Gateway endpoint, auth/network mechanism, deployment topology, process
+management, and Codex invocation contract remain Personal Admin/shared-runtime
+decisions and are not frozen inside Quick Aside.
+
+## Milestone dependency summary
+
+A milestone having dependencies is not the same as all development stopping.
+Non-blocked, provider-independent work may continue.
+
+| Milestone | Status |
+|---|---|
+| M1 | NOT BLOCKED |
+| M2 | PARTIALLY BLOCKED — completion blocked by runtime gateway readiness |
+| M3 | NOT globally blocked; end-to-end natural-language path blocked until interpretation resumes |
+| M4 | NOT globally blocked; natural-language reminder creation blocked until interpretation resumes |
+| M5 | NOT blocked by AI runtime |
+| M6 | FINAL COMPLETION BLOCKED; other polish may continue |
+
+Change 022 selection is pending independent review and merge of
+`docs/changes/PLN-001-runtime-ai-realignment/` and will come from non-blocked
+roadmap work.
+
+## Available work while AI interpretation is paused
+
+Not automatically scheduled. Candidate inputs for later Change 022 selection:
+
+- M3 foundations: Google OAuth, sync contracts, local/external mapping,
+  outbox/retry, idempotency/conflict behavior, Calendar integration.
+- M4 foundations: reminder domain, scheduling, notification actions, and
+  background/restart reliability.
+- M5 foundations: backup/snapshot, export center, structured reimport format,
+  and archive-before-prune verification.
+- M2 provider-independent execution/application foundations, only if
+  independently justified.
+- M1/M6 polish that does not depend on automated interpretation.
+
+This list records options, not a schedule. Change 022 is not pre-selected.
 
 ## Post-MVP — Evidence-triggered candidates
 

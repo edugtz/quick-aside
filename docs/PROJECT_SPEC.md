@@ -204,14 +204,24 @@ PDF/DOCX are human archives, not the sole restoration format.
 
 AI should interpret captures into a validated structured plan. It must not directly mutate Google services or become the persistence layer.
 
-Initial personal-MVP model strategy:
+Current personal-MVP runtime direction after the completed model evaluation
+(2026-09-09) and Change 021:
 
-- MiMo-V2.5 primary;
-- DeepSeek V4 Flash fallback if required by observed failure/low-confidence policy;
-- LongCat-2.0 next candidate if evidence requires changing;
-- Qwen3.8 Flash reserve.
+- primary target: GPT-5.6 Luna — Low reasoning — via ChatGPT Plus / Codex OAuth;
+- fallback candidate: DeepSeek V4 Flash via OpenCode Go, evidence-triggered only;
+- MiMo-V2.5 is no longer the primary model;
+- provider auth/secrets stay on the personal runtime, never on the Android device;
+- runtime interpretation is currently paused pending the private shared-VPS
+  runtime gateway (see `docs/ARCHITECTURE.md` §5 and
+  `docs/adr/0001-private-remote-ai-runtime.md`).
 
-Avoid up-front benchmark work unless real use shows that model quality is a blocker.
+Remote model output is untrusted and must pass Quick Aside validation before any
+future execution. A remote AI dependency must not make capture lossy: a capture
+is persisted locally before interpretation is attempted, and the original
+capture remains durable if interpretation is unavailable.
+
+Model/provider changes must not alter domain contracts or stored data formats.
+Do not restart broad benchmark work unless real use shows a concrete blocker.
 
 ## 12. MVP must-have capabilities
 

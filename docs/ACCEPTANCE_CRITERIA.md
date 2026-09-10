@@ -50,7 +50,10 @@ These are product-wide gates. Active changes add narrower acceptance scenarios.
 - Model output is validated before mutations.
 - Invalid/unsupported model output cannot directly alter Room/Google data.
 - Runtime provider can be switched without migrating user-domain data.
-- MiMo-V2.5 is the initial primary provider; fallback/provider changes are driven by observed failures, not speculative benchmark work.
+- Primary runtime target is GPT-5.6 Luna Low via the private shared-VPS runtime gateway; DeepSeek V4 Flash via OpenCode Go is an evidence-triggered fallback candidate. Provider changes are driven by observed failures, not speculative benchmark work.
+- Provider OAuth tokens and credentials are never stored on the Android device.
+- A capture is persisted locally before remote interpretation; remote unavailability must not lose user intent or silently discard a capture.
+- Remote interpretation cannot directly mutate Room, Google Tasks/Calendar, or local reminders.
 - AI does not act as the source of historical truth.
 
 ## History and retrieval
@@ -72,6 +75,7 @@ These are product-wide gates. Active changes add narrower acceptance scenarios.
 - Secrets are not included in export/backup or logs.
 - Diagnostics avoid raw personal/work capture content by default.
 - Public distribution cannot use a client-extractable shared provider key architecture.
+- Provider credentials and auth state stay on the personal runtime; the Android client owns no provider secrets.
 
 ## Engineering gates
 
