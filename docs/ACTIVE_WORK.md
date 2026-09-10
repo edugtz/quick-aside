@@ -4,7 +4,9 @@
 
 `docs/changes/PLN-001-runtime-ai-realignment/`
 
-Status: **PLANNING UPDATE COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
+
+Independent verdict: **PASS — BLOCKER 0 / MAJOR 0 / MINOR 0**
 
 Governance: **STANDARD**
 
@@ -41,7 +43,6 @@ production code and does not select or create Change 022.
 
 ## Exact next gate
 
-Independent review of the planning/docs diff.
-
-After that planning update is reviewed and merged, the orchestrator inspects
-non-blocked roadmap work and selects the smallest coherent Change 022.
+User-authorized commit/push of closeout docs, then merge PLN-001 into main.
+After merge, the orchestrator reviews current non-blocked roadmap work and
+selects the smallest coherent Change 022.

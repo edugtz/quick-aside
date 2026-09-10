@@ -1,6 +1,6 @@
 # ADR-0001 — Private Remote AI Runtime for Capture Interpretation
 
-Status: **Accepted — pending independent review of PLN-001**
+Status: **Accepted**
 Date: 2026-09-10
 Decision owner: user
 Related: `docs/ARCHITECTURE.md` §5, `docs/AI_WORKFLOW.md` §3, `docs/ROADMAP.md` M2,

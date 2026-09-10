@@ -1,7 +1,7 @@
 # PLN-001 — Runtime AI Realignment — TASKS
 
 Governance: **STANDARD**
-Status: **PLANNING UPDATE COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `planning-runtime-ai-realignment`
 
 ## Preflight
@@ -60,10 +60,10 @@ Expected branch: `planning-runtime-ai-realignment`
 - [x] `git diff --stat`
 - [x] Targeted textual checks (see `PLAN.md`).
 - [x] Confirm no Kotlin/Gradle/Room/manifest/test/schema file changed.
-- [x] Leave the verdict to independent review.
+- [x] Independent review recorded: **PASS — BLOCKER 0 / MAJOR 0 / MINOR 0**.
 
 ## Exact next gate
 
-Independent review of the planning/docs diff, then user-authorized merge.
-After merge, the orchestrator selects the smallest coherent Change 022 from
-non-blocked roadmap work.
+User-authorized commit/push of closeout docs, then merge PLN-001 into main.
+After merge, the orchestrator reviews current non-blocked roadmap work and
+selects the smallest coherent Change 022.
