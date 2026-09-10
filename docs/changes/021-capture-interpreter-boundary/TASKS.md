@@ -1,7 +1,7 @@
 # Change 021 — Capture Interpreter + AIProvider Boundary — TASKS
 
 Governance: STANDARD
-Status: IMPLEMENTATION COMPLETE — REVIEW PENDING
+Status: COMPLETE — REVIEW PASS
 Expected branch: chg-021-capture-interpreter-boundary
 
 This is a LIVE EXECUTION CHECKLIST. Mark [x] only when actual work or
@@ -91,7 +91,11 @@ Evidence:
 
 The final builder report must not declare the independent engineering verdict.
 
+Independent engineering review:
+PASS — BLOCKER 0 / MAJOR 0 / MINOR 0
+
+Independent engineering review gate: complete.
+
 ## Exact next gate
 
-Independent engineering review after the user commits/pushes the combined
-Change 021 docs and implementation.
+Change 021 is complete and ready for user-authorized merge.

@@ -4,13 +4,22 @@
 
 docs/changes/021-capture-interpreter-boundary/
 
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 - Governance: **STANDARD**
 
 Change 020 is complete and provides the CapturePlan/draft/validator baseline.
 Change 021 establishes the provider-independent interpretation boundary and
 stops at a validated in-memory plan/result. No action execution or runtime
 provider integration is in scope.
+
+Final independent verdict:
+PASS
+BLOCKER 0
+MAJOR 0
+MINOR 0
+
+State:
+Change 021 is complete.
 
 ## Proven baseline
 
@@ -43,5 +52,6 @@ action-execution behavior.
 
 ## Exact next gate
 
-Independent engineering review after the user commits/pushes the combined
-Change 021 docs and implementation.
+Change 021 is complete and ready for user-authorized merge.
+
+After merge, M2 continues with the next reviewable change.
