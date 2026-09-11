@@ -2,9 +2,9 @@
 
 ## Active change
 
-`docs/changes/023-task-completion-state/`
+`docs/changes/024-reversible-task-create/`
 
-Status: **COMPLETE — REVIEW PASS**
+Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
 
 Governance: **HIGH-ASSURANCE**
 
@@ -13,8 +13,13 @@ Change 022 is merged and complete at the verified baseline
 HIGH-ASSURANCE verification are complete. Independent review: `PASS` —
 `BLOCKER 0`, `MAJOR 0`, `MINOR 0`. Task now has durable provider-neutral
 completion state, Room is version 7 with an explicit 6→7 migration, and
-runtime AI remains paused. No Task UI, ActionExecutor, Google sync, reminders,
-or reversible Task action is included.
+runtime AI remains paused.
+
+Change 024 is selected on `chg-024-reversible-task-create` from verified
+`origin/main` `a3ef7e2c258146015875cb30069e5747b682b23a`. It adds only the
+provider-independent Task create + targeted Undo application boundary and its
+atomic Room implementation/evidence. No Task UI, ActionExecutor, Google sync,
+reminders, or complete/reopen application action is included.
 
 ## State
 
@@ -33,12 +38,12 @@ or reversible Task action is included.
 - Android-local Codex is deferred pending materially better upstream evidence or
   official Android support.
 - Change 022 is complete from the verified closeout baseline.
-- Change 023 is selected on `chg-023-task-completion-state`.
 - Change 023 implementation and HIGH-ASSURANCE verification are complete.
 - Independent review is complete: `PASS` — `BLOCKER 0`, `MAJOR 0`, `MINOR 0`.
 - Change 023 must add no separate completion boolean, Google status, sync
   metadata, action behavior, reminders, UI, or AI/runtime work.
-- No Change 024 has been selected yet.
+- Change 024 implementation is complete; its independent review remains
+  pending.
 
 ## Proven baseline
 
@@ -51,7 +56,6 @@ or reversible Task action is included.
 
 ## Exact next gate
 
-User-authorized commit/push of Change 023 closeout docs, then merge
-`chg-023-task-completion-state` into `main`.
-After merge, the orchestrator will inspect current repository/roadmap state
-before selecting the next reviewable change. Do not select Change 024 yet.
+After implementation evidence is complete: user-authorized commit/push of the
+combined CHG-024 implementation, docs, tests, and evidence, followed by
+independent review of `main...chg-024-reversible-task-create`.
