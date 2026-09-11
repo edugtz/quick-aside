@@ -41,8 +41,7 @@ classified here as pre-existing.
   conversation/context.
 - Android-local Codex is deferred pending materially better upstream evidence or
   official Android support.
-- Change 022 is selected and executing from the verified PLN-001 merge
-  baseline.
+- Change 022 is complete from the verified PLN-001 merge baseline.
 - PLN-001 is merged and complete; runtime AI implementation remains paused.
 - Change 022 adds only the local durable Task persistence foundation. No
   Google sync, AI provider, ActionExecutor, reminders, or Task UI is in scope.
