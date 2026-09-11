@@ -4,16 +4,17 @@
 
 `docs/changes/023-task-completion-state/`
 
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 
 Governance: **HIGH-ASSURANCE**
 
 Change 022 is merged and complete at the verified baseline
 `8aace0eca7c35c086d3f23db4d8ca91301ad9e1d`. Change 023 implementation and
-HIGH-ASSURANCE verification evidence are complete: Task now has
-provider-neutral persisted completion state, Room is version 7 with an explicit
-6→7 migration, and runtime AI remains paused. No Task UI, ActionExecutor,
-Google sync, reminders, or reversible Task action is included.
+HIGH-ASSURANCE verification are complete. Independent review: `PASS` —
+`BLOCKER 0`, `MAJOR 0`, `MINOR 0`. Task now has durable provider-neutral
+completion state, Room is version 7 with an explicit 6→7 migration, and
+runtime AI remains paused. No Task UI, ActionExecutor, Google sync, reminders,
+or reversible Task action is included.
 
 ## State
 
@@ -33,10 +34,11 @@ Google sync, reminders, or reversible Task action is included.
   official Android support.
 - Change 022 is complete from the verified closeout baseline.
 - Change 023 is selected on `chg-023-task-completion-state`.
-- Change 023 implementation evidence is complete; independent review remains
-  pending.
+- Change 023 implementation and HIGH-ASSURANCE verification are complete.
+- Independent review is complete: `PASS` — `BLOCKER 0`, `MAJOR 0`, `MINOR 0`.
 - Change 023 must add no separate completion boolean, Google status, sync
   metadata, action behavior, reminders, UI, or AI/runtime work.
+- No Change 024 has been selected yet.
 
 ## Proven baseline
 
@@ -49,6 +51,7 @@ Google sync, reminders, or reversible Task action is included.
 
 ## Exact next gate
 
-User-authorized commit/push of combined Change 023 docs + implementation +
-tests/schema evidence, followed by independent review of
-`main...chg-023-task-completion-state`.
+User-authorized commit/push of Change 023 closeout docs, then merge
+`chg-023-task-completion-state` into `main`.
+After merge, the orchestrator will inspect current repository/roadmap state
+before selecting the next reviewable change. Do not select Change 024 yet.

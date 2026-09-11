@@ -1,7 +1,7 @@
 # Change 023 — Task Completion State Foundation — TASKS
 
 Governance: **HIGH-ASSURANCE**  
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**  
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-023-task-completion-state`
 
 This is a LIVE EXECUTION CHECKLIST. Mark a task `[x]` only after the work or
@@ -85,6 +85,8 @@ evidence; it does not declare an independent engineering verdict.
 - [x] Run schema comparison, `git diff --check`, `git status --short`, and
       `git diff --stat`.
 - [x] Prepare the evidence report without declaring an independent verdict.
+- [x] Record independent engineering review: `PASS`; `BLOCKER 0`, `MAJOR 0`,
+      `MINOR 0`.
 
 ## Evidence log
 
@@ -116,10 +118,14 @@ evidence; it does not declare an independent engineering verdict.
   failure.
 - Broader all-app connected coverage was not run; the change remained within
   Task/domain/Room/data.local surfaces and introduced no UI behavior.
+- Independent engineering review: `PASS`; `BLOCKER 0`, `MAJOR 0`, `MINOR 0`.
+- Review confirmed the existing implementation, schema, migration, device,
+  JVM, build, lint, preservation, and scope evidence. No additional gates were
+  added.
 
 ## Exact next gate
 
-During execution: finish implementation and all applicable evidence gates.
-After successful builder closeout: user-authorized commit/push of combined
-Change 023 docs + implementation + tests/schema evidence, followed by
-independent review of `main...chg-023-task-completion-state`.
+User-authorized commit/push of Change 023 closeout docs, then merge
+`chg-023-task-completion-state` into `main`. After merge, inspect the current
+repository/roadmap state before selecting the next reviewable change. Do not
+select Change 024 yet.
