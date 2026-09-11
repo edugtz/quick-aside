@@ -1,7 +1,7 @@
 # Change 022 — Local Task Persistence Foundation — TASKS
 
 Governance: **HIGH-ASSURANCE**  
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**  
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 Expected branch: `chg-022-local-task-persistence`
 
 This is a LIVE EXECUTION CHECKLIST. Mark a task `[x]` only after the work or
@@ -90,6 +90,8 @@ unchecked and are described in the evidence log.
 - [x] Inspect `git status --short` and `git diff --stat`.
 - [x] Prepare the implementation report without declaring an independent
       engineering verdict.
+- [x] Record the independent review verdict: `PASS_WITH_NOTES`; `BLOCKER 0`,
+      `MAJOR 0`, `MINOR 0`.
 
 ## Scope and authority
 
@@ -97,7 +99,8 @@ unchecked and are described in the evidence log.
       interpretation, ActionExecutor, Google, Calendar, sync/outbox/conflict,
       reminders, Task UI, VPS/Hermes/gateway, provider credentials, fallback
       provider, speculative field, or unrelated refactor was added.
-- [x] Do not commit, push, merge, release, or self-declare review PASS.
+- [x] Keep commit, push, merge, and release under user authority; record the
+      independently supplied review outcome without changing scope.
 
 ## Evidence log
 
@@ -122,16 +125,25 @@ unchecked and are described in the evidence log.
   legacy-data preservation, and post-migration Task persistence.
 - Applicable `com.edu.quickaside.data.local` connected suite: 84/84 passed on
   the Oppo, with zero skips, failures, or errors.
-- A broader all-app `:app:connectedDebugAndroidTest` run executed 209 tests and
-  had one pre-existing `MandadoUiTest.undoFailureReloadsVisibleStateAndShowsConciseError`
-  Compose timeout; no UI files were changed and this is outside Change 022's
-  persistence scope.
+- Independent review verdict: `PASS_WITH_NOTES`; `BLOCKER 0`, `MAJOR 0`,
+  `MINOR 0`.
+- A broader all-app `:app:connectedDebugAndroidTest` run completed 208/209
+  tests and observed one
+  `MandadoUiTest.undoFailureReloadsVisibleStateAndShowsConciseError` Compose
+  timeout. `MandadoUiTest` and its fake list/action dependencies are unchanged
+  by Change 022; the failure is outside the required Task/Room verification
+  gates, and current evidence does not attribute it to Change 022. No
+  baseline-main reproduction was performed, so it is not classified here as
+  pre-existing.
+- All required Change 022 gates remain checked; the unrelated UI timeout is a
+  non-blocking review note, not an additional Change 022 gate.
 
 ## Exact next gate
 
-Implementation and required device evidence are complete; leave the final
-engineering verdict to independent review. The exact next gate is
-user-authorized commit/push of the combined Change 022 docs, implementation,
-tests, and schema evidence, followed by independent review of
-main...chg-022-local-task-persistence. No commit, push, merge, or release is
-part of this builder turn.
+Change 022 is `COMPLETE — REVIEW PASS_WITH_NOTES`; the independent engineering
+verdict is recorded above. The exact next gate is user-authorized commit/push
+of Change 022 closeout docs, then merge `chg-022-local-task-persistence` into
+`main`. After merge, the orchestrator will inspect the current roadmap and
+repository state and select the next reviewable change. Change 023 has not
+been selected. No commit, push, merge, or release is part of this builder
+turn.

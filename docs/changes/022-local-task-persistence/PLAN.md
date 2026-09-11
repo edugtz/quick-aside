@@ -1,7 +1,7 @@
 # Change 022 — Local Task Persistence Foundation — PLAN
 
 Governance: **HIGH-ASSURANCE**  
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**  
+Status: **COMPLETE — REVIEW PASS_WITH_NOTES**
 Expected branch: `chg-022-local-task-persistence`
 
 This plan follows the accepted current Task domain and existing focused Room
@@ -124,9 +124,15 @@ change-package files are expected to change.
 - `:app:assembleDebug` and `:app:lintDebug`: BUILD SUCCESSFUL.
 - Focused `TaskPersistenceDatabaseTest` passed 5/5 on the authorized Oppo
   CPH2791 / Android 16 device. The applicable `com.edu.quickaside.data.local`
-  connected suite passed 84/84 with zero skips, failures, or errors. A broader
-  all-app connected run executed 209 tests and reported one pre-existing
-  `MandadoUiTest` UI timeout outside Change 022's scope.
+  connected suite passed 84/84 with zero skips, failures, or errors.
+- Independent review verdict: `PASS_WITH_NOTES`; `BLOCKER 0`, `MAJOR 0`,
+  `MINOR 0`.
+- A broader all-app connected run completed 208/209 tests and observed one
+  `MandadoUiTest` Compose timeout. `MandadoUiTest` and its fake list/action
+  dependencies are unchanged by Change 022; the failure is outside the
+  required Task/Room verification gates, and current evidence does not
+  attribute it to Change 022. No baseline-main reproduction was performed, so
+  it is not classified here as pre-existing.
 - Generated schema 6 has identity hash
   `bcce741653c243cf77bf048e39e33f9a`, version 6, the nine unchanged v5
   entities plus `tasks`, and no Task foreign keys or indexes. Schemas 1–5
