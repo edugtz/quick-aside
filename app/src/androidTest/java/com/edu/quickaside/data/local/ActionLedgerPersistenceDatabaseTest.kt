@@ -443,7 +443,7 @@ class ActionLedgerPersistenceDatabaseTest {
         )
         assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
         assertTrue(database.actionLedgerMutationDao().getByEntryId("legacy-entry").isEmpty())
-        assertEquals(5L, readUserVersion())
+        assertEquals(6L, readUserVersion())
         assertTrue(
             readTables().containsAll(
                 listOf(
@@ -470,7 +470,7 @@ class ActionLedgerPersistenceDatabaseTest {
         val saved = store.record(listOf(mutation(targetId = "post-migration-target")))
             as ActionLedgerRecordResult.Saved
         assertEquals(saved.entry, store.getEntry(saved.entry.id))
-        assertEquals(5L, readUserVersion())
+        assertEquals(6L, readUserVersion())
         assertEquals(schemaBefore, readLegacySchemaObjects())
     }
 

@@ -19,8 +19,9 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
         StructuredLogFieldEntity::class,
         ActionLedgerEntryEntity::class,
         ActionLedgerMutationEntity::class,
+        TaskEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = true,
 )
 abstract class QuickAsideDatabase : RoomDatabase() {
@@ -42,6 +43,8 @@ abstract class QuickAsideDatabase : RoomDatabase() {
 
     abstract fun actionLedgerMutationDao(): ActionLedgerMutationDao
 
+    abstract fun taskDao(): TaskDao
+
     companion object {
         const val DATABASE_NAME = "quick_aside.db"
 
@@ -54,7 +57,13 @@ abstract class QuickAsideDatabase : RoomDatabase() {
             databaseName,
         )
             .setDriver(BundledSQLiteDriver())
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+            .addMigrations(
+                MIGRATION_1_2,
+                MIGRATION_2_3,
+                MIGRATION_3_4,
+                MIGRATION_4_5,
+                MIGRATION_5_6,
+            )
             .addCallback(BuiltInListDefinitionBootstrapper)
             .build()
 
@@ -211,6 +220,22 @@ abstract class QuickAsideDatabase : RoomDatabase() {
                 connection.prepare(
                     "CREATE INDEX IF NOT EXISTS `index_action_ledger_entries_source_capture_id` " +
                         "ON `action_ledger_entries` (`source_capture_id`) ",
+                ).use { statement -> statement.step() }
+            }
+        }
+
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override suspend fun migrate(connection: SQLiteConnection) {
+                connection.prepare(
+                    """
+                    CREATE TABLE IF NOT EXISTS `tasks` (
+                        `id` TEXT NOT NULL,
+                        `title` TEXT NOT NULL,
+                        `space` TEXT NOT NULL,
+                        `due_date` TEXT,
+                        PRIMARY KEY(`id`)
+                    )
+                    """.trimIndent(),
                 ).use { statement -> statement.step() }
             }
         }

@@ -1,18 +1,21 @@
 # Quick Aside — Active Work
 
-## Active planning update
+## Active change
 
-`docs/changes/PLN-001-runtime-ai-realignment/`
+`docs/changes/022-local-task-persistence/`
 
-Status: **COMPLETE — REVIEW PASS**
+Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
 
-Independent verdict: **PASS — BLOCKER 0 / MAJOR 0 / MINOR 0**
+Governance: **HIGH-ASSURANCE**
 
-Governance: **STANDARD**
+Change 022 establishes only the local durable Room-backed Task persistence
+foundation for the current Task domain. Runtime AI implementation remains
+paused; no Google sync, ActionExecutor, reminders, or Task UI is in scope.
 
-This is a docs-only planning package. It reconciles canonical documentation with
-the post-Change-021 runtime-AI decisions and evidence. It does not implement
-production code and does not select or create Change 022.
+Focused Task/migration instrumentation and the applicable Room/data.local
+connected suite passed on the authorized Oppo CPH2791 / Android 16 device
+(5/5 and 84/84, respectively). A broader all-app connected run had one
+pre-existing `MandadoUiTest` UI timeout outside Change 022; no UI files changed.
 
 ## State
 
@@ -30,7 +33,11 @@ production code and does not select or create Change 022.
   conversation/context.
 - Android-local Codex is deferred pending materially better upstream evidence or
   official Android support.
-- No Change 022 has been selected yet.
+- Change 022 is selected and executing from the verified PLN-001 merge
+  baseline.
+- PLN-001 is merged and complete; runtime AI implementation remains paused.
+- Change 022 adds only the local durable Task persistence foundation. No
+  Google sync, AI provider, ActionExecutor, reminders, or Task UI is in scope.
 
 ## Proven baseline
 
@@ -43,6 +50,6 @@ production code and does not select or create Change 022.
 
 ## Exact next gate
 
-User-authorized commit/push of closeout docs, then merge PLN-001 into main.
-After merge, the orchestrator reviews current non-blocked roadmap work and
-selects the smallest coherent Change 022.
+User-authorized commit/push of the combined Change 022 docs + implementation +
+tests/schema evidence, followed by independent review of
+main...chg-022-local-task-persistence.
