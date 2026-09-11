@@ -71,7 +71,7 @@ class ListPersistenceDatabaseTest {
         )
 
         database.close()
-        assertEquals(6L, readUserVersion())
+        assertEquals(7L, readUserVersion())
         assertTrue(readTables().containsAll(listOf("captures", "list_definitions", "list_sessions", "list_items")))
     }
 
@@ -106,7 +106,7 @@ class ListPersistenceDatabaseTest {
         )
 
         database.close()
-        assertEquals(6L, readUserVersion())
+        assertEquals(7L, readUserVersion())
         assertTrue(readTables().containsAll(listOf("captures", "list_definitions", "list_sessions", "list_items")))
 
         openProductionDatabase()

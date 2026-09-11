@@ -21,7 +21,7 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
         ActionLedgerMutationEntity::class,
         TaskEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 abstract class QuickAsideDatabase : RoomDatabase() {
@@ -63,6 +63,7 @@ abstract class QuickAsideDatabase : RoomDatabase() {
                 MIGRATION_3_4,
                 MIGRATION_4_5,
                 MIGRATION_5_6,
+                MIGRATION_6_7,
             )
             .addCallback(BuiltInListDefinitionBootstrapper)
             .build()
@@ -236,6 +237,14 @@ abstract class QuickAsideDatabase : RoomDatabase() {
                         PRIMARY KEY(`id`)
                     )
                     """.trimIndent(),
+                ).use { statement -> statement.step() }
+            }
+        }
+
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override suspend fun migrate(connection: SQLiteConnection) {
+                connection.prepare(
+                    "ALTER TABLE `tasks` ADD COLUMN `completed_at_epoch_millis` INTEGER",
                 ).use { statement -> statement.step() }
             }
         }

@@ -50,7 +50,7 @@ class TaskPersistenceDatabaseTest {
 
     @Before
     fun setUp() {
-        databaseName = "change-022-task-${UUID.randomUUID()}.db"
+        databaseName = "change-023-task-${UUID.randomUUID()}.db"
         context.deleteDatabase(databaseName)
     }
 
@@ -63,7 +63,7 @@ class TaskPersistenceDatabaseTest {
     }
 
     @Test
-    fun freshV6DatabaseRoundTripsBothSpacesDatesNullAndStableIdUpsert() = runBlocking {
+    fun freshV7DatabaseRoundTripsPendingAndCompletedTasksAndStableIdUpsert() = runBlocking {
         openFreshDatabase()
         val personal = Task(
             id = TaskId("task-01-personal"),
@@ -75,6 +75,7 @@ class TaskPersistenceDatabaseTest {
             title = "Revisar integración",
             space = TaskSpace.TRABAJO,
             dueDate = LocalDate.of(2026, 9, 17),
+            completedAt = Instant.parse("2026-09-17T18:19:20.123Z"),
         )
         val store = RoomTaskStore(database)
 
@@ -86,11 +87,17 @@ class TaskPersistenceDatabaseTest {
         assertEquals(listOf(personal, trabajo), store.readAll())
         assertNull(database.taskDao().getById(personal.id.value)?.dueDate)
         assertEquals("2026-09-17", database.taskDao().getById(trabajo.id.value)?.dueDate)
+        assertNull(database.taskDao().getById(personal.id.value)?.completedAtEpochMillis)
+        assertEquals(
+            trabajo.completedAt?.toEpochMilli(),
+            database.taskDao().getById(trabajo.id.value)?.completedAtEpochMillis,
+        )
 
         val updatedPersonal = personal.copy(
             title = "Pagar Totalplay actualizado",
             space = TaskSpace.TRABAJO,
             dueDate = LocalDate.of(2026, 9, 18),
+            completedAt = Instant.parse("2026-09-18T09:10:11Z"),
         )
         store.save(updatedPersonal)
 
@@ -104,7 +111,36 @@ class TaskPersistenceDatabaseTest {
         assertEquals(updatedPersonal, RoomTaskStore(database).getById(personal.id))
         assertEquals(listOf(updatedPersonal, trabajo), RoomTaskStore(database).readAll())
         database.close()
-        assertEquals(6L, readUserVersion())
+        assertEquals(7L, readUserVersion())
+    }
+
+    @Test
+    fun sameStableIdCompletedTaskCanBeReopenedWithoutDuplicateAndSurvivesReopen() = runBlocking {
+        openFreshDatabase()
+        val completed = task(
+            id = "lifecycle-task",
+            title = "Completar y reabrir",
+            space = TaskSpace.PERSONAL,
+            dueDate = LocalDate.of(2026, 9, 19),
+            completedAt = Instant.parse("2026-09-19T10:11:12Z"),
+        )
+        val store = RoomTaskStore(database)
+
+        store.save(completed)
+        assertEquals(completed, store.getById(completed.id))
+
+        val reopened = completed.copy(completedAt = null)
+        store.save(reopened)
+
+        assertEquals(reopened, store.getById(reopened.id))
+        assertNull(database.taskDao().getById(reopened.id.value)?.completedAtEpochMillis)
+        assertEquals(1, database.taskDao().getAll().size)
+
+        database.close()
+        openProductionDatabase()
+
+        assertEquals(reopened, RoomTaskStore(database).getById(reopened.id))
+        assertEquals(1, database.taskDao().getAll().size)
     }
 
     @Test
@@ -151,18 +187,33 @@ class TaskPersistenceDatabaseTest {
     }
 
     @Test
-    fun realV5FixtureMigratesPreservingAllLegacyFamiliesAndSupportsTasks() = runBlocking {
-        createVersion5Fixture()
-        assertEquals(5L, readUserVersion())
+    fun realV6FixtureMigratesPreservingAllLegacyFamiliesAndSupportsTaskLifecycle() = runBlocking {
+        createVersion6Fixture()
+        assertEquals(6L, readUserVersion())
         val schemaBefore = readLegacySchemaObjects()
+        val taskColumnsBefore = readColumns("tasks")
 
         openProductionDatabase()
 
-        assertTrue(database.taskDao().getAll().isEmpty())
+        assertEquals(
+            listOf(LEGACY_PERSONAL_TASK, LEGACY_TRABAJO_TASK),
+            RoomTaskStore(database).readAll(),
+        )
+        assertTrue(RoomTaskStore(database).readAll().all { it.completedAt == null })
         assertLegacyData()
 
         database.close()
-        assertEquals(6L, readUserVersion())
+        assertEquals(7L, readUserVersion())
+        assertEquals(
+            listOf(
+                ColumnInfo("id", "TEXT", true, 1),
+                ColumnInfo("title", "TEXT", true, 0),
+                ColumnInfo("space", "TEXT", true, 0),
+                ColumnInfo("due_date", "TEXT", false, 0),
+                ColumnInfo("completed_at_epoch_millis", "INTEGER", false, 0),
+            ),
+            readColumns("tasks"),
+        )
         assertEquals(
             listOf(
                 ColumnInfo("id", "TEXT", true, 1),
@@ -170,31 +221,57 @@ class TaskPersistenceDatabaseTest {
                 ColumnInfo("space", "TEXT", true, 0),
                 ColumnInfo("due_date", "TEXT", false, 0),
             ),
-            readColumns("tasks"),
+            taskColumnsBefore,
         )
         assertTrue(readTables().contains("tasks"))
         assertEquals(schemaBefore, readLegacySchemaObjects())
 
         openProductionDatabase()
-        assertTrue(database.taskDao().getAll().isEmpty())
         assertLegacyData()
-        val postMigrationTask = task(
-            id = "post-migration-task",
-            title = "  Persistida después de migrar  ",
-            space = TaskSpace.PERSONAL,
-            dueDate = null,
+        assertEquals(
+            listOf(LEGACY_PERSONAL_TASK, LEGACY_TRABAJO_TASK),
+            RoomTaskStore(database).readAll(),
         )
-        RoomTaskStore(database).save(postMigrationTask)
-        assertEquals(postMigrationTask, RoomTaskStore(database).getById(postMigrationTask.id))
+        val completedMigratedTask = LEGACY_TRABAJO_TASK.copy(
+            completedAt = Instant.parse("2026-09-20T12:13:14Z"),
+        )
+        RoomTaskStore(database).save(completedMigratedTask)
+        assertEquals(
+            completedMigratedTask,
+            RoomTaskStore(database).getById(completedMigratedTask.id),
+        )
+        assertEquals(2, database.taskDao().getAll().size)
 
         database.close()
-        assertEquals(6L, readUserVersion())
+        assertEquals(7L, readUserVersion())
         assertEquals(schemaBefore, readLegacySchemaObjects())
 
         openProductionDatabase()
         assertLegacyData()
-        assertEquals(postMigrationTask, RoomTaskStore(database).getById(postMigrationTask.id))
-        assertEquals(listOf(postMigrationTask), RoomTaskStore(database).readAll())
+        assertEquals(
+            completedMigratedTask,
+            RoomTaskStore(database).getById(completedMigratedTask.id),
+        )
+        val reopenedMigratedTask = completedMigratedTask.copy(completedAt = null)
+        RoomTaskStore(database).save(reopenedMigratedTask)
+        assertEquals(
+            reopenedMigratedTask,
+            RoomTaskStore(database).getById(reopenedMigratedTask.id),
+        )
+        assertNull(database.taskDao().getById(reopenedMigratedTask.id.value)?.completedAtEpochMillis)
+        assertEquals(2, database.taskDao().getAll().size)
+
+        database.close()
+        assertEquals(7L, readUserVersion())
+        assertEquals(schemaBefore, readLegacySchemaObjects())
+
+        openProductionDatabase()
+        assertLegacyData()
+        assertEquals(
+            reopenedMigratedTask,
+            RoomTaskStore(database).getById(reopenedMigratedTask.id),
+        )
+        assertEquals(2, database.taskDao().getAll().size)
     }
 
     private fun task(
@@ -202,11 +279,13 @@ class TaskPersistenceDatabaseTest {
         title: String = "Task $id",
         space: TaskSpace = TaskSpace.PERSONAL,
         dueDate: LocalDate? = LocalDate.of(2026, 9, 20),
+        completedAt: Instant? = null,
     ): Task = Task(
         id = TaskId(id),
         title = title,
         space = space,
         dueDate = dueDate,
+        completedAt = completedAt,
     )
 
     private suspend fun assertLegacyData() {
@@ -262,7 +341,7 @@ class TaskPersistenceDatabaseTest {
         database = QuickAsideDatabase.create(context, databaseName)
     }
 
-    private fun createVersion5Fixture() {
+    private fun createVersion6Fixture() {
         val path = context.getDatabasePath(databaseName).apply { parentFile?.mkdirs() }.absolutePath
         BundledSQLiteDriver().open(path).use { connection ->
             connection.execute("PRAGMA foreign_keys = ON")
@@ -386,6 +465,17 @@ class TaskPersistenceDatabaseTest {
                 """.trimIndent(),
             )
             connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS `tasks` (
+                    `id` TEXT NOT NULL,
+                    `title` TEXT NOT NULL,
+                    `space` TEXT NOT NULL,
+                    `due_date` TEXT,
+                    PRIMARY KEY(`id`)
+                )
+                """.trimIndent(),
+            )
+            connection.execute(
                 "CREATE INDEX IF NOT EXISTS `index_list_sessions_list_definition_id` " +
                     "ON `list_sessions` (`list_definition_id`) ",
             )
@@ -415,9 +505,9 @@ class TaskPersistenceDatabaseTest {
             )
             connection.execute(
                 "INSERT OR REPLACE INTO `room_master_table` " +
-                    "(id,identity_hash) VALUES(42, '$V5_IDENTITY_HASH')",
+                    "(id,identity_hash) VALUES(42, '$V6_IDENTITY_HASH')",
             )
-            connection.execute("PRAGMA user_version = 5")
+            connection.execute("PRAGMA user_version = 6")
 
             connection.insertCapture(LEGACY_TEXT_CAPTURE)
             connection.insertCapture(LEGACY_CORRECTED_VOICE_CAPTURE)
@@ -459,6 +549,14 @@ class TaskPersistenceDatabaseTest {
             connection.execute(
                 "INSERT INTO `action_ledger_mutations` VALUES " +
                     "('legacy-entry', 0, 'CREATE', 'task', 'legacy-task', 1, NULL, 'after legacy task')",
+            )
+            connection.execute(
+                "INSERT INTO `tasks` VALUES " +
+                    "('legacy-task-personal', '  Pagar Totalplay legado  ', 'PERSONAL', NULL)",
+            )
+            connection.execute(
+                "INSERT INTO `tasks` VALUES " +
+                    "('legacy-task-trabajo', 'Revisar PR legado', 'TRABAJO', '2026-09-17')",
             )
         }
     }
@@ -576,7 +674,7 @@ class TaskPersistenceDatabaseTest {
     )
 
     private companion object {
-        const val V5_IDENTITY_HASH = "a48a06990e50fcd1d1571535174d0622"
+        const val V6_IDENTITY_HASH = "bcce741653c243cf77bf048e39e33f9a"
         val LEGACY_TEXT_CAPTURE = CaptureEntity(
             id = "legacy-text",
             kind = "TEXT",
@@ -638,6 +736,20 @@ class TaskPersistenceDatabaseTest {
             ),
             sourceCaptureId = CaptureId("legacy-corrected-voice"),
             createdAt = Instant.ofEpochMilli(1788436840000),
+        )
+        val LEGACY_PERSONAL_TASK = Task(
+            id = TaskId("legacy-task-personal"),
+            title = "  Pagar Totalplay legado  ",
+            space = TaskSpace.PERSONAL,
+            dueDate = null,
+            completedAt = null,
+        )
+        val LEGACY_TRABAJO_TASK = Task(
+            id = TaskId("legacy-task-trabajo"),
+            title = "Revisar PR legado",
+            space = TaskSpace.TRABAJO,
+            dueDate = LocalDate.of(2026, 9, 17),
+            completedAt = null,
         )
         val LEGACY_LEDGER_ENTRY = ActionLedgerEntry(
             id = ActionLedgerEntryId("legacy-entry"),
