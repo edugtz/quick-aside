@@ -1,7 +1,7 @@
 # Change 024 — Reversible Task Create Action Foundation — PLAN
 
 Governance: **HIGH-ASSURANCE**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-024-reversible-task-create`
 
 This plan follows the verified Change 023 baseline. It does not re-plan the
@@ -117,12 +117,9 @@ green; no shared infrastructure refactor is planned.
 
 ## Closeout state
 
-Builder closeout is `IMPLEMENTATION COMPLETE — REVIEW PENDING` when the
-implementation and all reasonably obtainable applicable gates have evidence.
-The independent engineering review task remains unchecked. The exact next
-gate is user-authorized commit/push of the combined CHG-024 implementation,
-docs, tests, and evidence, followed by independent review of
-`main...chg-024-reversible-task-create`.
+Builder closeout was `IMPLEMENTATION COMPLETE — REVIEW PENDING` before the
+independent remote review. The implementation and verification history below
+is preserved as recorded.
 
 ## Implementation evidence
 
@@ -146,5 +143,15 @@ docs, tests, and evidence, followed by independent review of
 - The byte-for-byte schema comparison against `origin/main` was clean. Room
   version 7, migrations through 6→7, and no destructive fallback were
   confirmed. `git diff --check` was clean.
-- No applicable gate is blocked. No UI screenshots were required. Independent
-  engineering review remains pending.
+- No applicable gate was blocked. No UI screenshots were required.
+
+## Independent engineering review closeout
+
+Independent engineering review is complete:
+
+PASS
+BLOCKER 0
+MAJOR 0
+MINOR 0
+
+No new implementation work or future planning is created by this closeout.

@@ -4,7 +4,7 @@
 
 `docs/changes/024-reversible-task-create/`
 
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 
 Governance: **HIGH-ASSURANCE**
 
@@ -17,9 +17,11 @@ runtime AI remains paused.
 
 Change 024 is selected on `chg-024-reversible-task-create` from verified
 `origin/main` `a3ef7e2c258146015875cb30069e5747b682b23a`. It adds only the
-provider-independent Task create + targeted Undo application boundary and its
-atomic Room implementation/evidence. No Task UI, ActionExecutor, Google sync,
-reminders, or complete/reopen application action is included.
+provider-independent reversible local Task-create application boundary backed
+by atomic Room + Action Ledger semantics. Existing TaskStore lifecycle UPSERT
+remains intact; Room remains version 7; runtime AI remains paused; and no Task
+complete/reopen application action was added. No Task UI, ActionExecutor,
+Google sync, or reminders are included.
 
 ## State
 
@@ -42,8 +44,9 @@ reminders, or complete/reopen application action is included.
 - Independent review is complete: `PASS` — `BLOCKER 0`, `MAJOR 0`, `MINOR 0`.
 - Change 023 must add no separate completion boolean, Google status, sync
   metadata, action behavior, reminders, UI, or AI/runtime work.
-- Change 024 implementation is complete; its independent review remains
-  pending.
+- Change 024 is complete; independent engineering review: PASS — BLOCKER 0,
+  MAJOR 0, MINOR 0.
+- No CHG-025 or other next change has been selected.
 
 ## Proven baseline
 
@@ -56,6 +59,8 @@ reminders, or complete/reopen application action is included.
 
 ## Exact next gate
 
-After implementation evidence is complete: user-authorized commit/push of the
-combined CHG-024 implementation, docs, tests, and evidence, followed by
-independent review of `main...chg-024-reversible-task-create`.
+User-authorized commit/push of the CHG-024 docs-only closeout,
+followed by remote verification of the closeout docs.
+After that verification, the user may merge
+chg-024-reversible-task-create into main.
+After merge, verify main == branch before selecting the next reviewable change.

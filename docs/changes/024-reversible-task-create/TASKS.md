@@ -1,7 +1,7 @@
 # Change 024 — Reversible Task Create Action Foundation — TASKS
 
 Governance: **HIGH-ASSURANCE**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-024-reversible-task-create`
 
 This is a LIVE EXECUTION CHECKLIST. Mark `[x]` only after the work or evidence
@@ -82,7 +82,7 @@ does not declare an independent engineering verdict.
       `git diff --stat`.
 - [x] Prepare the builder evidence report without assigning an independent
       review verdict.
-- [ ] Independent engineering review remains pending at builder stop.
+- [x] Independent engineering review complete: PASS (BLOCKER 0 / MAJOR 0 / MINOR 0).
 
 ## Evidence log
 
@@ -127,8 +127,26 @@ does not declare an independent engineering verdict.
   intended CHG-024 production, test, and documentation files; no applicable
   gate is blocked and no screenshot gate applies.
 
+## Independent engineering review
+
+Independent engineering review:
+PASS
+
+BLOCKER 0
+MAJOR 0
+MINOR 0
+
+Remote review confirmed the narrow Task create/targeted-Undo boundary,
+strict no-overwrite create, atomic Task + Action Ledger persistence,
+pre-Undo target/type/version/shape validation, rollback/failure behavior,
+cancellation propagation, app wiring, Room v7, unchanged schemas 1–7,
+and absence of UI, AI/runtime, Google/sync, reminders, complete/reopen
+actions, migration, CapturePlan execution, or speculative abstractions.
+
 ## Exact next gate
 
-After builder evidence is complete: user-authorized commit/push of the
-combined CHG-024 implementation, docs, tests, and evidence, followed by
-independent engineering review of `main...chg-024-reversible-task-create`.
+User-authorized commit/push of the CHG-024 docs-only closeout,
+followed by remote verification of the closeout docs.
+After that verification, the user may merge
+chg-024-reversible-task-create into main.
+After merge, verify main == branch before selecting the next reviewable change.
