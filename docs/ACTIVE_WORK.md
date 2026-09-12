@@ -4,14 +4,15 @@
 
 `docs/changes/025-reversible-task-completion/`
 
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 
 Governance: **HIGH-ASSURANCE**
 
-CHG-025 is being implemented on `chg-025-reversible-task-completion` from the
-verified `origin/main` baseline `9d411908ec529117c9daf9fa23a3c8509a719346`.
+CHG-025 is complete on `chg-025-reversible-task-completion` at reviewed head
+`197860e9b3b51a85c9044a29d80d0028992d94e0`, from the verified `origin/main`
+baseline `9d411908ec529117c9daf9fa23a3c8509a719346`.
 `origin/chg-024-reversible-task-create` resolves to the same SHA and is an
-ancestor of `origin/main`. The worktree was clean before branch creation.
+ancestor of `origin/main`.
 
 The change extends the existing provider-independent `ReversibleTaskActions`
 boundary with atomic Task completion/reopen and targeted completion Undo. It
@@ -19,18 +20,31 @@ keeps `TaskStore` stable-ID UPSERT behavior, Room at version 7, schemas 1–7,
 and runtime AI paused. No UI, CapturePlan execution, Google sync, reminders,
 generic Undo, or provider/runtime work is included.
 
-Implementation and obtainable verification are complete. Focused and full
-JVM, device, regression, build, lint, schema, and diff evidence is recorded in
-the CHG-025 package. The independent-review checklist remains open.
+Implementation and recorded verification are complete. Focused and full JVM,
+device, regression, build, lint, schema, and diff evidence is recorded in the
+CHG-025 package. Independent engineering review is PASS.
 
 ## State
 
 - Changes 020, 021, 023, and 024 are merged/complete at this verified base.
 - CHG-024's Task CREATE ledger contract remains unchanged.
+- Reversible local Task create is already established by CHG-024.
+- CHG-025 adds reversible completion/reopen actions.
 - Completion UPDATE payload v1 is frozen to `pending` and
-  `completed:<epochMillis>` with strict targeted Undo validation.
-- Independent review, commit, push, merge, release, and final verdict remain
-  user-owned actions.
+  `completed:<epochMillis>`.
+- Stale targeted Undo is rejected.
+- Task lifecycle UPSERT semantics remain intact.
+- Room remains v7.
+- Runtime AI remains paused.
+- No CHG-026 or other next change has been selected.
+
+## Independent engineering review
+
+PASS
+
+BLOCKER 0
+MAJOR 0
+MINOR 0
 
 ## Proven baseline
 
@@ -44,12 +58,11 @@ the CHG-025 package. The independent-review checklist remains open.
 
 ## Exact next gate
 
-The implementation and all obtainable verification work is complete. The
-package is at:
+User-authorized commit/push of the CHG-025 docs-only closeout,
+followed by remote verification of the closeout docs.
 
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`
+After that verification, the user may merge
+`chg-025-reversible-task-completion` into `main`.
 
-The independent-review checklist item must remain unchecked. The next gate is
-user-authorized commit/push of the combined CHG-025 implementation, tests,
-docs, and evidence, followed by independent engineering review of
-`main...chg-025-reversible-task-completion`.
+After merge, verify `main == branch` before selecting the next
+reviewable change.

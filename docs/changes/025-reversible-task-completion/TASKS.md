@@ -1,12 +1,12 @@
 # Change 025 — Reversible Task Completion Actions Foundation — TASKS
 
 Governance: **HIGH-ASSURANCE**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-025-reversible-task-completion`
 
 This is a LIVE EXECUTION CHECKLIST. Mark `[x]` only after the work or evidence
-exists. This checklist records builder evidence and does not declare the
-independent engineering verdict.
+exists. This checklist records builder evidence and the completed independent
+engineering verdict.
 
 ## Change package and preflight
 
@@ -75,7 +75,8 @@ independent engineering verdict.
       with the verified base.
 - [x] Run `git diff --check`, inspect status/stat, and inspect exact final diff.
 - [x] Prepare builder evidence report without assigning an independent verdict.
-- [ ] Independent engineering review remains unchecked.
+- [x] Independent engineering review complete: PASS
+      (BLOCKER 0 / MAJOR 0 / MINOR 0).
 
 ## Evidence log
 
@@ -105,12 +106,20 @@ independent engineering verdict.
 - Two regression commands were initially run concurrently and encountered
   device APK/output lifecycle failures; serial reruns passed. No production
   code changed for that invocation issue.
+- The targeted test-only review patch resolved the prior MINOR finding by
+  explicitly covering Task-restoration failure during completion Undo.
+- This documentation-only closeout records the evidence above; no tests or
+  other technical gates were rerun for closeout.
 
 ## Exact next gate
 
-All obtainable implementation and verification work is complete. This package
-and `docs/ACTIVE_WORK.md` are now at:
+CHG-025 is complete with independent engineering review PASS. This package and
+`docs/ACTIVE_WORK.md` are now at:
 
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`
+`COMPLETE — REVIEW PASS`
 
-Then stop for user-authorized commit/push and independent engineering review.
+The next gate is user-authorized commit/push of the CHG-025 docs-only
+closeout, followed by remote verification of the closeout docs. After that
+verification, the user may merge `chg-025-reversible-task-completion` into
+`main`. After merge, verify `main == branch` before selecting the next
+reviewable change.

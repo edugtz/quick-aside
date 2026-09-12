@@ -1,7 +1,7 @@
 # Change 025 — Reversible Task Completion Actions Foundation — PLAN
 
 Governance: **HIGH-ASSURANCE**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-025-reversible-task-completion`
 
 This plan follows the verified CHG-024 Task-create boundary and keeps the
@@ -90,12 +90,12 @@ device gate unchecked and report it; never fabricate evidence.
 
 ## Required stop state
 
-After implementation and all obtainable verification:
+After implementation, recorded verification, and independent review:
 
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`
+`COMPLETE — REVIEW PASS`
 
-The independent engineering review remains unchecked. Do not commit, push,
-merge, release, or issue the final independent verdict.
+Do not commit, push, merge, or release as part of this documentation-only
+closeout.
 
 ## Builder evidence and closeout
 
@@ -112,6 +112,17 @@ merge, release, or issue the final independent verdict.
 - Room version/migrations and schema comparison are unchanged/clean; diff
   check is clean. The final branch remains uncommitted.
 
-Closeout state: **IMPLEMENTATION COMPLETE — REVIEW PENDING**. The next gate
-is user-authorized commit/push followed by independent engineering review of
-`main...chg-025-reversible-task-completion`.
+## Independent review closeout
+
+Independent engineering review: PASS
+
+BLOCKER 0
+MAJOR 0
+MINOR 0
+
+The targeted test-only review patch closed the sole MINOR evidence gap by
+covering Task-restoration failure during completion Undo. The evidence counts
+above are preserved from the completed verification; no technical gates were
+rerun for this documentation-only closeout.
+
+Closeout state: **COMPLETE — REVIEW PASS**.

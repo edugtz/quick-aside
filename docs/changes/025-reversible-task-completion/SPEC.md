@@ -1,7 +1,7 @@
 # Change 025 — Reversible Task Completion Actions Foundation — SPEC
 
 Governance: **HIGH-ASSURANCE**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-025-reversible-task-completion`
 
 ## Objective
@@ -151,8 +151,9 @@ Record actual results for focused JVM codec/contract tests, the focused Room
 instrumentation class on the authorized device when available, existing
 CHG-024/Task/Action Ledger and applicable `data.local` regressions, full JVM,
 `assembleDebug`, `lintDebug`, Room/version/migration and schema comparison,
-`git diff --check`, and final status/stat/scope inspection. Keep the
-independent-review item unchecked.
+`git diff --check`, and final status/stat/scope inspection. The builder evidence
+below is preserved as historical evidence; the independent review outcome is
+recorded separately.
 
 ## Builder evidence
 
@@ -183,10 +184,43 @@ independent-review item unchecked.
   device APK-lifecycle/output failures; serial reruns passed. No production
   code was changed for that invocation issue.
 
-## Builder authority and stop state
+## Independent engineering review
 
-The builder must not commit, push, merge, release, or assign the independent
-engineering verdict. When obtainable work is complete, set this SPEC, PLAN,
-TASKS, and `docs/ACTIVE_WORK.md` to:
+Independent engineering review: PASS
 
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`
+BLOCKER 0
+MAJOR 0
+MINOR 0
+
+Remote review confirmed:
+
+- complete/reopen remain inside the existing `ReversibleTaskActions` boundary;
+- the exact payload-v1 grammar is `pending` and
+  `completed:<epochMillis>`;
+- strict payload parsing;
+- nullable completion compare-and-set;
+- canonical millisecond completion timestamp;
+- atomic Task + Action Ledger UPDATE persistence;
+- targeted Undo;
+- stale-state protection;
+- Task-restoration rollback;
+- mark-undone rollback;
+- cancellation propagation;
+- unrelated Task-field preservation;
+- existing Task CREATE semantics remain intact;
+- Room remains version 7;
+- schemas 1–7 remain unchanged; and
+- no UI, Google sync, reminders, AI/runtime, schema, dependency, generic
+  serializer, or ActionExecutor scope entered the change.
+
+The targeted test-only review patch closed the sole MINOR evidence gap by
+covering Task-restoration failure during completion Undo. No production defect
+remains open.
+
+## Closeout state
+
+The implementation and recorded verification are complete. This documentation-
+only closeout does not rerun technical gates. The builder must not commit,
+push, merge, or release.
+
+`COMPLETE — REVIEW PASS`
