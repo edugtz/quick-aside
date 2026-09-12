@@ -14,6 +14,23 @@ interface TaskDao {
     @Upsert
     suspend fun upsert(task: TaskEntity)
 
+    @Query(
+        """
+        UPDATE tasks
+        SET completed_at_epoch_millis = :newCompletedAtEpochMillis
+        WHERE id = :id
+          AND (
+              (completed_at_epoch_millis IS NULL AND :expectedCompletedAtEpochMillis IS NULL)
+              OR completed_at_epoch_millis = :expectedCompletedAtEpochMillis
+          )
+        """,
+    )
+    suspend fun updateCompletedAtIfMatches(
+        id: String,
+        expectedCompletedAtEpochMillis: Long?,
+        newCompletedAtEpochMillis: Long?,
+    ): Int
+
     @Query("DELETE FROM tasks WHERE id = :id")
     suspend fun deleteById(id: String): Int
 

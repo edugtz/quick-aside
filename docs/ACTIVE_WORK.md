@@ -2,65 +2,54 @@
 
 ## Active change
 
-`docs/changes/024-reversible-task-create/`
+`docs/changes/025-reversible-task-completion/`
 
-Status: **COMPLETE — REVIEW PASS**
+Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
 
 Governance: **HIGH-ASSURANCE**
 
-Change 022 is merged and complete at the verified baseline
-`8aace0eca7c35c086d3f23db4d8ca91301ad9e1d`. Change 023 implementation and
-HIGH-ASSURANCE verification are complete. Independent review: `PASS` —
-`BLOCKER 0`, `MAJOR 0`, `MINOR 0`. Task now has durable provider-neutral
-completion state, Room is version 7 with an explicit 6→7 migration, and
-runtime AI remains paused.
+CHG-025 is being implemented on `chg-025-reversible-task-completion` from the
+verified `origin/main` baseline `9d411908ec529117c9daf9fa23a3c8509a719346`.
+`origin/chg-024-reversible-task-create` resolves to the same SHA and is an
+ancestor of `origin/main`. The worktree was clean before branch creation.
 
-Change 024 is selected on `chg-024-reversible-task-create` from verified
-`origin/main` `a3ef7e2c258146015875cb30069e5747b682b23a`. It adds only the
-provider-independent reversible local Task-create application boundary backed
-by atomic Room + Action Ledger semantics. Existing TaskStore lifecycle UPSERT
-remains intact; Room remains version 7; runtime AI remains paused; and no Task
-complete/reopen application action was added. No Task UI, ActionExecutor,
-Google sync, or reminders are included.
+The change extends the existing provider-independent `ReversibleTaskActions`
+boundary with atomic Task completion/reopen and targeted completion Undo. It
+keeps `TaskStore` stable-ID UPSERT behavior, Room at version 7, schemas 1–7,
+and runtime AI paused. No UI, CapturePlan execution, Google sync, reminders,
+generic Undo, or provider/runtime work is included.
+
+Implementation and obtainable verification are complete. Focused and full
+JVM, device, regression, build, lint, schema, and diff evidence is recorded in
+the CHG-025 package. The independent-review checklist remains open.
 
 ## State
 
-- Change 020 (Typed CapturePlan + Validator Foundation) is merged and complete.
-- Change 021 (Capture Interpreter + AIProvider Boundary) is merged and complete
-  (`7190d65 docs: close Change 021`).
-- Runtime AI provider/interpreter continuation is **paused** until the shared
-  private VPS runtime gateway is planned and proven enough to define the real
-  remote integration boundary.
-- Runtime model direction: GPT-5.6 Luna Low primary via ChatGPT Plus / Codex
-  OAuth; DeepSeek V4 Flash via OpenCode Go is an evidence-triggered fallback
-  candidate. MiMo-V2.5 is no longer primary.
-- Shared private VPS runtime gateway is the target runtime direction; Quick
-  Aside shares infrastructure with Personal Admin/Hermes but not Hermes agent
-  conversation/context.
-- Android-local Codex is deferred pending materially better upstream evidence or
-  official Android support.
-- Change 022 is complete from the verified closeout baseline.
-- Change 023 implementation and HIGH-ASSURANCE verification are complete.
-- Independent review is complete: `PASS` — `BLOCKER 0`, `MAJOR 0`, `MINOR 0`.
-- Change 023 must add no separate completion boolean, Google status, sync
-  metadata, action behavior, reminders, UI, or AI/runtime work.
-- Change 024 is complete; independent engineering review: PASS — BLOCKER 0,
-  MAJOR 0, MINOR 0.
-- No CHG-025 or other next change has been selected.
+- Changes 020, 021, 023, and 024 are merged/complete at this verified base.
+- CHG-024's Task CREATE ledger contract remains unchanged.
+- Completion UPDATE payload v1 is frozen to `pending` and
+  `completed:<epochMillis>` with strict targeted Undo validation.
+- Independent review, commit, push, merge, release, and final verdict remain
+  user-owned actions.
 
 ## Proven baseline
 
 - Product name accepted: **Quick Aside**.
-- Product/UX baseline accepted for personal MVP.
 - Canonical written UX contract: `docs/UX_UI_REFERENCE.md`.
-- Canonical visual-direction reference: `docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png`.
+- Canonical visual-direction reference:
+  `docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png`.
 - Durable runtime decision: `docs/adr/0001-private-remote-ai-runtime.md`.
-- Roadmap milestone dependency status: `docs/ROADMAP.md`.
+- Roadmap and acceptance sources: `docs/ROADMAP.md` and
+  `docs/ACCEPTANCE_CRITERIA.md`.
 
 ## Exact next gate
 
-User-authorized commit/push of the CHG-024 docs-only closeout,
-followed by remote verification of the closeout docs.
-After that verification, the user may merge
-chg-024-reversible-task-create into main.
-After merge, verify main == branch before selecting the next reviewable change.
+The implementation and all obtainable verification work is complete. The
+package is at:
+
+`IMPLEMENTATION COMPLETE — REVIEW PENDING`
+
+The independent-review checklist item must remain unchecked. The next gate is
+user-authorized commit/push of the combined CHG-025 implementation, tests,
+docs, and evidence, followed by independent engineering review of
+`main...chg-025-reversible-task-completion`.

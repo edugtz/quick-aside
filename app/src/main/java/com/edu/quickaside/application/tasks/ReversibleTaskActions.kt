@@ -6,7 +6,7 @@ import com.edu.quickaside.domain.tasks.Task
 import com.edu.quickaside.domain.tasks.TaskSpace
 import java.time.LocalDate
 
-/** The provider-independent application boundary for reversible Task creation. */
+/** The provider-independent application boundary for reversible Task actions. */
 interface ReversibleTaskActions {
     suspend fun create(
         title: String,
@@ -18,6 +18,15 @@ interface ReversibleTaskActions {
         actionLedgerEntryId: ActionLedgerEntryId,
         expectedTaskId: TaskId,
     ): UndoTaskCreateResult
+
+    suspend fun complete(taskId: TaskId): TaskCompletionActionResult
+
+    suspend fun reopen(taskId: TaskId): TaskCompletionActionResult
+
+    suspend fun undoCompletionChange(
+        actionLedgerEntryId: ActionLedgerEntryId,
+        expectedTaskId: TaskId,
+    ): UndoTaskCompletionChangeResult
 }
 
 fun interface TaskIdProvider {
@@ -60,5 +69,42 @@ sealed interface UndoTaskCreateResult {
     data class Failed(val cause: Exception) : UndoTaskCreateResult
 }
 
+sealed interface TaskCompletionActionResult {
+    data class Changed(
+        val task: Task,
+        val actionLedgerEntryId: ActionLedgerEntryId,
+    ) : TaskCompletionActionResult
+
+    data object MissingTask : TaskCompletionActionResult
+
+    data object AlreadyInRequestedState : TaskCompletionActionResult
+
+    data class Failed(val cause: Exception) : TaskCompletionActionResult
+}
+
+sealed interface UndoTaskCompletionChangeResult {
+    data class Undone(
+        val actionLedgerEntryId: ActionLedgerEntryId,
+        val taskId: TaskId,
+    ) : UndoTaskCompletionChangeResult
+
+    data object MissingLedgerEntry : UndoTaskCompletionChangeResult
+
+    data object AlreadyUndone : UndoTaskCompletionChangeResult
+
+    data object UnsupportedAction : UndoTaskCompletionChangeResult
+
+    data object UnsupportedLedgerShape : UndoTaskCompletionChangeResult
+
+    data object TargetMismatch : UndoTaskCompletionChangeResult
+
+    data object TargetMissing : UndoTaskCompletionChangeResult
+
+    data object TargetStateMismatch : UndoTaskCompletionChangeResult
+
+    data class Failed(val cause: Exception) : UndoTaskCompletionChangeResult
+}
+
 const val TASK_ACTION_LEDGER_TARGET_TYPE = "task"
 const val TASK_CREATE_ACTION_PAYLOAD_VERSION = 1
+const val TASK_COMPLETION_UPDATE_PAYLOAD_VERSION = 1
