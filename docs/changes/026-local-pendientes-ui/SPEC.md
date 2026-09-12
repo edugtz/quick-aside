@@ -70,6 +70,12 @@ tasks through `TaskStore.readAll()` and filters by the selected `TaskSpace` in
 memory. Ordinary read failures show a concise error and retry action;
 `CancellationException` propagates.
 
+Manual creation is available only from a successfully loaded task snapshot.
+While Loading or Failed, the add action and keyboard Done action are disabled;
+entered text is retained and Failed continues to expose Retry. A mutation may
+update the visible snapshot only when the current state is already Loaded;
+Loading and Failed cannot be promoted to a fabricated singleton Loaded state.
+
 Pending tasks sort by due date first, due date ascending, then normalized title
 and Task ID. Tasks without a due date follow dated tasks. Completed tasks sort
 by `completedAt` descending, then normalized title and Task ID. Presentation
@@ -138,6 +144,10 @@ This change does not implement:
    not claim a successful mutation.
 8. Google Tasks status is explicitly not connected and does not imply a
    working integration.
+9. An unavailable task snapshot cannot be promoted to
+   `Loaded(listOf(newTask))`: creation is blocked during Loading/Failed, input
+   is retained, Retry restores creation only after a successful read, and
+   existing tasks remain visible after recovery.
 
 ## Required evidence and stop state
 
@@ -160,9 +170,34 @@ The smallest fix changed that pre-undo wait to the existing semantic-presence
 helper, avoiding a brittle viewport/IME display assumption. No production
 Mandado behavior was changed. The repaired method passed 3/3 focused
 repetitions; `MandadoUiTest` passed 12/12, `MandadoHistoryUiTest` 7/7, and
-`QuickAsideAppTest` 1/1. The final connected suite passed 249/249 with 0
-skipped and 0 failures on `Pixel_9_Pro(AVD) - 15` (API 35). The package and
-`docs/ACTIVE_WORK.md` retain the review-pending stop state.
+`QuickAsideAppTest` 1/1. Before the targeted review patch below, the connected
+suite passed 249/249 with 0 skipped and 0 failures on
+`Pixel_9_Pro(AVD) - 15` (API 35).
+
+## Review patch reconciliation
+
+Independent review of reviewed remote head
+`eb20cc18f1b832259e4a510b713327e524111f07` found exactly one remaining issue:
+**MINOR** — manual create could call `withTask` while Pendientes was Loading
+or Failed, fabricating `Loaded(listOf(newTask))` and discarding the unavailable
+snapshot.
+
+The targeted fix gates manual creation on `PendientesState.Loaded`, disables
+the add and keyboard Done actions while Loading or Failed, retains entered
+text, and makes `PendientesState.withTask` preserve Loading/Failed instead of
+fabricating a partial Loaded state. The focused test now covers read failure,
+blocked create with no `ReversibleTaskActions.create` call, input preservation,
+Retry recovery, and retention of existing tasks.
+
+Post-patch evidence: `PendientesUiTest` passed 14/14 on both
+`Pixel_9_Pro(AVD) - 15` (API 35) and `CPH2791 - 16` (API 36);
+`QuickAsideAppTest` passed 1/1 on both devices; `:app:testDebugUnitTest`
+passed 120/120 with 0 skipped and 0 failures/errors; `assembleDebug` and
+`lintDebug` passed; and no Room schema changes were present. The full
+connected suite was not rerun because this was a targeted Pendientes-only
+patch; the 249/249 result above is pre-patch evidence.
+
+Independent review remains unchecked.
 
 The builder must not commit, push, merge, release, select CHG-027, or assign an
 independent engineering verdict. When implementation and obtainable evidence

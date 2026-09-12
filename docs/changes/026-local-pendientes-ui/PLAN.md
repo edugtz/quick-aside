@@ -87,6 +87,19 @@ fix, and rerun the affected gate. Do not fabricate counts or a device result.
 - CHG-024 Task-create Room regression: 12/12 passed.
 - CHG-025 Task-completion Room regression: 14/14 passed.
 - `:app:testDebugUnitTest`: 120 tests passed, 0 skipped, 0 failures/errors.
+- Independent review of reviewed head `eb20cc18f1b832259e4a510b713327e524111f07`
+  found exactly one **MINOR**: manual create could promote Loading/Failed to
+  `Loaded(listOf(newTask))`, losing the unavailable task snapshot.
+- The targeted fix gates creation on `PendientesState.Loaded` and makes
+  `PendientesState.withTask` preserve Loading/Failed. The focused test covers
+  blocked create/no action call, input preservation, Retry recovery, and
+  existing-task retention.
+- Post-patch `PendientesUiTest` passed 14/14 on both `Pixel_9_Pro(AVD) - 15`
+  (API 35) and `CPH2791 - 16` (API 36). Post-patch `QuickAsideAppTest` passed
+  1/1 on both devices.
+- Post-patch `:app:testDebugUnitTest` passed 120/120 with 0 skipped and 0
+  failures/errors; `assembleDebug` and `lintDebug` passed; no Room schema
+  changes were present.
 - The retained connected result identified
   `com.edu.quickaside.MandadoUiTest#undoFailureReloadsVisibleStateAndShowsConciseError`;
   it timed out at `MandadoUiTest.kt:198` while waiting for the added product
@@ -98,9 +111,10 @@ fix, and rerun the affected gate. Do not fabricate counts or a device result.
   method passed 3/3 focused repetitions after the fix; `MandadoUiTest` passed
   12/12, `MandadoHistoryUiTest` 7/7, and `QuickAsideAppTest` 1/1.
 - The first post-fix full run had one unrelated Transcript correction timeout;
-  that exact method passed in isolation. The final
+  that exact method passed in isolation. The pre-review-patch
   `:app:connectedDebugAndroidTest` passed 249/249 with 0 skipped and 0
-  failures on `Pixel_9_Pro(AVD) - 15` (API 35).
+  failures on `Pixel_9_Pro(AVD) - 15` (API 35). The full connected suite was
+  not rerun for this targeted Pendientes-only review patch.
 - `:app:assembleDebug` and `:app:lintDebug` passed. The lint report contains
   no `<issue>` entries; its text suggestions are available-version notices.
 - Room remains version 7 and there are no changes under `app/schemas`.

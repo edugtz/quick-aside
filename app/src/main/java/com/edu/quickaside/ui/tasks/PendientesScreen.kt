@@ -109,6 +109,10 @@ fun PendientesScreen(
     val selectedSpace = TaskSpace.valueOf(selectedSpaceName)
     val scope = rememberCoroutineScope()
     val keyboardController = androidx.compose.ui.platform.LocalSoftwareKeyboardController.current
+    val canCreate = state is PendientesState.Loaded &&
+        !isCreating &&
+        !isUndoingCreate &&
+        taskTitle.isNotBlank()
 
     suspend fun loadState() {
         val store = taskStore
@@ -204,7 +208,7 @@ fun PendientesScreen(
     }
 
     fun addTask() {
-        if (isCreating || isUndoingCreate || taskTitle.isBlank()) return
+        if (!canCreate) return
         val submittedTitle = taskTitle
         val submittedSpace = selectedSpace
         scope.launch {
@@ -339,7 +343,7 @@ fun PendientesScreen(
             trailingIcon = {
                 IconButton(
                     onClick = ::addTask,
-                    enabled = !isCreating && !isUndoingCreate && taskTitle.isNotBlank(),
+                    enabled = canCreate,
                     modifier = Modifier.semantics {
                         contentDescription = "Agregar pendiente"
                     },
@@ -351,7 +355,7 @@ fun PendientesScreen(
                 imeAction = ImeAction.Done,
             ),
             keyboardActions = androidx.compose.foundation.text.KeyboardActions(
-                onDone = { if (taskTitle.isNotBlank()) addTask() },
+                onDone = { if (canCreate) addTask() },
             ),
         )
 
@@ -596,9 +600,8 @@ private fun String.normalizedForOrdering(): String = lowercase(Locale.ROOT)
 
 private fun PendientesState.withTask(task: Task): PendientesState = when (this) {
     is PendientesState.Loaded -> PendientesState.Loaded(tasks.upsert(task))
-    PendientesState.Loading,
-    PendientesState.Failed,
-    -> PendientesState.Loaded(listOf(task))
+    PendientesState.Loading -> PendientesState.Loading
+    PendientesState.Failed -> PendientesState.Failed
 }
 
 private fun List<Task>.upsert(task: Task): List<Task> {

@@ -30,6 +30,8 @@ evidence exists. It does not assign an independent engineering verdict.
 - [x] Add complete/reopen controls using exact Task IDs and targeted Undo.
 - [x] Preserve global capture FAB and avoid a second Task FAB.
 - [x] Wire app-scoped TaskStore and reversible Task actions through the shell.
+- [x] Gate manual creation on a Loaded task snapshot and keep `withTask`
+      defensive for Loading/Failed.
 - [x] Confirm no Room, domain, sync, AI/runtime, dependency, or unrelated UI
       scope leakage.
 
@@ -43,16 +45,20 @@ evidence exists. It does not assign an independent engineering verdict.
 - [x] Cover exact complete/reopen IDs, success Undo, completion Undo reload,
       failure/no-op behavior, and no invented success.
 - [x] Cover persistent Google Tasks not-connected status and global capture.
+- [x] Cover unavailable snapshot blocking, no create call, input preservation,
+      Retry recovery, and existing-task retention.
 
 ## Verification gates
 
-- [x] Focused `PendientesUiTest` passes on CPH2791 / Android 16.
-- [x] `QuickAsideAppTest` and directly affected UI regressions pass.
+- [x] Review-patch `PendientesUiTest` passes 14/14 on Pixel API 35 and CPH2791 /
+      Android 16.
+- [x] Review-patch `QuickAsideAppTest` passes 1/1 on both connected devices.
 - [x] CHG-024 Task-create Room regression passes.
 - [x] CHG-025 Task-completion Room regression passes.
 - [x] Full JVM unit tests pass.
-- [x] Connected Android suite passes 249/249 after the pre-existing Mandado
-      test synchronization repair. See evidence log.
+- [x] Pre-review-patch connected Android suite passed 249/249 after the
+      pre-existing Mandado test synchronization repair; the full suite was not
+      rerun for this targeted Pendientes-only review patch. See evidence log.
 - [x] `assembleDebug` succeeds.
 - [x] `lintDebug` succeeds.
 - [x] Room remains v7; migrations and schemas are unchanged.
@@ -66,7 +72,15 @@ evidence exists. It does not assign an independent engineering verdict.
 
 - Preflight is complete as recorded in PLAN.md.
 - Production compile and Android-test compile passed.
-- `PendientesUiTest` passed 13/13 on CPH2791 / Android 16.
+- Independent review of reviewed head `eb20cc18f1b832259e4a510b713327e524111f07`
+  found exactly one **MINOR**: Loading/Failed could be promoted to a partial
+  `Loaded(listOf(newTask))` after manual create.
+- The targeted fix gates add/keyboard Done on Loaded, preserves input while
+  Loading/Failed, and makes `withTask` preserve unavailable states.
+- Review-patch `PendientesUiTest` passed 14/14 on `Pixel_9_Pro(AVD) - 15`
+  (API 35) and 14/14 on `CPH2791 - 16` (API 36). It verifies no create action
+  call while unavailable, Retry recovery, and existing-task retention.
+- Review-patch `QuickAsideAppTest` passed 1/1 on both connected devices.
 - `QuickAsideAppTest` passed on an isolated rerun; CHG-024 passed 12/12 and
   CHG-025 passed 14/14.
 - Full JVM passed 120/120 with 0 skipped and 0 failures/errors.
@@ -81,8 +95,9 @@ evidence exists. It does not assign an independent engineering verdict.
   passed 3/3; `MandadoUiTest` passed 12/12, `MandadoHistoryUiTest` 7/7, and
   `QuickAsideAppTest` 1/1. No Mandado production code changed.
 - The first post-fix full run had one unrelated Transcript correction timeout;
-  its exact method passed in isolation. The final connected suite passed
-  249/249 with 0 skipped and 0 failures on `Pixel_9_Pro(AVD) - 15` (API 35).
+  its exact method passed in isolation. The pre-review-patch connected suite
+  passed 249/249 with 0 skipped and 0 failures on `Pixel_9_Pro(AVD) - 15`
+  (API 35); it was not rerun for this targeted review patch.
 - `assembleDebug`, `lintDebug`, Room version/schema checks, and
   `git diff --check` passed. Lint reported no issue entries; remaining text
   output is version-availability guidance.

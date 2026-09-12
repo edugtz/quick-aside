@@ -2,6 +2,7 @@ package com.edu.quickaside
 
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
@@ -31,6 +32,7 @@ import com.edu.quickaside.ui.QuickAsideApp
 import com.edu.quickaside.ui.theme.QuickAsideTheme
 import java.time.Instant
 import java.time.LocalDate
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -301,17 +303,58 @@ class PendientesUiTest {
         openPendientes()
         waitForText("No se pudieron cargar tus pendientes.")
 
-        store.readFailure = null
+        composeRule.activity.runOnUiThread { store.readFailure = null }
         composeRule.onNodeWithContentDescription("Reintentar carga de pendientes").performClick()
         waitForText("No hay pendientes en Personal.")
+    }
+
+    @Test
+    fun unavailableSnapshotBlocksCreatePreservesInputAndRetryKeepsExistingTasks() {
+        val readGate = CompletableDeferred<Unit>()
+        setContent(
+            tasks = listOf(task("existing", "Tarea existente")),
+            readGate = readGate,
+            readResponses = listOf(
+                FakeReadAllResponse.Failure(IllegalStateException("unavailable")),
+                FakeReadAllResponse.Success(listOf(task("existing", "Tarea existente"))),
+            ),
+        )
+        openPendientes()
+        waitForText("Cargando pendientes…")
+
+        val entered = "Conservar tras reintento"
+        composeRule.onNode(hasSetTextAction()).performTextInput(entered)
+        composeRule.onNodeWithContentDescription("Agregar pendiente").assertIsNotEnabled()
+        assertEquals(entered, editableText())
+        assertTrue(actions.createCalls.isEmpty())
+
+        readGate.complete(Unit)
+        waitForText("No se pudieron cargar tus pendientes.")
+        composeRule.onNodeWithContentDescription("Agregar pendiente").assertIsNotEnabled()
+        assertEquals(entered, editableText())
+        assertTrue(actions.createCalls.isEmpty())
+
+        composeRule.activity.runOnUiThread { composeRule.activity.currentFocus?.clearFocus() }
+        composeRule.onNodeWithContentDescription("Reintentar carga de pendientes").performClick()
+        waitForEnabled("Agregar pendiente")
+        composeRule.onNodeWithContentDescription("Agregar pendiente").performClick()
+
+        composeRule.waitUntil(timeoutMillis = 5_000) { actions.createCalls.size == 1 }
+        assertEquals(entered, actions.createCalls.single().title)
+        waitForText("Tarea existente")
+        waitForText("Conservar tras reintento")
     }
 
     private fun setContent(
         tasks: List<Task> = emptyList(),
         readFailure: Exception? = null,
+        readGate: CompletableDeferred<Unit>? = null,
+        readResponses: List<FakeReadAllResponse>? = null,
     ) {
         store = FakeTaskStore(tasks)
         store.readFailure = readFailure
+        store.readAllGate = readGate
+        store.readAllResponses = readResponses
         actions = FakeReversibleTaskActions()
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
@@ -336,6 +379,14 @@ class PendientesUiTest {
     private fun waitForText(text: String) {
         composeRule.waitUntil(timeoutMillis = 5_000) {
             composeRule.onAllNodesWithText(text, substring = true).fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
+    private fun waitForEnabled(contentDescription: String) {
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            runCatching {
+                composeRule.onNodeWithContentDescription(contentDescription).assertIsEnabled()
+            }.isSuccess
         }
     }
 
@@ -371,9 +422,17 @@ class PendientesUiTest {
     )
 }
 
+private sealed interface FakeReadAllResponse {
+    data class Success(val tasks: List<Task>) : FakeReadAllResponse
+    data class Failure(val exception: Exception) : FakeReadAllResponse
+}
+
 private class FakeTaskStore(initialTasks: List<Task>) : TaskStore {
     var tasks: List<Task> = initialTasks
     var readFailure: Exception? = null
+    var readAllGate: CompletableDeferred<Unit>? = null
+    var readAllResponses: List<FakeReadAllResponse>? = null
+    private var readAllResponseIndex = 0
 
     override suspend fun save(task: Task) {
         tasks = tasks.filterNot { it.id == task.id } + task
@@ -381,7 +440,16 @@ private class FakeTaskStore(initialTasks: List<Task>) : TaskStore {
 
     override suspend fun getById(id: TaskId): Task? = tasks.singleOrNull { it.id == id }
 
-    override suspend fun readAll(): List<Task> = readFailure?.let { throw it } ?: tasks
+    override suspend fun readAll(): List<Task> {
+        readAllGate?.await()
+        readAllResponses?.getOrNull(readAllResponseIndex++)?.let { response ->
+            return when (response) {
+                is FakeReadAllResponse.Success -> response.tasks
+                is FakeReadAllResponse.Failure -> throw response.exception
+            }
+        }
+        return readFailure?.let { throw it } ?: tasks
+    }
 }
 
 private class FakeReversibleTaskActions : ReversibleTaskActions {
