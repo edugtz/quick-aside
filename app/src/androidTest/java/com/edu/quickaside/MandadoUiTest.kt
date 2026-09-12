@@ -195,7 +195,7 @@ class MandadoUiTest {
 
         composeRule.onNode(hasSetTextAction()).performTextInput("No borrar tras undo")
         composeRule.onNodeWithContentDescription("Agregar producto").performClick()
-        waitForText("No borrar tras undo")
+        waitForTextExists("No borrar tras undo")
         waitForText("Deshacer")
         composeRule.onNodeWithText("Deshacer").performClick()
 

@@ -17,6 +17,9 @@ class MainActivity : ComponentActivity() {
                     listStore = (application as QuickAsideApplication).listStore,
                     reversibleListItemActions =
                         (application as QuickAsideApplication).reversibleListItemActions,
+                    taskStore = (application as QuickAsideApplication).taskStore,
+                    reversibleTaskActions =
+                        (application as QuickAsideApplication).reversibleTaskActions,
                     memoryStore = (application as QuickAsideApplication).memoryStore,
                     localSearch = (application as QuickAsideApplication).localSearch,
                     captureTranscriptCorrector =

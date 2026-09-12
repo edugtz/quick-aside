@@ -2,49 +2,46 @@
 
 ## Active change
 
-`docs/changes/025-reversible-task-completion/`
+`docs/changes/026-local-pendientes-ui/`
 
-Status: **COMPLETE — REVIEW PASS**
+Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
 
-Governance: **HIGH-ASSURANCE**
+Governance: **STANDARD**
 
-CHG-025 is complete on `chg-025-reversible-task-completion` at reviewed head
-`197860e9b3b51a85c9044a29d80d0028992d94e0`, from the verified `origin/main`
-baseline `9d411908ec529117c9daf9fa23a3c8509a719346`.
-`origin/chg-024-reversible-task-create` resolves to the same SHA and is an
-ancestor of `origin/main`.
+CHG-026 was implemented on `chg-026-local-pendientes-ui` from the verified
+`origin/main` baseline `b4333a11e05403c1afe96890e0ecf73ec1f634ea`. It replaces
+the Pendientes placeholder with a local-first Personal/Trabajo Task management
+surface using the existing TaskStore and ReversibleTaskActions boundaries.
+Google Tasks synchronization and runtime AI remain unavailable and out of
+scope.
 
-The change extends the existing provider-independent `ReversibleTaskActions`
-boundary with atomic Task completion/reopen and targeted completion Undo. It
-keeps `TaskStore` stable-ID UPSERT behavior, Room at version 7, schemas 1–7,
-and runtime AI paused. No UI, CapturePlan execution, Google sync, reminders,
-generic Undo, or provider/runtime work is included.
-
-Implementation and recorded verification are complete. Focused and full JVM,
-device, regression, build, lint, schema, and diff evidence is recorded in the
-CHG-025 package. Independent engineering review is PASS.
+Implementation and obtainable verification are complete. The focused
+Pendientes UI test passed 13/13 on the authorized Oppo CPH2791 / Android 16;
+the full JVM suite passed 120/120, CHG-024 passed 12/12, CHG-025 passed 14/14,
+and assemble/lint/schema/diff checks passed. The retained connected result
+identified `MandadoUiTest.undoFailureReloadsVisibleStateAndShowsConciseError`
+timing out at `MandadoUiTest.kt:198` on a displayed-node wait; the exact method
+also passed on the detached `origin/main` baseline, so it was a pre-existing
+test synchronization defect/flake. The test-only semantic-presence repair
+passed 3/3 focused repetitions, `MandadoUiTest` passed 12/12,
+`MandadoHistoryUiTest` 7/7, and `QuickAsideAppTest` 1/1. The final connected
+suite passed 249/249 with 0 skipped and 0 failures on `Pixel_9_Pro(AVD) - 15`
+(API 35). No Mandado production behavior changed.
 
 ## State
 
-- Changes 020, 021, 023, and 024 are merged/complete at this verified base.
-- CHG-024's Task CREATE ledger contract remains unchanged.
-- Reversible local Task create is already established by CHG-024.
-- CHG-025 adds reversible completion/reopen actions.
-- Completion UPDATE payload v1 is frozen to `pending` and
-  `completed:<epochMillis>`.
-- Stale targeted Undo is rejected.
-- Task lifecycle UPSERT semantics remain intact.
-- Room remains v7.
-- Runtime AI remains paused.
-- No CHG-026 or other next change has been selected.
+- Changes 020, 021, 023, 024, and 025 are merged/complete at this verified
+  base.
+- CHG-024's Task CREATE ledger contract and CHG-025's completion contract
+  remain unchanged.
+- Room remains v7 and runtime AI remains paused.
+- CHG-026 changes only the Pendientes UI and its shell wiring plus focused UI
+  tests, the pre-existing Mandado test synchronization repair, and
+  documentation.
 
 ## Independent engineering review
 
-PASS
-
-BLOCKER 0
-MAJOR 0
-MINOR 0
+Unchecked — pending independent review.
 
 ## Proven baseline
 
@@ -58,11 +55,5 @@ MINOR 0
 
 ## Exact next gate
 
-User-authorized commit/push of the CHG-025 docs-only closeout,
-followed by remote verification of the closeout docs.
-
-After that verification, the user may merge
-`chg-025-reversible-task-completion` into `main`.
-
-After merge, verify `main == branch` before selecting the next
-reviewable change.
+User-authorized commit/push of CHG-026 followed by independent review of
+`main...chg-026-local-pendientes-ui`. Do not select CHG-027.

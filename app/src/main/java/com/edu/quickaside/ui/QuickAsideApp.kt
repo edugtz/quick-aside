@@ -68,6 +68,8 @@ import com.edu.quickaside.application.search.LocalSearch
 import com.edu.quickaside.application.speech.AndroidSpeechTranscriberFactory
 import com.edu.quickaside.application.speech.MicrophonePermissionController
 import com.edu.quickaside.application.speech.SpeechTranscriberFactory
+import com.edu.quickaside.application.tasks.ReversibleTaskActions
+import com.edu.quickaside.application.tasks.TaskStore
 import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
@@ -83,6 +85,7 @@ import com.edu.quickaside.ui.lists.MandadoHistoryScreen
 import com.edu.quickaside.ui.lists.MandadoHistoryTimestampFormatter
 import com.edu.quickaside.ui.lists.MandadoScreen
 import com.edu.quickaside.ui.navigation.AppDestination
+import com.edu.quickaside.ui.tasks.PendientesScreen
 import com.edu.quickaside.ui.voice.VoiceCaptureScreen
 import com.edu.quickaside.ui.voice.rememberAndroidMicrophonePermissionController
 import kotlinx.coroutines.CancellationException
@@ -110,6 +113,8 @@ fun QuickAsideApp(
     captureReader: CaptureReader,
     listStore: ListStore? = null,
     reversibleListItemActions: ReversibleListItemActions? = null,
+    taskStore: TaskStore? = null,
+    reversibleTaskActions: ReversibleTaskActions? = null,
     memoryStore: MemoryStore? = null,
     localSearch: LocalSearch? = null,
     captureTranscriptCorrector: CaptureTranscriptCorrector? = null,
@@ -293,6 +298,8 @@ fun QuickAsideApp(
                 snackbarHostState = snackbarHostState,
                 listStore = listStore,
                 reversibleListItemActions = reversibleListItemActions,
+                taskStore = taskStore,
+                reversibleTaskActions = reversibleTaskActions,
                 memoryStore = memoryStore,
                 localSearch = localSearch,
                 historyDetailSession = historyDetailSession,
@@ -338,6 +345,8 @@ private fun ManagementScreen(
     snackbarHostState: SnackbarHostState,
     listStore: ListStore?,
     reversibleListItemActions: ReversibleListItemActions?,
+    taskStore: TaskStore?,
+    reversibleTaskActions: ReversibleTaskActions?,
     memoryStore: MemoryStore?,
     localSearch: LocalSearch?,
     historyDetailSession: ListSessionWithItems?,
@@ -408,6 +417,16 @@ private fun ManagementScreen(
                 onBack = onBackToLists,
             )
         }
+        return
+    }
+
+    if (destination == AppDestination.Pendientes) {
+        PendientesScreen(
+            padding = padding,
+            taskStore = taskStore,
+            reversibleTaskActions = reversibleTaskActions,
+            snackbarHostState = snackbarHostState,
+        )
         return
     }
 
