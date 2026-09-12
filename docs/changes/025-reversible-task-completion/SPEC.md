@@ -158,13 +158,16 @@ independent-review item unchecked.
 
 - Focused JVM `ReversibleTaskCompletionActionsContractTest` and
   `TaskCompletionLedgerPayloadTest`: `6/6` passed; skips/failures/errors `0`.
-- Focused `ReversibleTaskCompletionActionsDatabaseTest`: `13/13` passed on
+- Focused `ReversibleTaskCompletionActionsDatabaseTest`: `14/14` passed on
   Oppo CPH2791 / Android 16; skips/failures/errors `0`.
+- The focused Room class explicitly covers Task restoration/update failure
+  during `undoCompletionChange`, proving the completed Task, active ledger
+  entry, and unrelated Task/ledger state remain unchanged after rollback.
 - Existing CHG-024 `ReversibleTaskActionsDatabaseTest`: `12/12` passed on
   Oppo CPH2791 / Android 16.
 - Existing `TaskPersistenceDatabaseTest`: `6/6` passed on Oppo CPH2791 /
   Android 16; existing `ActionLedgerPersistenceDatabaseTest`: `10/10` passed.
-- Applicable `com.edu.quickaside.data.local` connected suite: `110/110`
+- Applicable `com.edu.quickaside.data.local` connected suite: `111/111`
   passed on Oppo CPH2791 / Android 16; skips/failures/errors `0`.
 - Full `./gradlew :app:testDebugUnitTest`: `120/120` passed; skips/failures/
   errors `0`.

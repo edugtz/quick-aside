@@ -67,8 +67,8 @@ All Task completion/reopen/Undo reads and writes use one Room write
 transaction. Compare-and-set returns must equal one; otherwise an exception
 forces rollback and the public result is `Failed`. Ordinary exceptions are
 typed as `Failed`; `CancellationException` is rethrown. Tests inject ledger
-parent/child, Task-update, mark-undone, and cancellation failures with unique
-databases/triggers where appropriate.
+parent/child, Task-update, Task-restoration during Undo, mark-undone, and
+cancellation failures with unique databases/triggers where appropriate.
 
 ## Verification order
 
@@ -101,11 +101,12 @@ merge, release, or issue the final independent verdict.
 
 - Focused JVM completion contract/codec tests: `6/6` passed; skips/failures/
   errors `0`.
-- Focused Room completion test: `13/13` passed on Oppo CPH2791 / Android 16.
+- Focused Room completion test: `14/14` passed on Oppo CPH2791 / Android 16,
+  including explicit Task-restoration failure during completion Undo.
 - CHG-024 reversible Task-create regression: `12/12` passed.
 - Task persistence/migration regression: `6/6` passed.
 - Action Ledger persistence regression: `10/10` passed.
-- Applicable `com.edu.quickaside.data.local` suite: `110/110` passed on
+- Applicable `com.edu.quickaside.data.local` suite: `111/111` passed on
   Oppo CPH2791 / Android 16.
 - Full JVM: `120/120` passed. Assemble and lint both completed successfully.
 - Room version/migrations and schema comparison are unchanged/clean; diff

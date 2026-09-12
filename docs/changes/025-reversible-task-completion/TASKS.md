@@ -50,12 +50,14 @@ independent engineering verdict.
 - [x] Cover malformed/unsupported ledger shapes, missing Task, target mismatch,
       and already-undone paths without mutation.
 - [x] Cover mark-undone failure/cancellation rollback and narrow-field Undo.
+- [x] Cover Task restoration/update failure during completion Undo, preserving
+      the completed Task, active ledger entry, and unrelated state.
 
 ## Verification gates
 
 - [x] Run focused JVM codec/contract tests: `6/6` passed; skips/failures/errors
       `0`.
-- [x] Run focused completion Room/device test: `13/13` passed on CPH2791 /
+- [x] Run focused completion Room/device test: `14/14` passed on CPH2791 /
       Android 16; skips/failures/errors `0`.
 - [x] Run existing CHG-024 reversible Task-create instrumentation regression:
       `12/12` passed on CPH2791 / Android 16.
@@ -64,7 +66,7 @@ independent engineering verdict.
 - [x] Run existing Action Ledger persistence regression: `10/10` passed on
       CPH2791 / Android 16.
 - [x] Run applicable `com.edu.quickaside.data.local` instrumentation suite:
-      `110/110` passed with zero skips/failures/errors.
+      `111/111` passed with zero skips/failures/errors.
 - [x] Run `./gradlew :app:testDebugUnitTest`: `120/120` passed; skips/failures/
       errors `0`.
 - [x] Run `./gradlew :app:assembleDebug`: `BUILD SUCCESSFUL`.
@@ -89,10 +91,11 @@ independent engineering verdict.
   strict payload-v1 codec, nullable completion CAS, and no schema/entity or
   application-wiring change.
 - Focused JVM tests: `6/6` passed with zero skips/failures/errors.
-- Focused completion Room tests: `13/13` passed on CPH2791 / Android 16.
+- Focused completion Room tests: `14/14` passed on CPH2791 / Android 16,
+  including the explicit Task-restoration failure path during Undo.
 - CHG-024 Task-create: `12/12`; Task persistence: `6/6`; Action Ledger:
   `10/10`; all on CPH2791 / Android 16.
-- Applicable `com.edu.quickaside.data.local` suite: `110/110` passed on
+- Applicable `com.edu.quickaside.data.local` suite: `111/111` passed on
   CPH2791 / Android 16 with zero skips/failures/errors.
 - Full JVM: `120/120` passed with zero skips/failures/errors. Assemble and
   lint succeeded.

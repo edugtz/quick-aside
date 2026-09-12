@@ -255,6 +255,69 @@ class ReversibleTaskCompletionActionsDatabaseTest {
     }
 
     @Test
+    fun undoTaskRestorationFailureRollsBackTaskAndLeavesAllLedgerStateUnchanged() = runBlocking {
+        openFreshDatabase()
+        val task = Task(
+            id = TaskId("undo-task-update-failure"),
+            title = "Undo update failure",
+            space = TaskSpace.PERSONAL,
+            dueDate = LocalDate.of(2026, 9, 23),
+        )
+        val unrelatedTask = Task(
+            id = TaskId("undo-task-update-unrelated"),
+            title = "Unrelated task",
+            space = TaskSpace.TRABAJO,
+        )
+        insertTask(task)
+        insertTask(unrelatedTask)
+        database.actionLedgerEntryDao().insert(
+            ActionLedgerEntryEntity(
+                id = "undo-task-update-unrelated-entry",
+                occurredAtEpochMillis = 20_000L,
+            ),
+        )
+
+        val completed = actions(
+            entryIds = listOf("undo-task-update-failure-entry"),
+            times = listOf(Instant.parse("2026-09-12T10:05:30.123456789Z")),
+        ).complete(task.id) as TaskCompletionActionResult.Changed
+        val preUndoTask = completed.task
+        assertEquals(preUndoTask, RoomTaskStore(database).getById(task.id))
+        database.close()
+        addUndoTaskRestorationFailureTrigger()
+        openFreshDatabase()
+
+        val result = RoomReversibleTaskActions(
+            database = database,
+            clock = ActionLedgerClock { Instant.parse("2026-09-12T10:05:31Z") },
+        ).undoCompletionChange(completed.actionLedgerEntryId, task.id)
+
+        assertTrue(result is UndoTaskCompletionChangeResult.Failed)
+        assertEquals(preUndoTask, RoomTaskStore(database).getById(task.id))
+        assertEquals(unrelatedTask, RoomTaskStore(database).getById(unrelatedTask.id))
+        assertEquals(2, database.taskDao().getAll().size)
+        assertNull(
+            database.actionLedgerEntryDao()
+                .getById(completed.actionLedgerEntryId.value)
+                ?.undoneAtEpochMillis,
+        )
+        assertEquals(
+            20_000L,
+            database.actionLedgerEntryDao()
+                .getById("undo-task-update-unrelated-entry")
+                ?.occurredAtEpochMillis,
+        )
+        assertEquals(2, database.actionLedgerEntryDao().getRecent(50).size)
+        assertCompletionLedger(
+            entryId = completed.actionLedgerEntryId.value,
+            occurredAt = preUndoTask.completedAt!!,
+            taskId = task.id.value,
+            beforeState = "pending",
+            afterState = "completed:${preUndoTask.completedAt.toEpochMilli()}",
+        )
+    }
+
+    @Test
     fun completionCancellationPropagatesWithoutPartialState() = runBlocking {
         openFreshDatabase()
         val task = Task(TaskId("cancel-complete-task"), "cancel complete", TaskSpace.PERSONAL)
@@ -709,6 +772,18 @@ class ReversibleTaskCompletionActionsDatabaseTest {
                 "CREATE TRIGGER fail_change025_undo_mark BEFORE UPDATE OF undone_at_epoch_millis ON action_ledger_entries " +
                     "WHEN OLD.id = 'mark-failure-entry' " +
                     "BEGIN SELECT RAISE(ABORT, 'forced Change 025 mark failure'); END",
+            )
+        }
+    }
+
+    private fun addUndoTaskRestorationFailureTrigger() {
+        BundledSQLiteDriver().open(context.getDatabasePath(databaseName).absolutePath).use { connection ->
+            connection.execute(
+                "CREATE TRIGGER fail_change025_undo_task_restore BEFORE UPDATE OF completed_at_epoch_millis ON tasks " +
+                    "WHEN OLD.id = 'undo-task-update-failure' " +
+                    "AND OLD.completed_at_epoch_millis IS NOT NULL " +
+                    "AND NEW.completed_at_epoch_millis IS NULL " +
+                    "BEGIN SELECT RAISE(ABORT, 'forced Change 025 Undo Task restoration failure'); END",
             )
         }
     }
