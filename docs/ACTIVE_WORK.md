@@ -4,7 +4,7 @@
 
 `docs/changes/026-local-pendientes-ui/`
 
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 
 Governance: **STANDARD**
 
@@ -15,11 +15,12 @@ surface using the existing TaskStore and ReversibleTaskActions boundaries.
 Google Tasks synchronization and runtime AI remain unavailable and out of
 scope.
 
-Implementation and obtainable verification are complete. Independent review
-of reviewed head `eb20cc18f1b832259e4a510b713327e524111f07` found exactly one
-**MINOR**: manual creation could fabricate `Loaded(listOf(newTask))` from
-Loading/Failed. The targeted patch gates creation on Loaded and makes
-`withTask` preserve unavailable states. Post-patch `PendientesUiTest` passed
+CHG-026 implementation and obtainable verification are complete. Remote review
+of reviewed head `fe238b59d838c3967da572c7b61a9e43402354d6` confirmed the
+targeted patch resolved the sole prior **MINOR**: manual creation could
+fabricate `Loaded(listOf(newTask))` from Loading/Failed. The targeted patch
+gates creation on Loaded and makes `withTask` preserve unavailable states.
+Post-patch `PendientesUiTest` passed
 14/14 on both connected devices and `QuickAsideAppTest` passed 1/1 on both;
 the full JVM suite passed 120/120, CHG-024 passed 12/12, CHG-025 passed 14/14,
 and assemble/lint/schema/diff checks passed. The retained connected result
@@ -33,6 +34,22 @@ connected suite passed 249/249 with 0 skipped and 0 failures on
 `Pixel_9_Pro(AVD) - 15` (API 35); the full suite was not rerun for this
 targeted Pendientes-only review patch. No Mandado production behavior
 changed.
+
+Independent engineering review: **PASS**
+
+`BLOCKER 0`
+`MAJOR 0`
+`MINOR 0`
+
+Remote review confirmed that manual create requires a successfully Loaded task
+snapshot; Loading and Failed cannot be promoted to a partial Loaded state;
+entered text is preserved while the snapshot is unavailable; Retry remains
+available; after successful Retry, existing tasks remain present; and
+creation becomes available only after a complete local read.
+
+Visual review passed for Personal empty, Personal pending/completed, Trabajo,
+Personal/Trabajo hierarchy, due dates, completed distinction, honest Google
+Tasks status, the global capture FAB, and no obsolete VoiceApp branding.
 
 ## State
 
@@ -49,9 +66,8 @@ changed.
 
 ## Independent engineering review
 
-Latest review finding: **MINOR** — unavailable Pendientes snapshots could be
-promoted to partial Loaded state. The targeted follow-up is applied;
-independent review remains unchecked.
+PASS — `BLOCKER 0 / MAJOR 0 / MINOR 0`. The sole prior MINOR was resolved by
+the targeted review patch.
 
 ## Proven baseline
 
@@ -65,5 +81,8 @@ independent review remains unchecked.
 
 ## Exact next gate
 
-User-authorized commit/push of CHG-026 followed by independent review of
-`main...chg-026-local-pendientes-ui`. Do not select CHG-027.
+User-authorized commit/push of the CHG-026 docs-only closeout, followed by
+remote verification. After successful remote closeout verification, the user
+may merge `chg-026-local-pendientes-ui` into `main`. After merge, verify
+`main == branch` before selecting the next reviewable change. No CHG-027 or
+other next change has been selected.

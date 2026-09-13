@@ -1,7 +1,7 @@
 # Change 026 — Local Pendientes UI Foundation — SPEC
 
 Governance: **STANDARD**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-026-local-pendientes-ui`
 
 ## Objective
@@ -197,12 +197,35 @@ passed 120/120 with 0 skipped and 0 failures/errors; `assembleDebug` and
 connected suite was not rerun because this was a targeted Pendientes-only
 patch; the 249/249 result above is pre-patch evidence.
 
-Independent review remains unchecked.
+## Independent engineering review closeout
 
-The builder must not commit, push, merge, release, select CHG-027, or assign an
-independent engineering verdict. When implementation and obtainable evidence
-are complete, the package and `docs/ACTIVE_WORK.md` must say:
+Independent engineering review: **PASS**
 
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`
+Reviewed head: `fe238b59d838c3967da572c7b61a9e43402354d6`
 
-Independent review remains unchecked.
+`BLOCKER 0`
+`MAJOR 0`
+`MINOR 0`
+
+Remote review confirmed that the targeted patch resolved the prior MINOR:
+
+- manual create requires a successfully Loaded task snapshot;
+- Loading and Failed cannot be promoted to a partial Loaded state;
+- entered text is preserved while the snapshot is unavailable;
+- Retry remains available;
+- after successful Retry, existing tasks remain present;
+- creation becomes available only after a complete local read.
+
+Visual review passed for Personal empty, Personal pending/completed, Trabajo,
+Personal/Trabajo hierarchy, due dates, completed distinction, honest Google
+Tasks status, the global capture FAB, and the absence of obsolete VoiceApp
+branding.
+
+No commit, push, merge, release, or future-change selection was performed.
+The package and `docs/ACTIVE_WORK.md` now say:
+
+`COMPLETE — REVIEW PASS`
+
+The pre-review-patch connected suite remains recorded as 249/249; it was not
+rerun after the targeted review patch. Runtime AI remains paused. No CHG-027 or
+other next change has been selected.

@@ -1,11 +1,11 @@
 # Change 026 — Local Pendientes UI Foundation — TASKS
 
 Governance: **STANDARD**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-026-local-pendientes-ui`
 
-This is a live builder checklist. Mark an item complete only after the work or
-evidence exists. It does not assign an independent engineering verdict.
+This is the CHG-026 closeout checklist. Mark an item complete only after the
+work or evidence exists; the independent engineering review is recorded below.
 
 ## Change package and preflight
 
@@ -67,11 +67,15 @@ evidence exists. It does not assign an independent engineering verdict.
 - [x] Representative CPH2791 screenshots are obtained and inspected against
       UX v3: Personal with pending/completed tasks and Trabajo when practical.
 - [x] Builder report is prepared without assigning the independent verdict.
+- [x] Independent engineering review complete: PASS (BLOCKER 0 / MAJOR 0 /
+      MINOR 0), reviewed head `fe238b59d838c3967da572c7b61a9e43402354d6`.
 
 ## Evidence log
 
 - Preflight is complete as recorded in PLAN.md.
 - Production compile and Android-test compile passed.
+- Original pre-review-patch `PendientesUiTest` passed 13/13 on CPH2791 /
+  Android 16.
 - Independent review of reviewed head `eb20cc18f1b832259e4a510b713327e524111f07`
   found exactly one **MINOR**: Loading/Failed could be promoted to a partial
   `Loaded(listOf(newTask))` after manual create.
@@ -81,6 +85,9 @@ evidence exists. It does not assign an independent engineering verdict.
   (API 35) and 14/14 on `CPH2791 - 16` (API 36). It verifies no create action
   call while unavailable, Retry recovery, and existing-task retention.
 - Review-patch `QuickAsideAppTest` passed 1/1 on both connected devices.
+- Visual review passed for Personal empty, Personal pending/completed, Trabajo,
+  Personal/Trabajo hierarchy, due dates, completed distinction, honest Google
+  Tasks status, the global capture FAB, and no obsolete VoiceApp branding.
 - `QuickAsideAppTest` passed on an isolated rerun; CHG-024 passed 12/12 and
   CHG-025 passed 14/14.
 - Full JVM passed 120/120 with 0 skipped and 0 failures/errors.
@@ -107,17 +114,18 @@ evidence exists. It does not assign an independent engineering verdict.
 
 ## Exact stop state
 
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`
+`COMPLETE — REVIEW PASS`
 
-The builder did not commit, push, merge, release, select CHG-027, or assign an
-independent engineering verdict.
+No commit, push, merge, release, or future-change selection was performed.
 
 ## Exact next gate
 
 Implementation and obtainable verification are complete:
 
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`
+`COMPLETE — REVIEW PASS`
 
-Then the next gate is user-authorized commit/push followed by independent
-review of `main...chg-026-local-pendientes-ui`. Do not commit or push in this
-builder turn.
+Exact next gate: user-authorized commit/push of the CHG-026 docs-only
+closeout, followed by remote verification. After successful remote closeout
+verification, the user may merge `chg-026-local-pendientes-ui` into `main`.
+After merge, verify `main == branch` before selecting the next reviewable
+change.

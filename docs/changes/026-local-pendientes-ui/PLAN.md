@@ -1,7 +1,7 @@
 # Change 026 — Local Pendientes UI Foundation — PLAN
 
 Governance: **STANDARD**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — REVIEW PASS**
 Expected branch: `chg-026-local-pendientes-ui`
 
 ## Preflight findings
@@ -121,9 +121,42 @@ fix, and rerun the affected gate. Do not fabricate counts or a device result.
 - `git diff --check` passed. Representative CPH2791 screenshots were captured
   and inspected for Personal empty/pending/completed states and Trabajo.
 
+## Independent engineering review closeout
+
+Independent engineering review: **PASS**
+
+Reviewed head: `fe238b59d838c3967da572c7b61a9e43402354d6`
+
+`BLOCKER 0`
+`MAJOR 0`
+`MINOR 0`
+
+Remote review confirmed that the targeted patch resolved the prior MINOR:
+
+- manual create requires a successfully Loaded task snapshot;
+- Loading and Failed cannot be promoted to a partial Loaded state;
+- entered text is preserved while the snapshot is unavailable;
+- Retry remains available;
+- after successful Retry, existing tasks remain present;
+- creation becomes available only after a complete local read.
+
+Visual review passed for Personal empty, Personal pending/completed, Trabajo,
+Personal/Trabajo hierarchy, due dates, completed distinction, honest Google
+Tasks status, the global capture FAB, and the absence of obsolete VoiceApp
+branding.
+
+The pre-review-patch connected suite remains recorded as 249/249; it was not
+rerun after the targeted review patch. Runtime AI remains paused. No CHG-027 or
+other next change has been selected.
+
 ## Stop state
 
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`
+`COMPLETE — REVIEW PASS`
 
-The builder did not commit, push, merge, release, select CHG-027, or assign an
-independent engineering verdict.
+No commit, push, merge, release, or future-change selection was performed.
+
+Exact next gate: user-authorized commit/push of the CHG-026 docs-only
+closeout, followed by remote verification. After successful remote closeout
+verification, the user may merge `chg-026-local-pendientes-ui` into `main`.
+After merge, verify `main == branch` before selecting the next reviewable
+change.
