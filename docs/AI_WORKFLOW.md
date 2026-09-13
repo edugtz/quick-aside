@@ -35,30 +35,45 @@ Prefer deterministic tools (build/tests/lint/static analysis) over builder self-
 
 ## 3. Runtime interpretation models
 
-Runtime interpretation is currently **paused** at the provider/runtime boundary
-pending the Quick Aside-owned private gateway runtime/protocol decision (see
-`docs/ARCHITECTURE.md` §5,
-`docs/adr/0001-private-remote-ai-runtime.md`, and
-`docs/adr/0002-quick-aside-owned-private-ai-gateway.md`).
+QAG-1 is **complete — PASS**. Runtime interpretation now has a selected
+provider invocation route, although the production gateway and Android
+integration are not yet implemented.
 
-Accepted decision after the completed runtime model evaluation (2026-09-09):
+Accepted runtime direction:
 
-1. **GPT-5.6 Luna — Low reasoning** — primary target, via ChatGPT Plus / Codex OAuth.
-2. **DeepSeek V4 Flash via OpenCode Go** — fallback candidate, evidence-triggered.
-3. MiMo-V2.5 was not selected as primary because observed schema/contract reliability was worse than the finalists.
-4. No automatic reasoning escalation; fallback, if implemented, is for eligible
-   provider/runtime failures rather than semantic disagreement.
+1. **GPT-5.6 Luna — explicit Low reasoning** — primary model via ChatGPT
+   Plus / Codex OAuth.
+2. **`codex exec --ephemeral`** — first gateway provider invocation route;
+   one fresh bounded process per interpretation request.
+3. **DeepSeek V4 Flash via OpenCode Go** — fallback candidate,
+   evidence-triggered.
+4. MiMo-V2.5 was not selected as primary because observed schema/contract
+   reliability was worse than the finalists.
+5. No automatic reasoning escalation; fallback, if implemented, is for
+   eligible provider/runtime failures rather than semantic disagreement.
 
-Do not restart broad comparative benchmarking unless real runtime use shows a
-concrete blocker. Provider auth and credentials belong to the isolated Quick
-Aside gateway/runtime, not the Android app or Personal Admin/Hermes.
+QAG-1 validated Codex SDK/CLI `0.154.0` on the target VPS. The persistent
+Python SDK/app-server path produced correct results but resident memory grew
+across fresh ephemeral threads. The CLI ephemeral route produced 3/3 valid
+strict-schema controls, left no Codex process after each request, and used
+effectively the same token/context amount as the equivalent SDK request.
 
-Historical benchmark timings are evidence from grouped test runs, not
-end-to-end per-capture Android → gateway → provider → Android latency. QAG-1
-must use current supported runtime behavior and measured latency before freezing
-the implementation route.
+These are VPS/runtime measurements, not Android end-to-end latency.
 
-Runtime code uses a provider abstraction. Stored domain records and CapturePlan schema must be provider-independent.
+Provider auth and credentials belong to the isolated Quick Aside
+gateway/runtime, not Android or Personal Admin/Hermes. Runtime code remains
+provider-abstracted; stored domain records and `CapturePlan` remain
+provider-independent.
+
+QAG-2 is the next gate and must implement the minimal gateway contract and
+bounded provider-process lifecycle before QAG-3 live deployment or QAG-4
+Android integration.
+
+Do not restart broad comparative model benchmarking unless real runtime use
+shows a concrete blocker.
+
+See `docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md` and
+`docs/changes/QAG-001-runtime-protocol-decision/QA.md`.
 
 ## 4. Runtime AI observability
 

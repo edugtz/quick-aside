@@ -74,36 +74,52 @@ For generative visual assets, follow the project AI workflow: Google AI Plus pri
 
 ## Runtime AI policy
 
-Runtime interpretation is provider-abstracted and currently **paused** at the
-provider/runtime boundary.
+Runtime interpretation remains provider-abstracted. QAG-1 is now
+**complete — PASS**.
 
 Current runtime direction for the personal MVP:
 
-1. GPT-5.6 Luna — Low reasoning — primary target, via ChatGPT Plus / Codex OAuth
-   through the Quick Aside-owned private AI gateway hosted on shared VPS
-   infrastructure.
-2. DeepSeek V4 Flash via OpenCode Go — fallback candidate only,
+1. GPT-5.6 Luna — explicit Low reasoning — primary model via ChatGPT Plus /
+   Codex OAuth.
+2. First gateway provider invocation: `codex exec --ephemeral`, one fresh
+   bounded process per interpretation request.
+3. The runtime uses a Quick Aside-specific `CODEX_HOME`, ignores unrelated
+   user/project Codex config/rules for the invocation, uses a read-only
+   sandbox, and requires strict structured output.
+4. DeepSeek V4 Flash via OpenCode Go remains a fallback candidate only,
    evidence-triggered.
-3. MiMo-V2.5 is not primary; the completed runtime model evaluation observed
+5. MiMo-V2.5 is not primary; the completed runtime evaluation observed
    worse schema/contract reliability than the finalists.
-4. No automatic reasoning escalation. Fallback, if implemented, is for eligible
-   provider/runtime failure classes rather than semantic disagreement.
+6. No automatic reasoning escalation. Fallback, if implemented, is for
+   eligible provider/runtime failure classes rather than semantic
+   disagreement.
 
-Provider credentials and auth state (ChatGPT/Codex OAuth, OpenCode Go) stay on
-the isolated Quick Aside gateway/runtime side and must never be stored in the
-Android app or owned by Personal Admin/Hermes. Remote model output is untrusted
-and must be validated locally before any execution. A remote AI dependency must
-not make capture lossy: persist the capture locally first.
+The persistent Python SDK/app-server route was proven but is not selected
+for v1 because QAG-1 observed increasing resident memory across fresh
+ephemeral threads on the target VPS. It remains a future alternative if
+requirements change.
 
-Further AI-interpreter/runtime-provider implementation is paused until the
-Quick Aside-owned private gateway runtime/protocol is proven enough to define
-the real integration boundary. Android-local Codex is deferred. See
-`docs/adr/0001-private-remote-ai-runtime.md` and
-`docs/adr/0002-quick-aside-owned-private-ai-gateway.md`.
+Provider credentials and auth state stay on the isolated Quick Aside
+gateway/runtime side and must never be stored in the Android app or owned by
+Personal Admin/Hermes. Remote model output is untrusted and must be
+validated locally before execution. A remote AI dependency must not make
+capture lossy: persist the capture locally first.
 
-Do not spend time on broad model benchmarking before there is observed product
-evidence requiring it. Model changes must not alter the domain contract or
-stored data format.
+QAG-2 — minimal gateway implementation — is the next runtime gate. It must
+define the actual gateway request/result contract, trusted temporal context,
+child-process timeout/cancellation, bounded concurrency, version pinning,
+health/readiness, and safe logging before live deployment.
+
+Do not spend time on broad model benchmarking without observed product
+evidence requiring it. Model/provider changes must not alter the domain
+contract or stored data format.
+
+See:
+
+- `docs/adr/0001-private-remote-ai-runtime.md`
+- `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`
+- `docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md`
+- `docs/changes/QAG-001-runtime-protocol-decision/`
 
 ## Verification
 

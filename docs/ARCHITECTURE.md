@@ -1,6 +1,6 @@
 # Quick Aside — Architecture v0.2
 
-Status: proposed implementation baseline derived from accepted product/UX decisions. Exact Android/API versions must be verified during implementation preflight. Runtime-AI sections reconciled 2026-09-12 (`docs/adr/0001-private-remote-ai-runtime.md` and `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`).
+Status: proposed implementation baseline derived from accepted product/UX decisions. Exact Android/API versions must be verified during implementation preflight. Runtime-AI sections reconciled 2026-09-12 (`docs/adr/0001-private-remote-ai-runtime.md`, `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`, and `docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md`).
 
 ## 1. Architecture goals
 
@@ -126,107 +126,166 @@ Records user-visible mutations for activity/history and reversible operations wh
 
 ## 5. Runtime AI architecture
 
-Use an interface such as `AIProvider` / `CaptureInterpreter`, not model-specific calls throughout the app. `CapturePlan` and stored domain records remain provider-independent.
+Use the existing `AIProvider` / `CaptureInterpreter` boundary rather than
+model-specific calls throughout Android. `CapturePlan` and stored domain
+records remain provider-independent.
 
-Runtime direction after the completed model evaluation (2026-09-09):
+Runtime direction:
 
-1. Primary target: **GPT-5.6 Luna — Low reasoning** — via ChatGPT Plus / Codex OAuth.
-2. Fallback candidate: **DeepSeek V4 Flash via OpenCode Go** — evidence-triggered only.
-3. MiMo-V2.5 is not primary; the evaluation observed worse schema/contract reliability.
-4. Deterministic/local interpretation for simple known commands remains preferred when safe.
+1. Primary model: **GPT-5.6 Luna — explicit Low reasoning** via
+   ChatGPT/Codex OAuth.
+2. Provider invocation for the first gateway version:
+   **`codex exec --ephemeral`**, one fresh bounded process per
+   interpretation request.
+3. Fallback candidate: **DeepSeek V4 Flash via OpenCode Go**,
+   evidence-triggered only.
+4. Deterministic/local interpretation for simple known commands remains
+   preferred when safe.
 
-Provider/model choices are infrastructure concerns and must remain replaceable behind `AIProvider` without domain or stored-data changes. Do not restart broad comparative benchmarking without observed runtime evidence.
+QAG-1 is complete and the provider invocation route is selected. The
+production gateway itself, Android networking, and runtime execution path
+are still not implemented.
 
-**Current status: PAUSED.** Further AI-interpreter/runtime-provider implementation
-(real `AIProvider` implementation, Codex/OpenCode Go clients, provider wire
-protocol, provider authentication, Luna runtime integration, DeepSeek fallback,
-production prompts/schemas, runtime network integration, and provider-only
-interpreter-contract work) is paused until the Quick Aside-owned private runtime
-gateway is planned and proven well enough to define the real remote integration
-boundary. Changes 020 and 021 remain accepted and complete. The earlier pause
-and its roadmap consequences are recorded in
-`docs/changes/PLN-001-runtime-ai-realignment/`; ADR-0002 now makes Quick Aside
-responsible for the gateway itself.
+### QAG-1 selected provider invocation
+
+The validated runtime shape is:
+
+```text
+Quick Aside gateway
+    -> fresh bounded codex exec --ephemeral
+    -> Quick Aside-specific CODEX_HOME
+    -> ChatGPT/Codex OAuth
+    -> GPT-5.6 Luna / Low
+    -> strict structured result
+    -> process exits
+```
+
+The QAG-1 spike validated Codex SDK/CLI `0.154.0`. Production must pin and
+test an explicit compatible version rather than silently floating.
+
+Invocation invariants:
+
+- explicit `gpt-5.6-luna`;
+- explicit Low reasoning;
+- ephemeral execution;
+- unrelated user/project Codex config ignored;
+- unrelated user/project exec rules ignored;
+- read-only sandbox;
+- strict JSON Schema output;
+- dedicated Quick Aside provider-auth namespace;
+- provider process terminated after each interpretation.
+
+The official Python SDK/persistent app-server route remains technically
+viable but is not selected for v1. QAG-1 observed resident-memory growth
+across fresh ephemeral threads, while process-per-request `codex exec`
+released Codex memory at request completion.
+
+QAG-2 owns gateway-side process timeout/cancellation, exit-code handling,
+output parsing, bounded concurrency, version pinning, health/readiness, and
+safe diagnostics.
 
 ### Remote runtime boundary
 
-The accepted target topology is:
-
 ```text
 Quick Aside Android
-    → private interpretation request
-    → Quick Aside private AI gateway
+    -> private interpretation request
+    -> Quick Aside private AI gateway
         (hosted on shared personal VPS infrastructure)
-        → fresh / bounded provider invocation
-        → Codex / ChatGPT OAuth
-        → GPT-5.6 Luna Low
+    -> bounded codex exec --ephemeral
+    -> Codex / ChatGPT OAuth
+    -> GPT-5.6 Luna Low
+    -> provider-neutral untrusted result
+    -> Android validation / future execution
 ```
 
 Quick Aside owns the gateway and all Quick Aside-specific runtime behavior.
-Personal Admin/Hermes may share the same VPS, but it is not an application
-dependency of Quick Aside. The gateway must not use Hermes agent
-conversation/context, Personal Admin prompts/state/cron/integrations, ACK
-delivery, or `/home/hermes` as its application/configuration namespace.
+Personal Admin/Hermes may share the VPS, but it is not an application
+dependency.
 
-The gateway should use its own service identity, configuration/state namespace,
-provider auth state, process lifecycle, and private network exposure unless
-later evidence justifies a different isolated design. Deployment and rollback
-must leave Personal Admin operationally unchanged.
+The gateway must not use:
 
-The exact gateway endpoint, wire protocol, authentication/network mechanism,
-server runtime, process-management details, and provider invocation mechanism
-remain unresolved. These are Quick Aside decisions and must be selected through
-a focused runtime/protocol investigation using current supported behavior and
-measured evidence rather than by assuming a CLI, SDK, app-server, or other
-integration path in advance.
+- Hermes conversation/context;
+- Personal Admin prompts/state/cron/integrations;
+- ACK delivery;
+- `/home/hermes` as its app/config/auth namespace;
+- Hermes global model/fallback policy.
+
+Deployment and rollback must leave Personal Admin operationally unchanged.
+
+Still unresolved for QAG-2/QAG-3:
+
+- gateway server language/runtime;
+- exact HTTP endpoint and request/result wire schema;
+- private-network/auth mechanism;
+- timeout value;
+- concurrency/resource limits;
+- production filesystem paths;
+- systemd details;
+- fallback implementation.
+
+### Trusted request context
+
+Trusted provenance remains Android-owned. The provider must not become
+authoritative for `sourceCaptureId` or local persistence identity.
+
+QAG-1 also exposed a contract gap: current `AIInterpretationRequest`
+contains only `inputText`, while relative-date interpretation requires
+trusted capture time/timezone context. QAG-2 must resolve that transport
+requirement without delegating local identity/provenance to the provider.
 
 ### Fast-capture latency requirement
 
-Runtime architecture must preserve the product's zero-friction capture path:
+Runtime architecture must preserve:
 
 ```text
 speak/type
-    → final local capture/transcript
-    → persist capture locally
-    → remote interpretation
-    → local validation
-    → UI reflects interpreted result / lightweight receipt
+    -> final local capture/transcript
+    -> persist capture locally
+    -> private gateway interpretation
+    -> local validation
+    -> UI reflects result / lightweight receipt
 ```
 
-The local capture must become durable without waiting for the remote model.
-Remote interpretation should then complete quickly enough that automatic
-classification/routing feels like part of the capture interaction rather than a
-separate background workflow.
+Local capture must become durable before remote interpretation.
 
-No numeric latency budget is frozen yet. Runtime/protocol selection must include
-measured end-to-end latency on a supported Android device through the actual
-private-network/VPS/provider path before the implementation is accepted. A
-runtime must not be selected solely because its SDK/CLI is convenient if its
-observed latency degrades the accepted fast-capture UX.
+QAG-1 measured the VPS/provider runtime in seconds-scale requests and proved
+both selected/rejected provider-invocation paths. Those measurements are
+not Android end-to-end measurements and do not freeze a numeric latency
+budget.
+
+QAG-4 must measure the actual:
+
+`Android -> private network -> gateway -> provider -> gateway -> Android`
+
+path before the runtime integration receives final fast-capture acceptance.
 
 ### AI safety boundary
 
 - Remote model output is untrusted.
-- Flow: `remote interpretation → untrusted structured result → Quick Aside validation → future execution`.
-- The remote runtime never directly mutates Quick Aside Room, Google Tasks, Google Calendar, or local reminders.
-- Quick Aside Android never receives or stores ChatGPT/Codex OAuth tokens, Codex auth state, OpenCode Go credentials, or other provider secrets. Those stay in the isolated Quick Aside runtime on the VPS.
-- Trusted capture provenance remains Android-owned; the remote provider must not become authoritative for `sourceCaptureId` or other local identity.
-
-Model changes must not require domain-schema changes.
+- Flow:
+  `remote interpretation -> untrusted structured result -> Quick Aside validation -> future execution`.
+- The remote runtime never directly mutates Room, Google Tasks, Google
+  Calendar, or reminders.
+- Android never receives/stores ChatGPT/Codex OAuth tokens or provider auth
+  state.
+- Model changes must not require domain-schema changes.
+- Logs/diagnostics should avoid raw capture content and must never log
+  tokens, keys, auth headers, or OAuth credentials.
 
 ### Local-first failure behavior
 
-A remote AI dependency must not make capture lossy:
+Remote interpretation must not make capture lossy:
 
 ```text
-capture → persist locally → attempt remote interpretation
+capture -> persist locally -> attempt remote interpretation
 ```
 
-If remote interpretation is unavailable, the original Capture remains durable and
-user intent must not silently disappear. Retry/deferred-interpretation policy is
-intentionally unspecified here and will be scoped in a future focused change.
+If interpretation is unavailable, the original Capture remains durable.
 
-No broad benchmark program is required before MVP use. Collect lightweight local diagnostics such as model used, latency, validation outcome, and correction/fallback rate without storing sensitive prompt content unnecessarily.
+Retry/deferred-interpretation policy remains a future focused decision.
+Collect lightweight diagnostics such as provider/model, latency, validation
+outcome, and fallback/correction rates without unnecessarily storing raw
+sensitive content.
 
 ## 6. Persistence
 

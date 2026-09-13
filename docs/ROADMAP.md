@@ -35,43 +35,53 @@ Implemented/current foundation includes:
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **PARTIALLY BLOCKED** — provider/runtime implementation paused.
+Status: **PARTIALLY BLOCKED — QAG-1 complete; QAG-2 is next.**
 
-Outcome: natural-language input becomes validated structured actions with minimal friction.
+Outcome: natural-language input becomes validated structured actions with
+minimal friction.
 
 Already complete and valid:
 
 - typed CapturePlan schema + validator (Change 020);
-- provider-independent CaptureInterpreter / AIProvider boundary (Change 021).
+- provider-independent CaptureInterpreter / AIProvider boundary (Change 021);
+- QAG-0 read-only VPS preflight;
+- QAG-1 provider runtime/protocol decision.
 
-Deferred (not rejected) until the Quick Aside-owned private gateway
-runtime/protocol is planned and proven enough to define the real remote
-integration boundary:
+QAG-1 selected:
 
-- real AIProvider implementation;
-- provider client/wire protocol and provider authentication;
-- Luna runtime integration and optional DeepSeek V4 Flash fallback;
-- production prompt/schema implementation and runtime network integration;
-- interpreter outcomes (PLAN/CLARIFY/UNSUPPORTED) + temporal-context work;
+- GPT-5.6 Luna with explicit Low reasoning;
+- ChatGPT/Codex OAuth;
+- `codex exec --ephemeral`;
+- one fresh bounded provider process per interpretation request;
+- strict structured output;
+- Quick Aside-specific provider auth namespace.
+
+Still pending:
+
+- QAG-2 minimal gateway implementation and contract;
+- trusted capture time/timezone transport;
+- production prompt/schema implementation;
+- gateway failure/timeout/concurrency behavior;
+- QAG-3 live VPS deployment;
+- QAG-4 Android remote `AIProvider` integration and true end-to-end latency;
+- optional DeepSeek V4 Flash fallback;
+- interpreter outcomes such as PLAN/CLARIFY/UNSUPPORTED where not already
+  covered by local foundations;
 - low-confidence policy, adaptive receipt, optional edit/review branch, and
-  correction/routing examples where not already covered by local foundations.
-
-Runtime model direction: GPT-5.6 Luna Low primary via ChatGPT Plus/Codex OAuth
-behind the Quick Aside-owned private gateway; DeepSeek V4 Flash via OpenCode Go
-is an evidence-triggered fallback candidate.
+  correction/routing examples where not already covered.
 
 Current gateway gates:
 
 - QAG-0 — read-only VPS preflight: **COMPLETE — PASS**
-- QAG-1 — runtime/protocol decision: **NEXT**
-- QAG-2 — minimal gateway implementation: pending QAG-1
-- QAG-3 — live VPS deployment: pending implementation and explicit user approval
-- QAG-4 — Android integration: pending an independently healthy gateway
+- QAG-1 — runtime/protocol decision: **COMPLETE — PASS**
+- QAG-2 — minimal gateway implementation: **NEXT**
+- QAG-3 — live VPS deployment: pending implementation and explicit user
+  approval
+- QAG-4 — Android integration: pending independently healthy gateway
 - QAG-5 — normal-use hardening: pending real use
 
-M2 cannot be considered complete until runtime interpretation resumes.
-Provider-independent execution/application foundations may be candidate work if
-independently justified, but they are not automatically scheduled here.
+M2 cannot be considered complete until runtime interpretation is integrated
+and accepted end-to-end.
 
 ## M3 — Google Tasks + Calendar
 
@@ -148,18 +158,21 @@ Quick Aside owns its private AI gateway.
 
 ```text
 Quick Aside Android
-    → Quick Aside private AI gateway
-        → configured provider runtime
+    -> Quick Aside private AI gateway
+    -> bounded codex exec --ephemeral
+    -> GPT-5.6 Luna / Low
 ```
 
 The gateway may run on the same VPS as Personal Admin/Hermes, but this is
 infrastructure reuse only. Personal Admin/Hermes is not an application
 dependency of Quick Aside.
 
-Gateway endpoint, auth/network mechanism, deployment topology, process
-management, provider invocation contract, timeout/concurrency policy, and
-fallback implementation are Quick Aside decisions. They remain intentionally
-unfrozen until QAG-1 produces current measured evidence.
+QAG-1 selected the provider invocation route. QAG-2 still owns the actual
+gateway server language/runtime, HTTP contract, timeout/cancellation,
+concurrency, health/readiness, production version pin, and safe logging.
+
+QAG-3 owns live private-network/systemd deployment details and requires
+explicit user approval before mutating production VPS/network state.
 
 ## Milestone dependency summary
 
@@ -169,29 +182,28 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | PARTIALLY BLOCKED — QAG-1 is the next runtime gate |
-| M3 | NOT globally blocked; end-to-end natural-language path blocked until interpretation resumes |
-| M4 | NOT globally blocked; natural-language reminder creation blocked until interpretation resumes |
+| M2 | PARTIALLY BLOCKED — QAG-1 complete; QAG-2 is next |
+| M3 | NOT globally blocked; end-to-end natural-language path still depends on M2 runtime integration |
+| M4 | NOT globally blocked; natural-language reminder creation still depends on M2 runtime integration |
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
 There is currently **no CHG-027 selected**.
 
-QAG-1 is the next runtime/architecture investigation gate. It does not
-automatically assign an implementation change number or authorize live VPS
-mutation.
+QAG-2 is the next gateway implementation gate. It must remain a reviewable
+Quick Aside change and does not itself authorize live VPS/network mutation.
 
-## Available work while AI interpretation is paused
+## Available work while gateway implementation is pending
 
 Not automatically scheduled:
 
-- QAG-1 runtime/protocol investigation.
+- QAG-2 minimal gateway contract and implementation.
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,
   outbox/retry, idempotency/conflict behavior, Calendar integration.
 - M4 foundations: reminder domain, scheduling, notification actions, and
   background/restart reliability.
-- M5 foundations: backup/snapshot, export center, structured reimport format,
-  and archive-before-prune verification.
+- M5 foundations: backup/snapshot, export center, structured reimport
+  format, and archive-before-prune verification.
 - M2 provider-independent execution/application foundations, only if
   independently justified.
 - M1/M6 polish that does not depend on automated interpretation.
