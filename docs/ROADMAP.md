@@ -14,11 +14,11 @@ Likely changes:
 
 ## M1 — Local capture and memory core
 
-Status: **NOT BLOCKED** — completed local work remains valid.
+Status: **NOT BLOCKED** — local foundation has advanced through Change 026.
 
 Outcome: the app is useful locally without Google/AI dependencies.
 
-Capabilities:
+Implemented/current foundation includes:
 
 - text capture;
 - basic voice/STT capture;
@@ -28,6 +28,9 @@ Capabilities:
 - basic structured logs;
 - action ledger/undo foundation;
 - local search/history basics;
+- local task persistence/completion/reopen;
+- reversible task create/completion;
+- Pendientes UI foundation;
 - UI aligned with UX v3.
 
 ## M2 — AI interpretation and fast-capture flow
@@ -41,21 +44,30 @@ Already complete and valid:
 - typed CapturePlan schema + validator (Change 020);
 - provider-independent CaptureInterpreter / AIProvider boundary (Change 021).
 
-Deferred (not rejected) until the shared private VPS runtime gateway is planned
-and proven enough to define the real remote integration boundary:
+Deferred (not rejected) until the Quick Aside-owned private gateway
+runtime/protocol is planned and proven enough to define the real remote
+integration boundary:
 
 - real AIProvider implementation;
-- Codex/OpenCode Go provider clients, wire protocol, and provider authentication;
-- Luna runtime integration and DeepSeek V4 Flash fallback implementation;
+- provider client/wire protocol and provider authentication;
+- Luna runtime integration and optional DeepSeek V4 Flash fallback;
 - production prompt/schema implementation and runtime network integration;
-- interpreter outcomes (PLAN/CLARIFY/UNSUPPORTED) + temporal-context work
-  formerly proposed as Change 022;
+- interpreter outcomes (PLAN/CLARIFY/UNSUPPORTED) + temporal-context work;
 - low-confidence policy, adaptive receipt, optional edit/review branch, and
-  correction/routing examples.
+  correction/routing examples where not already covered by local foundations.
 
 Runtime model direction: GPT-5.6 Luna Low primary via ChatGPT Plus/Codex OAuth
-behind the private gateway; DeepSeek V4 Flash via OpenCode Go is an
-evidence-triggered fallback candidate.
+behind the Quick Aside-owned private gateway; DeepSeek V4 Flash via OpenCode Go
+is an evidence-triggered fallback candidate.
+
+Current gateway gates:
+
+- QAG-0 — read-only VPS preflight: **COMPLETE — PASS**
+- QAG-1 — runtime/protocol decision: **NEXT**
+- QAG-2 — minimal gateway implementation: pending QAG-1
+- QAG-3 — live VPS deployment: pending implementation and explicit user approval
+- QAG-4 — Android integration: pending an independently healthy gateway
+- QAG-5 — normal-use hardening: pending real use
 
 M2 cannot be considered complete until runtime interpretation resumes.
 Provider-independent execution/application foundations may be candidate work if
@@ -130,23 +142,24 @@ Capabilities driven by observed usage:
 - UI polish against canonical reference;
 - real usage acceptance period.
 
-## Cross-project runtime dependency
+## Quick Aside private runtime gateway
 
-Quick Aside now depends on a shared personal runtime capability:
+Quick Aside owns its private AI gateway.
 
 ```text
-Personal Admin / personal-runtime project
-    → shared private VPS runtime capability
-    → Quick Aside AI interpretation
+Quick Aside Android
+    → Quick Aside private AI gateway
+        → configured provider runtime
 ```
 
-The required external capability is a private, authenticated, bounded AI
-inference service available from the personal VPS — not Hermes-specific agent
-behavior. Quick Aside shares infrastructure with Personal Admin/Hermes but must
-not use the Hermes agent conversation/context as its interpretation service.
+The gateway may run on the same VPS as Personal Admin/Hermes, but this is
+infrastructure reuse only. Personal Admin/Hermes is not an application
+dependency of Quick Aside.
+
 Gateway endpoint, auth/network mechanism, deployment topology, process
-management, and Codex invocation contract remain Personal Admin/shared-runtime
-decisions and are not frozen inside Quick Aside.
+management, provider invocation contract, timeout/concurrency policy, and
+fallback implementation are Quick Aside decisions. They remain intentionally
+unfrozen until QAG-1 produces current measured evidence.
 
 ## Milestone dependency summary
 
@@ -155,21 +168,24 @@ Non-blocked, provider-independent work may continue.
 
 | Milestone | Status |
 |---|---|
-| M1 | NOT BLOCKED |
-| M2 | PARTIALLY BLOCKED — completion blocked by runtime gateway readiness |
+| M1 | NOT BLOCKED — local foundation advanced through Change 026 |
+| M2 | PARTIALLY BLOCKED — QAG-1 is the next runtime gate |
 | M3 | NOT globally blocked; end-to-end natural-language path blocked until interpretation resumes |
 | M4 | NOT globally blocked; natural-language reminder creation blocked until interpretation resumes |
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
-Change 022 selection is pending independent review and merge of
-`docs/changes/PLN-001-runtime-ai-realignment/` and will come from non-blocked
-roadmap work.
+There is currently **no CHG-027 selected**.
+
+QAG-1 is the next runtime/architecture investigation gate. It does not
+automatically assign an implementation change number or authorize live VPS
+mutation.
 
 ## Available work while AI interpretation is paused
 
-Not automatically scheduled. Candidate inputs for later Change 022 selection:
+Not automatically scheduled:
 
+- QAG-1 runtime/protocol investigation.
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,
   outbox/retry, idempotency/conflict behavior, Calendar integration.
 - M4 foundations: reminder domain, scheduling, notification actions, and
@@ -180,7 +196,7 @@ Not automatically scheduled. Candidate inputs for later Change 022 selection:
   independently justified.
 - M1/M6 polish that does not depend on automated interpretation.
 
-This list records options, not a schedule. Change 022 is not pre-selected.
+This list records options, not a schedule.
 
 ## Post-MVP — Evidence-triggered candidates
 

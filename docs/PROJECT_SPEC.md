@@ -210,15 +210,21 @@ Current personal-MVP runtime direction after the completed model evaluation
 - primary target: GPT-5.6 Luna — Low reasoning — via ChatGPT Plus / Codex OAuth;
 - fallback candidate: DeepSeek V4 Flash via OpenCode Go, evidence-triggered only;
 - MiMo-V2.5 is no longer the primary model;
-- provider auth/secrets stay on the personal runtime, never on the Android device;
-- runtime interpretation is currently paused pending the private shared-VPS
-  runtime gateway (see `docs/ARCHITECTURE.md` §5 and
-  `docs/adr/0001-private-remote-ai-runtime.md`).
+- provider auth/secrets stay in the isolated Quick Aside gateway/runtime,
+  never on the Android device or under Personal Admin/Hermes ownership;
+- runtime interpretation is currently paused pending the Quick Aside-owned
+  private gateway runtime/protocol decision (see `docs/ARCHITECTURE.md` §5,
+  `docs/adr/0001-private-remote-ai-runtime.md`, and
+  `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`).
 
 Remote model output is untrusted and must pass Quick Aside validation before any
 future execution. A remote AI dependency must not make capture lossy: a capture
 is persisted locally before interpretation is attempted, and the original
 capture remains durable if interpretation is unavailable.
+
+The remote path must preserve the accepted fast-capture UX. Numeric latency
+budgets are not frozen here; QAG-1 must establish them from measured runtime
+behavior before the integration is accepted.
 
 Model/provider changes must not alter domain contracts or stored data formats.
 Do not restart broad benchmark work unless real use shows a concrete blocker.

@@ -36,18 +36,27 @@ Prefer deterministic tools (build/tests/lint/static analysis) over builder self-
 ## 3. Runtime interpretation models
 
 Runtime interpretation is currently **paused** at the provider/runtime boundary
-pending the shared private VPS runtime gateway (see `docs/ARCHITECTURE.md` §5 and
-`docs/adr/0001-private-remote-ai-runtime.md`).
+pending the Quick Aside-owned private gateway runtime/protocol decision (see
+`docs/ARCHITECTURE.md` §5,
+`docs/adr/0001-private-remote-ai-runtime.md`, and
+`docs/adr/0002-quick-aside-owned-private-ai-gateway.md`).
 
 Accepted decision after the completed runtime model evaluation (2026-09-09):
 
 1. **GPT-5.6 Luna — Low reasoning** — primary target, via ChatGPT Plus / Codex OAuth.
 2. **DeepSeek V4 Flash via OpenCode Go** — fallback candidate, evidence-triggered.
 3. MiMo-V2.5 was not selected as primary because observed schema/contract reliability was worse than the finalists.
+4. No automatic reasoning escalation; fallback, if implemented, is for eligible
+   provider/runtime failures rather than semantic disagreement.
 
 Do not restart broad comparative benchmarking unless real runtime use shows a
-concrete blocker. Provider auth and credentials belong to the personal runtime,
-not the Android app.
+concrete blocker. Provider auth and credentials belong to the isolated Quick
+Aside gateway/runtime, not the Android app or Personal Admin/Hermes.
+
+Historical benchmark timings are evidence from grouped test runs, not
+end-to-end per-capture Android → gateway → provider → Android latency. QAG-1
+must use current supported runtime behavior and measured latency before freezing
+the implementation route.
 
 Runtime code uses a provider abstraction. Stored domain records and CapturePlan schema must be provider-independent.
 

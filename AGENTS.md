@@ -9,11 +9,12 @@ When sources disagree, use this order unless the user explicitly overrides it:
 1. The user's latest explicit product decision.
 2. The active change package under `docs/changes/...`.
 3. `docs/PROJECT_SPEC.md` for accepted product behavior and scope.
-4. `docs/NAMING.md` for the accepted product name and legacy-codename rule.
-5. `docs/ARCHITECTURE.md` for system boundaries and invariants.
-6. `docs/UX_UI_REFERENCE.md` + `docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png` for UI/UX intent.
-7. Actual repository code/manifests/tests for current implementation facts.
-8. Platform/vendor documentation for API behavior.
+4. Accepted ADRs under `docs/adr/` for durable architectural decisions and supersession history.
+5. `docs/NAMING.md` for the accepted product name and legacy-codename rule.
+6. `docs/ARCHITECTURE.md` for system boundaries and invariants.
+7. `docs/UX_UI_REFERENCE.md` + `docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png` for UI/UX intent.
+8. Actual repository code/manifests/tests for current implementation facts.
+9. Platform/vendor documentation for API behavior.
 
 Do not re-plan from zero when `docs/ACTIVE_WORK.md` already points to active work.
 
@@ -30,7 +31,7 @@ Use `software-project-orchestrator` proportional governance:
 
 - QUICK: trivial, local, reversible fixes with no durable contract impact.
 - STANDARD: normal features, bugs, integrations, UI flows, persistence, or multi-file changes.
-- HIGH-ASSURANCE: auth/permissions, data-loss risk, migrations, destructive archive/prune, sync correctness/idempotency, release/cutover, or platform behavior requiring real-device evidence.
+- HIGH-ASSURANCE: auth/permissions, data-loss risk, migrations, destructive archive/prune, sync correctness/idempotency, live VPS/network/runtime changes, release/cutover, or platform behavior requiring real-device evidence.
 
 The user retains product, commit, push, merge, and release authority unless explicitly delegated.
 
@@ -76,25 +77,29 @@ For generative visual assets, follow the project AI workflow: Google AI Plus pri
 Runtime interpretation is provider-abstracted and currently **paused** at the
 provider/runtime boundary.
 
-Current runtime direction for the personal MVP (post Change 021):
+Current runtime direction for the personal MVP:
 
 1. GPT-5.6 Luna — Low reasoning — primary target, via ChatGPT Plus / Codex OAuth
-   on shared personal runtime infrastructure.
+   through the Quick Aside-owned private AI gateway hosted on shared VPS
+   infrastructure.
 2. DeepSeek V4 Flash via OpenCode Go — fallback candidate only,
    evidence-triggered.
 3. MiMo-V2.5 is not primary; the completed runtime model evaluation observed
    worse schema/contract reliability than the finalists.
+4. No automatic reasoning escalation. Fallback, if implemented, is for eligible
+   provider/runtime failure classes rather than semantic disagreement.
 
 Provider credentials and auth state (ChatGPT/Codex OAuth, OpenCode Go) stay on
-the personal VPS/runtime side and must never be stored in the Android app.
-Remote model output is untrusted and must be validated locally before any
-execution. A remote AI dependency must not make capture lossy: persist the
-capture locally first.
+the isolated Quick Aside gateway/runtime side and must never be stored in the
+Android app or owned by Personal Admin/Hermes. Remote model output is untrusted
+and must be validated locally before any execution. A remote AI dependency must
+not make capture lossy: persist the capture locally first.
 
 Further AI-interpreter/runtime-provider implementation is paused until the
-shared private VPS runtime gateway is planned and proven enough to define the
-real integration boundary. Android-local Codex is deferred. See
-`docs/adr/0001-private-remote-ai-runtime.md`.
+Quick Aside-owned private gateway runtime/protocol is proven enough to define
+the real integration boundary. Android-local Codex is deferred. See
+`docs/adr/0001-private-remote-ai-runtime.md` and
+`docs/adr/0002-quick-aside-owned-private-ai-gateway.md`.
 
 Do not spend time on broad model benchmarking before there is observed product
 evidence requiring it. Model changes must not alter the domain contract or

@@ -50,11 +50,20 @@ These are product-wide gates. Active changes add narrower acceptance scenarios.
 - Model output is validated before mutations.
 - Invalid/unsupported model output cannot directly alter Room/Google data.
 - Runtime provider can be switched without migrating user-domain data.
-- Primary runtime target is GPT-5.6 Luna Low via the private shared-VPS runtime gateway; DeepSeek V4 Flash via OpenCode Go is an evidence-triggered fallback candidate. Provider changes are driven by observed failures, not speculative benchmark work.
+- Primary runtime target is GPT-5.6 Luna Low via the Quick Aside-owned private
+  gateway hosted on shared VPS infrastructure; DeepSeek V4 Flash via OpenCode
+  Go is an evidence-triggered fallback candidate. Provider changes are driven by
+  observed failures, not speculative benchmark work.
 - Provider OAuth tokens and credentials are never stored on the Android device.
+- Quick Aside provider credentials/auth state are isolated from Personal
+  Admin/Hermes.
 - A capture is persisted locally before remote interpretation; remote unavailability must not lose user intent or silently discard a capture.
 - Remote interpretation cannot directly mutate Room, Google Tasks/Calendar, or local reminders.
 - AI does not act as the source of historical truth.
+- The gateway must provide fresh/bounded inference without depending on Hermes
+  conversation history, memory, prompts, tools, cron, state, or integrations.
+- Runtime integration PASS requires measured latency evidence for the real
+  fast-capture path against the QAG-1 budget once that budget is established.
 
 ## History and retrieval
 
@@ -75,7 +84,10 @@ These are product-wide gates. Active changes add narrower acceptance scenarios.
 - Secrets are not included in export/backup or logs.
 - Diagnostics avoid raw personal/work capture content by default.
 - Public distribution cannot use a client-extractable shared provider key architecture.
-- Provider credentials and auth state stay on the personal runtime; the Android client owns no provider secrets.
+- Provider credentials and auth state stay on the isolated Quick Aside
+  gateway/runtime; the Android client owns no provider secrets.
+- Sharing VPS infrastructure with Personal Admin does not permit Quick Aside to
+  reuse Hermes/Personal Admin credentials, memory, state, or application data.
 
 ## Engineering gates
 
@@ -85,7 +97,9 @@ Before a change can receive `PASS`, all required applicable gates must have actu
 - targeted tests;
 - static analysis/lint/type checks as configured;
 - integration/sandbox checks where external APIs are touched;
+- current official vendor/runtime documentation verification where provider behavior matters;
 - real-device QA when behavior depends on Android background/voice/notifications/system surfaces;
+- real-VPS evidence where gateway/network/auth/systemd behavior is changed;
 - visual evidence for material UI changes.
 
 A model statement that something works is not evidence.
