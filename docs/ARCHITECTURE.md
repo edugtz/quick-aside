@@ -1,6 +1,6 @@
 # Quick Aside — Architecture v0.2
 
-Status: proposed implementation baseline derived from accepted product/UX decisions. Exact Android/API versions must be verified during implementation preflight. Runtime-AI sections reconciled 2026-09-10 (`docs/adr/0001-private-remote-ai-runtime.md`).
+Status: proposed implementation baseline derived from accepted product/UX decisions. Exact Android/API versions must be verified during implementation preflight. Runtime-AI sections reconciled 2026-09-12 (`docs/adr/0001-private-remote-ai-runtime.md` and `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`).
 
 ## 1. Architecture goals
 
@@ -11,8 +11,9 @@ Status: proposed implementation baseline derived from accepted product/UX decisi
 - Fast capture path with optional correction.
 - Offline-tolerant local functionality.
 - No custom multi-user/SaaS backend for the initial personal MVP. A small
-  private personal runtime gateway on shared personal VPS infrastructure is an
-  accepted exception for AI interpretation only (ADR-0001).
+  Quick Aside-owned private runtime gateway hosted on shared personal VPS
+  infrastructure is an accepted exception for AI interpretation only
+  (ADR-0001, ADR-0002).
 - Future interaction surfaces reuse one capture pipeline rather than duplicating logic.
 
 ## 2. High-level topology
@@ -31,8 +32,9 @@ Interaction surfaces
       /                     \
 Local rules             AIProvider
                           |
-                private runtime gateway
-                 (shared personal VPS)
+               Quick Aside private
+                  AI gateway
+              (shared VPS host only)
                           |
               Codex / ChatGPT OAuth
                           |
@@ -139,10 +141,12 @@ Provider/model choices are infrastructure concerns and must remain replaceable b
 (real `AIProvider` implementation, Codex/OpenCode Go clients, provider wire
 protocol, provider authentication, Luna runtime integration, DeepSeek fallback,
 production prompts/schemas, runtime network integration, and provider-only
-interpreter-contract work) is paused until the shared private runtime gateway is
-planned and proven well enough to define the real remote integration boundary.
-Changes 020 and 021 remain accepted and complete. The pause and its roadmap
-consequences are recorded in `docs/changes/PLN-001-runtime-ai-realignment/`.
+interpreter-contract work) is paused until the Quick Aside-owned private runtime
+gateway is planned and proven well enough to define the real remote integration
+boundary. Changes 020 and 021 remain accepted and complete. The earlier pause
+and its roadmap consequences are recorded in
+`docs/changes/PLN-001-runtime-ai-realignment/`; ADR-0002 now makes Quick Aside
+responsible for the gateway itself.
 
 ### Remote runtime boundary
 
@@ -151,29 +155,62 @@ The accepted target topology is:
 ```text
 Quick Aside Android
     → private interpretation request
-    → shared personal VPS
-        → private Quick Aside runtime gateway
-            → Codex / ChatGPT OAuth
-            → GPT-5.6 Luna Low
+    → Quick Aside private AI gateway
+        (hosted on shared personal VPS infrastructure)
+        → fresh / bounded provider invocation
+        → Codex / ChatGPT OAuth
+        → GPT-5.6 Luna Low
 ```
 
-Quick Aside shares infrastructure with the Personal Admin/Hermes runtime but must
-not use the Hermes agent conversation/context as its interpretation service. The
-gateway is a separate, logically isolated consumer with bounded, fresh
-inference.
+Quick Aside owns the gateway and all Quick Aside-specific runtime behavior.
+Personal Admin/Hermes may share the same VPS, but it is not an application
+dependency of Quick Aside. The gateway must not use Hermes agent
+conversation/context, Personal Admin prompts/state/cron/integrations, ACK
+delivery, or `/home/hermes` as its application/configuration namespace.
 
-The exact gateway endpoint, authentication/network mechanism (a
-private/Tailscale-style path is preferred if consistent with the Personal Admin
-architecture), deployment topology, process management, and Codex invocation
-contract remain unresolved and belong to Personal Admin/shared-runtime planning.
-Quick Aside must not freeze those details first.
+The gateway should use its own service identity, configuration/state namespace,
+provider auth state, process lifecycle, and private network exposure unless
+later evidence justifies a different isolated design. Deployment and rollback
+must leave Personal Admin operationally unchanged.
+
+The exact gateway endpoint, wire protocol, authentication/network mechanism,
+server runtime, process-management details, and provider invocation mechanism
+remain unresolved. These are Quick Aside decisions and must be selected through
+a focused runtime/protocol investigation using current supported behavior and
+measured evidence rather than by assuming a CLI, SDK, app-server, or other
+integration path in advance.
+
+### Fast-capture latency requirement
+
+Runtime architecture must preserve the product's zero-friction capture path:
+
+```text
+speak/type
+    → final local capture/transcript
+    → persist capture locally
+    → remote interpretation
+    → local validation
+    → UI reflects interpreted result / lightweight receipt
+```
+
+The local capture must become durable without waiting for the remote model.
+Remote interpretation should then complete quickly enough that automatic
+classification/routing feels like part of the capture interaction rather than a
+separate background workflow.
+
+No numeric latency budget is frozen yet. Runtime/protocol selection must include
+measured end-to-end latency on a supported Android device through the actual
+private-network/VPS/provider path before the implementation is accepted. A
+runtime must not be selected solely because its SDK/CLI is convenient if its
+observed latency degrades the accepted fast-capture UX.
 
 ### AI safety boundary
 
 - Remote model output is untrusted.
 - Flow: `remote interpretation → untrusted structured result → Quick Aside validation → future execution`.
 - The remote runtime never directly mutates Quick Aside Room, Google Tasks, Google Calendar, or local reminders.
-- Quick Aside Android never receives or stores ChatGPT/Codex OAuth tokens, Codex auth state, OpenCode Go credentials, or other provider secrets. Those stay on the personal VPS/runtime side.
+- Quick Aside Android never receives or stores ChatGPT/Codex OAuth tokens, Codex auth state, OpenCode Go credentials, or other provider secrets. Those stay in the isolated Quick Aside runtime on the VPS.
+- Trusted capture provenance remains Android-owned; the remote provider must not become authoritative for `sourceCaptureId` or other local identity.
 
 Model changes must not require domain-schema changes.
 
@@ -305,9 +342,11 @@ Future capture surfaces should call the same capture application/domain services
 ## 12. Backend strategy
 
 Personal MVP: no general-purpose custom backend. The single accepted exception is
-a small private personal runtime gateway on shared personal VPS infrastructure
-for AI interpretation only (ADR-0001). It is not a general-purpose backend and
-must not grow into one.
+a small **Quick Aside-owned private AI gateway** hosted on shared personal VPS
+infrastructure for AI interpretation only (ADR-0001, ADR-0002). It is not a
+Personal Admin capability, not a Hermes service, and not a general-purpose
+backend. Shared host/network patterns may be reused without sharing application
+authority, state, credentials, or lifecycle.
 
 Avoid premature:
 
@@ -324,7 +363,7 @@ Productization would be a separate architectural phase and likely requires backe
 - Least-privilege Google OAuth scopes.
 - Secrets excluded from backup/export.
 - Provider credentials never logged.
-- Provider OAuth tokens, Codex auth state, and OpenCode Go credentials stay on the personal runtime; the Android app does not own provider secrets.
+- Provider OAuth tokens, Codex auth state, and OpenCode Go credentials stay in the isolated Quick Aside runtime namespace on the VPS; the Android app and Personal Admin/Hermes do not own Quick Aside provider secrets.
 - Captures/logs may contain sensitive personal/work information; logs and diagnostics should avoid raw content by default.
 - Backups/exports need explicit user-visible destination and security posture.
 - Public/commercial builds require re-review of credential ownership, scopes, and data handling.
@@ -333,6 +372,10 @@ Productization would be a separate architectural phase and likely requires backe
 
 - deterministic parser/interpreter tests;
 - CapturePlan schema/validator tests;
+- runtime/gateway contract and failure-path tests before remote integration PASS;
+- real-VPS proof that the gateway is privately reachable, restartable, and does not expose provider credentials to Android;
+- measured end-to-end Android → private gateway → provider → Android latency for the fast-capture path before choosing/accepting the runtime integration;
+- regression evidence that deploying/restarting/rolling back Quick Aside leaves Personal Admin/Hermes/ACK behavior unchanged;
 - Room migration tests;
 - sync tests + sandbox/real-account verification;
 - reminder real-device verification;
