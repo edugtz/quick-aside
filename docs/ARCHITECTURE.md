@@ -134,21 +134,19 @@ Runtime direction:
 
 1. Primary model: **GPT-5.6 Luna — explicit Low reasoning** via
    ChatGPT/Codex OAuth.
-2. Provider invocation for the first gateway version:
-   **`codex exec --ephemeral`**, one fresh bounded process per
-   interpretation request.
+2. Provider invocation: **`codex exec --ephemeral`**, one fresh bounded
+   process per interpretation request.
 3. Fallback candidate: **DeepSeek V4 Flash via OpenCode Go**,
    evidence-triggered only.
 4. Deterministic/local interpretation for simple known commands remains
    preferred when safe.
 
-QAG-1 is complete and the provider invocation route is selected. The
-production gateway itself, Android networking, and runtime execution path
-are still not implemented.
+QAG-1 selected the provider invocation route. QAG-2 implemented and verified
+the minimal repository-owned gateway. The gateway is **not yet live-deployed**;
+QAG-3 owns that HIGH-ASSURANCE deployment step, and QAG-4 owns Android remote
+provider integration.
 
-### QAG-1 selected provider invocation
-
-The validated runtime shape is:
+### Selected provider invocation
 
 ```text
 Quick Aside gateway
@@ -160,8 +158,8 @@ Quick Aside gateway
     -> process exits
 ```
 
-The QAG-1 spike validated Codex SDK/CLI `0.154.0`. Production must pin and
-test an explicit compatible version rather than silently floating.
+QAG-1 validated Codex SDK/CLI `0.154.0`; QAG-2 pins and verifies that CLI
+version for the first gateway implementation.
 
 Invocation invariants:
 
@@ -173,16 +171,47 @@ Invocation invariants:
 - read-only sandbox;
 - strict JSON Schema output;
 - dedicated Quick Aside provider-auth namespace;
-- provider process terminated after each interpretation.
+- provider process terminated/reaped after each interpretation.
 
-The official Python SDK/persistent app-server route remains technically
-viable but is not selected for v1. QAG-1 observed resident-memory growth
-across fresh ephemeral threads, while process-per-request `codex exec`
-released Codex memory at request completion.
+The official Python SDK/persistent app-server route remains technically viable
+but is not selected for v1. QAG-1 observed resident-memory growth across fresh
+ephemeral threads, while process-per-request `codex exec` released Codex memory
+at request completion.
 
-QAG-2 owns gateway-side process timeout/cancellation, exit-code handling,
-output parsing, bounded concurrency, version pinning, health/readiness, and
-safe diagnostics.
+### QAG-2 gateway contract
+
+Repository implementation:
+
+- Python 3.12–3.14 compatible package;
+- FastAPI/Uvicorn/Pydantic HTTP boundary;
+- `GET /healthz` for process health;
+- `GET /readyz` for Codex/runtime readiness;
+- `POST /v1/interpret` for interpretation.
+
+Trusted request fields:
+
+- `inputText`;
+- `capturedAt` as strict RFC3339 string;
+- `timeZone` as IANA timezone.
+
+`sourceCaptureId` and local persistence identity remain Android-owned and are
+not delegated to the provider.
+
+Current QAG-2 safety/resource bounds:
+
+- raw HTTP request body: 32 KiB;
+- capture text: 4,000 characters;
+- provider candidate actions: 16;
+- structured-log fields: 32;
+- provider result file: 64 KiB;
+- provider-process timeout: 15 seconds;
+- total request timeout including semaphore wait: 20 seconds;
+- provider concurrency: 1 by default.
+
+Provider output is untrusted. The gateway validates required fields, rejects
+non-applicable non-null fields, rejects malformed/oversized/non-UTF-8 output,
+converts provider structured-log pairs to the public map contract, and returns
+stable privacy-safe failure responses.
 
 ### Remote runtime boundary
 
@@ -212,26 +241,22 @@ The gateway must not use:
 
 Deployment and rollback must leave Personal Admin operationally unchanged.
 
-Still unresolved for QAG-2/QAG-3:
+QAG-3 still owns unresolved live-environment details:
 
-- gateway server language/runtime;
-- exact HTTP endpoint and request/result wire schema;
-- private-network/auth mechanism;
-- timeout value;
-- concurrency/resource limits;
-- production filesystem paths;
-- systemd details;
-- fallback implementation.
+- production Quick Aside Unix user and filesystem paths;
+- private-network reachability/auth mechanism;
+- systemd service/lifecycle configuration;
+- live resource observation and rollback procedure;
+- Tailscale/UFW changes, if any are actually required.
 
-### Trusted request context
+QAG-4 later owns:
 
-Trusted provenance remains Android-owned. The provider must not become
-authoritative for `sourceCaptureId` or local persistence identity.
+- Android network permission/client implementation;
+- Android remote `AIProvider` adapter;
+- end-to-end capture persistence -> gateway -> validation flow;
+- true Android/private-network/provider latency measurement.
 
-QAG-1 also exposed a contract gap: current `AIInterpretationRequest`
-contains only `inputText`, while relative-date interpretation requires
-trusted capture time/timezone context. QAG-2 must resolve that transport
-requirement without delegating local identity/provenance to the provider.
+Fallback implementation remains later and evidence-triggered.
 
 ### Fast-capture latency requirement
 
@@ -248,16 +273,15 @@ speak/type
 
 Local capture must become durable before remote interpretation.
 
-QAG-1 measured the VPS/provider runtime in seconds-scale requests and proved
-both selected/rejected provider-invocation paths. Those measurements are
-not Android end-to-end measurements and do not freeze a numeric latency
-budget.
+QAG-1/QAG-2 proved provider/gateway behavior in seconds-scale requests. Those
+measurements are not Android end-to-end measurements and do not freeze a final
+numeric fast-capture budget.
 
 QAG-4 must measure the actual:
 
 `Android -> private network -> gateway -> provider -> gateway -> Android`
 
-path before the runtime integration receives final fast-capture acceptance.
+path before runtime integration receives final fast-capture acceptance.
 
 ### AI safety boundary
 
@@ -269,7 +293,7 @@ path before the runtime integration receives final fast-capture acceptance.
 - Android never receives/stores ChatGPT/Codex OAuth tokens or provider auth
   state.
 - Model changes must not require domain-schema changes.
-- Logs/diagnostics should avoid raw capture content and must never log
+- Logs/diagnostics avoid raw capture content by default and must never log
   tokens, keys, auth headers, or OAuth credentials.
 
 ### Local-first failure behavior

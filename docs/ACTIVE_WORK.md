@@ -6,98 +6,78 @@ None.
 
 Status: **NO ACTIVE IMPLEMENTATION CHANGE**
 
-No CHG-027 or other implementation change has been selected.
+No CHG-027 or later implementation change has been selected.
 
-## Latest completed implementation change
+## Latest completed runtime-gateway change
 
-`docs/changes/026-local-pendientes-ui/`
+`docs/changes/QAG-002-minimal-gateway/`
 
-CHG-026 — Local Pendientes UI Foundation — is complete, reviewed, closed,
-and merged into `main`.
+QAG-2 — Minimal Private Gateway — is implementation-complete, verified, and
+reviewed for merge into `main`.
 
-Latest completed implementation baseline:
+Final engineering review:
 
-`17ee862de90c19a54338397d239332ec908cef25`
+`PASS_WITH_NOTES — BLOCKER 0 / MAJOR 0 / MINOR 0`
 
-Independent engineering review: **PASS**
+Notes are limited to two upstream FastAPI/Starlette deprecation warnings in
+the local test environment. They do not affect QAG-2 behavior.
 
-`BLOCKER 0 / MAJOR 0 / MINOR 0`
+## QAG-2 verified result
 
-## Runtime gateway gates
-
-QAG-0 — read-only VPS preflight:
-
-**COMPLETE — PASS**
-
-QAG-1 — runtime/protocol decision:
-
-**COMPLETE — PASS**
-
-Evidence package:
-
-`docs/changes/QAG-001-runtime-protocol-decision/`
-
-Durable decision:
-
-`docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md`
-
-Selected first-runtime path:
+Repository-owned gateway foundation:
 
 ```text
-Quick Aside gateway
+Android (future QAG-4 integration)
+    -> /v1/interpret
+    -> bounded Quick Aside gateway
     -> codex exec --ephemeral
     -> GPT-5.6 Luna / Low
-    -> strict provider-neutral structured result
+    -> strict provider-neutral result
+    -> Android validation / future execution
 ```
 
-The persistent Python SDK/app-server route was proven but not selected for
-v1 because QAG-1 observed increasing resident memory across fresh ephemeral
-threads. The CLI ephemeral route left no Codex process resident after each
-request and showed effectively identical token/context use.
+Verified QAG-2 evidence includes:
 
-## Current state
+- Python gateway package and deterministic HTTP/provider contracts;
+- trusted `capturedAt` + IANA `timeZone` transport;
+- strict provider output validation;
+- bounded request/input/action/field/output sizes;
+- bounded queue + execution wall clock;
+- process termination/reaping and cancellation behavior;
+- Codex CLI `0.154.0` pin/readiness checks;
+- privacy-safe diagnostics;
+- `33 passed` deterministic tests;
+- real Luna Low contract smoke: PASS;
+- semantic Personal/Trabajo routing smoke: `5/5 PASS`;
+- residual Codex process check: `NONE`;
+- `git diff --check`: PASS.
 
-- Changes 020 through 026 relevant to the current capture/task foundation
-  remain merged/complete.
-- Local CapturePlan validation and the provider-neutral
-  `CaptureInterpreter` / `AIProvider` boundary remain accepted.
-- Local Task persistence, reversible actions, and Pendientes UI foundation
-  are complete.
-- Room remains version 7.
-- Google Tasks synchronization is not implemented.
-- Runtime AI integration is not implemented.
-- Android still has no remote `AIProvider` implementation or real HTTP
-  client.
-- Quick Aside owns its private AI gateway; Personal Admin/Hermes shares VPS
-  infrastructure only.
-- GPT-5.6 Luna Low via ChatGPT/Codex OAuth remains the primary runtime.
-- QAG-1 selected `codex exec --ephemeral` as the first provider invocation
-  mechanism.
-- DeepSeek V4 Flash remains an evidence-triggered fallback candidate only.
+No new ADR was required. ADR-0003 remains the durable provider-invocation
+decision; QAG-2 implementation details are captured in architecture and the
+QAG-2 change package.
 
-## Exact next gate
+## Explicit stop boundary
 
-**QAG-2 — minimal gateway implementation.**
+QAG-2 did **not** authorize or perform:
 
-QAG-2 must define and test, before live deployment:
-
-- the minimal private gateway request/result contract;
-- trusted capture time/timezone transport;
-- strict provider output schema;
-- provider subprocess invocation;
-- timeout/cancellation and bounded concurrency;
-- production Codex version pin;
-- isolated provider auth/config paths;
-- health/readiness;
-- safe diagnostics that avoid raw capture text and credentials;
-- deterministic gateway contract/failure tests.
-
-QAG-2 must not include:
-
-- live Tailscale/systemd/UFW deployment;
-- Android networking/integration;
-- DeepSeek fallback unless separately justified;
+- live VPS deployment;
+- Quick Aside production Unix-user creation;
+- systemd mutation;
+- Tailscale mutation;
+- UFW mutation;
+- public exposure;
+- Android remote-provider networking;
+- DeepSeek fallback;
 - Personal Admin/Hermes changes.
 
-Live VPS/network mutation remains QAG-3 HIGH-ASSURANCE work requiring
-explicit user approval.
+## Next gate
+
+**QAG-3 — live private gateway deployment — is next, but is not active.**
+
+QAG-3 is **HIGH-ASSURANCE** work and requires explicit user approval before
+mutating live VPS/network/systemd state. It must preserve Personal Admin /
+Hermes behavior and include deployment, rollback, private reachability, and
+real-environment evidence.
+
+QAG-4 Android integration remains later and must wait for an independently
+healthy deployed gateway.

@@ -35,9 +35,7 @@ Prefer deterministic tools (build/tests/lint/static analysis) over builder self-
 
 ## 3. Runtime interpretation models
 
-QAG-1 is **complete — PASS**. Runtime interpretation now has a selected
-provider invocation route, although the production gateway and Android
-integration are not yet implemented.
+QAG-1 and QAG-2 are complete.
 
 Accepted runtime direction:
 
@@ -52,28 +50,39 @@ Accepted runtime direction:
 5. No automatic reasoning escalation; fallback, if implemented, is for
    eligible provider/runtime failures rather than semantic disagreement.
 
-QAG-1 validated Codex SDK/CLI `0.154.0` on the target VPS. The persistent
-Python SDK/app-server path produced correct results but resident memory grew
-across fresh ephemeral threads. The CLI ephemeral route produced 3/3 valid
-strict-schema controls, left no Codex process after each request, and used
-effectively the same token/context amount as the equivalent SDK request.
+QAG-1 validated Codex SDK/CLI `0.154.0` and selected the process-per-request
+CLI route. QAG-2 implemented the minimal repository gateway around that route
+and verified bounded request/output behavior, strict provider validation,
+timeout/cancellation, concurrency, health/readiness, safe diagnostics, and
+isolated real-provider contract behavior.
 
-These are VPS/runtime measurements, not Android end-to-end latency.
+Final QAG-2 verification:
+
+- deterministic suite: **33 passed**;
+- targeted Luna Low contract smoke: PASS;
+- Personal/Trabajo semantic routing smoke: **5/5 PASS**;
+- residual Codex process after requests: **NONE**;
+- final engineering verdict: **PASS_WITH_NOTES**.
+
+The notes are limited to upstream FastAPI/Starlette deprecation warnings.
+
+The repository gateway is implemented but not live-deployed. QAG-3 is the
+next HIGH-ASSURANCE gate for private VPS deployment and requires explicit user
+approval. QAG-4 later integrates Android and measures true end-to-end latency.
 
 Provider auth and credentials belong to the isolated Quick Aside
 gateway/runtime, not Android or Personal Admin/Hermes. Runtime code remains
 provider-abstracted; stored domain records and `CapturePlan` remain
 provider-independent.
 
-QAG-2 is the next gate and must implement the minimal gateway contract and
-bounded provider-process lifecycle before QAG-3 live deployment or QAG-4
-Android integration.
-
 Do not restart broad comparative model benchmarking unless real runtime use
 shows a concrete blocker.
 
-See `docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md` and
-`docs/changes/QAG-001-runtime-protocol-decision/QA.md`.
+See:
+
+- `docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md`
+- `docs/changes/QAG-001-runtime-protocol-decision/QA.md`
+- `docs/changes/QAG-002-minimal-gateway/QA.md`
 
 ## 4. Runtime AI observability
 

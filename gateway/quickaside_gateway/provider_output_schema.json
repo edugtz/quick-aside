@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "AddListItem",
+              "CreateTask",
+              "CreateNote",
+              "CreateStructuredLog",
+              "UndoLast"
+            ]
+          },
+          "listDefinitionId": {
+            "anyOf": [
+              {"type": "string", "enum": ["mandado", "compras"]},
+              {"type": "null"}
+            ]
+          },
+          "text": {
+            "type": ["string", "null"]
+          },
+          "space": {
+            "anyOf": [
+              {"type": "string", "enum": ["PERSONAL", "TRABAJO"]},
+              {"type": "null"}
+            ]
+          },
+          "title": {
+            "type": ["string", "null"]
+          },
+          "dueDate": {
+            "type": ["string", "null"]
+          },
+          "fields": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "key": {"type": "string"},
+                    "value": {"type": "string"}
+                  },
+                  "required": ["key", "value"]
+                }
+              },
+              {"type": "null"}
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "listDefinitionId",
+          "text",
+          "space",
+          "title",
+          "dueDate",
+          "fields"
+        ]
+      }
+    }
+  },
+  "required": ["actions"]
+}

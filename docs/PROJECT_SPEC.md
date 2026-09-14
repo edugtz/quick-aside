@@ -200,31 +200,53 @@ Archive should eventually support:
 
 PDF/DOCX are human archives, not the sole restoration format.
 
+
 ## 11. AI runtime policy
 
-AI should interpret captures into a validated structured plan. It must not directly mutate Google services or become the persistence layer.
+AI should interpret captures into a validated structured plan. It must not
+directly mutate Google services or become the persistence layer.
 
-Current personal-MVP runtime direction after the completed model evaluation
-(2026-09-09) and Change 021:
+Accepted personal-MVP runtime direction:
 
-- primary target: GPT-5.6 Luna — Low reasoning — via ChatGPT Plus / Codex OAuth;
-- fallback candidate: DeepSeek V4 Flash via OpenCode Go, evidence-triggered only;
-- MiMo-V2.5 is no longer the primary model;
+- primary model: GPT-5.6 Luna — explicit Low reasoning;
+- authentication route: ChatGPT/Codex OAuth on the private gateway;
+- provider invocation: `codex exec --ephemeral`;
+- one fresh bounded provider process per interpretation request;
 - provider auth/secrets stay in the isolated Quick Aside gateway/runtime,
-  never on the Android device or under Personal Admin/Hermes ownership;
-- runtime interpretation is currently paused pending the Quick Aside-owned
-  private gateway runtime/protocol decision (see `docs/ARCHITECTURE.md` §5,
-  `docs/adr/0001-private-remote-ai-runtime.md`, and
-  `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`).
+  never on Android or under Personal Admin/Hermes ownership;
+- DeepSeek V4 Flash remains an evidence-triggered fallback candidate only;
+- no automatic reasoning escalation.
 
-Remote model output is untrusted and must pass Quick Aside validation before any
-future execution. A remote AI dependency must not make capture lossy: a capture
-is persisted locally before interpretation is attempted, and the original
-capture remains durable if interpretation is unavailable.
+QAG-0, QAG-1, and QAG-2 are complete.
 
-The remote path must preserve the accepted fast-capture UX. Numeric latency
-budgets are not frozen here; QAG-1 must establish them from measured runtime
-behavior before the integration is accepted.
+QAG-2 established the repository-owned minimal gateway contract and runtime:
+
+- Python/FastAPI service;
+- `/healthz`, `/readyz`, and `/v1/interpret`;
+- trusted `inputText`, RFC3339 `capturedAt`, and IANA `timeZone` request
+  context;
+- strict provider-neutral output validation;
+- bounded request/input/output/action/field sizes;
+- bounded concurrency and queue+execution timeout;
+- Codex CLI `0.154.0` runtime pin/readiness check;
+- privacy-safe diagnostics and stable provider failure responses.
+
+Remote model output remains untrusted and must pass Quick Aside validation
+before any future execution. A remote AI dependency must not make capture
+lossy: Android persists the original capture locally before interpretation is
+attempted, and that capture remains durable if interpretation is unavailable.
+
+Trusted capture provenance remains Android-owned. The gateway/provider must
+not invent `sourceCaptureId`.
+
+QAG-2 defines trusted temporal transport for relative-date interpretation, but
+Android networking is intentionally not part of QAG-2. QAG-3 is the next gate
+for live private deployment and is HIGH-ASSURANCE; QAG-4 later integrates the
+Android `AIProvider` and measures the complete Android/private-network/gateway/
+provider path.
+
+QAG-1/QAG-2 provider timings are not final Android end-to-end latency evidence.
+Final fast-capture acceptance still requires QAG-4 measurement.
 
 Model/provider changes must not alter domain contracts or stored data formats.
 Do not restart broad benchmark work unless real use shows a concrete blocker.

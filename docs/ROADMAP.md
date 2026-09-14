@@ -35,7 +35,7 @@ Implemented/current foundation includes:
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **PARTIALLY BLOCKED — QAG-1 complete; QAG-2 is next.**
+Status: **PARTIALLY BLOCKED — QAG-2 complete; QAG-3 is next.**
 
 Outcome: natural-language input becomes validated structured actions with
 minimal friction.
@@ -45,24 +45,25 @@ Already complete and valid:
 - typed CapturePlan schema + validator (Change 020);
 - provider-independent CaptureInterpreter / AIProvider boundary (Change 021);
 - QAG-0 read-only VPS preflight;
-- QAG-1 provider runtime/protocol decision.
+- QAG-1 provider runtime/protocol decision;
+- QAG-2 minimal repository gateway implementation and contract.
 
-QAG-1 selected:
+QAG-1/QAG-2 established:
 
 - GPT-5.6 Luna with explicit Low reasoning;
 - ChatGPT/Codex OAuth;
 - `codex exec --ephemeral`;
 - one fresh bounded provider process per interpretation request;
 - strict structured output;
-- Quick Aside-specific provider auth namespace.
+- Quick Aside-specific provider auth namespace;
+- trusted capture time/timezone transport;
+- bounded request/output/concurrency/timeout behavior;
+- health/readiness and stable provider failure contracts.
 
 Still pending:
 
-- QAG-2 minimal gateway implementation and contract;
-- trusted capture time/timezone transport;
-- production prompt/schema implementation;
-- gateway failure/timeout/concurrency behavior;
-- QAG-3 live VPS deployment;
+- QAG-3 live private VPS deployment, service lifecycle, private reachability,
+  rollback, and real-environment isolation evidence;
 - QAG-4 Android remote `AIProvider` integration and true end-to-end latency;
 - optional DeepSeek V4 Flash fallback;
 - interpreter outcomes such as PLAN/CLARIFY/UNSUPPORTED where not already
@@ -74,10 +75,9 @@ Current gateway gates:
 
 - QAG-0 — read-only VPS preflight: **COMPLETE — PASS**
 - QAG-1 — runtime/protocol decision: **COMPLETE — PASS**
-- QAG-2 — minimal gateway implementation: **NEXT**
-- QAG-3 — live VPS deployment: pending implementation and explicit user
-  approval
-- QAG-4 — Android integration: pending independently healthy gateway
+- QAG-2 — minimal gateway implementation: **COMPLETE — PASS_WITH_NOTES**
+- QAG-3 — live VPS deployment: **NEXT — HIGH-ASSURANCE; explicit user approval required**
+- QAG-4 — Android integration: pending independently healthy deployed gateway
 - QAG-5 — normal-use hardening: pending real use
 
 M2 cannot be considered complete until runtime interpretation is integrated
@@ -167,12 +167,17 @@ The gateway may run on the same VPS as Personal Admin/Hermes, but this is
 infrastructure reuse only. Personal Admin/Hermes is not an application
 dependency of Quick Aside.
 
-QAG-1 selected the provider invocation route. QAG-2 still owns the actual
-gateway server language/runtime, HTTP contract, timeout/cancellation,
-concurrency, health/readiness, production version pin, and safe logging.
+QAG-1 selected the provider invocation route. QAG-2 implemented and verified
+the repository gateway server, HTTP contract, trusted temporal context,
+timeout/cancellation, concurrency bounds, health/readiness, Codex version pin,
+and safe diagnostics.
 
-QAG-3 owns live private-network/systemd deployment details and requires
-explicit user approval before mutating production VPS/network state.
+QAG-2 intentionally did not deploy the service.
+
+QAG-3 is the next gate and owns live private-network/systemd deployment,
+rollback, resource observation, and proof that Quick Aside deployment leaves
+Personal Admin/Hermes/ACK behavior unchanged. QAG-3 requires explicit user
+approval before live mutation.
 
 ## Milestone dependency summary
 
@@ -182,7 +187,7 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | PARTIALLY BLOCKED — QAG-1 complete; QAG-2 is next |
+| M2 | PARTIALLY BLOCKED — QAG-2 complete; QAG-3 live deployment is next |
 | M3 | NOT globally blocked; end-to-end natural-language path still depends on M2 runtime integration |
 | M4 | NOT globally blocked; natural-language reminder creation still depends on M2 runtime integration |
 | M5 | NOT blocked by AI runtime |
@@ -190,22 +195,24 @@ Non-blocked, provider-independent work may continue.
 
 There is currently **no CHG-027 selected**.
 
-QAG-2 is the next gateway implementation gate. It must remain a reviewable
-Quick Aside change and does not itself authorize live VPS/network mutation.
+QAG-3 is the next gateway gate, but it is not automatically active. It is a
+separate HIGH-ASSURANCE live-environment change and requires explicit user
+approval before VPS/network/systemd mutation.
 
-## Available work while gateway implementation is pending
+## Available work after QAG-2
 
 Not automatically scheduled:
 
-- QAG-2 minimal gateway contract and implementation.
+- QAG-3 live private gateway deployment, only after explicit user approval;
+- QAG-4 Android remote-provider integration after a healthy deployed gateway;
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,
-  outbox/retry, idempotency/conflict behavior, Calendar integration.
+  outbox/retry, idempotency/conflict behavior, Calendar integration;
 - M4 foundations: reminder domain, scheduling, notification actions, and
-  background/restart reliability.
-- M5 foundations: backup/snapshot, export center, structured reimport
-  format, and archive-before-prune verification.
+  background/restart reliability;
+- M5 foundations: backup/snapshot, export center, structured reimport format,
+  and archive-before-prune verification;
 - M2 provider-independent execution/application foundations, only if
-  independently justified.
+  independently justified;
 - M1/M6 polish that does not depend on automated interpretation.
 
 This list records options, not a schedule.
