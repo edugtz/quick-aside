@@ -1,0 +1,89 @@
+{
+	admin unix//run/caddy-admin/admin.sock|0600
+	servers :80 {
+		timeouts {
+			read_body   10s
+			read_header 5s
+			write       15s
+			idle        15s
+		}
+
+		max_header_size 16KB
+	}
+
+	servers :443 {
+		timeouts {
+			read_body   15s
+			read_header 5s
+			write       60s
+			idle        30s
+		}
+
+		max_header_size 16KB
+	}
+}
+
+http:// {
+	respond 404
+}
+
+{$QUICKASIDE_PUBLIC_HOST} {
+	request_body {
+		max_size 32KB
+	}
+
+	@health {
+		method GET
+		path /healthz
+	}
+
+	handle @health {
+		reverse_proxy 127.0.0.1:2588 {
+			transport http {
+				dial_timeout            2s
+				response_header_timeout 60s
+				read_timeout            60s
+				write_timeout           15s
+			}
+		}
+	}
+
+	@pair {
+		method POST
+		path /v1/pair
+	}
+
+	handle @pair {
+		reverse_proxy 127.0.0.1:2588 {
+			transport http {
+				dial_timeout            2s
+				response_header_timeout 60s
+				read_timeout            60s
+				write_timeout           15s
+			}
+		}
+	}
+
+	@interpret {
+		method POST
+		path /v1/interpret
+	}
+
+	handle @interpret {
+		reverse_proxy 127.0.0.1:2588 {
+			transport http {
+				dial_timeout            2s
+				response_header_timeout 60s
+				read_timeout            60s
+				write_timeout           15s
+			}
+		}
+	}
+
+	handle {
+		respond 404
+	}
+
+	# Intentionally no Caddy access-log directive.
+	# X-QA-Signature and X-QA-Nonce must never enter access logs.
+}

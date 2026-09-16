@@ -1,83 +1,111 @@
-# Quick Aside — Active Work
+# ACTIVE WORK
+
+Status: **ACTIVE HIGH-ASSURANCE CHANGE**
 
 ## Active change
 
-None.
+`docs/changes/QAG-003-live-gateway-deployment/`
 
-Status: **NO ACTIVE IMPLEMENTATION CHANGE**
+Branch:
 
-No CHG-027 or later implementation change has been selected.
+`qag-003-live-gateway-deployment`
 
-## Latest completed runtime-gateway change
+Base:
 
-`docs/changes/QAG-002-minimal-gateway/`
+`3469adb7212127e89ed896d7601bd37c360dc2b3`
 
-QAG-2 — Minimal Private Gateway — is implementation-complete, verified, and
-reviewed for merge into `main`.
+## Change
 
-Final engineering review:
+QAG-3 — Live Authenticated Gateway Deployment.
 
-`PASS_WITH_NOTES — BLOCKER 0 / MAJOR 0 / MINOR 0`
+QAG-3 deploys the verified QAG-2 gateway behind a Quick Aside-owned
+authenticated HTTPS boundary.
 
-Notes are limited to two upstream FastAPI/Starlette deprecation warnings in
-the local test environment. They do not affect QAG-2 behavior.
+Governance: **HIGH-ASSURANCE**
 
-## QAG-2 verified result
+## Proven baseline
 
-Repository-owned gateway foundation:
+- QAG-0: COMPLETE — PASS.
+- QAG-1: COMPLETE — PASS.
+- QAG-2: COMPLETE — PASS_WITH_NOTES.
+- QAG-2 deterministic gateway suite: 33 passed.
+- Real Luna Low contract smoke: PASS.
+- Residual Codex process check: NONE.
+- QAG-3 live VPS preflight: PASS.
+- Personal Admin ACK baseline: HTTP 200.
+- Hermes gateway baseline: active/running.
 
-```text
-Android (future QAG-4 integration)
-    -> /v1/interpret
-    -> bounded Quick Aside gateway
-    -> codex exec --ephemeral
-    -> GPT-5.6 Luna / Low
-    -> strict provider-neutral result
-    -> Android validation / future execution
-```
+## Current architecture
 
-Verified QAG-2 evidence includes:
+ADR-0004 supersedes the previous private-network-only ingress assumption.
 
-- Python gateway package and deterministic HTTP/provider contracts;
-- trusted `capturedAt` + IANA `timeZone` transport;
-- strict provider output validation;
-- bounded request/input/action/field/output sizes;
-- bounded queue + execution wall clock;
-- process termination/reaping and cancellation behavior;
-- Codex CLI `0.154.0` pin/readiness checks;
-- privacy-safe diagnostics;
-- `33 passed` deterministic tests;
-- real Luna Low contract smoke: PASS;
-- semantic Personal/Trabajo routing smoke: `5/5 PASS`;
-- residual Codex process check: `NONE`;
-- `git diff --check`: PASS.
+Quick Aside must work independently of Tailscale.
 
-No new ADR was required. ADR-0003 remains the durable provider-invocation
-decision; QAG-2 implementation details are captured in architecture and the
-QAG-2 change package.
+Target:
 
-## Explicit stop boundary
+    Android
+      -> HTTPS + device-bound ECDSA signature
+      -> Caddy
+      -> 127.0.0.1:2588
+      -> Quick Aside gateway
+      -> Codex exec --ephemeral
+      -> GPT-5.6 Luna Low
 
-QAG-2 did **not** authorize or perform:
+Personal Admin and Hermes are unrelated applications that only share the VPS.
 
-- live VPS deployment;
-- Quick Aside production Unix-user creation;
-- systemd mutation;
-- Tailscale mutation;
-- UFW mutation;
-- public exposure;
-- Android remote-provider networking;
-- DeepSeek fallback;
-- Personal Admin/Hermes changes.
+Quick Aside must not use their users, credentials, paths, services, prompts,
+state, Tailscale service configuration, or application runtime.
+
+## Completed gate
+
+Gate A — live VPS preflight: **PASS**.
+
+## Current gate
+
+Gate E — explicit production-mutation approval.
+
+Gate D — independent security review: COMPLETE — PASS_WITH_NOTES.
+
+Final Gate D round 6:
+- 0 BLOCKER;
+- 0 MAJOR;
+- 4 MINOR;
+- 5 NOTE;
+- verdict: PASS_WITH_NOTES.
+
+Current deterministic evidence:
+- 99/99 tests passed;
+- deployment contract 12/12 passed;
+- pairing concurrency 20/20 passed;
+- replay concurrency 20/20 passed;
+- compileall passed;
+- git diff --check passed.
+
+No VPS mutation is authorized merely by opening Gate E.
+The user retains explicit approval authority for production changes.
+
+## Current authorization boundary
+
+No production VPS mutation is authorized yet.
+
+Not yet authorized:
+
+- Quick Aside Unix user creation;
+- directory creation;
+- package installation;
+- Caddy installation;
+- firewall modification;
+- systemd modification;
+- Codex OAuth login;
+- public TLS activation;
+- VPS reboot.
 
 ## Next gate
 
-**QAG-3 — live private gateway deployment — is next, but is not active.**
+Independent security review.
 
-QAG-3 is **HIGH-ASSURANCE** work and requires explicit user approval before
-mutating live VPS/network/systemd state. It must preserve Personal Admin /
-Hermes behavior and include deployment, rollback, private reachability, and
-real-environment evidence.
+No production mutation is authorized until Gate D has no unresolved
+BLOCKER or MAJOR findings.
 
-QAG-4 Android integration remains later and must wait for an independently
-healthy deployed gateway.
+Only after deterministic verification and security review pass will exact
+production mutation commands be presented for explicit user approval.
