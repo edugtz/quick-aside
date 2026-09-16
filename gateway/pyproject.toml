@@ -23,5 +23,9 @@ test = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["quickaside_gateway*"]
+
 [tool.setuptools.package-data]
 quickaside_gateway = ["provider_output_schema.json"]
