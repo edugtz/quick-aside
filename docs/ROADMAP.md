@@ -35,7 +35,7 @@ Implemented/current foundation includes:
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **IN PROGRESS — private gateway deployed; QAG-4 Android integration active.**
+Status: **IN PROGRESS — private gateway and QAG-4 Android integration complete; normal-use hardening remains.**
 
 Outcome: natural-language input becomes validated structured actions with
 minimal friction.
@@ -62,9 +62,8 @@ QAG-1/QAG-2 established:
 
 Still pending:
 
-- QAG-4 Android remote `AIProvider` integration, device pairing, signed QA1
-  requests, local validation, and true end-to-end latency;
-- real-use evidence after QAG-4;
+- real-use evidence and normal-use hardening after QAG-4;
+- closing accepted client hardening debt before any future automatic action execution;
 - optional DeepSeek V4 Flash fallback;
 - interpreter outcomes such as PLAN/CLARIFY/UNSUPPORTED where not already
   covered by local foundations;
@@ -78,7 +77,7 @@ Current gateway gates:
 - QAG-2 — minimal gateway implementation: **COMPLETE — PASS_WITH_NOTES**
 - QAG-3 — public ingress deployment attempt: **SUPERSEDED**
 - QAG-003R — private tailnet gateway deployment: **COMPLETE — PASS_WITH_NOTES**
-- QAG-4 — Android integration: **ACTIVE — HIGH-ASSURANCE**
+- QAG-4 — Android integration: **COMPLETE — PASS_WITH_NOTES**
 - QAG-5 — normal-use hardening: pending real use
 
 M2 cannot be considered complete until runtime interpretation is integrated
@@ -176,7 +175,7 @@ and safe diagnostics.
 QAG-003R subsequently deployed the gateway through private Tailscale
 Services/Serve, preserved localhost-only FastAPI and QA1, and proved service
 restart plus VPS reboot persistence without making Personal Admin an
-application dependency. QAG-4 now owns Android integration only.
+application dependency. QAG-4 completed Android integration and is integrated into `main`.
 
 ## Milestone dependency summary
 
@@ -186,7 +185,7 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | IN PROGRESS — gateway deployed; QAG-4 Android integration active |
+| M2 | IN PROGRESS — gateway + QAG-4 Android integration complete; normal-use hardening remains |
 | M3 | NOT globally blocked; end-to-end natural-language path still depends on M2 runtime integration |
 | M4 | NOT globally blocked; natural-language reminder creation still depends on M2 runtime integration |
 | M5 | NOT blocked by AI runtime |
@@ -194,11 +193,11 @@ Non-blocked, provider-independent work may continue.
 
 There is currently **no CHG-027 selected**.
 
-## Available work after QAG-003R
+## Available work after QAG-004
 
 Not automatically scheduled:
 
-- QAG-4 Android remote-provider integration is the active reviewable change;
+- QAG-5 normal-use hardening after real usage;
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,
   outbox/retry, idempotency/conflict behavior, Calendar integration;
 - M4 foundations: reminder domain, scheduling, notification actions, and
