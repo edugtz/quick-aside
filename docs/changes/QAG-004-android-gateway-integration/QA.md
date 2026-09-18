@@ -1,6 +1,6 @@
 # QAG-004 — Android Gateway Integration — QA
 
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO `main`**
 
 ## Verified preflight evidence
 
@@ -182,9 +182,11 @@ material are intentionally omitted.
 ## Current disposition
 
 QAG-004 runtime and visual evidence is complete for the private Android path.
-The full connected-suite anomaly is a non-QAG-004 regression finding and does
-not block the QAG-004 implementation status. The next gate is independent
-HIGH-ASSURANCE engineering/security review; no commit or push has occurred.
+The full connected-suite anomaly is a non-QAG-004 regression finding and did
+not block the QAG-004 implementation status. Independent HIGH-ASSURANCE review
+was completed directly against the GitHub branch and returned
+**PASS_WITH_NOTES**. The reviewed commit was then integrated into `main` after
+explicit user authorization.
 
 ## Static disposition of connected-suite anomaly
 
@@ -213,3 +215,52 @@ Disposition: **non-QAG-004 full-suite/order-dependent Compose timing finding**.
 No QAG-004 code or test behavior was changed to suppress it. It remains a
 repository regression finding for independent review/triage, not a blocker to
 the QAG-004 implementation status.
+
+
+## Independent HIGH-ASSURANCE review
+
+GitHub review baseline:
+
+- base: `main @ 9bf585404ecb73604ca43420397c4434bd8160e1`;
+- reviewed head: `87a2715d1da4bde7910b91049a36dbf9a51d9487`;
+- branch was 1 commit ahead and 0 behind;
+- no GitHub Actions/status checks were reported for the reviewed commit, so
+  deterministic/device evidence remains the recorded local/runtime evidence
+  above.
+
+Independent findings:
+
+- 0 BLOCKER;
+- 0 MAJOR;
+- 3 MINOR;
+- 3 NOTE.
+
+Accepted MINOR findings:
+
+1. pairing success should verify the returned `deviceId` equals the local QA1
+   identity;
+2. Android's local validation does not yet mirror every gateway action-count,
+   field-size, and list-definition bound; this must be hardened before future
+   automatic action execution;
+3. `HttpsURLConnection` disconnect-on-job-completion bounds cleanup but does
+   not guarantee immediate interruption of blocking I/O.
+
+Accepted NOTEs:
+
+- stale pre-merge documentation was corrected during closeout;
+- no dedicated JVM test currently targets `QuickAsideGatewayPairer`;
+- GitHub CI/status checks were absent for the reviewed commit.
+
+Final engineering verdict: **PASS_WITH_NOTES**.
+
+The `PendientesUiTest` full-suite timing anomaly was independently reviewed
+and accepted as non-QAG-004 based on unchanged task UI/test code, inactive
+pairing behavior in that scenario, two full-suite reproductions, and a 1/1
+isolated pass on the same Oppo.
+
+## Integration closeout
+
+The exact reviewed commit
+`87a2715d1da4bde7910b91049a36dbf9a51d9487` was fast-forwarded into `main`
+after explicit user authorization. QAG-004 is closed. No release or additional
+production mutation was performed as part of repository closeout.
