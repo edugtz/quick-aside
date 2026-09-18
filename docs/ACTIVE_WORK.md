@@ -1,6 +1,24 @@
 # ACTIVE WORK
 
-Status: **QAG-003R COMPLETE — INTEGRATED INTO `main`**
+Status: **QAG-004 IMPLEMENTATION COMPLETE — REVIEW PENDING**
+
+## Active change
+
+- Change: `QAG-004 — Android Gateway Integration`
+- Package: `docs/changes/QAG-004-android-gateway-integration/`
+- Expected branch: `qag-004-android-gateway-integration`
+- Verified base: `main` at `9bf585404ecb73604ca43420397c4434bd8160e1`
+- Governance: **HIGH-ASSURANCE**
+- Objective: connect persisted Android captures to the deployed private
+  gateway through QA1, return provider-neutral untrusted output through the
+  existing `CapturePlanValidator`, and stop before action execution.
+- Current gate: private real-device runtime and visual acceptance are complete.
+- The repeated full-suite `PendientesUiTest` timing anomaly is recorded as a
+  non-QAG-004 regression finding; the next gate is independent HIGH-ASSURANCE
+  review.
+- Production pairing-code generation/use was completed with explicit user
+  authorization for this gate; the code and device-sensitive registration
+  material are not recorded in the repository.
 
 ## Most recently completed change
 
@@ -147,9 +165,11 @@ No additional security-review round is required without new evidence.
 
 The user retains commit, push, merge and release authority.
 
-## Next change
+## Current stop boundary
 
-QAG-4 — Android integration — is now eligible to begin as a separate
-reviewable change. It has not started yet.
+QAG-004 ends at validated `CapturePlan` + observable interpretation result.
+It does not implement `ActionExecutor`, automatic mutations, fallback, Google
+integrations, reminders, public ingress, Tailscale policy changes, Personal
+Admin/Hermes changes, commit, push, merge, or release.
 
 The user retains commit, push, merge and release authority.

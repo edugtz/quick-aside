@@ -56,10 +56,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.edu.quickaside.application.capture.AIProviderException
+import com.edu.quickaside.application.capture.AIProviderFailureReason
+import com.edu.quickaside.application.capture.CaptureInterpretationResult
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
+import com.edu.quickaside.application.gateway.DevicePairer
 import com.edu.quickaside.application.lists.ListSessionWithItems
 import com.edu.quickaside.application.lists.ListStore
 import com.edu.quickaside.application.lists.ReversibleListItemActions
@@ -72,6 +76,7 @@ import com.edu.quickaside.application.tasks.ReversibleTaskActions
 import com.edu.quickaside.application.tasks.TaskStore
 import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
+import com.edu.quickaside.ui.gateway.GatewayPairingDialog
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
 import com.edu.quickaside.ui.memory.NoteTimestampFormatter
 import com.edu.quickaside.ui.memory.NotesScreen
@@ -120,6 +125,7 @@ fun QuickAsideApp(
     captureTranscriptCorrector: CaptureTranscriptCorrector? = null,
     speechTranscriberFactory: SpeechTranscriberFactory? = null,
     microphonePermissionController: MicrophonePermissionController? = null,
+    devicePairer: DevicePairer? = null,
     mandadoHistoryTimestampFormatter: MandadoHistoryTimestampFormatter =
         MandadoHistoryTimestampFormatter(),
     noteTimestampFormatter: NoteTimestampFormatter = NoteTimestampFormatter(),
@@ -136,6 +142,8 @@ fun QuickAsideApp(
     var historyDetailSession by remember { mutableStateOf<ListSessionWithItems?>(null) }
     var captureRequested by remember { mutableStateOf(false) }
     var historyRefreshToken by remember { mutableStateOf(0) }
+    var pairingRequested by remember { mutableStateOf(false) }
+    var lastVoiceInterpretation by remember { mutableStateOf<CaptureInterpretationResult?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val requestCapture = { captureRequested = true }
@@ -159,13 +167,24 @@ fun QuickAsideApp(
         }
     }
     val backFromMemoryRoute = { memoryRoute = MemoryRoute.History }
+    val onInterpretationObserved: (CaptureInterpretationResult?) -> Unit = { interpretation ->
+        if (interpretation.isAuthenticationFailure() && devicePairer != null) {
+            pairingRequested = true
+        }
+    }
     val onVoiceCaptureSaved = {
+        val interpretation = lastVoiceInterpretation
+        lastVoiceInterpretation = null
         historyRefreshToken += 1
         captureRequested = false
         scope.launch {
-            snackbarHostState.showSnackbar("Captura guardada")
+            snackbarHostState.showSnackbar(savedCaptureMessage(interpretation))
         }
         Unit
+    }
+    val onVoiceInterpretationResult: (CaptureInterpretationResult?) -> Unit = { interpretation ->
+        lastVoiceInterpretation = interpretation
+        onInterpretationObserved(interpretation)
     }
 
     Scaffold(
@@ -282,6 +301,7 @@ fun QuickAsideApp(
                 microphonePermissionController = resolvedMicrophonePermissionController,
                 onDismiss = { captureRequested = false },
                 onSaved = onVoiceCaptureSaved,
+                onInterpretationResult = onVoiceInterpretationResult,
             )
         } else {
             ManagementScreen(
@@ -295,6 +315,7 @@ fun QuickAsideApp(
                 captureTranscriptCorrector = captureTranscriptCorrector,
                 historyRefreshToken = historyRefreshToken,
                 onCaptureSaved = { historyRefreshToken += 1 },
+                onInterpretationObserved = onInterpretationObserved,
                 snackbarHostState = snackbarHostState,
                 listStore = listStore,
                 reversibleListItemActions = reversibleListItemActions,
@@ -328,6 +349,22 @@ fun QuickAsideApp(
             )
         }
     }
+
+    val pairer = devicePairer
+    if (pairingRequested && pairer != null) {
+        GatewayPairingDialog(
+            pairer = pairer,
+            onDismiss = { pairingRequested = false },
+            onPaired = {
+                pairingRequested = false
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        "Dispositivo vinculado. Haz una nueva captura para interpretar.",
+                    )
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -342,6 +379,7 @@ private fun ManagementScreen(
     captureTranscriptCorrector: CaptureTranscriptCorrector?,
     historyRefreshToken: Int,
     onCaptureSaved: () -> Unit,
+    onInterpretationObserved: (CaptureInterpretationResult?) -> Unit,
     snackbarHostState: SnackbarHostState,
     listStore: ListStore?,
     reversibleListItemActions: ReversibleListItemActions?,
@@ -504,6 +542,7 @@ private fun ManagementScreen(
                 captureSubmission = captureSubmission,
                 snackbarHostState = snackbarHostState,
                 onCaptureSaved = onCaptureSaved,
+                onInterpretationObserved = onInterpretationObserved,
             )
         }
         SummaryCard(destination)
@@ -515,6 +554,7 @@ private fun TextCaptureField(
     captureSubmission: CaptureSubmission,
     snackbarHostState: SnackbarHostState,
     onCaptureSaved: () -> Unit,
+    onInterpretationObserved: (CaptureInterpretationResult?) -> Unit,
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     var isSaving by remember { mutableStateOf(false) }
@@ -530,7 +570,8 @@ private fun TextCaptureField(
                     is CaptureSubmissionResult.Saved -> {
                         text = ""
                         onCaptureSaved()
-                        "Captura guardada"
+                        onInterpretationObserved(result.interpretation)
+                        savedCaptureMessage(result.interpretation)
                     }
 
                     is CaptureSubmissionResult.Failed -> "No se pudo guardar la captura"
@@ -566,6 +607,29 @@ private fun TextCaptureField(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { submit() }),
     )
+}
+
+private fun savedCaptureMessage(interpretation: CaptureInterpretationResult?): String =
+    when (interpretation) {
+        null -> "Captura guardada"
+        is CaptureInterpretationResult.Success ->
+            "Captura guardada · interpretación lista, sin aplicar"
+        CaptureInterpretationResult.BlankInput ->
+            "Captura guardada · sin interpretación"
+        is CaptureInterpretationResult.InvalidPlan ->
+            "Captura guardada · interpretación rechazada"
+        is CaptureInterpretationResult.ProviderFailure ->
+            if (interpretation.isAuthenticationFailure()) {
+                "Captura guardada · vinculación requerida"
+            } else {
+                "Captura guardada · interpretación no disponible"
+            }
+    }
+
+private fun CaptureInterpretationResult?.isAuthenticationFailure(): Boolean {
+    val failure = this as? CaptureInterpretationResult.ProviderFailure ?: return false
+    val providerFailure = failure.cause as? AIProviderException ?: return false
+    return providerFailure.reason == AIProviderFailureReason.AUTHENTICATION_FAILED
 }
 
 private sealed interface CaptureHistoryState {

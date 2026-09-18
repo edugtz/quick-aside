@@ -1,0 +1,33 @@
+# QAG-004 — Android Gateway Integration — TASKS
+
+- [x] Verify `main`/HEAD and active-work baseline.
+- [x] Verify QAG-003R production architecture and QA1 server contract from current code/docs.
+- [x] Inspect Android provider/interpreter/persistence/UI/build/dependency baseline.
+- [x] Verify Android Keystore/P-256, INTERNET/HTTPS and cleartext behavior against current official Android docs.
+- [x] Define QAG-004 SPEC/PLAN/TASKS/QA before meaningful implementation.
+- [x] Define provider-neutral trusted request context (`inputText`, `capturedAt`, `timeZone`).
+- [x] Implement persistence-before-interpretation shared text/voice path.
+- [x] Implement platform HTTPS transport with no cleartext fallback/retry/redirect following.
+- [x] Implement exact request/response wire codec and all current action mappings.
+- [x] Implement QA1 canonicalization, hashing, nonce/timestamp and Base64URL behavior.
+- [x] Implement Android Keystore P-256 device identity and PEM public-key export.
+- [x] Implement signed `/v1/interpret` adapter and explicit failure mapping.
+- [x] Implement transient `/v1/pair` flow without persisting the code.
+- [x] Apply UI integration patch and verify compilation against the actual checkout.
+- [x] Focused JVM tests pass.
+- [x] Existing CaptureInterpreter/Validator/Submission regressions pass.
+- [x] `:app:testDebugUnitTest` passes.
+- [x] `:app:assembleDebug` passes.
+- [x] `:app:lintDebug` passes.
+- [x] Relevant QAG-004 connected coverage passes on the available Oppo; the full suite's unchanged `PendientesUiTest` timing anomaly is dispositioned as non-QAG-004 after the affected test passed in isolation.
+- [x] Oppo CPH2791 Android 16 Keystore/device integration passes.
+- [x] **STOP GATE:** user authorizes creation/use of a fresh production pairing code.
+- [x] Production Oppo pairs through private gateway.
+- [x] Signed Android `/v1/interpret` reaches Luna Low and returns a locally validated CapturePlan.
+- [x] Authentication/provider failure during pre-pairing proved Capture remains persisted.
+- [x] End-to-end latency is measured and recorded; no retroactive SLO invented.
+- [x] Logcat/diagnostics checked for raw capture, pairing code, canonical request, signature/private key/provider credentials.
+- [x] Complete visual evidence captured outside the repository: masked pairing dialog, pairing-success snackbar with no secret, persisted Capture in Memoria, and saved/interpreted-but-not-applied receipt.
+- [x] `git diff --check` passes on actual branch.
+- [x] Final diff/status contains only QAG-004 scope; no commit/push performed.
+- [x] Builder stops at `IMPLEMENTATION COMPLETE — REVIEW PENDING`; the unrelated connected-suite anomaly is recorded for independent review.

@@ -142,9 +142,10 @@ Runtime direction:
    preferred when safe.
 
 QAG-1 selected the provider invocation route. QAG-2 implemented and verified
-the minimal repository-owned gateway. The gateway is **not yet live-deployed**;
-QAG-3 owns that HIGH-ASSURANCE deployment step, and QAG-4 owns Android remote
-provider integration.
+the minimal repository-owned gateway. QAG-003R then deployed it through
+private Tailscale Services/Serve with localhost-only FastAPI, QA1 retained as
+the application authorization boundary, and no public Quick Aside ingress.
+QAG-4 owns Android remote-provider integration.
 
 ### Selected provider invocation
 
@@ -241,17 +242,19 @@ The gateway must not use:
 
 Deployment and rollback must leave Personal Admin operationally unchanged.
 
-QAG-3 still owns unresolved live-environment details:
+QAG-003R resolved and proved the production ingress/runtime details:
 
-- production Quick Aside Unix user and filesystem paths;
-- private-network reachability/auth mechanism;
-- systemd service/lifecycle configuration;
-- live resource observation and rollback procedure;
-- Tailscale/UFW changes, if any are actually required.
+- dedicated Quick Aside service identity and systemd lifecycle;
+- FastAPI bound only to `127.0.0.1:2588`;
+- `svc:quickaside` exposed tailnet-only through Tailscale Serve HTTPS;
+- QA1 protected requests, replay rejection, and device revocation;
+- no Funnel and no public Quick Aside firewall ingress;
+- Quick-Aside-scoped restart/reboot persistence and rollback contract.
 
-QAG-4 later owns:
+QAG-4 now owns:
 
 - Android network permission/client implementation;
+- Android Keystore P-256 QA1 device identity and pairing;
 - Android remote `AIProvider` adapter;
 - end-to-end capture persistence -> gateway -> validation flow;
 - true Android/private-network/provider latency measurement.

@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.sqlite.bundled)
     ksp(libs.androidx.room3.compiler)
     testImplementation(libs.junit)
+    testImplementation(libs.json)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

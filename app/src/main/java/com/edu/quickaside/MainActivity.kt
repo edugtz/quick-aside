@@ -9,23 +9,21 @@ import com.edu.quickaside.ui.theme.QuickAsideTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val app = application as QuickAsideApplication
         setContent {
             QuickAsideTheme {
                 QuickAsideApp(
-                    captureSubmission = (application as QuickAsideApplication).captureSubmission,
-                    captureReader = (application as QuickAsideApplication).captureReader,
-                    listStore = (application as QuickAsideApplication).listStore,
-                    reversibleListItemActions =
-                        (application as QuickAsideApplication).reversibleListItemActions,
-                    taskStore = (application as QuickAsideApplication).taskStore,
-                    reversibleTaskActions =
-                        (application as QuickAsideApplication).reversibleTaskActions,
-                    memoryStore = (application as QuickAsideApplication).memoryStore,
-                    localSearch = (application as QuickAsideApplication).localSearch,
-                    captureTranscriptCorrector =
-                        (application as QuickAsideApplication).captureTranscriptCorrector,
-                    speechTranscriberFactory =
-                        (application as QuickAsideApplication).speechTranscriberFactory,
+                    captureSubmission = app.captureSubmission,
+                    captureReader = app.captureReader,
+                    listStore = app.listStore,
+                    reversibleListItemActions = app.reversibleListItemActions,
+                    taskStore = app.taskStore,
+                    reversibleTaskActions = app.reversibleTaskActions,
+                    memoryStore = app.memoryStore,
+                    localSearch = app.localSearch,
+                    captureTranscriptCorrector = app.captureTranscriptCorrector,
+                    speechTranscriberFactory = app.speechTranscriberFactory,
+                    devicePairer = app.devicePairer,
                 )
             }
         }

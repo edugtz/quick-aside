@@ -35,7 +35,7 @@ Implemented/current foundation includes:
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **PARTIALLY BLOCKED — QAG-2 complete; QAG-3 is next.**
+Status: **IN PROGRESS — private gateway deployed; QAG-4 Android integration active.**
 
 Outcome: natural-language input becomes validated structured actions with
 minimal friction.
@@ -62,9 +62,9 @@ QAG-1/QAG-2 established:
 
 Still pending:
 
-- QAG-3 live private VPS deployment, service lifecycle, private reachability,
-  rollback, and real-environment isolation evidence;
-- QAG-4 Android remote `AIProvider` integration and true end-to-end latency;
+- QAG-4 Android remote `AIProvider` integration, device pairing, signed QA1
+  requests, local validation, and true end-to-end latency;
+- real-use evidence after QAG-4;
 - optional DeepSeek V4 Flash fallback;
 - interpreter outcomes such as PLAN/CLARIFY/UNSUPPORTED where not already
   covered by local foundations;
@@ -76,8 +76,9 @@ Current gateway gates:
 - QAG-0 — read-only VPS preflight: **COMPLETE — PASS**
 - QAG-1 — runtime/protocol decision: **COMPLETE — PASS**
 - QAG-2 — minimal gateway implementation: **COMPLETE — PASS_WITH_NOTES**
-- QAG-3 — live VPS deployment: **NEXT — HIGH-ASSURANCE; explicit user approval required**
-- QAG-4 — Android integration: pending independently healthy deployed gateway
+- QAG-3 — public ingress deployment attempt: **SUPERSEDED**
+- QAG-003R — private tailnet gateway deployment: **COMPLETE — PASS_WITH_NOTES**
+- QAG-4 — Android integration: **ACTIVE — HIGH-ASSURANCE**
 - QAG-5 — normal-use hardening: pending real use
 
 M2 cannot be considered complete until runtime interpretation is integrated
@@ -172,12 +173,10 @@ the repository gateway server, HTTP contract, trusted temporal context,
 timeout/cancellation, concurrency bounds, health/readiness, Codex version pin,
 and safe diagnostics.
 
-QAG-2 intentionally did not deploy the service.
-
-QAG-3 is the next gate and owns live private-network/systemd deployment,
-rollback, resource observation, and proof that Quick Aside deployment leaves
-Personal Admin/Hermes/ACK behavior unchanged. QAG-3 requires explicit user
-approval before live mutation.
+QAG-003R subsequently deployed the gateway through private Tailscale
+Services/Serve, preserved localhost-only FastAPI and QA1, and proved service
+restart plus VPS reboot persistence without making Personal Admin an
+application dependency. QAG-4 now owns Android integration only.
 
 ## Milestone dependency summary
 
@@ -187,7 +186,7 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | PARTIALLY BLOCKED — QAG-2 complete; QAG-3 live deployment is next |
+| M2 | IN PROGRESS — gateway deployed; QAG-4 Android integration active |
 | M3 | NOT globally blocked; end-to-end natural-language path still depends on M2 runtime integration |
 | M4 | NOT globally blocked; natural-language reminder creation still depends on M2 runtime integration |
 | M5 | NOT blocked by AI runtime |
@@ -195,16 +194,11 @@ Non-blocked, provider-independent work may continue.
 
 There is currently **no CHG-027 selected**.
 
-QAG-3 is the next gateway gate, but it is not automatically active. It is a
-separate HIGH-ASSURANCE live-environment change and requires explicit user
-approval before VPS/network/systemd mutation.
-
-## Available work after QAG-2
+## Available work after QAG-003R
 
 Not automatically scheduled:
 
-- QAG-3 live private gateway deployment, only after explicit user approval;
-- QAG-4 Android remote-provider integration after a healthy deployed gateway;
+- QAG-4 Android remote-provider integration is the active reviewable change;
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,
   outbox/retry, idempotency/conflict behavior, Calendar integration;
 - M4 foundations: reminder domain, scheduling, notification actions, and

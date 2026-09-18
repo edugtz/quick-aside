@@ -13,6 +13,7 @@ sealed interface CaptureSubmissionResult {
 
     data class Saved(
         val capture: Capture,
+        val interpretation: CaptureInterpretationResult? = null,
     ) : CaptureSubmissionResult
 
     data class Failed(
@@ -22,6 +23,7 @@ sealed interface CaptureSubmissionResult {
 
 class CaptureSubmission(
     private val writer: CaptureWriter,
+    private val interpreter: CaptureInterpreter? = null,
     private val idProvider: () -> CaptureId = {
         CaptureId(UUID.randomUUID().toString())
     },
@@ -50,13 +52,19 @@ class CaptureSubmission(
             capturedAt = capturedAtProvider(),
         )
 
-        return try {
+        try {
             writer.save(capture)
-            CaptureSubmissionResult.Saved(capture)
         } catch (cancellation: CancellationException) {
             throw cancellation
         } catch (failure: Exception) {
-            CaptureSubmissionResult.Failed(failure)
+            return CaptureSubmissionResult.Failed(failure)
         }
+
+        // Persistence is complete before any remote interpretation can begin.
+        val interpretation = interpreter?.interpret(capture)
+        return CaptureSubmissionResult.Saved(
+            capture = capture,
+            interpretation = interpretation,
+        )
     }
 }

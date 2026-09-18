@@ -49,6 +49,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.edu.quickaside.application.capture.CaptureInterpretationResult
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.speech.AndroidMicrophonePermissionController
@@ -122,6 +123,7 @@ fun VoiceCaptureScreen(
     microphonePermissionController: MicrophonePermissionController,
     onDismiss: () -> Unit,
     onSaved: () -> Unit,
+    onInterpretationResult: (CaptureInterpretationResult?) -> Unit = {},
 ) {
     var state by remember { mutableStateOf<VoiceCaptureUiState>(VoiceCaptureUiState.PermissionNeeded) }
     var transcript by remember { mutableStateOf("") }
@@ -170,7 +172,10 @@ fun VoiceCaptureScreen(
                             )
                         }
 
-                        is CaptureSubmissionResult.Saved -> onSaved()
+                        is CaptureSubmissionResult.Saved -> {
+                            onInterpretationResult(result.interpretation)
+                            onSaved()
+                        }
                         is CaptureSubmissionResult.Failed -> {
                             state = VoiceCaptureUiState.Failed(
                                 message = "No se pudo guardar la captura.",

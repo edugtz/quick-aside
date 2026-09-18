@@ -21,6 +21,7 @@ import org.junit.Test
 
 class CaptureInterpreterTest {
     private val capturedAt = Instant.parse("2026-09-09T16:00:00Z")
+    private val timeZone = "America/Mexico_City"
 
     @Test
     fun textCaptureSendsExactOriginalTextToProvider() = runBlocking {
@@ -31,7 +32,11 @@ class CaptureInterpreterTest {
 
         assertTrue(result is CaptureInterpretationResult.Success)
         assertEquals(
-            AIInterpretationRequest(inputText = originalText),
+            AIInterpretationRequest(
+                inputText = originalText,
+                capturedAt = capturedAt,
+                timeZone = timeZone,
+            ),
             provider.requests.single(),
         )
     }
@@ -44,7 +49,11 @@ class CaptureInterpreterTest {
         interpreter(provider).interpret(voiceCapture(originalTranscript))
 
         assertEquals(
-            AIInterpretationRequest(inputText = originalTranscript),
+            AIInterpretationRequest(
+                inputText = originalTranscript,
+                capturedAt = capturedAt,
+                timeZone = timeZone,
+            ),
             provider.requests.single(),
         )
     }
@@ -62,7 +71,11 @@ class CaptureInterpreterTest {
         interpreter(provider).interpret(capture)
 
         assertEquals(
-            AIInterpretationRequest(inputText = "  Comprar leche mañana  "),
+            AIInterpretationRequest(
+                inputText = "  Comprar leche mañana  ",
+                capturedAt = capturedAt,
+                timeZone = timeZone,
+            ),
             provider.requests.single(),
         )
     }
@@ -90,7 +103,7 @@ class CaptureInterpreterTest {
     @Test
     fun providerRequestAndCandidateExposeOnlyProviderNeutralInterpretationData() {
         assertEquals(
-            listOf("inputText"),
+            listOf("inputText", "capturedAt", "timeZone"),
             AIInterpretationRequest::class.java.declaredFields
                 .filterNot { it.isSynthetic || Modifier.isStatic(it.modifiers) }
                 .map { it.name },
@@ -346,6 +359,7 @@ class CaptureInterpreterTest {
         ProviderCaptureInterpreter(
             provider = provider,
             validator = CapturePlanValidator(),
+            timeZoneIdProvider = { timeZone },
         )
 
     private fun textCapture(text: String): Capture = Capture(

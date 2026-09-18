@@ -4,6 +4,7 @@ import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.domain.capture.CapturePlan
 import com.edu.quickaside.domain.capture.CapturePlanDraft
+import java.time.ZoneId
 import kotlin.coroutines.cancellation.CancellationException
 
 fun interface CaptureInterpreter {
@@ -35,6 +36,7 @@ sealed interface CaptureInterpretationResult {
 class ProviderCaptureInterpreter(
     private val provider: AIProvider,
     private val validator: CapturePlanValidator,
+    private val timeZoneIdProvider: () -> String = { ZoneId.systemDefault().id },
 ) : CaptureInterpreter {
     override suspend fun interpret(capture: Capture): CaptureInterpretationResult {
         val inputText = effectiveInputText(capture)
@@ -42,8 +44,28 @@ class ProviderCaptureInterpreter(
             return CaptureInterpretationResult.BlankInput
         }
 
+        val timeZone = try {
+            val candidate = timeZoneIdProvider()
+            require(candidate in ZoneId.getAvailableZoneIds()) {
+                "Android timezone must be an IANA timezone identifier"
+            }
+            candidate
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (failure: Exception) {
+            return CaptureInterpretationResult.ProviderFailure(
+                AIProviderException(AIProviderFailureReason.INVALID_REQUEST, failure),
+            )
+        }
+
         val candidate = try {
-            provider.interpret(AIInterpretationRequest(inputText = inputText))
+            provider.interpret(
+                AIInterpretationRequest(
+                    inputText = inputText,
+                    capturedAt = capture.capturedAt,
+                    timeZone = timeZone,
+                ),
+            )
         } catch (cancellation: CancellationException) {
             throw cancellation
         } catch (failure: Exception) {

@@ -66,9 +66,13 @@ Final QAG-2 verification:
 
 The notes are limited to upstream FastAPI/Starlette deprecation warnings.
 
-The repository gateway is implemented but not live-deployed. QAG-3 is the
-next HIGH-ASSURANCE gate for private VPS deployment and requires explicit user
-approval. QAG-4 later integrates Android and measures true end-to-end latency.
+The gateway is now live through the QAG-003R private-tailnet deployment:
+`svc:quickaside -> Tailscale Serve HTTPS -> 127.0.0.1:2588`. QAG-003R completed
+real signed Luna Low, replay-rejection, restart/reboot-persistence, isolation,
+and log-privacy evidence with final `PASS_WITH_NOTES`. QAG-4 is the active
+HIGH-ASSURANCE Android integration change and owns device pairing, QA1 signing,
+the remote `AIProvider` adapter, local validation, and true Android end-to-end
+latency measurement.
 
 Provider auth and credentials belong to the isolated Quick Aside
 gateway/runtime, not Android or Personal Admin/Hermes. Runtime code remains
