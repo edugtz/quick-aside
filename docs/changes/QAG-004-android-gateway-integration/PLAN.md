@@ -58,6 +58,20 @@ are unchanged by QAG-004, while the test invokes `QuickAsideApp` without a
 `DevicePairer`, leaving the new pairing/interpretation state inactive.
 
 Disposition: **non-QAG-004 full-suite/order-dependent Compose timing finding**.
-No code change was made to bypass it. QAG-004 advances to
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`; the anomaly remains visible for
-independent review and repository triage.
+No code change was made to bypass it. Independent review subsequently accepted
+this disposition and returned **PASS_WITH_NOTES**. The reviewed QAG-004 commit
+was then fast-forwarded into `main` with explicit user authorization.
+
+
+## Closeout
+
+Independent HIGH-ASSURANCE review counts:
+
+- BLOCKER: 0
+- MAJOR: 0
+- MINOR: 3
+- NOTE: 3
+- verdict: **PASS_WITH_NOTES**
+
+QAG-004 is integrated and closed. No release/deployment action is implied by
+this repository merge. Future execution/hardening scope remains separate.
