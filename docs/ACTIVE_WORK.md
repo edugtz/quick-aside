@@ -1,8 +1,8 @@
 # ACTIVE WORK
 
-Status: **ENGINEERING COMPLETE — AWAITING USER COMMIT/PUSH/MERGE DECISION**
+Status: **QAG-003R COMPLETE — INTEGRATED INTO `main`**
 
-## Active change
+## Most recently completed change
 
 `docs/changes/QAG-003R-private-tailnet-deployment/`
 
@@ -149,7 +149,7 @@ The user retains commit, push, merge and release authority.
 
 ## Next change
 
-QAG-4 — Android integration — remains separate and must not begin until
-QAG-003R is formally closed.
+QAG-4 — Android integration — is now eligible to begin as a separate
+reviewable change. It has not started yet.
 
 The user retains commit, push, merge and release authority.
