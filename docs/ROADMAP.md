@@ -80,12 +80,13 @@ Current gateway gates:
 - QAG-4 — Android integration: **COMPLETE — PASS_WITH_NOTES**
 - QAG-5 — normal-use hardening: pending real use
 
-M2 cannot be considered complete until runtime interpretation is integrated
-and accepted end-to-end.
+M2 runtime interpretation is now integrated and accepted end-to-end through
+QAG-004. M2 remains open for normal-use hardening and the remaining
+fast-capture interpretation/UX policies listed above.
 
 ## M3 — Google Tasks + Calendar
 
-Status: **NOT globally blocked** — end-to-end natural-language path blocked until interpretation resumes.
+Status: **NOT globally blocked** — runtime interpretation is available; end-to-end task/event mutation still requires the future execution and sync layers.
 
 Outcome: Personal/Trabajo tasks and events synchronize reliably with Google.
 
@@ -93,9 +94,10 @@ Google OAuth, sync contracts, local/external mapping, outbox/retry,
 idempotency/conflict behavior, and Calendar integration can be designed and
 implemented independently of the AI provider when scoped coherently.
 
-However, end-to-end natural-language capture → interpreted Task/Event → Google
-acceptance remains blocked until interpretation resumes. M3 as a whole must not
-wait for M2.
+End-to-end natural-language capture → interpreted Task/Event → Google
+acceptance is no longer blocked by provider integration, but still requires the
+future validated-plan execution boundary plus Google sync implementation. M3 as
+a whole does not need to wait for all remaining M2 polish.
 
 Capabilities:
 
@@ -110,7 +112,7 @@ Because sync can create data-loss/idempotency risk, break this milestone into sm
 
 ## M4 — Reminders and daily reliability
 
-Status: **NOT globally blocked** — natural-language reminder creation blocked until interpretation resumes.
+Status: **NOT globally blocked** — runtime interpretation is available; natural-language reminder creation still depends on future reminder actions/execution.
 
 Outcome: user-configured reminders reliably fire and are actionable.
 
@@ -139,7 +141,7 @@ Capabilities:
 
 ## M6 — Personal MVP polish
 
-Status: **FINAL COMPLETION BLOCKED** — the full north-star happy path requires automated natural-language interpretation. Other polish may continue independently.
+Status: **FINAL COMPLETION BLOCKED** — interpretation is integrated, but the full north-star happy path still requires validated action execution plus the remaining sync/reminder/product polish. Other polish may continue independently.
 
 Outcome: the user can adopt Quick Aside as the default capture tool in everyday life.
 
@@ -186,7 +188,7 @@ Non-blocked, provider-independent work may continue.
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
 | M2 | IN PROGRESS — gateway + QAG-4 Android integration complete; normal-use hardening remains |
-| M3 | NOT globally blocked; end-to-end natural-language path still depends on M2 runtime integration |
+| M3 | NOT globally blocked; runtime interpretation is available, but execution + Google sync remain |
 | M4 | NOT globally blocked; natural-language reminder creation still depends on M2 runtime integration |
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
