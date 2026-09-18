@@ -1,7 +1,7 @@
 # QAG-004 — Android Gateway Integration — SPEC
 
 Governance: **HIGH-ASSURANCE**
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO `main`**
 Expected branch: `qag-004-android-gateway-integration`
 Verified base: `main` at `9bf585404ecb73604ca43420397c4434bd8160e1`
 
@@ -11,8 +11,10 @@ connected Android suite still reproduces an unrelated existing
 `PendientesUiTest` Compose timing failure. Static comparison confirms that the
 failing test and its task-management production path are outside the QAG-004
 diff, and the exact test passes in isolation on the same device. The anomaly is
-recorded as a non-QAG-004 full-suite/order-timing finding; QAG-004 advances to
-review pending.
+recorded as a non-QAG-004 full-suite/order-timing finding. Independent
+HIGH-ASSURANCE review completed with **PASS_WITH_NOTES** (0 BLOCKER, 0 MAJOR,
+3 MINOR, 3 NOTE), and the reviewed commit was integrated into `main` after
+explicit user authorization.
 
 ## Objective
 
@@ -157,3 +159,24 @@ QAG-004 does not implement:
 9. Pairing code is transient only and no provider credentials are introduced on Android.
 10. Real Oppo/Tailscale pairing and a signed production Luna request succeed, with measured end-to-end latency and no sensitive Logcat leakage.
 11. The implementation stops at validated CapturePlan + observable result; no action is applied.
+
+
+## Independent review closeout
+
+Reviewed GitHub range:
+
+`main@9bf585404ecb73604ca43420397c4434bd8160e1...qag-004-android-gateway-integration@87a2715d1da4bde7910b91049a36dbf9a51d9487`
+
+Final verdict: **PASS_WITH_NOTES**.
+
+Accepted non-blocking findings:
+
+- verify pairing response `deviceId` matches the local QA1 identity;
+- mirror gateway action-count/field-size/list-definition bounds locally before
+  any future automatic plan execution;
+- blocking `HttpsURLConnection` cancellation may remain active until I/O
+  returns or the configured timeout expires.
+
+The second item becomes a required hardening gate before introducing any
+automatic `ActionExecutor` path. No additional QAG-004 implementation round is
+required for the current validated-plan-only scope.
