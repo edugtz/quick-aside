@@ -1,144 +1,268 @@
 # Quick Aside gateway deployment contract
 
-These files define the reviewed production boundary for QAG-003.
+These files define the reviewed production boundary for QAG-003R.
 They are deployment inputs, not evidence that deployment has occurred.
 
 ## Required runtime shape
 
-Public Internet
--> Caddy :443
+Quick Aside Android
+-> Tailscale
+-> svc:quickaside
+-> Tailscale Serve HTTPS :443
 -> 127.0.0.1:2588
 -> one Uvicorn worker
 -> FastAPI
--> bounded Codex provider
+-> bounded provider runtime
 
 Port 2588 must never be publicly exposed.
 
-Tailscale is not part of the Quick Aside runtime request path.
+Tailscale Funnel is prohibited for Quick Aside.
 
-## Caddy control plane
+No public Quick Aside UFW rule is required.
 
-Caddy's Admin API must not listen on localhost:2019.
+## Protected existing service
 
-The reviewed deployment uses:
+The VPS already hosts:
 
-    unix//run/caddy-admin/admin.sock
+    svc:personal-admin-ack
+      -> http://127.0.0.1:2587
 
-The Caddy systemd drop-in must create:
+Never clear, reset, replace or otherwise mutate that Service as part of
+Quick Aside deployment.
 
-    RuntimeDirectory=caddy-admin
-    RuntimeDirectoryMode=0700
+Quick Aside operations must be scoped to:
 
-The admin socket itself is configured as mode 0600.
-
-The `quickaside` service user must not be able to traverse the runtime
-directory or connect to the Caddy Admin API.
-
-Graceful Caddy reloads must target the reviewed admin address, for example:
-
-    sudo systemctl reload caddy
-
-The Caddy systemd drop-in overrides `ExecReload` so reload runs with the
-same `EnvironmentFile=/etc/quickaside-gateway/caddy.env` used by the
-service and targets the permissioned Unix Admin socket.
-
-Do not run `caddy reload` directly from an operator shell for this
-deployment. The Caddyfile contains `{$QUICKASIDE_PUBLIC_HOST}`, so
-adaptation must occur within the controlled caddy.service environment.
-
-Gate F/G runtime verification must explicitly prove that a process running
-as `quickaside` cannot connect to the admin socket.
-
-## Caddy requirements
-
-- Caddy security version contract:
-
-- QAG-003 reviewed version: `v2.11.4`.
-- The exact reviewed value is stored in `deploy/reviewed-versions.env`.
-- Gate E must verify that the installed Caddy version equals that value.
-- Gate E must also independently verify against the official Caddy
-  security policy/releases that the reviewed version is still `2.latest`.
-- If a newer stable `2.latest` exists, deployment is BLOCKED until the
-  reviewed version is updated and the version delta is re-reviewed.
-- Older Caddy releases are not accepted merely because they satisfy a
-  minimum semantic version.
-- Only these public application routes are allowed:
-  - GET /healthz
-  - POST /v1/pair
-  - POST /v1/interpret
-- /readyz is not public.
-- All other paths/methods return 404.
-- Request bodies are capped at 32 KiB before FastAPI.
-- Request headers are capped at 16 KiB.
-- Header/body/client-write timeouts are finite.
-- Upstream timeouts are finite.
-- Quick Aside access logging is intentionally disabled.
-- X-QA-Signature and X-QA-Nonce must never be access logged.
-- The public hostname is provided through QUICKASIDE_PUBLIC_HOST.
-- Caddy must proxy only to 127.0.0.1:2588.
+    svc:quickaside
 
 ## Uvicorn requirements
 
-The systemd unit fixes:
+The reviewed systemd unit fixes:
 
-- --factory
-- --host 127.0.0.1
-- --port 2588
-- --workers 1
-- --limit-concurrency 16
-- --proxy-headers
-- --forwarded-allow-ips 127.0.0.1
+- `--factory`
+- `--host 127.0.0.1`
+- `--port 2588`
+- `--workers 1`
+- `--limit-concurrency 16`
+- `--proxy-headers`
+- `--forwarded-allow-ips 127.0.0.1`
+- `--timeout-keep-alive 5`
+- `--no-server-header`
+- `--no-access-log`
 
-Do not replace forwarded-allow-ips with "*".
+Do not replace `--forwarded-allow-ips 127.0.0.1` with `*`.
 
-Application rate limiting is process-local, therefore production must remain
+Application rate limiting is process-local. Production must remain
 single-worker unless rate limiting is redesigned around shared state.
+
+## Systemd security requirements
+
+The reviewed unit must retain:
+
+- dedicated `quickaside` user/group;
+- `UMask=0077`;
+- `NoNewPrivileges=true`;
+- `PrivateTmp=true`;
+- `ProtectSystem=strict`;
+- `ProtectHome=true`;
+- restricted read/write paths;
+- kernel/control-group protections;
+- restricted address families;
+- empty capability sets;
+- native syscall architecture restriction.
+
+Before activation:
+
+    systemd-analyze verify /etc/systemd/system/quickaside-gateway.service
 
 ## Persistent state
 
-- /var/lib/quickaside/auth.db
-- /var/lib/quickaside/codex-home
-- /var/lib/quickaside/workspace
+Quick Aside owns:
 
-The service may write only under /var/lib/quickaside.
+    /var/lib/quickaside/auth.db
+    /var/lib/quickaside/codex-home
+    /var/lib/quickaside/workspace
+
+The service may write only under `/var/lib/quickaside`.
 
 ## Isolation
 
-The deployment must not read, write, restart, reconfigure, or reuse:
+The deployment must not read, write, restart, reconfigure or reuse:
 
-- /home/hermes
-- Personal Admin state
-- Hermes credentials
-- Hermes systemd units
-- Personal Admin ACK
-- Tailscale configuration
+- `/home/hermes`;
+- Personal Admin state or databases;
+- Hermes credentials;
+- Hermes systemd units;
+- Personal Admin ACK application state;
+- Personal Admin cron jobs.
 
-### Caddy version gate
+Tailscale configuration may be changed only for the explicitly approved
+Quick Aside Service. Existing Personal Admin Service configuration remains
+outside Quick Aside mutation scope.
 
-From the deployed gateway checkout:
+## Gate E — read-only preflight
 
-    expected_version="$(sed -n 's/^CADDY_VERSION=//p' gateway/deploy/reviewed-versions.env)"
-    actual_version="$(caddy version | awk '{print $1}')"
-    test "$actual_version" = "$expected_version"
+Before any production mutation, verify:
 
-This local equality check is necessary but not sufficient. Gate E must also
-verify from the official Caddy security policy and releases that
-`expected_version` is still the supported stable `2.latest`.
+    systemctl status quickaside-gateway --no-pager
+    ss -ltnp
+    sudo ufw status numbered
+    tailscale status
+    tailscale serve status
+    tailscale funnel status
 
-Do not activate the public ingress if those checks disagree.
+Confirm:
 
-## Validation before activation
+- `svc:personal-admin-ack` remains unchanged;
+- Personal Admin still targets `127.0.0.1:2587`;
+- Quick Aside has no existing public listener;
+- Quick Aside has no Funnel configuration;
+- no public Quick Aside UFW rule exists.
 
-Before any Caddy reload:
+In the Tailscale control plane, verify before activation:
 
-    caddy validate \
-      --config /etc/caddy/Caddyfile \
-      --adapter caddyfile \
-      --envfile /etc/quickaside-gateway/caddy.env
+- `svc:quickaside` exists, or creation is explicitly approved;
+- resource is `tcp:443`;
+- expected DNS identity is `quickaside.taildc9db9.ts.net`;
+- this VPS is eligible to advertise the Service;
+- intended clients are allowed to reach the Service.
 
-Before starting the gateway service:
+QAG-003R intentionally preserves the existing tailnet-wide access policy.
 
-    systemd-analyze verify \
-      /etc/systemd/system/quickaside-gateway.service
+Do not modify tailnet grants or Access Controls as part of this deployment
+solely to restrict Quick Aside.
 
-Actual mutation commands belong to Gate E and require explicit user approval.
+Network access requirements are:
+
+- Quick Aside is unreachable from outside the tailnet;
+- tailnet connectivity follows the existing tailnet policy;
+- QA1 remains the application authorization boundary for protected
+  Quick Aside operations.
+
+If a Service definition, tag or auto-approval change is required, stop and
+obtain explicit user approval before mutation.
+
+## Gate E — local gateway first
+
+Before Tailscale activation, prove:
+
+    systemctl is-active quickaside-gateway
+    ss -ltnp | grep '127.0.0.1:2588'
+    curl --fail --silent http://127.0.0.1:2588/healthz
+
+Do not activate private ingress unless localhost health succeeds.
+
+## Gate E — private Service activation
+
+Requires explicit user approval.
+
+Configure only Quick Aside:
+
+    tailscale serve \
+      --service=svc:quickaside \
+      --https=443 \
+      http://127.0.0.1:2588
+
+After activation:
+
+    tailscale serve status
+    tailscale funnel status
+
+Verify:
+
+- `svc:quickaside` targets `127.0.0.1:2588`;
+- the Quick Aside endpoint is tailnet-only;
+- Funnel is not enabled for Quick Aside;
+- `svc:personal-admin-ack` remains unchanged;
+- no public Quick Aside listener/UFW rule was introduced.
+
+From an authorized tailnet client, verify:
+
+    https://quickaside.taildc9db9.ts.net/healthz
+
+## QA1 runtime verification
+
+Through the private endpoint verify:
+
+- valid signed request succeeds;
+- replayed nonce is rejected;
+- revoked device is rejected;
+- pairing/revocation behavior remains correct;
+- application rate limits remain effective.
+
+QA1 remains required even though ingress is private.
+
+## Failure-path log verification
+
+Use synthetic values only. Never use real credentials or personal capture text.
+
+Exercise one request while the gateway is healthy and one while the backend
+is intentionally unavailable.
+
+Use recognizable synthetic canaries for:
+
+- QA1 signature;
+- QA1 nonce;
+- capture text.
+
+Inspect:
+
+    journalctl -u tailscaled
+    journalctl -u quickaside-gateway
+
+The synthetic signature, nonce and capture canaries must not appear in
+either journal.
+
+Restore `quickaside-gateway` immediately after the failure-path check.
+
+## Persistence
+
+Verify after restarting only Quick Aside:
+
+    sudo systemctl restart quickaside-gateway
+    systemctl is-active quickaside-gateway
+    tailscale serve status
+
+Confirm:
+
+- Quick Aside still listens only on `127.0.0.1:2588`;
+- `svc:quickaside` remains correct;
+- `svc:personal-admin-ack` remains unchanged.
+
+A VPS reboot requires separate explicit user approval.
+
+## Normal rollback
+
+Rollback must affect Quick Aside only.
+
+Stop accepting new Quick Aside connections:
+
+    tailscale serve drain svc:quickaside
+
+After active Quick Aside requests have completed, remove only its Service
+configuration:
+
+    tailscale serve clear svc:quickaside
+
+Then stop and disable only:
+
+    sudo systemctl disable --now quickaside-gateway
+
+Verify afterward:
+
+- no listener remains on `127.0.0.1:2588`;
+- `svc:quickaside` is no longer active;
+- `svc:personal-admin-ack` remains unchanged;
+- Personal Admin remains on `127.0.0.1:2587`.
+
+Never perform a global Tailscale Serve reset for Quick Aside rollback.
+
+## Emergency containment
+
+If graceful draining is inappropriate, containment may clear only:
+
+    tailscale serve clear svc:quickaside
+
+Do not clear, reset or otherwise mutate unrelated Services.
+
+Production mutation commands belong to Gate E and require explicit user
+approval.

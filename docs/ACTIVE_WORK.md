@@ -1,111 +1,155 @@
 # ACTIVE WORK
 
-Status: **ACTIVE HIGH-ASSURANCE CHANGE**
+Status: **ENGINEERING COMPLETE — AWAITING USER COMMIT/PUSH/MERGE DECISION**
 
 ## Active change
 
-`docs/changes/QAG-003-live-gateway-deployment/`
+`docs/changes/QAG-003R-private-tailnet-deployment/`
 
 Branch:
 
-`qag-003-live-gateway-deployment`
+`qag-003r-private-tailnet-deployment`
 
 Base:
 
-`3469adb7212127e89ed896d7601bd37c360dc2b3`
+`13442a90d818511c072b316a77c1398fbc93089b`
 
 ## Change
 
-QAG-3 — Live Authenticated Gateway Deployment.
+QAG-003R — Private Tailnet Gateway Deployment.
 
-QAG-3 deploys the verified QAG-2 gateway behind a Quick Aside-owned
-authenticated HTTPS boundary.
+QAG-003R replaces only the superseded public-Caddy ingress architecture from
+QAG-003 while preserving the valid gateway, QA1, packaging and localhost-only
+systemd work already implemented.
 
 Governance: **HIGH-ASSURANCE**
 
-## Proven baseline
-
-- QAG-0: COMPLETE — PASS.
-- QAG-1: COMPLETE — PASS.
-- QAG-2: COMPLETE — PASS_WITH_NOTES.
-- QAG-2 deterministic gateway suite: 33 passed.
-- Real Luna Low contract smoke: PASS.
-- Residual Codex process check: NONE.
-- QAG-3 live VPS preflight: PASS.
-- Personal Admin ACK baseline: HTTP 200.
-- Hermes gateway baseline: active/running.
-
 ## Current architecture
 
-ADR-0004 supersedes the previous private-network-only ingress assumption.
+ADR-0005 supersedes ADR-0004 for production ingress.
 
-Quick Aside must work independently of Tailscale.
-
-Target:
-
-    Android
-      -> HTTPS + device-bound ECDSA signature
-      -> Caddy
-      -> 127.0.0.1:2588
+    Quick Aside Android
+      -> Tailscale
+      -> svc:quickaside
+      -> Tailscale Serve HTTPS
+      -> http://127.0.0.1:2588
       -> Quick Aside gateway
-      -> Codex exec --ephemeral
+      -> provider runtime
       -> GPT-5.6 Luna Low
 
-Personal Admin and Hermes are unrelated applications that only share the VPS.
+Quick Aside remains loopback-only on `127.0.0.1:2588`.
 
-Quick Aside must not use their users, credentials, paths, services, prompts,
-state, Tailscale service configuration, or application runtime.
+The existing protected Personal Admin path remains independent:
 
-## Completed gate
+    svc:personal-admin-ack
+      -> http://127.0.0.1:2587
 
-Gate A — live VPS preflight: **PASS**.
+No Quick Aside Funnel or public Quick Aside firewall rule is part of the
+architecture.
 
-## Current gate
+## Tailnet access decision
 
-Gate E — explicit production-mutation approval.
+Gate E inspected the existing Tailscale Access Controls and found the tailnet
+uses a broad existing `* -> * -> *` grant.
 
-Gate D — independent security review: COMPLETE — PASS_WITH_NOTES.
+Explicit product/operations decision:
 
-Final Gate D round 6:
+- preserve existing Access Controls to avoid affecting Personal Admin or other
+  services;
+- Tailscale is the private-network boundary;
+- QA1 remains the application authorization boundary for protected Quick Aside
+  operations;
+- non-tailnet exposure remains prohibited.
+
+## Gate D
+
+COMPLETE — **PASS_WITH_NOTES**.
+
+Focused round 2:
+
 - 0 BLOCKER;
 - 0 MAJOR;
-- 4 MINOR;
-- 5 NOTE;
+- 2 accepted MINOR;
 - verdict: PASS_WITH_NOTES.
 
-Current deterministic evidence:
-- 99/99 tests passed;
-- deployment contract 12/12 passed;
-- pairing concurrency 20/20 passed;
-- replay concurrency 20/20 passed;
-- compileall passed;
-- git diff --check passed.
+Deterministic evidence before Gate E:
 
-No VPS mutation is authorized merely by opening Gate E.
-The user retains explicit approval authority for production changes.
+- deployment contract: 19 passed;
+- full gateway suite: 108 passed;
+- 2 known dependency deprecation warnings;
+- compileall: PASS;
+- `git diff --check`: PASS.
 
-## Current authorization boundary
+## Gate E
 
-No production VPS mutation is authorized yet.
+COMPLETE — **PASS**.
 
-Not yet authorized:
+Real-environment evidence:
 
-- Quick Aside Unix user creation;
-- directory creation;
-- package installation;
-- Caddy installation;
-- firewall modification;
-- systemd modification;
-- Codex OAuth login;
-- public TLS activation;
-- VPS reboot.
+- `quickaside-gateway.service`: active and enabled;
+- `personal-admin-ack.service`: active after Quick Aside activation/restart/reboot;
+- Quick Aside listener: `127.0.0.1:2588`;
+- Personal Admin listener: `127.0.0.1:2587`;
+- `svc:quickaside -> http://127.0.0.1:2588`;
+- `svc:personal-admin-ack -> http://127.0.0.1:2587`;
+- both Services: tailnet-only;
+- local and private `/healthz`: PASS;
+- local and private `/readyz`: PASS;
+- anonymous protected request: HTTP 401;
+- paired synthetic P-256 device: PASS;
+- valid QA1 signed Luna Low request: HTTP 200;
+- replay rejection: HTTP 401;
+- synthetic Gate E device: revoked;
+- raw controlled capture absent from Quick Aside journal;
+- controlled service restart: PASS;
+- user-approved full VPS reboot: PASS;
+- Quick Aside, Personal Admin, Hermes and tailscaled active after reboot;
+- Tailscale Service mappings persisted after reboot.
 
-## Next gate
+## Final repository verification
 
-Independent security review.
+COMPLETE — **PASS**.
 
-No production mutation is authorized until Gate D has no unresolved
-BLOCKER or MAJOR findings.
+Run on the actual branch after Gate E documentation updates:
 
-Only after deterministic verification and security review pass will exact
-production mutation commands be presented for explicit user approval.
+    gateway/.venv/bin/python -m pytest gateway/tests/test_deployment_contract.py -q
+      -> 19 passed
+
+    gateway/.venv/bin/python -m pytest gateway/tests -q
+      -> 108 passed, 2 known dependency deprecation warnings, 6.58s
+
+    gateway/.venv/bin/python -m compileall -q gateway/quickaside_gateway gateway/tests
+      -> PASS (no output)
+
+    git diff --check
+      -> PASS (no output)
+
+The two warnings remain the previously accepted dependency deprecations:
+
+- Starlette TestClient/httpx deprecation;
+- anyio BlockingPortal alias deprecation.
+
+## Engineering closure
+
+QAG-003R implementation, independent review, real-environment Gate E and final
+deterministic verification are complete.
+
+Final engineering verdict: **PASS_WITH_NOTES**.
+
+Accepted notes:
+
+- the two existing Gate D MINOR findings remain non-blocking;
+- a live destructive rollback drill was intentionally not performed after the
+  successful production activation; the reviewed scoped rollback contract is
+  deterministically protected and remains available if operationally needed.
+
+No additional security-review round is required without new evidence.
+
+The user retains commit, push, merge and release authority.
+
+## Next change
+
+QAG-4 — Android integration — remains separate and must not begin until
+QAG-003R is formally closed.
+
+The user retains commit, push, merge and release authority.

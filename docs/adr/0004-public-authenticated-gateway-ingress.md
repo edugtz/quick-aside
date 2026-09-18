@@ -1,5 +1,8 @@
 # ADR-0004 — Public authenticated Quick Aside gateway ingress
 
+> **SUPERSEDED:** ADR-0005 — Private Tailnet Gateway Ingress.
+
+
 Status: Accepted
 Date: 2026-09-13
 
