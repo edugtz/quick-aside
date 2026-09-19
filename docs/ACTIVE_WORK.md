@@ -1,6 +1,27 @@
 # ACTIVE WORK
 
-Status: **QAG-004H COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO `main`**
+Status: **CHG-027 IMPLEMENTATION COMPLETE — REVIEW PENDING — HIGH-ASSURANCE**
+
+## Active change
+
+- Change: `CHG-027 — CapturePlan List Execution Foundation`
+- Package: `docs/changes/027-captureplan-list-execution/`
+- Branch: `chg-027-captureplan-list-execution`
+- Verified base: `origin/main` at
+  `cb67494a7b57d0f7a939ec06396ccbc665edff7c`
+- Governance: **HIGH-ASSURANCE**
+- Scope: add a narrow, atomic executor for validated all-AddListItem
+  CapturePlans and targeted batch Undo. The normal capture path remains
+  stopped at validated CapturePlan; there is no capture/UI auto-wiring.
+- Verification: focused/full JVM checks, Android test Kotlin compilation,
+  debug assembly, lint, and schema/config comparisons completed successfully.
+  On OPPO CPH2791 / Android 16 / API 36, the new Room class passed 21/21 and
+  the existing manual Room regression passed 9/9. Both device gates passed.
+- No code or test changes were required after the device runs.
+- Final local HEAD remains the verified base SHA; no commit or push was
+  created.
+- The user retains product, commit, push, merge, release, and production
+  authority.
 
 ## Most recently completed change
 
@@ -80,7 +101,7 @@ server-side. Personal Admin/Hermes remains independent. QAG-004H is integrated
 with **PASS_WITH_NOTES** and remains stopped at validated `CapturePlan` with no
 `ActionExecutor` or automatic mutation.
 
-## Workstream and next selection
+## Workstream and active implementation
 
 The specialized Quick Aside Gateway workstream is complete and closed for
 now. Its historical QAG identifiers and records remain unchanged; QAG
@@ -93,10 +114,10 @@ automatically scheduled as the next implementation change or reserved under a
 global Change ID.
 
 The normal global reviewable-change history remains Change 001 through Change
-026. The next normal reviewable implementation unit will be Change 027
-(`docs/changes/027-<slug>/`, branch `chg-027-<slug>`) only after the user
-selects its scope through a fresh product decision. There is currently **no
-CHG-027 selected**; no product scope or priority is selected by this closeout.
+026. The user has selected Change 027 as the CapturePlan List Execution
+Foundation; its active scope and verification contract are recorded in
+`docs/changes/027-captureplan-list-execution/`. No later Change ID is
+reserved.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates
 only; this closeout does not schedule them.
