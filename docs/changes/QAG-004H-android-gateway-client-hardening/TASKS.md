@@ -15,4 +15,13 @@
 - [x] Run focused JVM tests.
 - [x] Run unit tests, Android-test Kotlin compilation, assemble, lint, and
   `git diff --check`.
-- [x] Record final evidence and stop without commit or push.
+- [x] Record original implementation evidence; user-authorized commit
+  `f17058e9a01026a2fa258c05be3501c44fed0e69` was pushed and independently
+  reviewed.
+- [x] Remediate Round 1 MAJOR-1 with strict raw JSON string type checks.
+- [x] Add field-by-field structural regressions and prove malformed output
+  cannot reach a validated plan.
+- [x] Correct cancellation guarantees without changing the network stack.
+- [x] Correct QAG sequence and commit/push provenance.
+- [x] Run Round 2 focused and deterministic verification.
+- [x] Stop without committing or pushing the Round 2 remediation.

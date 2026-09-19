@@ -72,6 +72,68 @@ class GatewayJsonCodecTest {
     }
 
     @Test
+    fun createNoteTextRequiresAJsonString() {
+        listOf(
+            "null" to """{"actions":[{"type":"CreateNote","text":null}]}""",
+            "number" to """{"actions":[{"type":"CreateNote","text":12}]}""",
+            "boolean" to """{"actions":[{"type":"CreateNote","text":true}]}""",
+        ).forEach { (_, body) -> assertMalformed(body) }
+    }
+
+    @Test
+    fun addListItemFieldsRequireJsonStrings() {
+        listOf(
+            """{"actions":[{"type":"AddListItem","listDefinitionId":12,"text":"Leche"}]}""",
+            """{"actions":[{"type":"AddListItem","listDefinitionId":"mandado","text":false}]}""",
+        ).forEach(::assertMalformed)
+    }
+
+    @Test
+    fun createTaskFieldsRequireJsonStringsExceptNullableDueDate() {
+        listOf(
+            """{"actions":[{"type":"CreateTask","space":false,"title":"Revisar","dueDate":null}]}""",
+            """{"actions":[{"type":"CreateTask","space":"TRABAJO","title":12,"dueDate":null}]}""",
+            """{"actions":[{"type":"CreateTask","space":"TRABAJO","title":"Revisar","dueDate":12}]}""",
+            """{"actions":[{"type":"CreateTask","space":"TRABAJO","title":"Revisar","dueDate":true}]}""",
+            """{"actions":[{"type":"CreateTask","space":"TRABAJO","title":"Revisar","dueDate":{}}]}""",
+            """{"actions":[{"type":"CreateTask","space":"TRABAJO","title":"Revisar","dueDate":[]}]}""",
+        ).forEach(::assertMalformed)
+
+        val candidate = GatewayJsonCodec.decodeInterpretResponse(
+            """{"actions":[{"type":"CreateTask","space":"TRABAJO","title":"Revisar","dueDate":null}]}"""
+                .toByteArray(),
+        )
+        assertEquals(
+            CapturePlanActionDraft.CreateTask(TaskSpace.TRABAJO, "Revisar", null),
+            candidate.actions.single(),
+        )
+    }
+
+    @Test
+    fun structuredLogValuesRequireJsonStrings() {
+        assertMalformed(
+            """{"actions":[{"type":"CreateStructuredLog","fields":{"weight":210}}]}""",
+        )
+    }
+
+    @Test
+    fun actionTypeRequiresAJsonString() {
+        assertMalformed("""{"actions":[{"type":true,"text":"Nota"}]}""")
+    }
+
+    @Test
+    fun nonStringContractValuesFailStructuralDecodeBeforeValidation() {
+        val decodeResult = runCatching {
+            GatewayJsonCodec.decodeInterpretResponse(
+                """{"actions":[{"type":"CreateNote","text":42}]}""".toByteArray(),
+            )
+        }
+
+        assertTrue(decodeResult.exceptionOrNull() is GatewayMalformedResponseException)
+        assertFalse(decodeResult.isSuccess)
+    }
+
+    @Test
     fun semanticallyRepresentableOversizedValueSurvivesDecodeButFailsValidation() {
         val candidate = GatewayJsonCodec.decodeInterpretResponse(
             """{"actions":[{"type":"CreateNote","text":"${"x".repeat(4_001)}"}]}"""
@@ -87,5 +149,11 @@ class GatewayJsonCodecTest {
 
         assertTrue(result is CapturePlanValidationResult.Invalid)
         assertFalse(result is CapturePlanValidationResult.Valid)
+    }
+
+    private fun assertMalformed(body: String) {
+        assertThrows(GatewayMalformedResponseException::class.java) {
+            GatewayJsonCodec.decodeInterpretResponse(body.toByteArray())
+        }
     }
 }

@@ -1,6 +1,6 @@
 # ACTIVE WORK
 
-Status: **QAG-004H IMPLEMENTATION COMPLETE — REVIEW PENDING**
+Status: **QAG-004H REMEDIATION ROUND 2 COMPLETE — RE-REVIEW PENDING**
 
 ## Active change
 
@@ -12,10 +12,17 @@ Status: **QAG-004H IMPLEMENTATION COMPLETE — REVIEW PENDING**
 - Objective: close the accepted QAG-004 client-side hardening findings before
   any future automatic action execution, while preserving the gateway API and
   stopping at validated `CapturePlan`.
-- Current gate: implementation and deterministic verification are complete;
-  independent review remains pending.
-- No commit, push, merge, release, or production action is authorized by this
-  change.
+- Reviewed implementation: commit
+  `f17058e9a01026a2fa258c05be3501c44fed0e69` is pushed to the branch and was
+  independently reviewed from GitHub.
+- Review disposition: **BLOCKED** with 0 BLOCKER / 1 MAJOR / 2 MINOR / 1 NOTE;
+  Round 2 remediation addresses strict JSON string typing, cancellation wording,
+  and governance provenance.
+- Current gate: Round 2 implementation and deterministic verification are
+  complete; stop for a user-authorized remediation commit/push and independent
+  re-review.
+- No remediation commit, push, merge, release, or production action is
+  authorized by this change.
 
 ## Most recently completed change
 

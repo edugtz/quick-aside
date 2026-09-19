@@ -52,8 +52,8 @@ internal object GatewayJsonCodec {
     fun decodePairResponse(bytes: ByteArray): String = try {
         val root = JSONObject(strictUtf8(bytes))
         requireKeys(root, setOf("deviceId", "status"))
-        val deviceId = root.getString("deviceId")
-        val status = root.getString("status")
+        val deviceId = requireString(root, "deviceId")
+        val status = requireString(root, "status")
         if (deviceId.isBlank() || status != "active") throw JSONException("invalid pair response")
         deviceId
     } catch (failure: Exception) {
@@ -61,12 +61,12 @@ internal object GatewayJsonCodec {
         throw GatewayMalformedResponseException(failure)
     }
 
-    private fun decodeAction(action: JSONObject): CapturePlanActionDraft = when (action.getString("type")) {
+    private fun decodeAction(action: JSONObject): CapturePlanActionDraft = when (requireString(action, "type")) {
         "AddListItem" -> {
             requireKeys(action, setOf("type", "listDefinitionId", "text"))
             CapturePlanActionDraft.AddListItem(
-                listDefinitionId = action.getString("listDefinitionId"),
-                text = action.getString("text"),
+                listDefinitionId = requireString(action, "listDefinitionId"),
+                text = requireString(action, "text"),
             )
         }
 
@@ -75,25 +75,25 @@ internal object GatewayJsonCodec {
             val dueDate = if (!action.has("dueDate") || action.isNull("dueDate")) {
                 null
             } else {
-                LocalDate.parse(action.getString("dueDate"))
+                LocalDate.parse(requireString(action, "dueDate"))
             }
             CapturePlanActionDraft.CreateTask(
-                space = TaskSpace.valueOf(action.getString("space")),
-                title = action.getString("title"),
+                space = TaskSpace.valueOf(requireString(action, "space")),
+                title = requireString(action, "title"),
                 dueDate = dueDate,
             )
         }
 
         "CreateNote" -> {
             requireKeys(action, setOf("type", "text"))
-            CapturePlanActionDraft.CreateNote(text = action.getString("text"))
+            CapturePlanActionDraft.CreateNote(text = requireString(action, "text"))
         }
 
         "CreateStructuredLog" -> {
             requireKeys(action, setOf("type", "fields"))
             val fieldsObject = action.getJSONObject("fields")
             val fields = linkedMapOf<String, String>()
-            fieldsObject.keys().forEach { key -> fields[key] = fieldsObject.getString(key) }
+            fieldsObject.keys().forEach { key -> fields[key] = requireString(fieldsObject, key) }
             CapturePlanActionDraft.CreateStructuredLog(fields)
         }
 
@@ -114,6 +114,15 @@ internal object GatewayJsonCodec {
         if (!actual.containsAll(expected - optional) || (actual - expected).isNotEmpty()) {
             throw JSONException("unexpected JSON fields")
         }
+    }
+
+    private fun requireString(
+        objectValue: JSONObject,
+        key: String,
+    ): String {
+        val rawValue = objectValue.get(key)
+        if (rawValue !is String) throw JSONException("expected JSON string")
+        return rawValue
     }
 
     private fun strictUtf8(bytes: ByteArray): String =

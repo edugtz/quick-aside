@@ -1,8 +1,8 @@
 # QAG-004H — Android Gateway Client Hardening — SPEC
 
-Governance: **HIGH-ASSURANCE**  
-Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**  
-Expected branch: `qag-004h-android-gateway-client-hardening`  
+Governance: **HIGH-ASSURANCE**
+Status: **REMEDIATION ROUND 2 COMPLETE — RE-REVIEW PENDING**
+Expected branch: `qag-004h-android-gateway-client-hardening`
 Verified base: `main` at `9114af73b96fd53a65423beba71d2d645aac8876`
 
 ## Objective
@@ -66,17 +66,18 @@ Existing HTTP and transport failure mappings remain unchanged.
 ## Transport contract
 
 - Cancellation propagates as `CancellationException` and cannot become a
-  successful response.
+  successful coroutine result once blocking I/O returns.
 - The connection, output stream, and response/error stream remain closed on
   every exit path.
 - No retry, redirect following, signed-request reuse, or networking dependency
   is added.
-- Explicit connect/read timeouts remain the upper bound for blocking platform
-  I/O. `HttpsURLConnection.disconnect()` is used as best-effort cancellation
-  cleanup, but Android/JDK platform behavior does not guarantee that it
-  immediately interrupts every blocking I/O operation; the client therefore
-  checks coroutine activity after blocking operations and retains bounded
-  timeouts.
+- Connect and read phases have explicit timeouts. Coroutine activity is checked
+  after blocking output, response-code, and response-read work, and streams plus
+  the connection retain `use`/`finally` cleanup.
+- `HttpsURLConnection.disconnect()` is best-effort completion cleanup. The
+  platform does not guarantee immediate interruption of blocking I/O, and this
+  stack provides no general write timeout or guarantee that a blocking output
+  write is bounded. No retry is introduced.
 
 ## Scope exclusions
 
@@ -101,9 +102,11 @@ or UI behavior.
 
 ## Implementation evidence
 
-The focused pairing, validator, codec-boundary, provider, transport, and
-interpreter JVM tests pass. The complete `:app:testDebugUnitTest`,
-`:app:compileDebugAndroidTestKotlin`, `:app:assembleDebug`, and
-`:app:lintDebug` tasks pass, and `git diff --check` is clean. No connected
-Android suite, production pairing, provider request, commit, or push was run or
-performed for QAG-004H.
+The original implementation was committed as
+`f17058e9a01026a2fa258c05be3501c44fed0e69`, pushed to GitHub, and independently
+reviewed. Round 2 focused tests pass 55/55 and the complete JVM suite passes
+161/161 with 0 failures, errors, or skips. Android-test Kotlin compilation,
+debug assembly, lint, and `git diff --check` pass. The remediation remains
+uncommitted and unpushed. No connected Android suite, production pairing,
+provider request, merge, release, VPS, or Tailscale action is part of this
+remediation.

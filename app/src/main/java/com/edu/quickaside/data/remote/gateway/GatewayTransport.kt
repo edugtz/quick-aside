@@ -31,10 +31,11 @@ internal fun interface GatewayTransport {
 /**
  * Platform-only HTTPS transport with bounded blocking I/O.
  *
- * Job cancellation disconnects the connection as best-effort cleanup. The
- * platform does not guarantee that disconnect immediately interrupts every
- * blocking operation, so activity is checked after each blocking phase and
- * explicit connect/read timeouts remain part of the cancellation contract.
+ * Job completion disconnects the connection as best-effort cleanup. Activity
+ * checks prevent cancellation from becoming a successful result after
+ * blocking I/O returns. Connect and read phases have explicit timeouts, but
+ * HttpsURLConnection does not guarantee immediate interruption or a bounded
+ * blocking output write.
  */
 internal class HttpsUrlConnectionGatewayTransport(
     baseUrl: String = QUICK_ASIDE_GATEWAY_BASE_URL,

@@ -3,6 +3,12 @@ package com.edu.quickaside.data.remote.gateway
 import com.edu.quickaside.application.capture.AIInterpretationRequest
 import com.edu.quickaside.application.capture.AIProviderException
 import com.edu.quickaside.application.capture.AIProviderFailureReason
+import com.edu.quickaside.application.capture.CaptureInterpretationResult
+import com.edu.quickaside.application.capture.CapturePlanValidator
+import com.edu.quickaside.application.capture.ProviderCaptureInterpreter
+import com.edu.quickaside.domain.capture.Capture
+import com.edu.quickaside.domain.capture.CaptureInput
+import com.edu.quickaside.domain.common.CaptureId
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -91,6 +97,37 @@ class QuickAsideGatewayAIProviderTest {
             provider(RecordingTransport(GatewayHttpResponse(200, "bad".toByteArray()))).interpret(request)
         }.exceptionOrNull() as AIProviderException
         assertEquals(AIProviderFailureReason.MALFORMED_RESPONSE, failure.reason)
+    }
+
+    @Test
+    fun nonStringContractValueCannotReachAValidatedPlan() = runBlocking {
+        val gatewayProvider = provider(
+            RecordingTransport(
+                GatewayHttpResponse(
+                    200,
+                    """{"actions":[{"type":"CreateNote","text":42}]}""".toByteArray(),
+                ),
+            ),
+        )
+        val interpreter = ProviderCaptureInterpreter(
+            provider = gatewayProvider,
+            validator = CapturePlanValidator(),
+            timeZoneIdProvider = { "America/Mexico_City" },
+        )
+
+        val result = interpreter.interpret(
+            Capture(
+                id = CaptureId("structural-boundary"),
+                originalInput = CaptureInput.Text("Guardar esto"),
+                capturedAt = request.capturedAt,
+            ),
+        )
+
+        val failure = result as CaptureInterpretationResult.ProviderFailure
+        assertEquals(
+            AIProviderFailureReason.MALFORMED_RESPONSE,
+            (failure.cause as AIProviderException).reason,
+        )
     }
 
     @Test

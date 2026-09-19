@@ -51,7 +51,12 @@ required unless implementation evidence changes that assessment.
 
 ## Implementation closeout
 
-The planned implementation is complete on the isolated branch. Deterministic
-JVM tests, Android-test source compilation, debug assembly, lint, and diff
-whitespace verification have passed. The change stops at
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`; no commit or push was performed.
+The original implementation was committed as
+`f17058e9a01026a2fa258c05be3501c44fed0e69`, pushed to GitHub, and independently
+reviewed. That review returned **BLOCKED** with 0 BLOCKER / 1 MAJOR / 2 MINOR /
+1 NOTE. Round 2 keeps the same branch, API, networking stack, and scope while it
+adds strict JSON string extraction and corrects cancellation/provenance wording.
+The remediation stops uncommitted after deterministic verification for
+user-authorized commit/push and independent HIGH-ASSURANCE re-review round 2.
+Focused tests, the complete JVM suite, Android-test Kotlin compilation, debug
+assembly, lint, and diff whitespace verification all pass.

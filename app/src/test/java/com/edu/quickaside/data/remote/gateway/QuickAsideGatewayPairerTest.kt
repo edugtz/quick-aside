@@ -72,7 +72,6 @@ class QuickAsideGatewayPairerTest {
             "not-json",
             "{}",
             """{"deviceId":"${identity.deviceId}"}""",
-            """{"deviceId":12,"status":"active"}""",
         ).forEach { body ->
             val result = pairer(
                 RespondingTransport(GatewayHttpResponse(200, body.toByteArray())),
@@ -83,6 +82,37 @@ class QuickAsideGatewayPairerTest {
                 result,
             )
         }
+    }
+
+    @Test
+    fun pairResponseDeviceIdRequiresAJsonString() = runBlocking {
+        val result = pairer(
+            RespondingTransport(
+                GatewayHttpResponse(200, """{"deviceId":12,"status":"active"}""".toByteArray()),
+            ),
+        ).pair("pairing-code-for-test")
+
+        assertEquals(
+            DevicePairingResult.Failure(DevicePairingFailureReason.MALFORMED_RESPONSE),
+            result,
+        )
+    }
+
+    @Test
+    fun pairResponseStatusRequiresAJsonString() = runBlocking {
+        val result = pairer(
+            RespondingTransport(
+                GatewayHttpResponse(
+                    200,
+                    """{"deviceId":"${identity.deviceId}","status":true}""".toByteArray(),
+                ),
+            ),
+        ).pair("pairing-code-for-test")
+
+        assertEquals(
+            DevicePairingResult.Failure(DevicePairingFailureReason.MALFORMED_RESPONSE),
+            result,
+        )
     }
 
     @Test
