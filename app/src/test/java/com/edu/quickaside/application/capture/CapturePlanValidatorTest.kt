@@ -89,7 +89,7 @@ class CapturePlanValidatorTest {
     }
 
     @Test
-    fun validPlanPreservesSourceAndSurroundingWhitespaceExactly() {
+    fun validPlanPreservesSourceAndActionTextWhitespaceExactly() {
         val sourceCaptureId = "  capture-with-space  "
         val itemText = "  Cuerdas guitarra  "
 
@@ -98,7 +98,7 @@ class CapturePlanValidatorTest {
                 CapturePlanDraft(
                     sourceCaptureId = sourceCaptureId,
                     actions = listOf(
-                        CapturePlanActionDraft.AddListItem("  compras  ", itemText),
+                        CapturePlanActionDraft.AddListItem("compras", itemText),
                     ),
                 ),
             ),
@@ -106,7 +106,7 @@ class CapturePlanValidatorTest {
         val action = plan.actions.single() as CapturePlanAction.AddListItem
 
         assertEquals(sourceCaptureId, plan.sourceCaptureId.value)
-        assertEquals("  compras  ", action.listDefinitionId.value)
+        assertEquals("compras", action.listDefinitionId.value)
         assertEquals(itemText, action.text)
     }
 
@@ -220,6 +220,196 @@ class CapturePlanValidatorTest {
         )
 
         assertEquals(listOf(CapturePlanAction.UndoLast), plan.actions)
+    }
+
+    @Test
+    fun sixteenActionsAreAcceptedWhenEachActionIsOtherwiseValid() {
+        val plan = validPlan(
+            validator.validate(
+                CapturePlanDraft(
+                    sourceCaptureId = "capture-max-actions",
+                    actions = (0 until 16).map { index ->
+                        CapturePlanActionDraft.CreateNote("Nota $index")
+                    },
+                ),
+            ),
+        )
+
+        assertEquals(16, plan.actions.size)
+    }
+
+    @Test
+    fun seventeenthActionIsRejectedBeforeProducingAValidatedPlan() {
+        val result = validator.validate(
+            CapturePlanDraft(
+                sourceCaptureId = "capture-too-many-actions",
+                actions = (0..16).map { index ->
+                    CapturePlanActionDraft.CreateNote("Nota $index")
+                },
+            ),
+        )
+
+        assertEquals(
+            listOf(
+                CapturePlanValidationIssue.Plan(
+                    CapturePlanValidationReason.TOO_MANY_ACTIONS,
+                ),
+            ),
+            invalidIssues(result),
+        )
+        assertFalse(result is CapturePlanValidationResult.Valid)
+    }
+
+    @Test
+    fun onlyMandadoAndComprasListDefinitionsAreAcceptedWithoutNormalization() {
+        listOf("mandado", "compras").forEach { listDefinitionId ->
+            val plan = validPlan(
+                validator.validate(
+                    CapturePlanDraft(
+                        sourceCaptureId = "capture-$listDefinitionId",
+                        actions = listOf(
+                            CapturePlanActionDraft.AddListItem(
+                                listDefinitionId,
+                                "Producto",
+                            ),
+                        ),
+                    ),
+                ),
+            )
+
+            assertEquals(
+                listDefinitionId,
+                (plan.actions.single() as CapturePlanAction.AddListItem)
+                    .listDefinitionId.value,
+            )
+        }
+
+        assertEquals(
+            listOf(
+                CapturePlanValidationIssue.Action(
+                    actionIndex = 0,
+                    reason = CapturePlanValidationReason.UNSUPPORTED_LIST_DEFINITION_ID,
+                ),
+            ),
+            invalidIssues(
+                CapturePlanDraft(
+                    sourceCaptureId = "capture-unsupported-list",
+                    actions = listOf(
+                        CapturePlanActionDraft.AddListItem("arbitrary", "Producto"),
+                    ),
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun exactGatewayFieldLimitsAreAccepted() {
+        val plan = validPlan(
+            validator.validate(
+                CapturePlanDraft(
+                    sourceCaptureId = "capture-exact-limits",
+                    actions = listOf(
+                        CapturePlanActionDraft.AddListItem(
+                            "mandado",
+                            "x".repeat(1_000),
+                        ),
+                        CapturePlanActionDraft.CreateTask(
+                            TaskSpace.PERSONAL,
+                            "x".repeat(500),
+                        ),
+                        CapturePlanActionDraft.CreateNote("x".repeat(4_000)),
+                        CapturePlanActionDraft.CreateStructuredLog(
+                            linkedMapOf("k".repeat(128) to "v".repeat(1_000)),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        assertEquals(4, plan.actions.size)
+    }
+
+    @Test
+    fun maxPlusOneGatewayFieldValuesAreRejected() {
+        val cases = listOf(
+            CapturePlanActionDraft.AddListItem("mandado", "x".repeat(1_001)) to
+                CapturePlanValidationReason.LIST_ITEM_TEXT_TOO_LONG,
+            CapturePlanActionDraft.CreateTask(TaskSpace.PERSONAL, "x".repeat(501)) to
+                CapturePlanValidationReason.TASK_TITLE_TOO_LONG,
+            CapturePlanActionDraft.CreateNote("x".repeat(4_001)) to
+                CapturePlanValidationReason.NOTE_TEXT_TOO_LONG,
+            CapturePlanActionDraft.CreateStructuredLog(
+                linkedMapOf("k".repeat(129) to "value"),
+            ) to CapturePlanValidationReason.STRUCTURED_LOG_KEY_TOO_LONG,
+            CapturePlanActionDraft.CreateStructuredLog(
+                linkedMapOf("key" to "v".repeat(1_001)),
+            ) to CapturePlanValidationReason.STRUCTURED_LOG_VALUE_TOO_LONG,
+        )
+
+        cases.forEach { (action, reason) ->
+            assertEquals(
+                listOf(CapturePlanValidationIssue.Action(0, reason)),
+                invalidIssues(
+                    CapturePlanDraft(
+                        sourceCaptureId = "capture-too-long",
+                        actions = listOf(action),
+                    ),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun structuredLogFieldCountBoundaryIsEnforced() {
+        val exactlyMaxFields = (0 until 32).associate { index ->
+            "key-$index" to "value-$index"
+        }
+        val maxPlan = validPlan(
+            validator.validate(
+                CapturePlanDraft(
+                    sourceCaptureId = "capture-max-fields",
+                    actions = listOf(
+                        CapturePlanActionDraft.CreateStructuredLog(exactlyMaxFields),
+                    ),
+                ),
+            ),
+        )
+        assertEquals(32, (maxPlan.actions.single() as CapturePlanAction.CreateStructuredLog).fields.size)
+
+        val tooManyFields = (0..32).associate { index ->
+            "key-$index" to "value-$index"
+        }
+        assertEquals(
+            listOf(
+                CapturePlanValidationIssue.Action(
+                    actionIndex = 0,
+                    reason = CapturePlanValidationReason.TOO_MANY_STRUCTURED_LOG_FIELDS,
+                ),
+            ),
+            invalidIssues(
+                CapturePlanDraft(
+                    sourceCaptureId = "capture-too-many-fields",
+                    actions = listOf(
+                        CapturePlanActionDraft.CreateStructuredLog(tooManyFields),
+                    ),
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun outOfContractRemoteValueCannotBecomeAValidatedDomainAction() {
+        val result = validator.validate(
+            CapturePlanDraft(
+                sourceCaptureId = "capture-rejected-value",
+                actions = listOf(
+                    CapturePlanActionDraft.CreateNote("x".repeat(4_001)),
+                ),
+            ),
+        )
+
+        assertTrue(result is CapturePlanValidationResult.Invalid)
+        assertFalse(result is CapturePlanValidationResult.Valid)
     }
 
     @Test
@@ -512,7 +702,10 @@ class CapturePlanValidatorTest {
         }
 
     private fun invalidIssues(draft: CapturePlanDraft): List<CapturePlanValidationIssue> {
-        val result = validator.validate(draft)
+        return invalidIssues(validator.validate(draft))
+    }
+
+    private fun invalidIssues(result: CapturePlanValidationResult): List<CapturePlanValidationIssue> {
         return when (result) {
             is CapturePlanValidationResult.Invalid -> result.issues
             is CapturePlanValidationResult.Valid ->

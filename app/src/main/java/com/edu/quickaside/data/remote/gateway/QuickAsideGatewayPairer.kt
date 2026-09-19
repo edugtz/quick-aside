@@ -44,7 +44,12 @@ internal class QuickAsideGatewayPairer(
         }
 
         return try {
-            DevicePairingResult.Success(GatewayJsonCodec.decodePairResponse(response.body))
+            val returnedDeviceId = GatewayJsonCodec.decodePairResponse(response.body)
+            if (returnedDeviceId != identity.deviceId) {
+                DevicePairingResult.Failure(DevicePairingFailureReason.MALFORMED_RESPONSE)
+            } else {
+                DevicePairingResult.Success(returnedDeviceId)
+            }
         } catch (_: GatewayMalformedResponseException) {
             DevicePairingResult.Failure(DevicePairingFailureReason.MALFORMED_RESPONSE)
         }

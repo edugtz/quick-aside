@@ -1,13 +1,17 @@
 package com.edu.quickaside.data.remote.gateway
 
 import com.edu.quickaside.application.capture.AIInterpretationRequest
+import com.edu.quickaside.application.capture.CapturePlanValidationResult
+import com.edu.quickaside.application.capture.CapturePlanValidator
 import com.edu.quickaside.domain.capture.CapturePlanActionDraft
+import com.edu.quickaside.domain.capture.CapturePlanDraft
 import com.edu.quickaside.domain.tasks.TaskSpace
 import java.time.Instant
 import java.time.LocalDate
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertThrows
 import org.junit.Test
 
@@ -65,5 +69,23 @@ class GatewayJsonCodecTest {
                 GatewayJsonCodec.decodeInterpretResponse(body.toByteArray())
             }
         }
+    }
+
+    @Test
+    fun semanticallyRepresentableOversizedValueSurvivesDecodeButFailsValidation() {
+        val candidate = GatewayJsonCodec.decodeInterpretResponse(
+            """{"actions":[{"type":"CreateNote","text":"${"x".repeat(4_001)}"}]}"""
+                .toByteArray(),
+        )
+
+        val result = CapturePlanValidator().validate(
+            CapturePlanDraft(
+                sourceCaptureId = "capture-codec-validator-boundary",
+                actions = candidate.actions,
+            ),
+        )
+
+        assertTrue(result is CapturePlanValidationResult.Invalid)
+        assertFalse(result is CapturePlanValidationResult.Valid)
     }
 }

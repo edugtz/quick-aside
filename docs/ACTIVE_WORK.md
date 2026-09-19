@@ -1,6 +1,21 @@
 # ACTIVE WORK
 
-Status: **QAG-004 COMPLETE — INTEGRATED INTO `main`**
+Status: **QAG-004H IMPLEMENTATION COMPLETE — REVIEW PENDING**
+
+## Active change
+
+- Change: `QAG-004H — Android Gateway Client Hardening`
+- Package: `docs/changes/QAG-004H-android-gateway-client-hardening/`
+- Branch: `qag-004h-android-gateway-client-hardening`
+- Verified base: `main` at `9114af73b96fd53a65423beba71d2d645aac8876`
+- Governance: **HIGH-ASSURANCE**
+- Objective: close the accepted QAG-004 client-side hardening findings before
+  any future automatic action execution, while preserving the gateway API and
+  stopping at validated `CapturePlan`.
+- Current gate: implementation and deterministic verification are complete;
+  independent review remains pending.
+- No commit, push, merge, release, or production action is authorized by this
+  change.
 
 ## Most recently completed change
 
@@ -45,11 +60,12 @@ integration are both integrated. The private production path is now:
       -> validated CapturePlan
 
 QA1 remains the application authorization boundary. Provider credentials remain
-server-side. Personal Admin/Hermes remains independent.
+server-side. Personal Admin/Hermes remains independent. QAG-004H is the current
+client-hardening change and remains stopped at validated `CapturePlan`.
 
 ## Next change
 
-No next change is automatically selected.
+No next change is automatically selected after QAG-004H.
 
 QAG-5 normal-use hardening remains a roadmap candidate after real usage.
 M3/M4/M5 foundations and other provider-independent work remain available

@@ -145,7 +145,8 @@ QAG-1 selected the provider invocation route. QAG-2 implemented and verified
 the minimal repository-owned gateway. QAG-003R then deployed it through
 private Tailscale Services/Serve with localhost-only FastAPI, QA1 retained as
 the application authorization boundary, and no public Quick Aside ingress.
-QAG-4 owns Android remote-provider integration.
+QAG-004 completed Android remote-provider integration. QAG-004H owns the
+accepted client-side hardening debt before any future automatic execution.
 
 ### Selected provider invocation
 
@@ -251,13 +252,18 @@ QAG-003R resolved and proved the production ingress/runtime details:
 - no Funnel and no public Quick Aside firewall ingress;
 - Quick-Aside-scoped restart/reboot persistence and rollback contract.
 
-QAG-4 now owns:
+QAG-004 completed:
 
 - Android network permission/client implementation;
 - Android Keystore P-256 QA1 device identity and pairing;
 - Android remote `AIProvider` adapter;
 - end-to-end capture persistence -> gateway -> validation flow;
 - true Android/private-network/provider latency measurement.
+
+QAG-004H owns only the accepted client-side hardening findings: pairing
+response identity binding, local action/field bounds, and bounded transport
+cancellation handling. It does not add action execution or change the gateway
+contract.
 
 Fallback implementation remains later and evidence-triggered.
 
@@ -280,11 +286,12 @@ QAG-1/QAG-2 proved provider/gateway behavior in seconds-scale requests. Those
 measurements are not Android end-to-end measurements and do not freeze a final
 numeric fast-capture budget.
 
-QAG-4 must measure the actual:
+QAG-004 measured the actual:
 
 `Android -> private network -> gateway -> provider -> gateway -> Android`
 
-path before runtime integration receives final fast-capture acceptance.
+path before runtime integration received final fast-capture acceptance.
+QAG-004H preserves that path and its persistence-first boundary.
 
 ### AI safety boundary
 

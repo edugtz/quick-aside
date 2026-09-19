@@ -3,6 +3,7 @@ package com.edu.quickaside.application.capture
 import com.edu.quickaside.domain.capture.CapturePlan
 import com.edu.quickaside.domain.capture.CapturePlanAction
 import com.edu.quickaside.domain.capture.CapturePlanActionDraft
+import com.edu.quickaside.domain.capture.CapturePlanContract
 import com.edu.quickaside.domain.capture.CapturePlanDraft
 import com.edu.quickaside.domain.common.CaptureId
 import com.edu.quickaside.domain.common.ListDefinitionId
@@ -29,6 +30,13 @@ class CapturePlanValidator {
                     ),
                 )
             }
+            if (draft.actions.size > CapturePlanContract.MAX_ACTIONS) {
+                add(
+                    CapturePlanValidationIssue.Plan(
+                        reason = CapturePlanValidationReason.TOO_MANY_ACTIONS,
+                    ),
+                )
+            }
 
             draft.actions.forEachIndexed { index, action ->
                 when (action) {
@@ -40,12 +48,32 @@ class CapturePlanValidator {
                                     reason = CapturePlanValidationReason.BLANK_LIST_DEFINITION_ID,
                                 ),
                             )
+                        } else if (action.listDefinitionId !in
+                            CapturePlanContract.SUPPORTED_LIST_DEFINITION_IDS
+                        ) {
+                            add(
+                                CapturePlanValidationIssue.Action(
+                                    actionIndex = index,
+                                    reason = CapturePlanValidationReason.UNSUPPORTED_LIST_DEFINITION_ID,
+                                ),
+                            )
                         }
                         if (action.text.isBlank()) {
                             add(
                                 CapturePlanValidationIssue.Action(
                                     actionIndex = index,
                                     reason = CapturePlanValidationReason.BLANK_LIST_ITEM_TEXT,
+                                ),
+                            )
+                        } else if (!CapturePlanContract.isWithinCharacterLimit(
+                                action.text,
+                                CapturePlanContract.MAX_LIST_ITEM_CHARS,
+                            )
+                        ) {
+                            add(
+                                CapturePlanValidationIssue.Action(
+                                    actionIndex = index,
+                                    reason = CapturePlanValidationReason.LIST_ITEM_TEXT_TOO_LONG,
                                 ),
                             )
                         }
@@ -59,6 +87,17 @@ class CapturePlanValidator {
                                     reason = CapturePlanValidationReason.BLANK_TASK_TITLE,
                                 ),
                             )
+                        } else if (!CapturePlanContract.isWithinCharacterLimit(
+                                action.title,
+                                CapturePlanContract.MAX_TASK_TITLE_CHARS,
+                            )
+                        ) {
+                            add(
+                                CapturePlanValidationIssue.Action(
+                                    actionIndex = index,
+                                    reason = CapturePlanValidationReason.TASK_TITLE_TOO_LONG,
+                                ),
+                            )
                         }
                     }
 
@@ -68,6 +107,17 @@ class CapturePlanValidator {
                                 CapturePlanValidationIssue.Action(
                                     actionIndex = index,
                                     reason = CapturePlanValidationReason.BLANK_NOTE_TEXT,
+                                ),
+                            )
+                        } else if (!CapturePlanContract.isWithinCharacterLimit(
+                                action.text,
+                                CapturePlanContract.MAX_NOTE_CHARS,
+                            )
+                        ) {
+                            add(
+                                CapturePlanValidationIssue.Action(
+                                    actionIndex = index,
+                                    reason = CapturePlanValidationReason.NOTE_TEXT_TOO_LONG,
                                 ),
                             )
                         }
@@ -95,6 +145,42 @@ class CapturePlanValidator {
                                     CapturePlanValidationIssue.Action(
                                         actionIndex = index,
                                         reason = CapturePlanValidationReason.BLANK_STRUCTURED_LOG_VALUE,
+                                    ),
+                                )
+                            }
+                            if (action.fields.size > CapturePlanContract.MAX_STRUCTURED_LOG_FIELDS) {
+                                add(
+                                    CapturePlanValidationIssue.Action(
+                                        actionIndex = index,
+                                        reason = CapturePlanValidationReason.TOO_MANY_STRUCTURED_LOG_FIELDS,
+                                    ),
+                                )
+                            }
+                            if (action.fields.keys.any {
+                                    !CapturePlanContract.isWithinCharacterLimit(
+                                        it,
+                                        CapturePlanContract.MAX_STRUCTURED_LOG_KEY_CHARS,
+                                    )
+                                }
+                            ) {
+                                add(
+                                    CapturePlanValidationIssue.Action(
+                                        actionIndex = index,
+                                        reason = CapturePlanValidationReason.STRUCTURED_LOG_KEY_TOO_LONG,
+                                    ),
+                                )
+                            }
+                            if (action.fields.values.any {
+                                    !CapturePlanContract.isWithinCharacterLimit(
+                                        it,
+                                        CapturePlanContract.MAX_STRUCTURED_LOG_VALUE_CHARS,
+                                    )
+                                }
+                            ) {
+                                add(
+                                    CapturePlanValidationIssue.Action(
+                                        actionIndex = index,
+                                        reason = CapturePlanValidationReason.STRUCTURED_LOG_VALUE_TOO_LONG,
                                     ),
                                 )
                             }
@@ -150,13 +236,21 @@ enum class CapturePlanValidationScope {
 enum class CapturePlanValidationReason {
     BLANK_SOURCE_CAPTURE_ID,
     EMPTY_ACTIONS,
+    TOO_MANY_ACTIONS,
     BLANK_LIST_DEFINITION_ID,
+    UNSUPPORTED_LIST_DEFINITION_ID,
     BLANK_LIST_ITEM_TEXT,
+    LIST_ITEM_TEXT_TOO_LONG,
     BLANK_TASK_TITLE,
+    TASK_TITLE_TOO_LONG,
     BLANK_NOTE_TEXT,
+    NOTE_TEXT_TOO_LONG,
     EMPTY_STRUCTURED_LOG_FIELDS,
+    TOO_MANY_STRUCTURED_LOG_FIELDS,
     BLANK_STRUCTURED_LOG_KEY,
+    STRUCTURED_LOG_KEY_TOO_LONG,
     BLANK_STRUCTURED_LOG_VALUE,
+    STRUCTURED_LOG_VALUE_TOO_LONG,
 }
 
 sealed interface CapturePlanValidationIssue {

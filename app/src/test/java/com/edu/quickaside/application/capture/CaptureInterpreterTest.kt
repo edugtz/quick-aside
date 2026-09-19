@@ -178,7 +178,7 @@ class CaptureInterpreterTest {
             "prioridad" to "alta ",
         )
         val actions = listOf(
-            CapturePlanActionDraft.AddListItem("  compras  ", "  Cuerdas Fender  "),
+            CapturePlanActionDraft.AddListItem("compras", "  Cuerdas Fender  "),
             CapturePlanActionDraft.CreateTask(TaskSpace.TRABAJO, "  Revisar PR  ", dueDate),
             CapturePlanActionDraft.CreateNote("  Llamar al taller  "),
             CapturePlanActionDraft.CreateStructuredLog(fields),
@@ -192,7 +192,7 @@ class CaptureInterpreterTest {
         assertEquals(
             listOf(
                 CapturePlanAction.AddListItem(
-                    ListDefinitionId("  compras  "),
+                    ListDefinitionId("compras"),
                     "  Cuerdas Fender  ",
                 ),
                 CapturePlanAction.CreateTask(

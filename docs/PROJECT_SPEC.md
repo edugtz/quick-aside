@@ -217,7 +217,8 @@ Accepted personal-MVP runtime direction:
 - DeepSeek V4 Flash remains an evidence-triggered fallback candidate only;
 - no automatic reasoning escalation.
 
-QAG-0, QAG-1, and QAG-2 are complete.
+QAG-0, QAG-1, QAG-2, QAG-003R, and QAG-004 are complete. QAG-004H is the
+current client-hardening change for the accepted QAG-004 review debt.
 
 QAG-2 established the repository-owned minimal gateway contract and runtime:
 
@@ -239,14 +240,15 @@ attempted, and that capture remains durable if interpretation is unavailable.
 Trusted capture provenance remains Android-owned. The gateway/provider must
 not invent `sourceCaptureId`.
 
-QAG-2 defines trusted temporal transport for relative-date interpretation, but
-Android networking is intentionally not part of QAG-2. QAG-3 is the next gate
-for live private deployment and is HIGH-ASSURANCE; QAG-4 later integrates the
-Android `AIProvider` and measures the complete Android/private-network/gateway/
-provider path.
+QAG-2 defined trusted temporal transport for relative-date interpretation.
+QAG-003R completed the live private deployment, and QAG-004 integrated the
+Android `AIProvider`, QA1 identity/pairing, local validation, and the complete
+Android/private-network/gateway/provider path. QAG-004H closes the accepted
+client-side hardening debt before any future automatic action execution.
 
 QAG-1/QAG-2 provider timings are not final Android end-to-end latency evidence.
-Final fast-capture acceptance still requires QAG-4 measurement.
+QAG-004 recorded the Android end-to-end measurement; QAG-004H does not change
+the request or provider contract.
 
 Model/provider changes must not alter domain contracts or stored data formats.
 Do not restart broad benchmark work unless real use shows a concrete blocker.

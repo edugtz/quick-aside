@@ -6,8 +6,9 @@ import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.coroutineContext
 
 internal const val QUICK_ASIDE_GATEWAY_BASE_URL = "https://quickaside.taildc9db9.ts.net"
 internal const val PAIR_PATH = "/v1/pair"
@@ -27,6 +28,14 @@ internal fun interface GatewayTransport {
     ): GatewayHttpResponse
 }
 
+/**
+ * Platform-only HTTPS transport with bounded blocking I/O.
+ *
+ * Job cancellation disconnects the connection as best-effort cleanup. The
+ * platform does not guarantee that disconnect immediately interrupts every
+ * blocking operation, so activity is checked after each blocking phase and
+ * explicit connect/read timeouts remain part of the cancellation contract.
+ */
 internal class HttpsUrlConnectionGatewayTransport(
     baseUrl: String = QUICK_ASIDE_GATEWAY_BASE_URL,
     private val connectTimeoutMillis: Int = 5_000,
@@ -57,7 +66,7 @@ internal class HttpsUrlConnectionGatewayTransport(
         require(path.startsWith("/")) { "Gateway path must be absolute" }
         if (body.size > maxRequestBytes) throw GatewayRequestTooLargeException()
         val connection = URL(baseUrl + path).openConnection() as HttpsURLConnection
-        val cancellationHandle = coroutineContext[Job]?.invokeOnCompletion {
+        val cancellationHandle = currentCoroutineContext()[Job]?.invokeOnCompletion {
             connection.disconnect()
         }
         try {
@@ -72,11 +81,15 @@ internal class HttpsUrlConnectionGatewayTransport(
             headers.forEach { (name, value) -> connection.setRequestProperty(name, value) }
 
             connection.outputStream.use { output -> output.write(body) }
+            currentCoroutineContext().ensureActive()
             val status = connection.responseCode
+            currentCoroutineContext().ensureActive()
             val stream = if (status in 200..299) connection.inputStream else connection.errorStream
+            val responseBody = stream?.use { readBounded(it, maxResponseBytes) } ?: ByteArray(0)
+            currentCoroutineContext().ensureActive()
             GatewayHttpResponse(
                 statusCode = status,
-                body = stream?.use { readBounded(it, maxResponseBytes) } ?: ByteArray(0),
+                body = responseBody,
             )
         } finally {
             cancellationHandle?.dispose()
