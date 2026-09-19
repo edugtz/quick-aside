@@ -1,7 +1,7 @@
 # QAG-004H — Android Gateway Client Hardening — SPEC
 
 Governance: **HIGH-ASSURANCE**
-Status: **ROUND 2 REVIEW COMPLETE — PASS_WITH_NOTES — MERGE PENDING**
+Status: **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO `main`**
 Expected branch: `qag-004h-android-gateway-client-hardening`
 Verified base: `main` at `9114af73b96fd53a65423beba71d2d645aac8876`
 
@@ -116,9 +116,10 @@ documentation-only closeout. Stale governance/provenance was largely corrected
 in Round 2; no Round 3 independent security review is required for this
 correction.
 
-QAG-004H is not merged into `main`. It remains stopped at validated
-`CapturePlan`, with no `ActionExecutor` or automatic mutation. The next gate is
-user-authorized commit/push of this documentation-only closeout, followed by
-user-authorized merge / final repository closeout. No connected Android suite,
-production pairing, provider request, release, VPS, or Tailscale action is part
-of this closeout.
+QAG-004H is integrated into `main` and remains stopped at validated
+`CapturePlan`, with no `ActionExecutor` or automatic mutation. The
+documentation-only closeout was committed as
+`9db98f2e808d076ab29ca1e1dd7dddb74c6fed49` and then fast-forwarded into
+`main` after explicit user authorization. No connected Android suite,
+production pairing, provider request, release, VPS, or Tailscale action was
+required for this closeout.
