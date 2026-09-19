@@ -80,12 +80,25 @@ server-side. Personal Admin/Hermes remains independent. QAG-004H is integrated
 with **PASS_WITH_NOTES** and remains stopped at validated `CapturePlan` with no
 `ActionExecutor` or automatic mutation.
 
-## Next change
+## Workstream and next selection
 
-No next change is automatically selected after QAG-004H.
+The specialized Quick Aside Gateway workstream is complete and closed for
+now. Its historical QAG identifiers and records remain unchanged; QAG
+identifiers do not replace or renumber the global Change sequence. No QAG-005
+implementation change is reserved.
 
-QAG-5 normal-use hardening remains a roadmap candidate after real usage.
-M3/M4/M5 foundations and other provider-independent work remain available
-options, but beginning any new reviewable change requires a fresh user decision.
+Normal-use gateway hardening, historically Phase QAG-5 in the gateway
+initiative, remains dependent on evidence from actual use. It is not
+automatically scheduled as the next implementation change or reserved under a
+global Change ID.
+
+The normal global reviewable-change history remains Change 001 through Change
+026. The next normal reviewable implementation unit will be Change 027
+(`docs/changes/027-<slug>/`, branch `chg-027-<slug>`) only after the user
+selects its scope through a fresh product decision. There is currently **no
+CHG-027 selected**; no product scope or priority is selected by this closeout.
+
+M3/M4/M5 foundations and other provider-independent work remain candidates
+only; this closeout does not schedule them.
 
 The user retains product, commit, push, merge, release, and production authority.

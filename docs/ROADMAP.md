@@ -35,7 +35,7 @@ Implemented/current foundation includes:
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **IN PROGRESS — private gateway, Android integration, and client hardening complete; normal-use hardening remains.**
+Status: **IN PROGRESS — private gateway and Android integration/client hardening are complete; remaining product work is scope-selected, and normal-use gateway hardening is evidence-triggered.**
 
 Outcome: natural-language input becomes validated structured actions with
 minimal friction.
@@ -62,7 +62,7 @@ QAG-1/QAG-2 established:
 
 Still pending:
 
-- real-use evidence and normal-use hardening after QAG-4;
+- real-use evidence before deciding whether normal-use hardening is warranted;
 - optional DeepSeek V4 Flash fallback;
 - interpreter outcomes such as PLAN/CLARIFY/UNSUPPORTED where not already
   covered by local foundations;
@@ -76,13 +76,20 @@ Current gateway gates:
 - QAG-2 — minimal gateway implementation: **COMPLETE — PASS_WITH_NOTES**
 - QAG-3 — public ingress deployment attempt: **SUPERSEDED**
 - QAG-003R — private tailnet gateway deployment: **COMPLETE — PASS_WITH_NOTES**
-- QAG-4 — Android integration: **COMPLETE — PASS_WITH_NOTES**
-- QAG-004H — Android gateway client hardening: **COMPLETE — PASS_WITH_NOTES**
-- QAG-5 — normal-use hardening: pending real use
+- QAG-004 — Android integration: **COMPLETE — PASS_WITH_NOTES; integrated into `main`**
+- QAG-004H — Android client trust-boundary hardening: **COMPLETE — PASS_WITH_NOTES; integrated into `main`**
+- Normal-use hardening (historically Phase QAG-5 in the gateway initiative): pending real-use evidence; not a reserved Change ID
 
-M2 runtime interpretation is now integrated and accepted end-to-end through
-QAG-004. M2 remains open for normal-use hardening and the remaining
-fast-capture interpretation/UX policies listed above.
+The specialized QAG gateway workstream is complete and closed for now.
+Normal-use hardening is contingent on actual-use evidence and is not
+automatically scheduled as the next implementation change.
+
+M2 runtime interpretation is integrated end-to-end through QAG-004, and
+Android client trust-boundary hardening is complete through QAG-004H. Both are
+integrated into `main`. Execution remains intentionally absent: the flow stops
+at validated `CapturePlan`, with no `ActionExecutor` or automatic mutation.
+M2 remains open for the remaining fast-capture interpretation/UX policies
+listed above and any separately selected work.
 
 ## M3 — Google Tasks + Calendar
 
@@ -112,7 +119,7 @@ Because sync can create data-loss/idempotency risk, break this milestone into sm
 
 ## M4 — Reminders and daily reliability
 
-Status: **NOT globally blocked** — runtime interpretation is available; natural-language reminder creation still depends on future reminder actions/execution.
+Status: **NOT globally blocked** — runtime interpretation is integrated; natural-language reminder creation still requires future reminder-domain/action work, validated-plan execution, and scheduling.
 
 Outcome: user-configured reminders reliably fire and are actionable.
 
@@ -177,7 +184,10 @@ and safe diagnostics.
 QAG-003R subsequently deployed the gateway through private Tailscale
 Services/Serve, preserved localhost-only FastAPI and QA1, and proved service
 restart plus VPS reboot persistence without making Personal Admin an
-application dependency. QAG-4 completed Android integration and is integrated into `main`.
+application dependency. QAG-004 completed Android integration and is
+integrated into `main`. QAG-004H completed Android client trust-boundary
+hardening and is integrated into `main`. Both intentionally stop at validated
+`CapturePlan`; there is no `ActionExecutor` or automatic mutation.
 
 ## Milestone dependency summary
 
@@ -187,19 +197,23 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | IN PROGRESS — gateway + Android integration + client hardening complete; normal-use hardening remains |
+| M2 | IN PROGRESS — gateway + Android integration/client hardening complete; remaining policy and UX scope is undecided; normal-use hardening is evidence-triggered |
 | M3 | NOT globally blocked; runtime interpretation is available, but execution + Google sync remain |
-| M4 | NOT globally blocked; natural-language reminder creation still depends on M2 runtime integration |
+| M4 | NOT globally blocked; runtime interpretation is integrated, while natural-language reminder creation awaits future reminder-domain/actions, validated-plan execution, and scheduling work |
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
 There is currently **no CHG-027 selected**.
 
-## Available work after QAG-004
+The normal global implementation sequence remains Change 001 through Change
+026. After a fresh user scope decision, the next normal reviewable change will
+be Change 027, under `docs/changes/027-<slug>/` on branch `chg-027-<slug>`.
 
-Not automatically scheduled:
+## Candidate work after QAG-004H (not scheduled)
 
-- QAG-5 normal-use hardening after real usage;
+Candidate work only; none is automatically scheduled:
+
+- Normal-use hardening (historically Phase QAG-5 in the gateway initiative): pending real-use evidence; not a reserved Change ID;
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,
   outbox/retry, idempotency/conflict behavior, Calendar integration;
 - M4 foundations: reminder domain, scheduling, notification actions, and
