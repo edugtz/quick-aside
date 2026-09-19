@@ -65,7 +65,8 @@ limitation. The remaining MINOR is documentation/provenance only and is
 corrected by this documentation-only closeout. No Round 3 independent security
 review is required for this correction.
 
-QAG-004H is not merged into `main` and remains stopped at validated
-`CapturePlan`, with no `ActionExecutor` or automatic mutation. The next gate is
-user-authorized commit/push of this documentation-only closeout, followed by
-user-authorized merge / final repository closeout.
+QAG-004H is integrated into `main` and remains stopped at validated
+`CapturePlan`, with no `ActionExecutor` or automatic mutation. The
+documentation-only closeout commit
+`9db98f2e808d076ab29ca1e1dd7dddb74c6fed49` was included in the
+user-authorized fast-forward integration.
