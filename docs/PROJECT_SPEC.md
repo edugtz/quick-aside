@@ -217,8 +217,9 @@ Accepted personal-MVP runtime direction:
 - DeepSeek V4 Flash remains an evidence-triggered fallback candidate only;
 - no automatic reasoning escalation.
 
-QAG-0, QAG-1, QAG-2, QAG-003R, and QAG-004 are complete. QAG-004H is the
-current client-hardening change for the accepted QAG-004 review debt.
+QAG-0, QAG-1, QAG-2, QAG-003R, QAG-004, and QAG-004H are complete.
+QAG-004H closed the accepted Android client-hardening debt before any future
+automatic action execution.
 
 QAG-2 established the repository-owned minimal gateway contract and runtime:
 
