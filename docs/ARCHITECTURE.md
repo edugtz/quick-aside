@@ -145,8 +145,9 @@ QAG-1 selected the provider invocation route. QAG-2 implemented and verified
 the minimal repository-owned gateway. QAG-003R then deployed it through
 private Tailscale Services/Serve with localhost-only FastAPI, QA1 retained as
 the application authorization boundary, and no public Quick Aside ingress.
-QAG-004 completed Android remote-provider integration. QAG-004H owns the
-accepted client-side hardening debt before any future automatic execution.
+QAG-004 completed Android remote-provider integration. QAG-004H subsequently
+closed the accepted client-side hardening debt before any future automatic
+execution.
 
 ### Selected provider invocation
 
@@ -260,10 +261,10 @@ QAG-004 completed:
 - end-to-end capture persistence -> gateway -> validation flow;
 - true Android/private-network/provider latency measurement.
 
-QAG-004H owns only the accepted client-side hardening findings: pairing
-response identity binding, local action/field bounds, and bounded transport
-cancellation handling. It does not add action execution or change the gateway
-contract.
+QAG-004H completed only the accepted client-side hardening findings: pairing
+response identity binding, local action/field bounds, strict JSON structural
+typing, and bounded transport cancellation handling. It did not add action
+execution or change the gateway contract.
 
 Fallback implementation remains later and evidence-triggered.
 
