@@ -72,8 +72,9 @@ real signed Luna Low, replay-rejection, restart/reboot-persistence, isolation,
 and log-privacy evidence with final `PASS_WITH_NOTES`. QAG-004 completed the
 HIGH-ASSURANCE Android integration gate, including device pairing, QA1 signing,
 the remote `AIProvider` adapter, local validation, and true Android end-to-end
-latency measurement. QAG-004H closes the accepted client-side hardening debt
-before any future automatic action execution.
+latency measurement. QAG-004H completed the accepted client-side hardening
+before any future automatic action execution and finished with
+**PASS_WITH_NOTES**.
 
 Provider auth and credentials belong to the isolated Quick Aside
 gateway/runtime, not Android or Personal Admin/Hermes. Runtime code remains
