@@ -35,7 +35,7 @@ Implemented/current foundation includes:
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **IN PROGRESS — private gateway and QAG-4 Android integration complete; normal-use hardening remains.**
+Status: **IN PROGRESS — private gateway, Android integration, and client hardening complete; normal-use hardening remains.**
 
 Outcome: natural-language input becomes validated structured actions with
 minimal friction.
@@ -63,7 +63,6 @@ QAG-1/QAG-2 established:
 Still pending:
 
 - real-use evidence and normal-use hardening after QAG-4;
-- closing accepted client hardening debt before any future automatic action execution;
 - optional DeepSeek V4 Flash fallback;
 - interpreter outcomes such as PLAN/CLARIFY/UNSUPPORTED where not already
   covered by local foundations;
@@ -78,6 +77,7 @@ Current gateway gates:
 - QAG-3 — public ingress deployment attempt: **SUPERSEDED**
 - QAG-003R — private tailnet gateway deployment: **COMPLETE — PASS_WITH_NOTES**
 - QAG-4 — Android integration: **COMPLETE — PASS_WITH_NOTES**
+- QAG-004H — Android gateway client hardening: **COMPLETE — PASS_WITH_NOTES**
 - QAG-5 — normal-use hardening: pending real use
 
 M2 runtime interpretation is now integrated and accepted end-to-end through
@@ -187,7 +187,7 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | IN PROGRESS — gateway + QAG-4 Android integration complete; normal-use hardening remains |
+| M2 | IN PROGRESS — gateway + Android integration + client hardening complete; normal-use hardening remains |
 | M3 | NOT globally blocked; runtime interpretation is available, but execution + Google sync remain |
 | M4 | NOT globally blocked; natural-language reminder creation still depends on M2 runtime integration |
 | M5 | NOT blocked by AI runtime |
