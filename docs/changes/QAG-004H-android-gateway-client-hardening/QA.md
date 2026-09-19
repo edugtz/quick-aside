@@ -1,6 +1,6 @@
 # QAG-004H — Android Gateway Client Hardening — QA
 
-Status: **REMEDIATION ROUND 2 — DETERMINISTIC PASS — RE-REVIEW PENDING**
+Status: **ROUND 2 INDEPENDENT REVIEW COMPLETE — PASS_WITH_NOTES — MERGE PENDING**
 
 ## Verified preflight
 
@@ -17,6 +17,28 @@ Status: **REMEDIATION ROUND 2 — DETERMINISTIC PASS — RE-REVIEW PENDING**
   bounded `HttpsURLConnection` cancellation cleanup.
 - Round 1 review disposition: **BLOCKED**, 0 BLOCKER / 1 MAJOR / 2 MINOR /
   1 NOTE.
+
+## Independent Round 2 review outcome
+
+- Review source: independent HIGH-ASSURANCE re-review performed directly from
+  GitHub.
+- Reviewed SHA: `66d96d91d0e1207415d9cfc449993df70093d25f` on branch
+  `qag-004h-android-gateway-client-hardening`.
+- The Round 1 MAJOR is resolved. The Round 1 cancellation MINOR is accepted as
+  a documented partial platform limitation: `HttpsURLConnection.disconnect()`
+  is best-effort, blocking I/O is not guaranteed to stop immediately, and no
+  general write-timeout guarantee is provided.
+- Round 2 final findings: **0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE**.
+- Verdict: **PASS_WITH_NOTES**.
+- The remaining MINOR is documentation/provenance only; this documentation-only
+  closeout corrects the remaining stale wording. Stale governance/provenance
+  was largely corrected in Round 2.
+- No Round 3 independent security review is required for this documentation-
+  only correction. No new runtime, device, or production verification is
+  required.
+- No GitHub CI/check evidence was observed for the reviewed SHA. The local
+  deterministic evidence recorded below is separate from GitHub-observed CI
+  evidence and does not imply that GitHub checks ran.
 
 ## Round 2 remediation evidence
 
@@ -84,8 +106,13 @@ in scope.
 git diff --check
 ```
 
-The original implementation commit was pushed and reviewed. This Round 2
-remediation remains uncommitted and unpushed. No connected-suite rerun,
-production pairing, provider request, VPS/Tailscale change, merge, or release is
-performed. The existing full-suite `PendientesUiTest` anomaly is not reopened
-because no UI or platform behavior requiring device evidence changed.
+The Round 2 remediation was committed and pushed as
+`66d96d91d0e1207415d9cfc449993df70093d25f`; the independent re-review above
+completed directly from GitHub. QAG-004H is not merged into `main` and remains
+stopped at validated `CapturePlan`, with no `ActionExecutor` or automatic
+mutation. No connected-suite rerun, production pairing, provider request,
+VPS/Tailscale change, merge, or release is performed. The existing full-suite
+`PendientesUiTest` anomaly is not reopened because no UI or platform behavior
+requiring device evidence changed. The next gate is user-authorized
+commit/push of this documentation-only closeout, followed by user-authorized
+merge / final repository closeout.

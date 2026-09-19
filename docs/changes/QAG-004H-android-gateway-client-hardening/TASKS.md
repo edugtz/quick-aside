@@ -24,4 +24,13 @@
 - [x] Correct cancellation guarantees without changing the network stack.
 - [x] Correct QAG sequence and commit/push provenance.
 - [x] Run Round 2 focused and deterministic verification.
-- [x] Stop without committing or pushing the Round 2 remediation.
+- [x] Commit and push the Round 2 remediation as
+  `66d96d91d0e1207415d9cfc449993df70093d25f`.
+- [x] Complete independent HIGH-ASSURANCE Round 2 re-review directly from
+  GitHub; disposition: **PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 1 MINOR /
+  2 NOTE).
+- [x] Correct stale provenance/status wording in this documentation-only
+  closeout.
+- [ ] User-authorized commit/push of this documentation-only closeout.
+- [ ] User-authorized merge of `qag-004h-android-gateway-client-hardening` into
+  `main` / final repository closeout.

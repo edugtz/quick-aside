@@ -1,7 +1,7 @@
 # QAG-004H — Android Gateway Client Hardening — SPEC
 
 Governance: **HIGH-ASSURANCE**
-Status: **REMEDIATION ROUND 2 COMPLETE — RE-REVIEW PENDING**
+Status: **ROUND 2 REVIEW COMPLETE — PASS_WITH_NOTES — MERGE PENDING**
 Expected branch: `qag-004h-android-gateway-client-hardening`
 Verified base: `main` at `9114af73b96fd53a65423beba71d2d645aac8876`
 
@@ -104,9 +104,21 @@ or UI behavior.
 
 The original implementation was committed as
 `f17058e9a01026a2fa258c05be3501c44fed0e69`, pushed to GitHub, and independently
-reviewed. Round 2 focused tests pass 55/55 and the complete JVM suite passes
-161/161 with 0 failures, errors, or skips. Android-test Kotlin compilation,
-debug assembly, lint, and `git diff --check` pass. The remediation remains
-uncommitted and unpushed. No connected Android suite, production pairing,
-provider request, merge, release, VPS, or Tailscale action is part of this
-remediation.
+reviewed in Round 1, which returned **BLOCKED** with 0 BLOCKER / 1 MAJOR /
+2 MINOR / 1 NOTE. The Round 2 remediation was committed and pushed as
+`66d96d91d0e1207415d9cfc449993df70093d25f`. An independent HIGH-ASSURANCE
+re-review completed directly from GitHub at that SHA: the Round 1 MAJOR is
+resolved, and the final findings are 0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE,
+with verdict **PASS_WITH_NOTES**. The accepted Round 1 cancellation MINOR
+documents the partial `HttpsURLConnection` limitation described above. The
+remaining MINOR is documentation/provenance only and is corrected by this
+documentation-only closeout. Stale governance/provenance was largely corrected
+in Round 2; no Round 3 independent security review is required for this
+correction.
+
+QAG-004H is not merged into `main`. It remains stopped at validated
+`CapturePlan`, with no `ActionExecutor` or automatic mutation. The next gate is
+user-authorized commit/push of this documentation-only closeout, followed by
+user-authorized merge / final repository closeout. No connected Android suite,
+production pairing, provider request, release, VPS, or Tailscale action is part
+of this closeout.

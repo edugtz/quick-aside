@@ -53,10 +53,19 @@ required unless implementation evidence changes that assessment.
 
 The original implementation was committed as
 `f17058e9a01026a2fa258c05be3501c44fed0e69`, pushed to GitHub, and independently
-reviewed. That review returned **BLOCKED** with 0 BLOCKER / 1 MAJOR / 2 MINOR /
-1 NOTE. Round 2 keeps the same branch, API, networking stack, and scope while it
-adds strict JSON string extraction and corrects cancellation/provenance wording.
-The remediation stops uncommitted after deterministic verification for
-user-authorized commit/push and independent HIGH-ASSURANCE re-review round 2.
-Focused tests, the complete JVM suite, Android-test Kotlin compilation, debug
-assembly, lint, and diff whitespace verification all pass.
+reviewed in Round 1, which returned **BLOCKED** with 0 BLOCKER / 1 MAJOR /
+2 MINOR / 1 NOTE. Round 2 remediation was committed and pushed as
+`66d96d91d0e1207415d9cfc449993df70093d25f`; it added strict JSON string
+extraction and corrected cancellation/provenance wording while keeping the same
+branch, API, networking stack, and scope. Independent HIGH-ASSURANCE re-review
+completed directly from GitHub at that SHA. The Round 1 MAJOR is resolved; the
+final result is 0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE, **PASS_WITH_NOTES**.
+The accepted Round 1 cancellation MINOR remains a documented partial platform
+limitation. The remaining MINOR is documentation/provenance only and is
+corrected by this documentation-only closeout. No Round 3 independent security
+review is required for this correction.
+
+QAG-004H is not merged into `main` and remains stopped at validated
+`CapturePlan`, with no `ActionExecutor` or automatic mutation. The next gate is
+user-authorized commit/push of this documentation-only closeout, followed by
+user-authorized merge / final repository closeout.

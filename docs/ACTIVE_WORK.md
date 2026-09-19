@@ -1,6 +1,6 @@
 # ACTIVE WORK
 
-Status: **QAG-004H REMEDIATION ROUND 2 COMPLETE — RE-REVIEW PENDING**
+Status: **QAG-004H REVIEW COMPLETE — PASS_WITH_NOTES — AWAITING USER MERGE DECISION**
 
 ## Active change
 
@@ -12,17 +12,25 @@ Status: **QAG-004H REMEDIATION ROUND 2 COMPLETE — RE-REVIEW PENDING**
 - Objective: close the accepted QAG-004 client-side hardening findings before
   any future automatic action execution, while preserving the gateway API and
   stopping at validated `CapturePlan`.
-- Reviewed implementation: commit
-  `f17058e9a01026a2fa258c05be3501c44fed0e69` is pushed to the branch and was
-  independently reviewed from GitHub.
-- Review disposition: **BLOCKED** with 0 BLOCKER / 1 MAJOR / 2 MINOR / 1 NOTE;
-  Round 2 remediation addresses strict JSON string typing, cancellation wording,
-  and governance provenance.
-- Current gate: Round 2 implementation and deterministic verification are
-  complete; stop for a user-authorized remediation commit/push and independent
-  re-review.
-- No remediation commit, push, merge, release, or production action is
-  authorized by this change.
+- Round 1 reviewed SHA: `f17058e9a01026a2fa258c05be3501c44fed0e69`.
+  Round 1 returned **BLOCKED** with 0 BLOCKER / 1 MAJOR / 2 MINOR / 1 NOTE.
+- Round 2 remediation commit: `66d96d91d0e1207415d9cfc449993df70093d25f`,
+  committed and pushed to this branch.
+- Independent HIGH-ASSURANCE Round 2 re-review completed directly from GitHub
+  at `66d96d91d0e1207415d9cfc449993df70093d25f`.
+- Round 1 MAJOR is resolved. The Round 1 cancellation MINOR is accepted as a
+  documented partial platform limitation: `HttpsURLConnection.disconnect()` is
+  best-effort, blocking I/O is not guaranteed to stop immediately, and there is
+  no general write-timeout guarantee.
+- Final Round 2 findings: 0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE;
+  **PASS_WITH_NOTES**. The remaining MINOR is documentation/provenance only
+  and is corrected by this documentation-only closeout.
+- Stale governance/provenance was largely corrected in Round 2. No Round 3
+  independent security review is required for this documentation-only closeout.
+- QAG-004H remains stopped at validated `CapturePlan`; there is no
+  `ActionExecutor` or automatic mutation. It is **not merged into `main`**.
+- Current next gate: user-authorized commit/push of this documentation-only
+  closeout, followed by user-authorized merge / final repository closeout.
 
 ## Most recently completed change
 
@@ -67,8 +75,9 @@ integration are both integrated. The private production path is now:
       -> validated CapturePlan
 
 QA1 remains the application authorization boundary. Provider credentials remain
-server-side. Personal Admin/Hermes remains independent. QAG-004H is the current
-client-hardening change and remains stopped at validated `CapturePlan`.
+server-side. Personal Admin/Hermes remains independent. QAG-004H is reviewed
+with **PASS_WITH_NOTES**, awaits the user's merge decision, and remains stopped
+at validated `CapturePlan` with no `ActionExecutor` or automatic mutation.
 
 ## Next change
 
