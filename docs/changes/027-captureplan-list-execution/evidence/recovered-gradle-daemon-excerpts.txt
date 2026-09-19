@@ -1,0 +1,32 @@
+Source: Gradle 9.5 daemon output; only the task-result lines are retained. The local repository path was replaced with `.` where present. The original complete daemon log is not included.
+
+FOCUSED JVM — CapturePlanListExecutorContractTest, recovered from Gradle daemon output at 2026-09-19 16:13:39 -0600
+
+Calculating task graph as no cached configuration is available for tasks: :app:testDebugUnitTest --tests com.edu.quickaside.application.capture.CapturePlanListExecutorContractTest
+
+BUILD SUCCESSFUL in 4s
+26 actionable tasks: 7 executed, 19 up-to-date
+
+FULL JVM — recovered Gradle daemon build result aligned with the JUnit XML timestamp at 2026-09-19 16:28:44 -0600
+
+Reusing configuration cache.
+BUILD SUCCESSFUL in 675ms
+26 actionable tasks: 1 executed, 25 up-to-date
+Configuration cache entry reused.
+
+LINT — recovered Gradle daemon output at 2026-09-19 16:28:57 -0600
+
+Reusing configuration cache.
+Wrote HTML report to file:./app/build/reports/lint-results-debug.html
+Wrote SARIF report to file:./app/build/reports/lint-results-debug.sarif
+BUILD SUCCESSFUL in 6s
+28 actionable tasks: 8 executed, 20 up-to-date
+Configuration cache entry reused.
+
+MANUAL LIST ROOM REGRESSION — recovered Gradle daemon output at 2026-09-19 16:52:47 -0600
+
+Reusing configuration cache.
+Starting 9 tests on CPH2791 - 16
+Finished 9 tests on CPH2791 - 16
+BUILD SUCCESSFUL in 12s
+Configuration cache entry reused.

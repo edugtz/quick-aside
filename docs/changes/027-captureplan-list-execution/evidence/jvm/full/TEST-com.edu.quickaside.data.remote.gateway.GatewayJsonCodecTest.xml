@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-09-19T22:28:44.581Z" hostname="local-runner" time="0.008">
+  <properties/>
+  <testcase name="structuredLogValuesRequireJsonStrings" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.005"/>
+  <testcase name="createNoteTextRequiresAJsonString" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.0"/>
+  <testcase name="createTaskFieldsRequireJsonStringsExceptNullableDueDate" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.0"/>
+  <testcase name="successResponseDecodesEverySupportedActionInOrder" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.001"/>
+  <testcase name="nonStringContractValuesFailStructuralDecodeBeforeValidation" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.0"/>
+  <testcase name="semanticallyRepresentableOversizedValueSurvivesDecodeButFailsValidation" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.001"/>
+  <testcase name="addListItemFieldsRequireJsonStrings" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.001"/>
+  <testcase name="malformedOrUnexpectedSuccessResponseIsRejected" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.0"/>
+  <testcase name="interpretRequestUsesTrustedCapturedAtAndTimezoneWithoutSourceCaptureId" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.0"/>
+  <testcase name="actionTypeRequiresAJsonString" classname="com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,1121 @@
+{
+    "$schema" : "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+    "version" : "2.1.0",
+    "runs" : [
+        {
+            "tool": {
+                "driver": {
+                    "name": "Android Lint",
+                    "fullName": "Android Lint (in gradle)",
+                    "version": "9.3.2",
+                    "semanticVersion": "9.3.2",
+                    "organization": "Google",
+                    "informationUri": "https://developer.android.com/studio/write/lint",
+                    "fullDescription": {
+                        "text": "Static analysis originally for Android source code but now performing general analysis"
+                    },
+                    "language": "en-US",
+                    "rules": [
+                        {
+                            "id": "AndroidGradlePluginVersion",
+                            "shortDescription": {
+                                "text": "Obsolete Android Gradle Plugin Version"
+                            },
+                            "fullDescription": {
+                                "text": "This detector looks for usage of the Android Gradle Plugin where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 70
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Correctness"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "AutoboxingStateCreation",
+                            "shortDescription": {
+                                "text": "State<T> will autobox values assigned to this state. Use a specialized state type instead.",
+                                "markdown": "`State<T>` will autobox values assigned to this state. Use a specialized state type instead."
+                            },
+                            "fullDescription": {
+                                "text": "Calling mutableStateOf<T>() when T is either backed by a primitive type on the JVM or is a value class results in a state implementation that requires all state values to be boxed. This usually causes an additional allocation for each state write, and adds some additional work to auto-unbox values when reading the value of the state. Instead, prefer to use a specialized primitive state implementation for Int, Long, Float, and Double when the state does not need to track null values and does not override the default SnapshotMutationPolicy. See mutableIntStateOf(), mutableLongStateOf(), mutableFloatStateOf(), and mutableDoubleStateOf() for more information.",
+                                "markdown": "Calling `mutableStateOf<T>()` when `T` is either backed by a primitive type on the JVM or is a value class results in a state implementation that requires all state values to be boxed. This usually causes an additional allocation for each state write, and adds some additional work to auto-unbox values when reading the value of the state. Instead, prefer to use a specialized primitive state implementation for `Int`, `Long`, `Float`, and `Double` when the state does not need to track null values and does not override the default `SnapshotMutationPolicy`. See `mutableIntStateOf()`, `mutableLongStateOf()`, `mutableFloatStateOf()`, and `mutableDoubleStateOf()` for more information."
+                            },
+                            "defaultConfiguration": {
+                                "level": "note",
+                                "rank": 80
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Performance"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "GradleDependency",
+                            "shortDescription": {
+                                "text": "Obsolete Gradle Dependency"
+                            },
+                            "fullDescription": {
+                                "text": "This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 70
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Correctness"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "NewerVersionAvailable",
+                            "shortDescription": {
+                                "text": "Newer Library Versions Available"
+                            },
+                            "fullDescription": {
+                                "text": "This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the GradleDependency check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also much slower.",
+                                "markdown": "This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the `GradleDependency` check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also **much** slower."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 70
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Correctness"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "UnusedResources",
+                            "shortDescription": {
+                                "text": "Unused resources"
+                            },
+                            "fullDescription": {
+                                "text": "Unused resources make applications larger and slow down builds.\n\n\nThe unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.\n\nYou can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests=true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests=true.\n",
+                                "markdown": "Unused resources make applications larger and slow down builds.\n\n\nThe unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.\n\nYou can include test sources in the unused resource check by setting the system property `lint.unused-resources.include-tests=true`, and to exclude them (usually for performance reasons), use `lint.unused-resources.exclude-tests=true`.\n"
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 80
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Performance"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            "originalUriBaseIds": {
+                "%SRCROOT%": {
+                    "uri": "file://./"
+                }
+            },
+            "results": [
+                {
+                    "ruleId": "AndroidGradlePluginVersion",
+                    "ruleIndex": 0,
+                    "message": {
+                        "text": "A newer version of Gradle than 9.5.0 is available: 9.7.1"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/wrapper/gradle-wrapper.properties"
+                                },
+                                "region": {
+                                    "startLine": 5,
+                                    "startColumn": 17,
+                                    "endLine": 5,
+                                    "endColumn": 80,
+                                    "charOffset": 198,
+                                    "charLength": 63,
+                                    "snippet": {
+                                        "text": "https\\://services.gradle.org/distributions/gradle-9.5.0-bin.zip"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 3,
+                                    "endLine": 8,
+                                    "snippet": {
+                                        "text": "distributionPath=wrapper/dists\ndistributionSha256Sum=553c78f50dafcd54d65b9a444649057857469edf836431389695608536d6b746\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-9.5.0-bin.zip\nnetworkTimeout=10000\nvalidateDistributionUrl=true\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Update to 9.7.1"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/wrapper/gradle-wrapper.properties"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 5,
+                                                "startColumn": 67,
+                                                "charOffset": 248,
+                                                "endLine": 5,
+                                                "endColumn": 72,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "9.7.1\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "5f86193aa1f0cbff"
+                    }
+                },
+                {
+                    "ruleId": "AndroidGradlePluginVersion",
+                    "ruleIndex": 0,
+                    "message": {
+                        "text": "A newer version of com.android.application than 9.3.2 is available: 9.4.1. (There is also a newer version of 9.3.𝑥 available, if upgrading to 9.4.1 is difficult: 9.3.3)"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 2,
+                                    "startColumn": 7,
+                                    "endLine": 2,
+                                    "endColumn": 14,
+                                    "charOffset": 17,
+                                    "charLength": 7,
+                                    "snippet": {
+                                        "text": "\"9.3.2\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 1,
+                                    "endLine": 5,
+                                    "snippet": {
+                                        "text": "[versions]\nagp = \"9.3.2\"\ncoreKtx = \"1.19.0\"\nactivityCompose = \"1.13.0\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with 9.3.3"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 2,
+                                                "startColumn": 8,
+                                                "charOffset": 18,
+                                                "endLine": 2,
+                                                "endColumn": 13,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "9.3.3\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "description": {
+                                "text": "Replace with 9.4.1"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 2,
+                                                "startColumn": 8,
+                                                "charOffset": 18,
+                                                "endLine": 2,
+                                                "endColumn": 13,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "9.4.1\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "e6be3f50fd646074"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 2,
+                    "message": {
+                        "text": "A newer version of androidx.compose:compose-bom than 2026.08.00 is available: 2026.09.00"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 5,
+                                    "startColumn": 14,
+                                    "endLine": 5,
+                                    "endColumn": 26,
+                                    "charOffset": 84,
+                                    "charLength": 12,
+                                    "snippet": {
+                                        "text": "\"2026.08.00\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 3,
+                                    "endLine": 8,
+                                    "snippet": {
+                                        "text": "coreKtx = \"1.19.0\"\nactivityCompose = \"1.13.0\"\ncomposeBom = \"2026.08.00\"\ncomposeCompiler = \"2.2.10\"\njunit = \"4.13.2\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 2026.09.00"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 5,
+                                                "startColumn": 15,
+                                                "charOffset": 85,
+                                                "endLine": 5,
+                                                "endColumn": 25,
+                                                "charLength": 10
+                                            },
+                                            "insertedContent": {
+                                                "text": "2026.09.00\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "72b1805f362b9a99"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 2,
+                    "message": {
+                        "text": "A newer version of com.google.devtools.ksp than 2.3.6 is available: 2.3.10"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 10,
+                                    "startColumn": 7,
+                                    "endLine": 10,
+                                    "endColumn": 14,
+                                    "charOffset": 188,
+                                    "charLength": 7,
+                                    "snippet": {
+                                        "text": "\"2.3.6\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 8,
+                                    "endLine": 13,
+                                    "snippet": {
+                                        "text": "junitVersion = \"1.3.0\"\njson = \"20260814\"\nksp = \"2.3.6\"\nroom = \"3.0.2\"\nsqlite = \"2.7.0\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 2.3.10"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 10,
+                                                "startColumn": 8,
+                                                "charOffset": 189,
+                                                "endLine": 10,
+                                                "endColumn": 13,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "2.3.10\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "4e68b2ba380bd675"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 2,
+                    "message": {
+                        "text": "A newer version of androidx.room3 than 3.0.2 is available: 3.0.3"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 11,
+                                    "startColumn": 8,
+                                    "endLine": 11,
+                                    "endColumn": 15,
+                                    "charOffset": 203,
+                                    "charLength": 7,
+                                    "snippet": {
+                                        "text": "\"3.0.2\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 9,
+                                    "endLine": 14,
+                                    "snippet": {
+                                        "text": "json = \"20260814\"\nksp = \"2.3.6\"\nroom = \"3.0.2\"\nsqlite = \"2.7.0\"\n\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 3.0.3"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 11,
+                                                "startColumn": 9,
+                                                "charOffset": 204,
+                                                "endLine": 11,
+                                                "endColumn": 14,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "3.0.3\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "8cea35b4cf60aa08"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 2,
+                    "message": {
+                        "text": "A newer version of androidx.room3:room3-compiler than 3.0.2 is available: 3.0.3"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 11,
+                                    "startColumn": 8,
+                                    "endLine": 11,
+                                    "endColumn": 15,
+                                    "charOffset": 203,
+                                    "charLength": 7,
+                                    "snippet": {
+                                        "text": "\"3.0.2\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 9,
+                                    "endLine": 14,
+                                    "snippet": {
+                                        "text": "json = \"20260814\"\nksp = \"2.3.6\"\nroom = \"3.0.2\"\nsqlite = \"2.7.0\"\n\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 3.0.3"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 11,
+                                                "startColumn": 9,
+                                                "charOffset": 204,
+                                                "endLine": 11,
+                                                "endColumn": 14,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "3.0.3\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "8cea35b4cf60aa08"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 2,
+                    "message": {
+                        "text": "A newer version of androidx.room3:room3-runtime than 3.0.2 is available: 3.0.3"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 11,
+                                    "startColumn": 8,
+                                    "endLine": 11,
+                                    "endColumn": 15,
+                                    "charOffset": 203,
+                                    "charLength": 7,
+                                    "snippet": {
+                                        "text": "\"3.0.2\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 9,
+                                    "endLine": 14,
+                                    "snippet": {
+                                        "text": "json = \"20260814\"\nksp = \"2.3.6\"\nroom = \"3.0.2\"\nsqlite = \"2.7.0\"\n\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 3.0.3"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 11,
+                                                "startColumn": 9,
+                                                "charOffset": 204,
+                                                "endLine": 11,
+                                                "endColumn": 14,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "3.0.3\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "8cea35b4cf60aa08"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 2,
+                    "message": {
+                        "text": "A newer version of androidx.sqlite:sqlite-bundled than 2.7.0 is available: 2.7.1"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 12,
+                                    "startColumn": 10,
+                                    "endLine": 12,
+                                    "endColumn": 17,
+                                    "charOffset": 220,
+                                    "charLength": 7,
+                                    "snippet": {
+                                        "text": "\"2.7.0\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 10,
+                                    "endLine": 15,
+                                    "snippet": {
+                                        "text": "ksp = \"2.3.6\"\nroom = \"3.0.2\"\nsqlite = \"2.7.0\"\n\n[libraries]\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 2.7.1"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 12,
+                                                "startColumn": 11,
+                                                "charOffset": 221,
+                                                "endLine": 12,
+                                                "endColumn": 16,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "2.7.1\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "54ee1a95ecf93680"
+                    }
+                },
+                {
+                    "ruleId": "NewerVersionAvailable",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "A newer version of org.jetbrains.kotlin.plugin.compose than 2.2.10 is available: 2.4.20"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 6,
+                                    "startColumn": 19,
+                                    "endLine": 6,
+                                    "endColumn": 27,
+                                    "charOffset": 115,
+                                    "charLength": 8,
+                                    "snippet": {
+                                        "text": "\"2.2.10\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 4,
+                                    "endLine": 9,
+                                    "snippet": {
+                                        "text": "activityCompose = \"1.13.0\"\ncomposeBom = \"2026.08.00\"\ncomposeCompiler = \"2.2.10\"\njunit = \"4.13.2\"\njunitVersion = \"1.3.0\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 2.4.20"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 6,
+                                                "startColumn": 20,
+                                                "charOffset": 116,
+                                                "endLine": 6,
+                                                "endColumn": 26,
+                                                "charLength": 6
+                                            },
+                                            "insertedContent": {
+                                                "text": "2.4.20\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "4925acbe072b634b"
+                    }
+                },
+                {
+                    "ruleId": "AutoboxingStateCreation",
+                    "ruleIndex": 1,
+                    "message": {
+                        "text": "Prefer mutableIntStateOf instead of mutableStateOf",
+                        "markdown": "Prefer `mutableIntStateOf` instead of `mutableStateOf`"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/java/com/edu/quickaside/ui/QuickAsideApp.kt"
+                                },
+                                "region": {
+                                    "startLine": 144,
+                                    "startColumn": 43,
+                                    "endLine": 144,
+                                    "endColumn": 57,
+                                    "charOffset": 7013,
+                                    "charLength": 14,
+                                    "snippet": {
+                                        "text": "mutableStateOf"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 142,
+                                    "endLine": 147,
+                                    "snippet": {
+                                        "text": "    var historyDetailSession by remember { mutableStateOf<ListSessionWithItems?>(null) }\n    var captureRequested by remember { mutableStateOf(false) }\n    var historyRefreshToken by remember { mutableStateOf(0) }\n    var pairingRequested by remember { mutableStateOf(false) }\n    var lastVoiceInterpretation by remember { mutableStateOf<CaptureInterpretationResult?>(null) }\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with mutableIntStateOf"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/java/com/edu/quickaside/ui/QuickAsideApp.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 144,
+                                                "startColumn": 43,
+                                                "charOffset": 7013,
+                                                "endLine": 144,
+                                                "endColumn": 57,
+                                                "charLength": 14
+                                            },
+                                            "insertedContent": {
+                                                "text": "androidx.compose.runtime.mutableIntStateOf\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "b9cb86322c818b23"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 4,
+                    "message": {
+                        "text": "The resource R.color.purple_200 appears to be unused",
+                        "markdown": "The resource `R.color.purple_200` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/values/colors.xml"
+                                },
+                                "region": {
+                                    "startLine": 3,
+                                    "startColumn": 12,
+                                    "endLine": 3,
+                                    "endColumn": 29,
+                                    "charOffset": 62,
+                                    "charLength": 17,
+                                    "snippet": {
+                                        "text": "name=\"purple_200\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 1,
+                                    "endLine": 6,
+                                    "snippet": {
+                                        "text": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <color name=\"purple_200\">#FFBB86FC</color>\n    <color name=\"purple_500\">#FF6200EE</color>\n    <color name=\"purple_700\">#FF3700B3</color>\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "03120e6b5055d840"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 4,
+                    "message": {
+                        "text": "The resource R.color.purple_500 appears to be unused",
+                        "markdown": "The resource `R.color.purple_500` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/values/colors.xml"
+                                },
+                                "region": {
+                                    "startLine": 4,
+                                    "startColumn": 12,
+                                    "endLine": 4,
+                                    "endColumn": 29,
+                                    "charOffset": 109,
+                                    "charLength": 17,
+                                    "snippet": {
+                                        "text": "name=\"purple_500\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 2,
+                                    "endLine": 7,
+                                    "snippet": {
+                                        "text": "<resources>\n    <color name=\"purple_200\">#FFBB86FC</color>\n    <color name=\"purple_500\">#FF6200EE</color>\n    <color name=\"purple_700\">#FF3700B3</color>\n    <color name=\"teal_200\">#FF03DAC5</color>\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "e1811cb206a41ce7"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 4,
+                    "message": {
+                        "text": "The resource R.color.purple_700 appears to be unused",
+                        "markdown": "The resource `R.color.purple_700` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/values/colors.xml"
+                                },
+                                "region": {
+                                    "startLine": 5,
+                                    "startColumn": 12,
+                                    "endLine": 5,
+                                    "endColumn": 29,
+                                    "charOffset": 156,
+                                    "charLength": 17,
+                                    "snippet": {
+                                        "text": "name=\"purple_700\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 3,
+                                    "endLine": 8,
+                                    "snippet": {
+                                        "text": "    <color name=\"purple_200\">#FFBB86FC</color>\n    <color name=\"purple_500\">#FF6200EE</color>\n    <color name=\"purple_700\">#FF3700B3</color>\n    <color name=\"teal_200\">#FF03DAC5</color>\n    <color name=\"teal_700\">#FF018786</color>\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "07b842cb52ead93b"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 4,
+                    "message": {
+                        "text": "The resource R.color.teal_200 appears to be unused",
+                        "markdown": "The resource `R.color.teal_200` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/values/colors.xml"
+                                },
+                                "region": {
+                                    "startLine": 6,
+                                    "startColumn": 12,
+                                    "endLine": 6,
+                                    "endColumn": 27,
+                                    "charOffset": 203,
+                                    "charLength": 15,
+                                    "snippet": {
+                                        "text": "name=\"teal_200\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 4,
+                                    "endLine": 9,
+                                    "snippet": {
+                                        "text": "    <color name=\"purple_500\">#FF6200EE</color>\n    <color name=\"purple_700\">#FF3700B3</color>\n    <color name=\"teal_200\">#FF03DAC5</color>\n    <color name=\"teal_700\">#FF018786</color>\n    <color name=\"black\">#FF000000</color>\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "a39d86606e511481"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 4,
+                    "message": {
+                        "text": "The resource R.color.teal_700 appears to be unused",
+                        "markdown": "The resource `R.color.teal_700` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/values/colors.xml"
+                                },
+                                "region": {
+                                    "startLine": 7,
+                                    "startColumn": 12,
+                                    "endLine": 7,
+                                    "endColumn": 27,
+                                    "charOffset": 248,
+                                    "charLength": 15,
+                                    "snippet": {
+                                        "text": "name=\"teal_700\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 5,
+                                    "endLine": 10,
+                                    "snippet": {
+                                        "text": "    <color name=\"purple_700\">#FF3700B3</color>\n    <color name=\"teal_200\">#FF03DAC5</color>\n    <color name=\"teal_700\">#FF018786</color>\n    <color name=\"black\">#FF000000</color>\n    <color name=\"white\">#FFFFFFFF</color>\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "0184e84c570fef82"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 4,
+                    "message": {
+                        "text": "The resource R.color.black appears to be unused",
+                        "markdown": "The resource `R.color.black` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/values/colors.xml"
+                                },
+                                "region": {
+                                    "startLine": 8,
+                                    "startColumn": 12,
+                                    "endLine": 8,
+                                    "endColumn": 24,
+                                    "charOffset": 293,
+                                    "charLength": 12,
+                                    "snippet": {
+                                        "text": "name=\"black\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 6,
+                                    "endLine": 10,
+                                    "snippet": {
+                                        "text": "    <color name=\"teal_200\">#FF03DAC5</color>\n    <color name=\"teal_700\">#FF018786</color>\n    <color name=\"black\">#FF000000</color>\n    <color name=\"white\">#FFFFFFFF</color>\n</resources>"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "ba4a8b7155e95540"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 4,
+                    "message": {
+                        "text": "The resource R.color.white appears to be unused",
+                        "markdown": "The resource `R.color.white` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/values/colors.xml"
+                                },
+                                "region": {
+                                    "startLine": 9,
+                                    "startColumn": 12,
+                                    "endLine": 9,
+                                    "endColumn": 24,
+                                    "charOffset": 335,
+                                    "charLength": 12,
+                                    "snippet": {
+                                        "text": "name=\"white\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 7,
+                                    "endLine": 10,
+                                    "snippet": {
+                                        "text": "    <color name=\"teal_700\">#FF018786</color>\n    <color name=\"black\">#FF000000</color>\n    <color name=\"white\">#FFFFFFFF</color>\n</resources>"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "7ddeb565d603207b"
+                    }
+                }
+            ]
+        }
+    ]
+}

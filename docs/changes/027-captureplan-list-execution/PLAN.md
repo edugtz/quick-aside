@@ -1,7 +1,7 @@
 # Change 027 — CapturePlan List Execution Foundation — PLAN
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+- Status: **ROUND-1 REVIEW BLOCKED — REMEDIATION COMPLETE — ROUND-2 RE-REVIEW PENDING**
 - Expected branch: `chg-027-captureplan-list-execution`
 
 This plan follows the verified `origin/main` baseline. It records the narrow
@@ -29,11 +29,13 @@ manual list behavior, or Room schema design.
   mark-undone also exist. No new DAO operation is currently justified.
 - Room is v7 with tracked schemas 1–7 and migrations through 6→7. No schema
   change is planned.
-- The runtime flow still persists Capture before interpretation and stops at
-  locally validated `CapturePlan`. No executor exists or is wired.
-- No device was attached at preflight (`adb devices -l` returned no devices).
-  Recheck once during verification; do not call the Room/device gate PASS if
-  no authorized real device is available.
+- At the verified base, the runtime flow persisted Capture before
+  interpretation and stopped at locally validated `CapturePlan`; no executor
+  existed or was wired. CHG-027 adds the narrow executor without adding caller
+  or capture/UI wiring.
+- At initial preflight, `adb devices -l` returned no attached devices. During
+  verification an authorized OPPO CPH2791 running Android 16 / API 36 was
+  available and both focused Room classes passed.
 - `software-project-orchestrator` is unavailable in the installed skill
   catalog and repository. Use repository `AGENTS.md`, `docs/AI_WORKFLOW.md`,
   and this explicit user brief as the governance workflow.
@@ -128,13 +130,31 @@ validation error, diagnose the root cause, and attempt at most two focused
 fixes for that same blocker. Do not claim the Room/device gate passed without
 an authorized real device run.
 
+## Round-1 review and evidence remediation
+
+- Independent Round-1 review of `b9ba067ff442259225127645c8a4c04eeb65dfc6`
+  returned **BLOCKED**, with 1 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
+- The BLOCKER concerns inspectable test/lint/device evidence on GitHub; the
+  reviewer reported no production-code correctness defect. The MINOR concerns
+  stale current-state wording and ROADMAP selection state.
+- Remediation is limited to machine-generated evidence and the current-state
+  documents authorized by the review brief. `QA.md` indexes recovered and
+  newly captured evidence, identifies the reviewed SHA, and distinguishes
+  local repository evidence from GitHub CI/status evidence.
+- The overwritten new Room test report was regenerated on the reviewed HEAD.
+  Android test Kotlin compilation and debug assembly were rerun to retain
+  standalone command output. The full JVM, lint, and existing manual-list
+  reports were recovered. No production or test-source fix was required.
+
 ## Stop state and authority
 
-After implementation and all obtainable verification, stop at
-`IMPLEMENTATION COMPLETE — REVIEW PENDING`. The user reviews this report and
-local diff, then separately authorizes commit/push. Independent
-HIGH-ASSURANCE review is later performed against the actual GitHub branch.
-Do not commit, push, merge, release, or start CHG-028.
+The implementation is committed/pushed at reviewed SHA
+`b9ba067ff442259225127645c8a4c04eeb65dfc6`; its Round-1 review returned
+BLOCKED. This remediation adds only evidence and current-state documentation.
+Stop at `REMEDIATION COMPLETE — RE-REVIEW PENDING`. The user reviews the local
+diff and separately authorizes commit/push of this remediation. Independent
+HIGH-ASSURANCE Round-2 review follows against the updated GitHub HEAD.
+Do not commit, push, merge, release, or start CHG-028 in this remediation.
 
 ## Verification outcome
 
@@ -147,7 +167,15 @@ Do not commit, push, merge, release, or start CHG-028.
   `ReversibleListItemActionsDatabaseTest` passed 9/9 tests, sequentially.
 - Both Room/device gates passed. No code or test fix was needed after these
   runs.
+- Round-1 evidence remediation reran the missing `CapturePlanListExecutorDatabaseTest`
+  on the reviewed HEAD and captured standalone Android test Kotlin compilation
+  and debug assembly output. Existing full JVM, lint, and manual-list reports
+  were recovered; the full JVM, lint, and manual-list gates were not rerun.
+- See `QA.md` and `evidence/` for report files, sanitized device details,
+  exact commands, results, and provenance notes. No independently available
+  GitHub CI/status evidence was found.
 - Room v7, migrations, tracked schemas, dependencies, and manifest/network
   security configuration are unchanged from the verified base.
-- No commit or push was created. See `TASKS.md` for exact commands and final
-  Git scope evidence.
+- The reviewed implementation commit is `b9ba067ff442259225127645c8a4c04eeb65dfc6`.
+  No remediation commit or push has been created. See `TASKS.md` and `QA.md`
+  for the evidence index and current next gate.

@@ -1,12 +1,13 @@
 # Change 027 — CapturePlan List Execution Foundation — TASKS
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+- Status: **ROUND-1 REVIEW BLOCKED — REMEDIATION COMPLETE — ROUND-2 RE-REVIEW PENDING**
 - Expected branch: `chg-027-captureplan-list-execution`
 
 This checklist records implementation and observable evidence. It does not
-declare an independent engineering verdict. Device-dependent gates remain
-PENDING unless run on an authorized real Android device.
+declare an independent engineering verdict. Both focused Room gates have
+passed on the authorized real device; see `QA.md` for the repository evidence
+index and the separate Round-1 review verdict.
 
 ## Ground truth and package
 
@@ -98,50 +99,67 @@ PENDING unless run on an authorized real Android device.
 
 - Baseline and starting HEAD: `cb67494a7b57d0f7a939ec06396ccbc665edff7c`;
   the starting worktree was clean.
-- Branch: `chg-027-captureplan-list-execution`; no commit or push was created.
+- Branch: `chg-027-captureplan-list-execution`; implementation commit
+  `b9ba067ff442259225127645c8a4c04eeb65dfc6` was pushed for Round-1 review.
+  Evidence/docs remediation remains uncommitted and unpushed.
 - Focused JVM command:
   `./gradlew :app:testDebugUnitTest --tests com.edu.quickaside.application.capture.CapturePlanListExecutorContractTest`
-  — **BUILD SUCCESSFUL**; XML reports 4 tests, 0 failures, 0 errors, 0
-  skipped.
+  — historical implementation run was **BUILD SUCCESSFUL**; the recovered
+  class XML in `evidence/jvm/full/` reports 4 tests, 0 failures, 0 errors, 0
+  skipped. The same class report is part of the recovered full-suite report.
 - Full JVM command: `./gradlew :app:testDebugUnitTest` — **BUILD
-  SUCCESSFUL**; XML reports 165 tests across 27 result files, 0 failures, 0
-  errors, 0 skipped.
+  SUCCESSFUL**; recovered XML reports 165 tests across 27 result files, 0
+  failures, 0 errors, 0 skipped.
 - Android test compilation:
-  `./gradlew :app:compileDebugAndroidTestKotlin` — **BUILD SUCCESSFUL**. The
-  new Room class compiled; no instrumented test was executed.
-- Assembly: `./gradlew :app:assembleDebug` — **BUILD SUCCESSFUL**.
-- Lint: `./gradlew :app:lintDebug` — **BUILD SUCCESSFUL**.
-- Device check: preflight `adb devices -l` reported no devices. At verification
-  it reported `adb-3B163C00N4V00000-KztNrU._adb-tls-connect._tcp`, state
-  `device` (authorized), product/model `CPH2791`; device properties report
-  manufacturer OPPO, Android 16, API 36.
+  `./gradlew :app:compileDebugAndroidTestKotlin` — **BUILD SUCCESSFUL**; the
+  standalone remediation capture is in `evidence/build/`.
+- Assembly: `./gradlew :app:assembleDebug` — **BUILD SUCCESSFUL**; the
+  standalone remediation capture is in `evidence/build/`.
+- Lint: `./gradlew :app:lintDebug` — historical run **BUILD SUCCESSFUL**;
+  recovered SARIF/text reports are in `evidence/lint/` (0 errors, 16 warnings,
+  1 hint).
+- Device check: at verification `adb devices -l` reported one authorized
+  device, state `device`, product/model `CPH2791`; properties report
+  manufacturer OPPO, Android 16, API 36. The unique ADB identifier is redacted
+  in the evidence copy.
 - New Room command:
   `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest`
-  — **BUILD SUCCESSFUL**; 21 started/passed, 0 failed, 0 errors, 0 skipped;
-  device `CPH2791 - 16`.
+  — Round-1 evidence-remediation run **BUILD SUCCESSFUL**; 21 started/passed,
+  0 failed, 0 errors, 0 skipped; device `CPH2791 - 16`. Captured Gradle
+  output, JUnit XML, runner log, and both exit codes are in
+  `evidence/device/capture-plan/`.
 - Manual regression command:
   `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.ReversibleListItemActionsDatabaseTest`
-  — **BUILD SUCCESSFUL**; 9 started/passed, 0 failed, 0 errors, 0 skipped;
-  device `CPH2791 - 16`. The classes ran sequentially.
-- Neither run required a production or test-source fix. Previously passing host
-  JVM/build/lint gates were not rerun.
+  — recovered prior run **BUILD SUCCESSFUL**; 9 started/passed, 0 failed,
+  0 errors, 0 skipped; device `CPH2791 - 16`. Its JUnit XML, runner log, and
+  runner exit code are in `evidence/device/manual-list/`. The class was not
+  rerun because its result artifact was recoverable.
+- The first current connected-test attempt was blocked before Gradle launch by
+  the sandbox's Gradle wrapper-cache lock permission. The same focused class
+  then ran successfully with the established Gradle cache access. The blocked
+  attempt is preserved with its exit code and is not a test failure.
+- No production or test-source fix was required. The full JVM and lint gates
+  were not rerun; their existing reports were recovered. Android test Kotlin
+  compilation and debug assembly were rerun solely to capture standalone
+  command output.
 - Schema/database comparison:
   `git diff --exit-code origin/main -- app/schemas app/src/main/java/com/edu/quickaside/data/local/QuickAsideDatabase.kt`
-  — exit 0, no differences.
+  — exit 0, no differences; captured in `evidence/scope/schema-config-comparison.txt`.
 - Dependency/configuration comparison:
   `git diff --exit-code origin/main -- app/build.gradle.kts app/src/main/AndroidManifest.xml app/src/main/res/xml`
-  — exit 0, no differences.
+  — exit 0, no differences; captured in `evidence/scope/schema-config-comparison.txt`.
 - No production capture/UI wiring, gateway/VPS/Tailscale change, provider/auth
-  change, or logging change was made. No generated artifacts or secrets were
-  found among the changed files.
+  change, or logging change was made. The only generated artifacts added are
+  the indexed text/XML/SARIF evidence files; no APK, build cache, screenshot,
+  or secret was added.
 - The initial default-sandbox Gradle wrapper attempt was blocked by external
   cache/lock permissions; the required commands succeeded with the approved
   Gradle cache access.
 
 ## Exact next gate
 
-User authorization to commit/push the CHG-027 branch, followed by independent
-HIGH-ASSURANCE review directly against GitHub. The user retains merge, release,
-and production authority.
+User authorization to commit/push this evidence/docs-only remediation,
+followed by independent HIGH-ASSURANCE Round-2 review directly against the
+updated GitHub HEAD. The user retains merge, release, and production authority.
 
 Stop here. Do not commit, push, merge, release, or start CHG-028.

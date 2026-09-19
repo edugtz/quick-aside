@@ -1,6 +1,6 @@
 # ACTIVE WORK
 
-Status: **CHG-027 IMPLEMENTATION COMPLETE — REVIEW PENDING — HIGH-ASSURANCE**
+Status: **CHG-027 ROUND-1 REMEDIATION COMPLETE — ROUND-2 RE-REVIEW PENDING — HIGH-ASSURANCE**
 
 ## Active change
 
@@ -9,6 +9,8 @@ Status: **CHG-027 IMPLEMENTATION COMPLETE — REVIEW PENDING — HIGH-ASSURANCE*
 - Branch: `chg-027-captureplan-list-execution`
 - Verified base: `origin/main` at
   `cb67494a7b57d0f7a939ec06396ccbc665edff7c`
+- Reviewed implementation HEAD: `b9ba067ff442259225127645c8a4c04eeb65dfc6`;
+  local and tracking-branch refs matched at remediation start.
 - Governance: **HIGH-ASSURANCE**
 - Scope: add a narrow, atomic executor for validated all-AddListItem
   CapturePlans and targeted batch Undo. The normal capture path remains
@@ -17,9 +19,25 @@ Status: **CHG-027 IMPLEMENTATION COMPLETE — REVIEW PENDING — HIGH-ASSURANCE*
   debug assembly, lint, and schema/config comparisons completed successfully.
   On OPPO CPH2791 / Android 16 / API 36, the new Room class passed 21/21 and
   the existing manual Room regression passed 9/9. Both device gates passed.
-- No code or test changes were required after the device runs.
-- Final local HEAD remains the verified base SHA; no commit or push was
-  created.
+- Independent Round-1 review at `b9ba067ff442259225127645c8a4c04eeb65dfc6`
+  returned **BLOCKED**: 1 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE. The BLOCKER
+  was the lack of independently inspectable GitHub verification evidence, not
+  a production-code correctness defect. The MINOR was stale current-state
+  documentation and ROADMAP wording.
+- Remediation added machine-generated test/lint/device evidence under
+  `docs/changes/027-captureplan-list-execution/evidence/`, indexed by
+  `docs/changes/027-captureplan-list-execution/QA.md`, and reconciled only the
+  permitted current-state documents. The overwritten new Room result was
+  rerun; standalone Android test compilation and debug assembly were rerun to
+  retain their command output. Full JVM, lint, and manual-list results were
+  recovered from existing reports.
+- No production code, test source, or test semantics changed during review
+  remediation. No schema, dependency, manifest, runtime, or CHG-028 scope was
+  introduced.
+- The reviewed implementation remains at `b9ba067ff442259225127645c8a4c04eeb65dfc6`;
+  remediation evidence and documentation are local and uncommitted. The next
+  gate is user-authorized commit/push of this remediation, then independent
+  HIGH-ASSURANCE Round-2 re-review against GitHub.
 - The user retains product, commit, push, merge, release, and production
   authority.
 

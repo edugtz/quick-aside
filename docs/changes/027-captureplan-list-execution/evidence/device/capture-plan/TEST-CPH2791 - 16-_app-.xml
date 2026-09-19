@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="21" failures="0" errors="0" skipped="0" time="2.272" timestamp="2026-09-19T23:31:24" hostname="localhost">
+  <testsuite name="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" tests="21" failures="0" errors="0" skipped="0" time="1.08" timestamp="2026-09-19T23:31:24" hostname="localhost">
+    <properties>
+      <property name="device" value="CPH2791 - 16" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="expectedIdAndOrderMismatchesLeaveEveryTargetAndLedgerActive" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.162" />
+    <testcase name="childFailureAfterAnEarlierMutationRollsBackItemsParentAndChildren" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.032" />
+    <testcase name="noActiveMandadoRejectsWholeBatchAtFailingIndexBeforeIdsOrClock" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.033" />
+    <testcase name="mixedMandadoAndComprasActionsPreserveOrderAndSessionSemantics" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.031" />
+    <testcase name="deleteFailureAfterEarlierDeleteRollsBackAllTargets" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.059" />
+    <testcase name="targetedUndoRejectsManualListEntriesWithoutCaptureProvenance" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.059" />
+    <testcase name="secondUndoReturnsAlreadyUndoneWithoutFurtherMutation" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.029" />
+    <testcase name="targetedUndoPreservesUnrelatedRowsAndExecutionAndUndoSurviveReopen" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.057" />
+    <testcase name="cancellationAfterItemInsertsPropagatesAndRollsBackTheCompletePlan" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.06" />
+    <testcase name="multipleComprasActionsUseOneParentCommonTimeAndOrderedMutations" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.03" />
+    <testcase name="unsupportedActionFamiliesAndListIdsWriteNothing" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.002" />
+    <testcase name="missingSourceCaptureWritesNothingAndDoesNotConsumeIdsOrClock" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.03" />
+    <testcase name="missingTargetIsDetectedBeforeAnyTargetIsDeleted" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.088" />
+    <testcase name="laterItemIdCollisionRollsBackEarlierInsertWithoutReplacingExistingItem" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.057" />
+    <testcase name="mismatchedBuiltInListBehaviorRejectsWithoutWrites" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.057" />
+    <testcase name="ledgerParentFailureRollsBackEveryInsertedItem" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.058" />
+    <testcase name="undoCancellationAfterDeletesPropagatesAndRestoresEveryTarget" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.058" />
+    <testcase name="singleComprasActionPersistsExactItemLedgerAndSourceCapture" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.032" />
+    <testcase name="markUndoneFailureRollsBackAllTargetDeletes" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.033" />
+    <testcase name="malformedLedgerOperationsTypesVersionsPayloadsAndShapesAreRejected" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.111" />
+    <testcase name="missingLedgerEntryReturnsWithoutDeletingExpectedItem" classname="com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest" time="0.002" />
+  </testsuite>
+</testsuites>

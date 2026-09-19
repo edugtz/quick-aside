@@ -1,7 +1,7 @@
 # Change 027 — CapturePlan List Execution Foundation — SPEC
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTATION COMPLETE — REVIEW PENDING**
+- Status: **ROUND-1 REVIEW BLOCKED — REMEDIATION COMPLETE — ROUND-2 RE-REVIEW PENDING**
 - Expected branch: `chg-027-captureplan-list-execution`
 - Verified base: `origin/main` at `cb67494a7b57d0f7a939ec06396ccbc665edff7c`
 
@@ -42,16 +42,17 @@ validated `CapturePlan`.
   Compras to have no session.
 - Manual list creates remain a separate boundary and record
   `sourceCaptureId = null`.
-- The actual capture path persists the Capture, then interprets it and returns
-  a locally validated plan. Neither `CaptureSubmission` nor the app/UI invokes
-  an executor today. CHG-027 will not add that wiring.
+- At the verified base, the actual capture path persisted the Capture, then
+  interpreted it and returned a locally validated plan; neither
+  `CaptureSubmission` nor the app/UI invoked an executor. CHG-027 adds the
+  narrow executor but does not add that wiring.
 - The requested `software-project-orchestrator` workflow is not installed or
   callable in the available skill catalog or repository. This change follows
   the repository's `AGENTS.md`, `docs/AI_WORKFLOW.md`, and the user's explicit
   HIGH-ASSURANCE workflow.
-- `adb devices -l` currently reports no attached device. The device gate must
-  be rechecked at verification and remain PENDING if no authorized real device
-  is available.
+- At initial preflight, `adb devices -l` reported no attached device. At
+  verification, the authorized OPPO CPH2791 / Android 16 / API 36 device was
+  attached and both focused Room classes passed.
 
 ## Application boundary
 
@@ -197,4 +198,7 @@ list actions, schema history changes, or behavior that cannot be guaranteed
 atomic.
 
 The user retains product, commit, push, merge, release, and production
-authority. This change must not be committed, pushed, merged, or released.
+authority. CHG-027 was committed and pushed as
+`b9ba067ff442259225127645c8a4c04eeb65dfc6` for Round-1 review. This remediation
+does not authorize another commit or push, merge, or release; the implementation
+scope and product contract remain unchanged.

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProviderTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-19T22:28:44.604Z" hostname="local-runner" time="0.006">
+  <properties/>
+  <testcase name="transmittedBodyIsExactlyTheBodyThatWasSigned" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProviderTest" time="0.002"/>
+  <testcase name="malformedSuccessMapsToMalformedResponse" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProviderTest" time="0.0"/>
+  <testcase name="transportFailuresMapExplicitly" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProviderTest" time="0.001"/>
+  <testcase name="nonStringContractValueCannotReachAValidatedPlan" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProviderTest" time="0.001"/>
+  <testcase name="documentedHttpFailuresMapToProviderNeutralReasons" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProviderTest" time="0.001"/>
+  <testcase name="cancellationPropagates" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProviderTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

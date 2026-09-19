@@ -1,0 +1,30 @@
+# Sanitized Android device identity record
+
+Command: `adb devices -l`
+Exit status: 0
+Output:
+List of devices attached
+[ADB_ID_REDACTED] device product:CPH2791 model:CPH2791 device:OP5E8EL1 transport_id:1
+
+Command: `adb shell getprop ro.product.manufacturer`
+Exit status: 0
+Output:
+OPPO
+
+Command: `adb shell getprop ro.product.model`
+Exit status: 0
+Output:
+CPH2791
+
+Command: `adb shell getprop ro.build.version.release`
+Exit status: 0
+Output:
+16
+
+Command: `adb shell getprop ro.build.version.sdk`
+Exit status: 0
+Output:
+36
+
+Authorization: ADB reports state `device` (authorized).
+Sanitization: the unique ADB transport/device identifier was replaced with `[ADB_ID_REDACTED]`; product, model, device, and transport state were retained.

@@ -203,11 +203,13 @@ Non-blocked, provider-independent work may continue.
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
-There is currently **no CHG-027 selected**.
-
-The normal global implementation sequence remains Change 001 through Change
-026. After a fresh user scope decision, the next normal reviewable change will
-be Change 027, under `docs/changes/027-<slug>/` on branch `chg-027-<slug>`.
+The normal global reviewable-change history currently runs through Change 026.
+The user has selected CHG-027 — CapturePlan List Execution Foundation — and
+its implementation is under HIGH-ASSURANCE review. Round-1 independent review
+returned **BLOCKED** pending inspectable verification evidence and current-state
+documentation reconciliation. That remediation is complete locally and awaits
+Round-2 re-review after the user-authorized evidence/docs commit and push.
+CHG-027 is not marked complete. No later Change ID is selected or reserved.
 
 ## Candidate work after QAG-004H (not scheduled)
 
