@@ -31,6 +31,6 @@
   2 NOTE).
 - [x] Correct stale provenance/status wording in this documentation-only
   closeout.
-- [ ] User-authorized commit/push of this documentation-only closeout.
-- [ ] User-authorized merge of `qag-004h-android-gateway-client-hardening` into
+- [x] Commit/push the documentation-only closeout as `9db98f2e808d076ab29ca1e1dd7dddb74c6fed49`.
+- [x] User-authorized fast-forward integration of `qag-004h-android-gateway-client-hardening` into
   `main` / final repository closeout.
