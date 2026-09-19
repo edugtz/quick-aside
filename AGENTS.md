@@ -106,9 +106,9 @@ validated locally before execution. A remote AI dependency must not make
 capture lossy: persist the capture locally first.
 
 QAG-2 minimal gateway implementation, QAG-003R private Tailnet deployment,
-and QAG-004 Android gateway integration are complete. QAG-004H Android gateway
-client hardening is the current remediation/review gate; it remains stopped at
-a validated `CapturePlan` and does not execute actions.
+QAG-004 Android gateway integration, and QAG-004H Android gateway client
+hardening are complete. QAG-004H finished with **PASS_WITH_NOTES** and remains
+stopped at a validated `CapturePlan`; it does not execute actions.
 
 Do not spend time on broad model benchmarking without observed product
 evidence requiring it. Model/provider changes must not alter the domain
