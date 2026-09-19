@@ -1,6 +1,6 @@
 # QAG-004H — Android Gateway Client Hardening — QA
 
-Status: **ROUND 2 INDEPENDENT REVIEW COMPLETE — PASS_WITH_NOTES — MERGE PENDING**
+Status: **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO `main`**
 
 ## Verified preflight
 
@@ -108,11 +108,11 @@ git diff --check
 
 The Round 2 remediation was committed and pushed as
 `66d96d91d0e1207415d9cfc449993df70093d25f`; the independent re-review above
-completed directly from GitHub. QAG-004H is not merged into `main` and remains
+completed directly from GitHub. The documentation-only review closeout was
+committed as `9db98f2e808d076ab29ca1e1dd7dddb74c6fed49`, and the branch was
+fast-forwarded into `main` after explicit user authorization. QAG-004H remains
 stopped at validated `CapturePlan`, with no `ActionExecutor` or automatic
 mutation. No connected-suite rerun, production pairing, provider request,
-VPS/Tailscale change, merge, or release is performed. The existing full-suite
-`PendientesUiTest` anomaly is not reopened because no UI or platform behavior
-requiring device evidence changed. The next gate is user-authorized
-commit/push of this documentation-only closeout, followed by user-authorized
-merge / final repository closeout.
+VPS/Tailscale change, or release was required. The existing full-suite
+`PendientesUiTest` anomaly was not reopened because no UI or platform behavior
+requiring device evidence changed.
