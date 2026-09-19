@@ -1,8 +1,8 @@
 # ACTIVE WORK
 
-Status: **QAG-004H REVIEW COMPLETE — PASS_WITH_NOTES — AWAITING USER MERGE DECISION**
+Status: **QAG-004H COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO `main`**
 
-## Active change
+## Most recently completed change
 
 - Change: `QAG-004H — Android Gateway Client Hardening`
 - Package: `docs/changes/QAG-004H-android-gateway-client-hardening/`
@@ -28,11 +28,12 @@ Status: **QAG-004H REVIEW COMPLETE — PASS_WITH_NOTES — AWAITING USER MERGE D
 - Stale governance/provenance was largely corrected in Round 2. No Round 3
   independent security review is required for this documentation-only closeout.
 - QAG-004H remains stopped at validated `CapturePlan`; there is no
-  `ActionExecutor` or automatic mutation. It is **not merged into `main`**.
-- Current next gate: user-authorized commit/push of this documentation-only
-  closeout, followed by user-authorized merge / final repository closeout.
+  `ActionExecutor` or automatic mutation.
+- Integration: branch head `9db98f2e808d076ab29ca1e1dd7dddb74c6fed49`
+  was fast-forwarded into `main` after explicit user authorization.
+- The documentation-only review closeout required no Round 3 security review.
 
-## Most recently completed change
+## Previous completed change
 
 - Change: `QAG-004 — Android Gateway Integration`
 - Package: `docs/changes/QAG-004-android-gateway-integration/`
@@ -75,9 +76,9 @@ integration are both integrated. The private production path is now:
       -> validated CapturePlan
 
 QA1 remains the application authorization boundary. Provider credentials remain
-server-side. Personal Admin/Hermes remains independent. QAG-004H is reviewed
-with **PASS_WITH_NOTES**, awaits the user's merge decision, and remains stopped
-at validated `CapturePlan` with no `ActionExecutor` or automatic mutation.
+server-side. Personal Admin/Hermes remains independent. QAG-004H is integrated
+with **PASS_WITH_NOTES** and remains stopped at validated `CapturePlan` with no
+`ActionExecutor` or automatic mutation.
 
 ## Next change
 
