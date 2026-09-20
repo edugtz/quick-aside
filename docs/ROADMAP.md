@@ -35,7 +35,7 @@ Implemented/current foundation includes:
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **IN PROGRESS — private gateway and Android integration/client hardening are complete; remaining product work is scope-selected, and normal-use gateway hardening is evidence-triggered.**
+Status: **IN PROGRESS — private gateway, Android integration/client hardening, and CHG-027's list-only CapturePlan execution foundation are integrated into main; remaining product work is scope-selected, and normal-use gateway hardening is evidence-triggered.**
 
 Outcome: natural-language input becomes validated structured actions with
 minimal friction.
@@ -86,14 +86,16 @@ automatically scheduled as the next implementation change.
 
 M2 runtime interpretation is integrated end-to-end through QAG-004, and
 Android client trust-boundary hardening is complete through QAG-004H. Both are
-integrated into `main`. Execution remains intentionally absent: the flow stops
-at validated `CapturePlan`, with no `ActionExecutor` or automatic mutation.
-M2 remains open for the remaining fast-capture interpretation/UX policies
-listed above and any separately selected work.
+integrated into `main`. CHG-027 adds a provider-independent list execution
+foundation for validated `CapturePlan`s whose every action is `AddListItem`,
+with targeted batch Undo. Other CapturePlan action types are not covered. The
+normal capture/UI path still stops at a validated `CapturePlan` and does not
+execute it automatically. M2 remains open for the remaining fast-capture
+interpretation/UX policies listed above and any separately selected work.
 
 ## M3 — Google Tasks + Calendar
 
-Status: **NOT globally blocked** — runtime interpretation is available; end-to-end task/event mutation still requires the future execution and sync layers.
+Status: **NOT globally blocked** — runtime interpretation is available; end-to-end task/event mutation still requires Task/Event-specific execution support and the sync layers.
 
 Outcome: Personal/Trabajo tasks and events synchronize reliably with Google.
 
@@ -102,9 +104,10 @@ idempotency/conflict behavior, and Calendar integration can be designed and
 implemented independently of the AI provider when scoped coherently.
 
 End-to-end natural-language capture → interpreted Task/Event → Google
-acceptance is no longer blocked by provider integration, but still requires the
-future validated-plan execution boundary plus Google sync implementation. M3 as
-a whole does not need to wait for all remaining M2 polish.
+acceptance is no longer blocked by provider integration, but still requires
+Task/Event-specific validated-plan execution plus Google sync implementation.
+The CHG-027 list executor does not provide that action coverage. M3 as a whole
+does not need to wait for all remaining M2 polish.
 
 Capabilities:
 
@@ -119,7 +122,7 @@ Because sync can create data-loss/idempotency risk, break this milestone into sm
 
 ## M4 — Reminders and daily reliability
 
-Status: **NOT globally blocked** — runtime interpretation is integrated; natural-language reminder creation still requires future reminder-domain/action work, validated-plan execution, and scheduling.
+Status: **NOT globally blocked** — runtime interpretation is integrated; natural-language reminder creation still requires reminder-domain/action work, reminder-specific validated-plan execution, and scheduling.
 
 Outcome: user-configured reminders reliably fire and are actionable.
 
@@ -148,7 +151,7 @@ Capabilities:
 
 ## M6 — Personal MVP polish
 
-Status: **FINAL COMPLETION BLOCKED** — interpretation is integrated, but the full north-star happy path still requires validated action execution plus the remaining sync/reminder/product polish. Other polish may continue independently.
+Status: **FINAL COMPLETION BLOCKED** — interpretation is integrated, but the full north-star happy path still requires normal capture/UI execution wiring, Task/Event/Reminder action support beyond CHG-027's list-only contract, and the remaining sync/reminder/product polish. Other polish may continue independently.
 
 Outcome: the user can adopt Quick Aside as the default capture tool in everyday life.
 
@@ -186,8 +189,11 @@ Services/Serve, preserved localhost-only FastAPI and QA1, and proved service
 restart plus VPS reboot persistence without making Personal Admin an
 application dependency. QAG-004 completed Android integration and is
 integrated into `main`. QAG-004H completed Android client trust-boundary
-hardening and is integrated into `main`. Both intentionally stop at validated
-`CapturePlan`; there is no `ActionExecutor` or automatic mutation.
+hardening and is integrated into `main`; those QAG paths stop at validated
+`CapturePlan`. CHG-027 adds a separate provider-independent executor foundation
+for validated all-`AddListItem` plans with targeted batch Undo. Other action
+types remain outside its scope, and normal capture/UI does not execute plans
+automatically.
 
 ## Milestone dependency summary
 
@@ -197,23 +203,32 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | IN PROGRESS — gateway + Android integration/client hardening complete; remaining policy and UX scope is undecided; normal-use hardening is evidence-triggered |
-| M3 | NOT globally blocked; runtime interpretation is available, but execution + Google sync remain |
-| M4 | NOT globally blocked; runtime interpretation is integrated, while natural-language reminder creation awaits future reminder-domain/actions, validated-plan execution, and scheduling work |
+| M2 | IN PROGRESS — gateway + Android integration/client hardening and CHG-027 list-only execution foundation integrated; remaining policy and UX scope is undecided; normal-use hardening is evidence-triggered |
+| M3 | NOT globally blocked; runtime interpretation is available, but Task/Event execution support + Google sync remain |
+| M4 | NOT globally blocked; runtime interpretation is integrated, while natural-language reminder creation awaits reminder-domain/actions, reminder-specific plan execution, and scheduling work |
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
-The normal global reviewable-change history currently runs through Change 026.
-The user has selected CHG-027 — CapturePlan List Execution Foundation. Its
-implementation and independent review are complete: Round 1 returned
-**BLOCKED**, and Round 2 returned **PASS_WITH_NOTES** at
-`eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`. The Round-1 evidence BLOCKER is
-resolved; no production correctness finding remains. This documentation-only
-closeout reconciles the remaining QA provenance wording. CHG-027 is ready for
-user-authorized merge after the closeout is committed and pushed. No later
-Change ID is selected or reserved.
+The normal global reviewable-change history now runs through Change 027.
+CHG-027 — CapturePlan List Execution Foundation is **COMPLETE —
+PASS_WITH_NOTES — INTEGRATED INTO main**. Its verified base was
+`cb67494a7b57d0f7a939ec06396ccbc665edff7c`; its implementation commit was
+`b9ba067ff442259225127645c8a4c04eeb65dfc6`. Round 1 reviewed that
+implementation commit and returned **BLOCKED** with 1 BLOCKER / 0 MAJOR /
+1 MINOR / 2 NOTE. The evidence/remediation commit and Round-2 reviewed SHA was
+`eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`; Round 2 returned
+**PASS_WITH_NOTES**. The Round-1 evidence BLOCKER was resolved and no
+production correctness defect remained. Final review debt was documentation/
+evidence provenance only. The final documentation closeout was integrated into
+`main` at `979b8e6abb9a57ac5936559c252726a1ca84a98c`.
 
-## Candidate work after QAG-004H (not scheduled)
+CHG-027 provides a provider-independent list execution foundation limited to
+validated plans whose every action is `AddListItem`, plus targeted batch Undo.
+It does not make all CapturePlan actions executable, and normal capture/UI does
+not automatically execute a plan. No next Change is selected or reserved;
+CHG-028 remains unselected and no later Change ID is reserved.
+
+## Candidate work after CHG-027 (not scheduled)
 
 Candidate work only; none is automatically scheduled:
 
@@ -224,8 +239,8 @@ Candidate work only; none is automatically scheduled:
   background/restart reliability;
 - M5 foundations: backup/snapshot, export center, structured reimport format,
   and archive-before-prune verification;
-- M2 provider-independent execution/application foundations, only if
-  independently justified;
+- Further M2 provider-independent execution/application foundations beyond
+  CHG-027's list-only scope, only if independently justified;
 - M1/M6 polish that does not depend on automated interpretation.
 
 This list records options, not a schedule.

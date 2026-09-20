@@ -1,47 +1,52 @@
 # ACTIVE WORK
 
-Status: **CHG-027 IMPLEMENTATION AND REVIEW COMPLETE — PASS_WITH_NOTES — DOCUMENTATION CLOSEOUT COMPLETE LOCALLY — HIGH-ASSURANCE**
+Status: **CHG-027 COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main — NO NEXT CHANGE SELECTED**
 
-## Active change
+## Most recently completed normal Change
 
 - Change: `CHG-027 — CapturePlan List Execution Foundation`
 - Package: `docs/changes/027-captureplan-list-execution/`
-- Branch: `chg-027-captureplan-list-execution`
 - Verified base: `origin/main` at
   `cb67494a7b57d0f7a939ec06396ccbc665edff7c`
 - Implementation commit: `b9ba067ff442259225127645c8a4c04eeb65dfc6`.
-- Evidence/remediation commit and Round-2 reviewed HEAD:
+- Round-1 independent review at the implementation commit returned
+  **BLOCKED** with 1 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
+- Evidence/remediation commit and Round-2 reviewed SHA:
   `eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`.
-- Governance: **HIGH-ASSURANCE**
-- Scope: add a narrow, atomic executor for validated all-AddListItem
-  CapturePlans and targeted batch Undo. The normal capture path remains
-  stopped at validated CapturePlan; there is no capture/UI auto-wiring.
+- Round-2 verdict: **PASS_WITH_NOTES**.
+- Final integrated `main` SHA:
+  `979b8e6abb9a57ac5936559c252726a1ca84a98c`.
+- Governance: **HIGH-ASSURANCE**.
+- Scope: a provider-independent, narrow, atomic execution foundation for
+  validated CapturePlans whose every action is `AddListItem`, plus targeted
+  batch Undo. This does not make other CapturePlan action types executable.
 - Verification: focused/full JVM checks, Android test Kotlin compilation,
   debug assembly, lint, and schema/config comparisons completed successfully.
   On OPPO CPH2791 / Android 16 / API 36, the new Room class passed 21/21 and
   the existing manual Room regression passed 9/9. Both device gates passed.
-- Round-1 independent review at `b9ba067ff442259225127645c8a4c04eeb65dfc6`
-  returned **BLOCKED** with 1 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE. Round-2
-  independent review at `eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24` returned
-  **PASS_WITH_NOTES**.
-- The Round-1 BLOCKER is resolved: independently inspectable repository
-  test/lint/device evidence is present. No production correctness finding
-  remains. The remaining review notes and minors concern documentation and
-  evidence provenance only.
+- The Round-1 evidence BLOCKER was resolved. No production correctness defect
+  remained; the final remaining review debt was documentation/evidence
+  provenance only.
 - Round 2 identified stale post-push wording and QA references to standalone
-  build logs that are not in the repository. This closeout corrects those
-  records and distinguishes machine evidence in the repository from the
-  historical builder-recorded standalone compile/assembly results.
+  build logs that are not in the repository. The final documentation closeout
+  corrected those records and distinguished repository machine evidence from
+  the historical builder-recorded standalone compile/assembly results. That
+  closeout was integrated into `main` at the final integrated SHA above.
 - No production code, test source, or test semantics changed during either
-  review closeout. No schema, dependency, manifest, runtime, or CHG-028 scope
-  was introduced.
-- CHG-027 implementation and independent review are complete at
-  `eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`. The documentation closeout is
-  ready for user-authorized commit/push, followed by user-authorized merge.
+  review closeout. No schema, dependency, manifest, or runtime changes were
+  introduced during closeout.
+- Normal capture/UI still stops at the validated `CapturePlan`; it does not
+  automatically execute the plan.
+- No next Change is selected or reserved. CHG-028 is unselected, and no later
+  Change ID is reserved.
 - The user retains product, commit, push, merge, release, and production
   authority.
 
-## Most recently completed change
+## Current Change selection
+
+There is currently no selected next Change.
+
+## Most recently completed QAG change
 
 - Change: `QAG-004H — Android Gateway Client Hardening`
 - Package: `docs/changes/QAG-004H-android-gateway-client-hardening/`
@@ -66,13 +71,15 @@ Status: **CHG-027 IMPLEMENTATION AND REVIEW COMPLETE — PASS_WITH_NOTES — DOC
   and is corrected by this documentation-only closeout.
 - Stale governance/provenance was largely corrected in Round 2. No Round 3
   independent security review is required for this documentation-only closeout.
-- QAG-004H remains stopped at validated `CapturePlan`; there is no
-  `ActionExecutor` or automatic mutation.
+- The QAG-004H gateway/client flow remains stopped at validated `CapturePlan`.
+  CHG-027 adds a separate provider-independent list executor for plans whose
+  every action is `AddListItem`, but the QAG flow does not call it and normal
+  capture/UI does not execute plans automatically.
 - Integration: branch head `9db98f2e808d076ab29ca1e1dd7dddb74c6fed49`
   was fast-forwarded into `main` after explicit user authorization.
 - The documentation-only review closeout required no Round 3 security review.
 
-## Previous completed change
+## Previous completed QAG change
 
 - Change: `QAG-004 — Android Gateway Integration`
 - Package: `docs/changes/QAG-004-android-gateway-integration/`
@@ -116,10 +123,13 @@ integration are both integrated. The private production path is now:
 
 QA1 remains the application authorization boundary. Provider credentials remain
 server-side. Personal Admin/Hermes remains independent. QAG-004H is integrated
-with **PASS_WITH_NOTES** and remains stopped at validated `CapturePlan` with no
-`ActionExecutor` or automatic mutation.
+with **PASS_WITH_NOTES** and its interpretation path remains stopped at
+validated `CapturePlan`. CHG-027 adds a separate provider-independent list
+execution foundation for validated plans whose every action is `AddListItem`,
+with targeted batch Undo. Other CapturePlan action types are not covered, and
+normal capture/UI does not automatically execute a plan.
 
-## Workstream and active implementation
+## Workstream and Change selection
 
 The specialized Quick Aside Gateway workstream is complete and closed for
 now. Its historical QAG identifiers and records remain unchanged; QAG
@@ -131,11 +141,12 @@ initiative, remains dependent on evidence from actual use. It is not
 automatically scheduled as the next implementation change or reserved under a
 global Change ID.
 
-The normal global reviewable-change history remains Change 001 through Change
-026. The user has selected Change 027 as the CapturePlan List Execution
-Foundation; its active scope and verification contract are recorded in
-`docs/changes/027-captureplan-list-execution/`. No later Change ID is
-reserved.
+The normal global reviewable-change history now runs through Change 027.
+CHG-027 — CapturePlan List Execution Foundation is the most recently completed
+normal Change and is integrated into `main` with **PASS_WITH_NOTES**. Its
+implementation scope and verification record remain in
+`docs/changes/027-captureplan-list-execution/`. No next Change is selected or
+reserved; CHG-028 remains unselected and no later Change ID is reserved.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates
 only; this closeout does not schedule them.
