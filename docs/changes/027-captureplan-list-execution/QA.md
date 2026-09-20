@@ -1,15 +1,35 @@
-# CHG-027 QA and Round-1 Remediation Evidence
+# CHG-027 QA, Evidence, and Review Record
 
 - Governance: **HIGH-ASSURANCE**
-- Reviewed implementation HEAD: `b9ba067ff442259225127645c8a4c04eeb65dfc6`
+- Implementation commit: `b9ba067ff442259225127645c8a4c04eeb65dfc6`
+- Evidence/remediation commit and Round-2 reviewed HEAD:
+  `eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`
 - Branch: `chg-027-captureplan-list-execution`
 - Verified base / `origin/main`: `cb67494a7b57d0f7a939ec06396ccbc665edff7c`
 - Reviewed implementation tree: `3e0e6150cad449c4add573dfe714d64487966a87`
-- Round-1 verdict: **BLOCKED** — 1 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
+- Round-1 verdict at `b9ba067ff442259225127645c8a4c04eeb65dfc6`:
+  **BLOCKED** — 1 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
+- Round-2 verdict at `eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`:
+  **PASS_WITH_NOTES**.
 
 The Round-1 BLOCKER was missing independently inspectable GitHub test/lint/
 device evidence, not a discovered production-code correctness defect. The
 MINOR was stale current-state documentation and ROADMAP selection wording.
+
+Round-2 findings and closeout:
+
+- The Round-1 BLOCKER is **RESOLVED**; independently inspectable repository
+  evidence is present.
+- The Round-1 MINOR was **PARTIALLY RESOLVED** at Round 2: important
+  project-state corrections had been made, while post-push wording remained
+  stale. This documentation closeout corrects that remaining wording.
+- Round 2 identified a new MINOR: the QA index cited standalone compile and
+  assembly logs and exit-code files that are not present in the repository.
+  This closeout removes those claims and records the evidence that does
+  exist; it does not add replacement or fabricated artifacts.
+- Round-2 NOTE: remediation remained documentation/evidence-only and did not
+  reopen production behavior.
+- No production correctness finding remains.
 
 Round-1 NOTE findings:
 
@@ -34,9 +54,12 @@ provenance is based on the recorded clean baseline, report timestamps, and
 unchanged source/test content rather than an embedded revision field.
 
 The missing `CapturePlanListExecutorDatabaseTest` report was regenerated after
-the reviewed SHA was established. Android test Kotlin compilation and debug
-assembly were also rerun to retain standalone command output. No production or
-test-source changes were made during this remediation.
+the implementation SHA was established. Android test Kotlin compilation and
+debug assembly were rerun and recorded by the builder; separate standalone
+command logs and exit-code files for those two commands are not present in the
+repository. The connected CapturePlan test log does record the Android test
+Kotlin compile task as `UP-TO-DATE` within that successful connected build. No
+production or test-source changes were made during this remediation.
 
 ## Verification results
 
@@ -44,8 +67,8 @@ test-source changes were made during this remediation.
 |---|---|---|
 | Focused JVM | `./gradlew :app:testDebugUnitTest --tests com.edu.quickaside.application.capture.CapturePlanListExecutorContractTest` — **BUILD SUCCESSFUL**, 4 started/passed, 0 failed/errors/skipped. Recovered class XML is part of the full-suite report. | `evidence/recovered-gradle-daemon-excerpts.txt`; `evidence/jvm/full/TEST-com.edu.quickaside.application.capture.CapturePlanListExecutorContractTest.xml` |
 | Full JVM | `./gradlew :app:testDebugUnitTest` — **BUILD SUCCESSFUL**, 165 started/passed, 0 failed/errors/skipped across 27 XML reports. | All files under `evidence/jvm/full/`; recovered daemon result in `evidence/recovered-gradle-daemon-excerpts.txt` |
-| Android test Kotlin compilation | `./gradlew :app:compileDebugAndroidTestKotlin` — **BUILD SUCCESSFUL**, exit 0. | `evidence/build/compileDebugAndroidTestKotlin.log` and `.exit-code.txt` |
-| Debug assembly | `./gradlew :app:assembleDebug` — **BUILD SUCCESSFUL**, exit 0. | `evidence/build/assembleDebug.log` and `.exit-code.txt` |
+| Android test Kotlin compilation | Historical builder-recorded standalone command `./gradlew :app:compileDebugAndroidTestKotlin` — **BUILD SUCCESSFUL**. The checked-in connected-test Gradle output separately records `:app:compileDebugAndroidTestKotlin UP-TO-DATE` during the successful Room-test build. | `TASKS.md` (historical standalone command record); `evidence/device/capture-plan/gradle-output.txt` (connected-run machine output, not a standalone compile log) |
+| Debug assembly | Historical builder-recorded standalone command `./gradlew :app:assembleDebug` — **BUILD SUCCESSFUL**. No standalone assembly log or exit-code artifact is present in the repository. | `TASKS.md` (historical command record only) |
 | Lint | `./gradlew :app:lintDebug` — historical **BUILD SUCCESSFUL**; 0 errors, 16 warnings, 1 hint. Gate not rerun. | `evidence/lint/lint-results-debug.sarif`, `evidence/lint/lint-results-debug.txt`, and `evidence/recovered-gradle-daemon-excerpts.txt` |
 | New Room executor class | `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.CapturePlanListExecutorDatabaseTest` — **BUILD SUCCESSFUL**, exit 0; 21 started/passed, 0 failed/errors/skipped. | `evidence/device/capture-plan/gradle-output.txt`, `gradle-exit-code.txt`, JUnit XML, runner log, and `test-result-exit-code.txt` |
 | Manual-list regression | `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.ReversibleListItemActionsDatabaseTest` — recovered historical **BUILD SUCCESSFUL**; 9 started/passed, 0 failed/errors/skipped; runner exit 0. Gate not rerun. | `evidence/device/manual-list/` and recovered result excerpt |
@@ -74,8 +97,12 @@ needed.
 - Rerun for missing evidence: only the new `CapturePlanListExecutorDatabaseTest`
   Room class among device test classes. It was run as one focused class; the
   existing manual-list regression artifact was recoverable.
-- Rerun to retain standalone command output: `compileDebugAndroidTestKotlin`
-  and `assembleDebug`. Their Gradle logs and exit codes are saved above.
+- Standalone `compileDebugAndroidTestKotlin` and `assembleDebug` commands were
+  rerun during evidence remediation and recorded as successful by the
+  builder. Their individual logs and exit-code files are not present in the
+  repository. The connected CapturePlan Gradle output is the checked-in
+  machine evidence that includes the Kotlin compile task state and successful
+  connected build result.
 - No full connected Compose/UI suite or screenshot was run or needed.
 
 ## Artifact index and sanitization
@@ -86,8 +113,6 @@ needed.
 - `evidence/recovered-gradle-daemon-excerpts.txt` — minimal recovered Gradle
   output for the focused/full JVM, lint, and manual-list gates.
 - `evidence/lint/` — Android Lint SARIF and text report.
-- `evidence/build/` — standalone compilation/assembly command outputs and
-  exit codes.
 - `evidence/device/capture-plan/` — new Room class Gradle output, JUnit XML,
   instrumentation log, runner/Gradle exit codes, and the pre-Gradle permission
   attempt record.
@@ -97,6 +122,12 @@ needed.
   output with the unique ADB identifier redacted.
 - `evidence/scope/schema-config-comparison.txt` — exact database/schema and
   dependency/configuration comparison commands and exit statuses.
+- `evidence/device/capture-plan/gradle-output.txt` — connected Room-test
+  machine output, including the Android test Kotlin compile task state and
+  the successful connected build. It is not a standalone compile-command
+  log. `TASKS.md` records the builder-reported standalone compile and assembly
+  command results as historical results; their individual logs and exit-code
+  files are absent from the repository.
 
 Sanitization was limited to machine-local data: the host name in copied JUnit
 XML was replaced with `local-runner`; the local repository/Gradle-cache path
@@ -107,9 +138,14 @@ credential-like values were found in the evidence package.
 
 ## GitHub evidence and next gate
 
-These are repository-recorded machine reports for the remediation package.
-The Round-1 brief reports no independently inspectable GitHub CI/status
-evidence; none was recovered here. GitHub will not contain this new evidence
-until the user separately authorizes its commit and push. Independent
-HIGH-ASSURANCE Round-2 re-review must inspect the updated GitHub HEAD. Do not
-merge, release, or begin CHG-028 as part of this remediation.
+The machine-generated evidence listed above is present in the repository at
+the evidence/remediation commit. Per the independent Round-2 review, no GitHub
+CI run or status check is present. Historical standalone compile and assembly
+successes are builder-recorded in `TASKS.md`, not represented by standalone
+machine logs in the repository. Round 2 accepted the implementation with
+PASS_WITH_NOTES; no further production or device re-review is required for
+this documentation-only closeout.
+
+The exact next gate is user authorization to commit/push this
+documentation-only closeout, followed by user-authorized merge into `main`.
+Do not release or begin CHG-028.

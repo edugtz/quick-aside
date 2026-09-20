@@ -1,7 +1,7 @@
 # Change 027 — CapturePlan List Execution Foundation — SPEC
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ROUND-1 REVIEW BLOCKED — REMEDIATION COMPLETE — ROUND-2 RE-REVIEW PENDING**
+- Status: **ROUND-2 PASS_WITH_NOTES — DOCUMENTATION CLOSEOUT COMPLETE LOCALLY**
 - Expected branch: `chg-027-captureplan-list-execution`
 - Verified base: `origin/main` at `cb67494a7b57d0f7a939ec06396ccbc665edff7c`
 
@@ -198,7 +198,13 @@ list actions, schema history changes, or behavior that cannot be guaranteed
 atomic.
 
 The user retains product, commit, push, merge, release, and production
-authority. CHG-027 was committed and pushed as
-`b9ba067ff442259225127645c8a4c04eeb65dfc6` for Round-1 review. This remediation
-does not authorize another commit or push, merge, or release; the implementation
-scope and product contract remain unchanged.
+authority. The implementation commit is
+`b9ba067ff442259225127645c8a4c04eeb65dfc6`; the evidence/remediation commit
+and Round-2 reviewed HEAD is
+`eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`. Round 1 returned **BLOCKED** and
+Round 2 returned **PASS_WITH_NOTES**. The Round-1 evidence BLOCKER is resolved;
+no production correctness finding remains. This local closeout corrects
+documentation/provenance records only and leaves the implementation scope and
+product contract unchanged. The next gate is user authorization to
+commit/push this documentation-only closeout, followed by user-authorized
+merge into `main`.

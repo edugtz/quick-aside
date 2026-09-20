@@ -1,13 +1,13 @@
 # Change 027 — CapturePlan List Execution Foundation — TASKS
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ROUND-1 REVIEW BLOCKED — REMEDIATION COMPLETE — ROUND-2 RE-REVIEW PENDING**
+- Status: **ROUND-2 PASS_WITH_NOTES — DOCUMENTATION CLOSEOUT COMPLETE LOCALLY**
 - Expected branch: `chg-027-captureplan-list-execution`
 
 This checklist records implementation and observable evidence. It does not
 declare an independent engineering verdict. Both focused Room gates have
 passed on the authorized real device; see `QA.md` for the repository evidence
-index and the separate Round-1 review verdict.
+index and the Round-1/Round-2 independent review record.
 
 ## Ground truth and package
 
@@ -101,7 +101,9 @@ index and the separate Round-1 review verdict.
   the starting worktree was clean.
 - Branch: `chg-027-captureplan-list-execution`; implementation commit
   `b9ba067ff442259225127645c8a4c04eeb65dfc6` was pushed for Round-1 review.
-  Evidence/docs remediation remains uncommitted and unpushed.
+  Evidence/remediation commit `eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`
+  was pushed and independently reviewed in Round 2. This documentation-only
+  closeout is local and awaits user authorization to commit/push.
 - Focused JVM command:
   `./gradlew :app:testDebugUnitTest --tests com.edu.quickaside.application.capture.CapturePlanListExecutorContractTest`
   — historical implementation run was **BUILD SUCCESSFUL**; the recovered
@@ -112,9 +114,13 @@ index and the separate Round-1 review verdict.
   failures, 0 errors, 0 skipped.
 - Android test compilation:
   `./gradlew :app:compileDebugAndroidTestKotlin` — **BUILD SUCCESSFUL**; the
-  standalone remediation capture is in `evidence/build/`.
+  standalone command result is a historical builder record. The connected
+  CapturePlan Gradle output records the compile task as `UP-TO-DATE` during
+  that successful connected build. No standalone command log or exit-code
+  file is present in the repository.
 - Assembly: `./gradlew :app:assembleDebug` — **BUILD SUCCESSFUL**; the
-  standalone remediation capture is in `evidence/build/`.
+  result is a historical builder record. No standalone assembly log or
+  exit-code file is present in the repository.
 - Lint: `./gradlew :app:lintDebug` — historical run **BUILD SUCCESSFUL**;
   recovered SARIF/text reports are in `evidence/lint/` (0 errors, 16 warnings,
   1 hint).
@@ -140,8 +146,10 @@ index and the separate Round-1 review verdict.
   attempt is preserved with its exit code and is not a test failure.
 - No production or test-source fix was required. The full JVM and lint gates
   were not rerun; their existing reports were recovered. Android test Kotlin
-  compilation and debug assembly were rerun solely to capture standalone
-  command output.
+  compilation and debug assembly were rerun during evidence remediation and
+  recorded as successful by the builder. The checked-in connected-test log
+  includes the compile task state and successful connected build, but no
+  standalone compile/assembly logs or exit-code files are in the repository.
 - Schema/database comparison:
   `git diff --exit-code origin/main -- app/schemas app/src/main/java/com/edu/quickaside/data/local/QuickAsideDatabase.kt`
   — exit 0, no differences; captured in `evidence/scope/schema-config-comparison.txt`.
@@ -158,8 +166,11 @@ index and the separate Round-1 review verdict.
 
 ## Exact next gate
 
-User authorization to commit/push this evidence/docs-only remediation,
-followed by independent HIGH-ASSURANCE Round-2 review directly against the
-updated GitHub HEAD. The user retains merge, release, and production authority.
+User authorization to commit/push this documentation-only closeout, followed
+by user-authorized merge into `main`. Round 2 returned **PASS_WITH_NOTES** at
+`eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`; the implementation was accepted
+with no production correctness finding. No further production or device
+re-review is required for this documentation-only closeout. The user retains
+merge, release, and production authority.
 
 Stop here. Do not commit, push, merge, release, or start CHG-028.

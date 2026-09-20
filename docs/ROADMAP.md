@@ -204,12 +204,14 @@ Non-blocked, provider-independent work may continue.
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
 The normal global reviewable-change history currently runs through Change 026.
-The user has selected CHG-027 — CapturePlan List Execution Foundation — and
-its implementation is under HIGH-ASSURANCE review. Round-1 independent review
-returned **BLOCKED** pending inspectable verification evidence and current-state
-documentation reconciliation. That remediation is complete locally and awaits
-Round-2 re-review after the user-authorized evidence/docs commit and push.
-CHG-027 is not marked complete. No later Change ID is selected or reserved.
+The user has selected CHG-027 — CapturePlan List Execution Foundation. Its
+implementation and independent review are complete: Round 1 returned
+**BLOCKED**, and Round 2 returned **PASS_WITH_NOTES** at
+`eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`. The Round-1 evidence BLOCKER is
+resolved; no production correctness finding remains. This documentation-only
+closeout reconciles the remaining QA provenance wording. CHG-027 is ready for
+user-authorized merge after the closeout is committed and pushed. No later
+Change ID is selected or reserved.
 
 ## Candidate work after QAG-004H (not scheduled)
 

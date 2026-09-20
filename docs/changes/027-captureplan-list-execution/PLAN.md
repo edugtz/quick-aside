@@ -1,7 +1,7 @@
 # Change 027 — CapturePlan List Execution Foundation — PLAN
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ROUND-1 REVIEW BLOCKED — REMEDIATION COMPLETE — ROUND-2 RE-REVIEW PENDING**
+- Status: **ROUND-2 PASS_WITH_NOTES — DOCUMENTATION CLOSEOUT COMPLETE LOCALLY**
 - Expected branch: `chg-027-captureplan-list-execution`
 
 This plan follows the verified `origin/main` baseline. It records the narrow
@@ -130,52 +130,85 @@ validation error, diagnose the root cause, and attempt at most two focused
 fixes for that same blocker. Do not claim the Room/device gate passed without
 an authorized real device run.
 
-## Round-1 review and evidence remediation
+## Independent review and evidence remediation
 
 - Independent Round-1 review of `b9ba067ff442259225127645c8a4c04eeb65dfc6`
   returned **BLOCKED**, with 1 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
 - The BLOCKER concerns inspectable test/lint/device evidence on GitHub; the
   reviewer reported no production-code correctness defect. The MINOR concerns
   stale current-state wording and ROADMAP selection state.
+- The Round-1 NOTE findings are recorded in `QA.md`: no static correctness
+  defect was found in transaction/rollback/cancellation/provenance/targeted
+  Undo and no implementation remediation was requested; the diff exceeded
+  the generic split signal but remained one coherent behavior, with most
+  volume in focused tests/docs, and no split was requested.
 - Remediation is limited to machine-generated evidence and the current-state
   documents authorized by the review brief. `QA.md` indexes recovered and
   newly captured evidence, identifies the reviewed SHA, and distinguishes
   local repository evidence from GitHub CI/status evidence.
 - The overwritten new Room test report was regenerated on the reviewed HEAD.
   Android test Kotlin compilation and debug assembly were rerun to retain
-  standalone command output. The full JVM, lint, and existing manual-list
-  reports were recovered. No production or test-source fix was required.
+  standalone command results in the builder's historical record. The
+  connected CapturePlan Gradle output records the Android test Kotlin compile
+  task as `UP-TO-DATE` and the successful connected build. Standalone compile
+  and assembly logs/exit-code files are not present in the repository. The
+  full JVM, lint, and existing manual-list reports were recovered. No
+  production or test-source fix was required.
+- Evidence/remediation was committed and pushed as
+  `eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`. Independent Round-2 review of
+  that HEAD returned **PASS_WITH_NOTES**. It resolved the Round-1 BLOCKER,
+  reported the earlier documentation MINOR as partly resolved because
+  post-push wording remained stale, and identified the stale standalone-build
+  evidence references in `QA.md`. Round 2 also noted that the remediation
+  stayed documentation/evidence-only and did not reopen production behavior.
+- This local documentation-only closeout corrects the stale post-push wording
+  and removes the unsupported standalone-build artifact references. No
+  production correctness finding remains; no production or device re-review
+  is required for these documentation corrections.
 
 ## Stop state and authority
 
-The implementation is committed/pushed at reviewed SHA
-`b9ba067ff442259225127645c8a4c04eeb65dfc6`; its Round-1 review returned
-BLOCKED. This remediation adds only evidence and current-state documentation.
-Stop at `REMEDIATION COMPLETE — RE-REVIEW PENDING`. The user reviews the local
-diff and separately authorizes commit/push of this remediation. Independent
-HIGH-ASSURANCE Round-2 review follows against the updated GitHub HEAD.
-Do not commit, push, merge, release, or start CHG-028 in this remediation.
+The implementation commit is `b9ba067ff442259225127645c8a4c04eeb65dfc6`;
+the evidence/remediation commit and Round-2 reviewed HEAD is
+`eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`. Round 1 returned BLOCKED and
+Round 2 returned PASS_WITH_NOTES. This local closeout changes documentation
+only. The next gate is user authorization to commit/push this
+documentation-only closeout, followed by user-authorized merge into `main`.
+Do not commit, push, merge, release, or start CHG-028 without that authority.
 
 ## Verification outcome
 
 - Focused JVM contract tests: 4 passed, 0 failed, 0 skipped.
 - Full JVM suite: 165 passed, 0 failed, 0 skipped.
-- Android test Kotlin compilation, debug assembly, and lint completed
-  successfully.
+- Android test Kotlin compilation, debug assembly, and lint were recorded as
+  successful during implementation/evidence remediation. The connected
+  CapturePlan Gradle output includes the Android test Kotlin compile task
+  state and successful connected build; the standalone compile/assembly
+  results remain historical builder records, without standalone log or
+  exit-code files in the repository.
 - On the authorized OPPO CPH2791 running Android 16 / API 36, the focused
   `CapturePlanListExecutorDatabaseTest` passed 21/21 tests and
   `ReversibleListItemActionsDatabaseTest` passed 9/9 tests, sequentially.
 - Both Room/device gates passed. No code or test fix was needed after these
   runs.
-- Round-1 evidence remediation reran the missing `CapturePlanListExecutorDatabaseTest`
-  on the reviewed HEAD and captured standalone Android test Kotlin compilation
-  and debug assembly output. Existing full JVM, lint, and manual-list reports
-  were recovered; the full JVM, lint, and manual-list gates were not rerun.
+- Round-1 evidence remediation reran the missing
+  `CapturePlanListExecutorDatabaseTest` and recorded standalone Android test
+  Kotlin compilation and debug assembly command results. Existing full JVM,
+  lint, and manual-list reports were recovered; the full JVM, lint, and
+  manual-list gates were not rerun.
 - See `QA.md` and `evidence/` for report files, sanitized device details,
   exact commands, results, and provenance notes. No independently available
   GitHub CI/status evidence was found.
+- Round-2 independent review returned **PASS_WITH_NOTES** at
+  `eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`; the Round-1 BLOCKER is
+  resolved, and no production correctness finding remains. The local closeout
+  corrects documentation/provenance wording only. No additional production
+  or device review is required.
 - Room v7, migrations, tracked schemas, dependencies, and manifest/network
   security configuration are unchanged from the verified base.
-- The reviewed implementation commit is `b9ba067ff442259225127645c8a4c04eeb65dfc6`.
-  No remediation commit or push has been created. See `TASKS.md` and `QA.md`
-  for the evidence index and current next gate.
+- The implementation commit is `b9ba067ff442259225127645c8a4c04eeb65dfc6`;
+  evidence/remediation is committed and pushed at
+  `eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`. The next gate is user
+  authorization to commit/push this documentation-only closeout, followed by
+  user-authorized merge into `main`. See `TASKS.md` and `QA.md` for the
+  evidence index and review record.
