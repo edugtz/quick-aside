@@ -22,7 +22,7 @@ Exact command:
 ```sh
 ./gradlew :app:connectedDebugAndroidTest \
 -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest \
-\--stacktrace
+--stacktrace
 ```
 
 Observed successful console result:
