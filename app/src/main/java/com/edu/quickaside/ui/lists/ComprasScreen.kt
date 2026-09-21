@@ -78,6 +78,7 @@ fun ComprasScreen(
     listStore: ListStore?,
     reversibleListItemActions: ReversibleListItemActions?,
     snackbarHostState: SnackbarHostState,
+    refreshToken: Int = 0,
     onBack: () -> Unit,
 ) {
     var state by remember(listStore) { mutableStateOf<ComprasState>(ComprasState.Loading) }
@@ -246,7 +247,7 @@ fun ComprasScreen(
         }
     }
 
-    LaunchedEffect(listStore) { loadState() }
+    LaunchedEffect(listStore, refreshToken) { loadState() }
     BackHandler { onBack() }
 
     Column(

@@ -40,6 +40,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,10 +61,13 @@ import androidx.compose.ui.unit.dp
 import com.edu.quickaside.application.capture.AIProviderException
 import com.edu.quickaside.application.capture.AIProviderFailureReason
 import com.edu.quickaside.application.capture.CaptureInterpretationResult
+import com.edu.quickaside.application.capture.CaptureExecutionOutcome
+import com.edu.quickaside.application.capture.CapturePlanListExecutor
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
+import com.edu.quickaside.application.capture.UndoCapturePlanListExecutionResult
 import com.edu.quickaside.application.gateway.DevicePairer
 import com.edu.quickaside.application.lists.ListSessionWithItems
 import com.edu.quickaside.application.lists.ListStore
@@ -116,6 +121,7 @@ private enum class MemoryRoute {
 fun QuickAsideApp(
     captureSubmission: CaptureSubmission,
     captureReader: CaptureReader,
+    capturePlanListExecutor: CapturePlanListExecutor? = null,
     listStore: ListStore? = null,
     reversibleListItemActions: ReversibleListItemActions? = null,
     taskStore: TaskStore? = null,
@@ -142,8 +148,8 @@ fun QuickAsideApp(
     var historyDetailSession by remember { mutableStateOf<ListSessionWithItems?>(null) }
     var captureRequested by remember { mutableStateOf(false) }
     var historyRefreshToken by remember { mutableStateOf(0) }
+    var listRefreshToken by remember { mutableStateOf(0) }
     var pairingRequested by remember { mutableStateOf(false) }
-    var lastVoiceInterpretation by remember { mutableStateOf<CaptureInterpretationResult?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val requestCapture = { captureRequested = true }
@@ -172,19 +178,56 @@ fun QuickAsideApp(
             pairingRequested = true
         }
     }
-    val onVoiceCaptureSaved = {
-        val interpretation = lastVoiceInterpretation
-        lastVoiceInterpretation = null
+    val onCaptureSaved: (CaptureSubmissionResult.Saved, Boolean) -> Unit = { result, closeCapture ->
+        onInterpretationObserved(result.interpretation)
         historyRefreshToken += 1
-        captureRequested = false
-        scope.launch {
-            snackbarHostState.showSnackbar(savedCaptureMessage(interpretation))
+        if (result.execution is CaptureExecutionOutcome.Executed) {
+            listRefreshToken += 1
         }
-        Unit
-    }
-    val onVoiceInterpretationResult: (CaptureInterpretationResult?) -> Unit = { interpretation ->
-        lastVoiceInterpretation = interpretation
-        onInterpretationObserved(interpretation)
+        if (closeCapture) {
+            captureRequested = false
+        }
+        scope.launch {
+            val execution = result.execution
+            if (execution !is CaptureExecutionOutcome.Executed) {
+                snackbarHostState.showSnackbar(savedCaptureMessage(result))
+                return@launch
+            }
+
+            snackbarHostState.currentSnackbarData?.dismiss()
+            val receipt = execution.receipt
+            val snackbarResult = snackbarHostState.showSnackbar(
+                message = if (receipt.items.size == 1) {
+                    "Producto agregado"
+                } else {
+                    "${receipt.items.size} elementos guardados"
+                },
+                actionLabel = "Deshacer",
+                duration = SnackbarDuration.Long,
+            )
+            if (snackbarResult != SnackbarResult.ActionPerformed) {
+                return@launch
+            }
+
+            val undoResult = try {
+                capturePlanListExecutor?.undoExecution(
+                    actionLedgerEntryId = receipt.actionLedgerEntryId,
+                    expectedItemIds = receipt.items.map { it.id },
+                )
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (_: Exception) {
+                null
+            }
+            listRefreshToken += 1
+            snackbarHostState.showSnackbar(
+                if (undoResult is UndoCapturePlanListExecutionResult.Undone) {
+                    "Cambio deshecho"
+                } else {
+                    "No se pudo deshacer."
+                },
+            )
+        }
     }
 
     Scaffold(
@@ -300,8 +343,7 @@ fun QuickAsideApp(
                 speechTranscriberFactory = resolvedSpeechTranscriberFactory,
                 microphonePermissionController = resolvedMicrophonePermissionController,
                 onDismiss = { captureRequested = false },
-                onSaved = onVoiceCaptureSaved,
-                onInterpretationResult = onVoiceInterpretationResult,
+                onSaved = { result -> onCaptureSaved(result, true) },
             )
         } else {
             ManagementScreen(
@@ -314,9 +356,9 @@ fun QuickAsideApp(
                 captureReader = captureReader,
                 captureTranscriptCorrector = captureTranscriptCorrector,
                 historyRefreshToken = historyRefreshToken,
-                onCaptureSaved = { historyRefreshToken += 1 },
-                onInterpretationObserved = onInterpretationObserved,
+                onCaptureSaved = { result -> onCaptureSaved(result, false) },
                 snackbarHostState = snackbarHostState,
+                listRefreshToken = listRefreshToken,
                 listStore = listStore,
                 reversibleListItemActions = reversibleListItemActions,
                 taskStore = taskStore,
@@ -378,9 +420,9 @@ private fun ManagementScreen(
     captureReader: CaptureReader,
     captureTranscriptCorrector: CaptureTranscriptCorrector?,
     historyRefreshToken: Int,
-    onCaptureSaved: () -> Unit,
-    onInterpretationObserved: (CaptureInterpretationResult?) -> Unit,
+    onCaptureSaved: (CaptureSubmissionResult.Saved) -> Unit,
     snackbarHostState: SnackbarHostState,
+    listRefreshToken: Int,
     listStore: ListStore?,
     reversibleListItemActions: ReversibleListItemActions?,
     taskStore: TaskStore?,
@@ -415,6 +457,7 @@ private fun ManagementScreen(
                 listStore = listStore,
                 reversibleListItemActions = reversibleListItemActions,
                 snackbarHostState = snackbarHostState,
+                refreshToken = listRefreshToken,
                 onBack = onBackToLists,
                 onOpenHistory = onOpenHistory,
             )
@@ -452,6 +495,7 @@ private fun ManagementScreen(
                 listStore = listStore,
                 reversibleListItemActions = reversibleListItemActions,
                 snackbarHostState = snackbarHostState,
+                refreshToken = listRefreshToken,
                 onBack = onBackToLists,
             )
         }
@@ -542,7 +586,6 @@ private fun ManagementScreen(
                 captureSubmission = captureSubmission,
                 snackbarHostState = snackbarHostState,
                 onCaptureSaved = onCaptureSaved,
-                onInterpretationObserved = onInterpretationObserved,
             )
         }
         SummaryCard(destination)
@@ -553,8 +596,7 @@ private fun ManagementScreen(
 private fun TextCaptureField(
     captureSubmission: CaptureSubmission,
     snackbarHostState: SnackbarHostState,
-    onCaptureSaved: () -> Unit,
-    onInterpretationObserved: (CaptureInterpretationResult?) -> Unit,
+    onCaptureSaved: (CaptureSubmissionResult.Saved) -> Unit,
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     var isSaving by remember { mutableStateOf(false) }
@@ -569,15 +611,16 @@ private fun TextCaptureField(
                     CaptureSubmissionResult.Blank -> "Escribe algo para guardar"
                     is CaptureSubmissionResult.Saved -> {
                         text = ""
-                        onCaptureSaved()
-                        onInterpretationObserved(result.interpretation)
-                        savedCaptureMessage(result.interpretation)
+                        onCaptureSaved(result)
+                        null
                     }
 
                     is CaptureSubmissionResult.Failed -> "No se pudo guardar la captura"
                 }
                 isSaving = false
-                snackbarHostState.showSnackbar(message)
+                if (message != null) {
+                    snackbarHostState.showSnackbar(message)
+                }
             }
         }
     }
@@ -608,6 +651,21 @@ private fun TextCaptureField(
         keyboardActions = KeyboardActions(onDone = { submit() }),
     )
 }
+
+private fun savedCaptureMessage(result: CaptureSubmissionResult.Saved): String =
+    when (result.execution) {
+        CaptureExecutionOutcome.NotEligible ->
+            "Captura guardada · interpretación lista, sin aplicar"
+
+        is CaptureExecutionOutcome.Rejected ->
+            "Captura guardada · no se pudo aplicar la interpretación"
+
+        is CaptureExecutionOutcome.Failed ->
+            "Captura guardada · no se pudo aplicar la interpretación"
+
+        is CaptureExecutionOutcome.Executed -> error("Executed Captures use an Undo receipt")
+        CaptureExecutionOutcome.NoValidPlan -> savedCaptureMessage(result.interpretation)
+    }
 
 private fun savedCaptureMessage(interpretation: CaptureInterpretationResult?): String =
     when (interpretation) {

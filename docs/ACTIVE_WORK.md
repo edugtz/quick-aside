@@ -1,6 +1,83 @@
 # ACTIVE WORK
 
-Status: **CHG-027 COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main — NO NEXT CHANGE SELECTED**
+Status: **CHG-028 IMPLEMENTED — TEXT AND REAL-HUMAN VOICE DEVICE ACCEPTANCE PASS; REVIEW PENDING**
+
+## Current Change selection
+
+- Change: `CHG-028 — Capture List Auto-Execution + Receipt/Undo Integration`
+- Package: `docs/changes/028-capture-list-auto-execution/`
+- Branch: `chg-028-capture-list-auto-execution`
+- Verified base: live GitHub `main` / `origin/main` / starting `HEAD` at
+  `6ede3d08f298a376cfdfd7749fc2d92a2eca3f5c`.
+- Governance: **HIGH-ASSURANCE**.
+- Objective: connect persistence-first text and voice Capture submission to
+  the CHG-027 executor only for validated all-`AddListItem` plans, then expose
+  an accurate lightweight receipt and exact targeted batch Undo.
+- Room remains v7; no schema, migration, dependency, gateway, provider, Google,
+  reminder, or other action-family work is selected.
+- Focused JVM and real-Room implementation evidence passes. All required
+  deterministic connected gates now pass on the awake OPPO CPH2791 / Android
+  16: `CaptureListAutoExecutionUiTest` 8/8 and the directly affected
+  five-class regression set 35/35 (`QuickAsideAppTest` 1,
+  `CaptureTextSubmissionTest` 2, `VoiceCaptureTest` 10, `MandadoUiTest` 12,
+  `ComprasUiTest` 10). The earlier dozing-lockscreen blocker is superseded and
+  was environmental, not a product defect.
+- Historical note: connected-test cleanup removed the old install; the
+  reinstalled app's first real capture was correctly rejected until pairing.
+  That no longer describes the current identity. Three earlier production
+  text executions and the current capture-linked execution establish that the
+  active QA1 identity is working. No re-pairing or pairing-code operation was
+  attempted in this continuation.
+- The 2026-09-20 text acceptance pass submitted
+  `Agrega pan QA028-TEXT-ACCEPT-20260920 a Compras`. It persisted one Capture,
+  created exactly one Compras item, showed `Producto agregado`, and the
+  snackbar `Deshacer` action succeeded (`Cambio deshecho`). Read-only Room
+  evidence confirms the Capture remains, its one ledger entry is marked
+  undone, and its item is absent. The receipt appeared about 7 seconds after
+  submission; the UI appeared to be waiting in the capture state rather than
+  frozen or unresponsive.
+- A preceding exploratory text attempt,
+  `Agrega leche QA028-TEXT-0920 a Compras`, missed its transient Undo and left
+  that distinct test item in Compras. It is not a duplicate of the accepted
+  marker; the Capture and active ledger are documented in the CHG-028 QA
+  record so the durable side effect is explicit.
+- The coordinated real-human voice acceptance is **PASS**. The newest human
+  VOICE Capture is `f9bcffbf-429e-424d-9981-fe2184405f3d`, transcript
+  `agregar uvas moradas a compras`, captured at `2026-09-20T18:34:06-06:00`.
+  It remains persisted with one linked ledger,
+  `16b4bd34-c05a-4aaa-ac10-4b9e8d48bdda`, and exactly one CREATE/list_item
+  mutation targeting `b044cec6-1b94-47a4-9f56-426a35f78bf7`. The existing
+  Compras execution screenshot establishes `listDefinitionId=compras`; after
+  Undo the deleted row no longer stores that field. The ledger was marked
+  undone at 18:34:14; Room confirms the target ID and any `uvas moradas` item
+  are absent. The user-provided screenshot shows `Cambio deshecho`. The Capture
+  remains and no duplicate mutation/item exists.
+- An earlier human voice run, Capture `b7bd11ad-e075-45b6-9494-b2e8737fa41f`
+  (`comprar Giovanni en Costco`), remains an independent active execution with
+  its `Giovanni en Costco` item present once in Compras. It is not the target
+  of the coordinated Undo. The earlier workstation-synthesized artifact
+  `04eed633-87b3-4cc8-8283-a3a24869b5c3` (`comprar carne`) has no ledger or
+  mutation and is not acceptance evidence.
+- The accepted text receipt took approximately 7 seconds. The earlier human
+  voice run took approximately 8 seconds from Capture to ledger/item creation;
+  the coordinated Undo run took approximately 6 seconds to ledger execution
+  and about 2 more seconds to Undo. The UI appeared to wait rather than freeze.
+- Tailscale had been disabled on the OPPO during the earlier
+  `Captura guardada · interpretación no disponible` event. After Tailscale was
+  enabled, both real text and real-human voice interpretation/execution
+  worked. That was an environment/preflight issue, not a CHG-028 defect; the
+  previous ProviderFailure was not investigated further. NOTE — without the
+  required private Tailscale route, the app still shows generic
+  `interpretación no disponible` feedback; this is environmental UX feedback
+  debt. NOTE — remote interpretation latency is perceptible and should be
+  evaluated separately after CHG-028; do not redesign the async flow here.
+- No tests were run, and no source code was changed during this documentation
+  closeout. Existing production/test working-tree changes were left untouched.
+  No install/uninstall, pairing, `pm clear`, JDWP, commit, push, merge, release,
+  or later Change work was performed. The post-voice app-process Logcat
+  privacy scan found no voice transcript/item keywords, auth/signature
+  headers, API-key pattern, request body, or prompt pattern (0 matches).
+- The user retains commit, push, merge, release, and production authority.
 
 ## Most recently completed normal Change
 
@@ -37,14 +114,10 @@ Status: **CHG-027 COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main — NO N
   introduced during closeout.
 - Normal capture/UI still stops at the validated `CapturePlan`; it does not
   automatically execute the plan.
-- No next Change is selected or reserved. CHG-028 is unselected, and no later
-  Change ID is reserved.
+- CHG-028 is now selected by explicit user instruction. No later Change ID is
+  reserved.
 - The user retains product, commit, push, merge, release, and production
   authority.
-
-## Current Change selection
-
-There is currently no selected next Change.
 
 ## Most recently completed QAG change
 
@@ -127,7 +200,11 @@ with **PASS_WITH_NOTES** and its interpretation path remains stopped at
 validated `CapturePlan`. CHG-027 adds a separate provider-independent list
 execution foundation for validated plans whose every action is `AddListItem`,
 with targeted batch Undo. Other CapturePlan action types are not covered, and
-normal capture/UI does not automatically execute a plan.
+CHG-028 connects that list-only boundary to normal text and voice Capture with
+exact targeted Undo. Text execution/Undo and human-voice execution/Undo have
+passed real-device acceptance with visual and privacy evidence recorded in
+the CHG-028 QA package. The user retains commit, push, merge, and release
+authority. No other action family is selected.
 
 ## Workstream and Change selection
 
@@ -141,12 +218,12 @@ initiative, remains dependent on evidence from actual use. It is not
 automatically scheduled as the next implementation change or reserved under a
 global Change ID.
 
-The normal global reviewable-change history now runs through Change 027.
+The completed normal global reviewable-change history runs through Change 027.
 CHG-027 — CapturePlan List Execution Foundation is the most recently completed
 normal Change and is integrated into `main` with **PASS_WITH_NOTES**. Its
 implementation scope and verification record remain in
-`docs/changes/027-captureplan-list-execution/`. No next Change is selected or
-reserved; CHG-028 remains unselected and no later Change ID is reserved.
+`docs/changes/027-captureplan-list-execution/`. CHG-028 is the selected active
+Change; no later Change ID is reserved.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates
 only; this closeout does not schedule them.

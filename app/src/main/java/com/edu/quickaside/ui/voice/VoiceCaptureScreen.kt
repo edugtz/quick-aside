@@ -49,7 +49,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.edu.quickaside.application.capture.CaptureInterpretationResult
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.speech.AndroidMicrophonePermissionController
@@ -122,8 +121,7 @@ fun VoiceCaptureScreen(
     speechTranscriberFactory: SpeechTranscriberFactory,
     microphonePermissionController: MicrophonePermissionController,
     onDismiss: () -> Unit,
-    onSaved: () -> Unit,
-    onInterpretationResult: (CaptureInterpretationResult?) -> Unit = {},
+    onSaved: (CaptureSubmissionResult.Saved) -> Unit,
 ) {
     var state by remember { mutableStateOf<VoiceCaptureUiState>(VoiceCaptureUiState.PermissionNeeded) }
     var transcript by remember { mutableStateOf("") }
@@ -173,8 +171,7 @@ fun VoiceCaptureScreen(
                         }
 
                         is CaptureSubmissionResult.Saved -> {
-                            onInterpretationResult(result.interpretation)
-                            onSaved()
+                            onSaved(result)
                         }
                         is CaptureSubmissionResult.Failed -> {
                             state = VoiceCaptureUiState.Failed(

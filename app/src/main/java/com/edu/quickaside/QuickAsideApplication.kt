@@ -5,6 +5,7 @@ import com.edu.quickaside.application.actions.ActionLedgerStore
 import com.edu.quickaside.application.capture.AIProvider
 import com.edu.quickaside.application.capture.CaptureInterpreter
 import com.edu.quickaside.application.capture.CapturePlanValidator
+import com.edu.quickaside.application.capture.CapturePlanListExecutor
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
@@ -22,6 +23,7 @@ import com.edu.quickaside.data.local.CaptureWriter
 import com.edu.quickaside.data.local.QuickAsideDatabase
 import com.edu.quickaside.data.local.RoomActionLedgerStore
 import com.edu.quickaside.data.local.RoomCaptureReader
+import com.edu.quickaside.data.local.RoomCapturePlanListExecutor
 import com.edu.quickaside.data.local.RoomCaptureTranscriptCorrector
 import com.edu.quickaside.data.local.RoomCaptureWriter
 import com.edu.quickaside.data.local.RoomListStore
@@ -71,6 +73,10 @@ class QuickAsideApplication : Application() {
         )
     }
 
+    val capturePlanListExecutor: CapturePlanListExecutor by lazy {
+        RoomCapturePlanListExecutor(database)
+    }
+
     val devicePairer: DevicePairer by lazy {
         QuickAsideGatewayPairer(
             transport = gatewayTransport,
@@ -82,6 +88,7 @@ class QuickAsideApplication : Application() {
         CaptureSubmission(
             writer = captureWriter,
             interpreter = captureInterpreter,
+            listExecutor = capturePlanListExecutor,
         )
     }
 

@@ -90,6 +90,7 @@ fun MandadoScreen(
     listStore: ListStore?,
     reversibleListItemActions: ReversibleListItemActions?,
     snackbarHostState: SnackbarHostState,
+    refreshToken: Int = 0,
     onBack: () -> Unit,
     onOpenHistory: () -> Unit,
 ) {
@@ -348,7 +349,7 @@ fun MandadoScreen(
         }
     }
 
-    LaunchedEffect(listStore) { loadState() }
+    LaunchedEffect(listStore, refreshToken) { loadState() }
     BackHandler(enabled = finishConfirmationVisible) {
         finishConfirmationVisible = false
     }
