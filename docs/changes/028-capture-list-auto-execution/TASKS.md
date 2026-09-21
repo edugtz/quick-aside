@@ -1,7 +1,7 @@
 # Change 028 — Capture List Auto-Execution + Receipt/Undo Integration — TASKS
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTED — TEXT AND REAL-HUMAN VOICE DEVICE ACCEPTANCE PASS; REVIEW PENDING**
+- Status: **IMPLEMENTED — ACCEPTANCE RECORDED; EVIDENCE CLOSEOUT COMPLETE; REVIEW PENDING**
 - Branch: `chg-028-capture-list-auto-execution`
 
 ## Preflight and package
@@ -50,8 +50,15 @@
       `CaptureListAutoExecutionUiTest` PASS 8/8. Existing regressions PASS
       35/35: `QuickAsideAppTest` 1, `CaptureTextSubmissionTest` 2,
       `VoiceCaptureTest` 10, `MandadoUiTest` 12, `ComprasUiTest` 10.
-      `CaptureSubmissionListExecutionDatabaseTest` remains PASS 4/4 from the
-      earlier real-Room run and was not rerun.
+      A fresh focused run of `CaptureSubmissionListExecutionDatabaseTest` on
+      `CHG028_Room_API35(AVD)` / API 35 passed 4/4 at unchanged reviewed
+      implementation SHA `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`. Its
+      JUnit XML and exact command/result record are canonical in
+      `evidence/device/room/`. This is a fresh verification of the same Room
+      instrumentation gate, not a reproduction of the original OPPO
+      historical 4/4 run. The original historical note, OPPO signing-conflict
+      attempt, Pixel 9 Pro boot failure, and first API 35 infrastructure
+      failure remain preserved separately.
 - [x] Run full JVM, Android-test compile, assemble, and lint gates.
 - [x] Verify Room/schema/migrations/dependencies/manifest/network config and
       gateway/provider/auth/logging remain unchanged.
@@ -63,18 +70,29 @@
       Capture persisted, created exactly one Compras mutation, and its exact
       target was successfully undone while retaining the Capture. The voice
       Undo ledger and target absence match the user-provided `Cambio deshecho`
-      screenshot. Text/voice visual and privacy evidence pass. No tests were
-      run during this documentation closeout; no install or re-pair occurred.
-- [x] Run final Git whitespace/status/stat/name-status and complete-diff review.
+      screenshot. Text receipt/Undo and sampled privacy evidence are included;
+      the accepted-marker voice execution screenshot was not recovered. The
+      original acceptance closeout ran no tests. The later evidence closeout
+      verified the Room instrumentation gate on the clean API 35 emulator at
+      the unchanged implementation SHA. It did not touch the OPPO, repeat
+      production acceptance, or change production/test source. No re-pair or
+      production acceptance rerun occurred.
+- [x] Run the requested Git whitespace, status, stat, and name-status checks.
 - [x] Prepare the required CHG-028 implementation evidence record without
       assigning the independent engineering verdict.
 
 ## Stop state
 
-Deterministic and real-device acceptance are complete: text execution/Undo and
-human voice execution/Undo pass, with visual and privacy evidence recorded in
-`QA.md`. The user authorized the CHG-028 commit and push for independent
-review. Stop before merge, release, or CHG-029.
+The implementation and prior production acceptance are complete as recorded
+in `QA.md`; evidence closeout is complete and independent review is pending.
+Machine evidence for the focused/full JVM, Room 4/4, Compose, existing
+connected regressions, build, lint, text acceptance, and privacy sample is
+indexed under `evidence/`. The fresh API 35 Room result independently verifies
+the same instrumentation gate at unchanged reviewed implementation SHA; it
+does not reproduce the original OPPO historical run. The earlier Room
+historical note and infrastructure failures remain preserved. Stop before any
+further gate, OPPO interaction, app uninstall, re-pair, commit, push, merge,
+release, Round 2, or CHG-029.
 The earlier workstation-synthesized attempt produced a separate `comprar
 carne` Capture without a ledger or mutation; it is not human-voice acceptance.
 No synthesized speech or capture was initiated during documentation closeout.

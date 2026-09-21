@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.application.capture.CaptureSubmissionTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-20T01:02:27.357Z" hostname="redacted-local-host" time="0.006">
+  <properties/>
+  <testcase name="successfulSubmissionsUseDistinctIds" classname="com.edu.quickaside.application.capture.CaptureSubmissionTest" time="0.002"/>
+  <testcase name="validTextSubmissionCreatesOneTextCaptureAndPreservesOriginalText" classname="com.edu.quickaside.application.capture.CaptureSubmissionTest" time="0.0"/>
+  <testcase name="blankAndWhitespaceOnlySubmissionsCreateNothing" classname="com.edu.quickaside.application.capture.CaptureSubmissionTest" time="0.001"/>
+  <testcase name="blankVoiceSubmissionCreatesNothing" classname="com.edu.quickaside.application.capture.CaptureSubmissionTest" time="0.0"/>
+  <testcase name="persistenceFailureReturnsFailureWithoutReplacingItWithSuccess" classname="com.edu.quickaside.application.capture.CaptureSubmissionTest" time="0.001"/>
+  <testcase name="validVoiceSubmissionCreatesOneVoiceCaptureAndPreservesOriginalTranscript" classname="com.edu.quickaside.application.capture.CaptureSubmissionTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

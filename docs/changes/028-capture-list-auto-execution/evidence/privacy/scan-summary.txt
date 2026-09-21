@@ -1,0 +1,17 @@
+CHG-028 privacy scan — recovered app-process Logcat sample
+Reviewed branch SHA: b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67
+Sample: 32 lines, 4,120 bytes; saved 2026-09-20 17:45:46 America/Mexico_City.
+Scope: app process PID 5762 after the earlier real-human voice execution; epoch span 1789947062.139–1789947670.629 (2026-09-20 17:31:02.139–17:41:10.629 local).
+Method: case-insensitive regex scan, one line match count per category; no matching line content was emitted.
+
+Exact regex categories and counts:
+- acceptance transcript/item literals: /agregar uvas moradas a compras|uvas moradas/i — 0 matches
+- capture/transcript/raw-text categories: /capture|transcript|raw[_ -]?text/i — 0 matches
+- auth/bearer headers: /authorization|bearer/i — 0 matches
+- QA1/signature/pairing-code terms: /qa1|signature|hmac|nonce|pairing.?code/i — 0 matches
+- six-digit pairing-code shape: /(?<!\d)\d{6}(?!\d)/i — 0 matches
+- provider/API credential terms: /provider|api[-_ ]?key|sk-[A-Za-z0-9]{12,}|token/i — 0 matches
+- request-body/prompt/message terms: /request[-_ ]?body|raw[-_ ]?body|prompt|messages/i — 0 matches
+
+Result: 0 matches in all categories. The checked categories cover the acceptance transcript/item name, capture/transcript/raw-text markers, authorization/bearer headers, QA1/signature/HMAC/nonce/pairing-code terms, six-digit pairing-code shapes, provider/API-key/token credential terms, and request-body/prompt/message content.
+Sanitization: sample was included unchanged after the targeted scan; no pairing code, QA1 signature/header material, provider credential, unexpected request body, prompt content, or acceptance transcript/item text matched. No other Logcat samples were copied.

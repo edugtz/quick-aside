@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="4" failures="0" errors="0" skipped="0" time="0.591" timestamp="2026-09-21T03:04:37" hostname="localhost">
+  <testsuite name="com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest" tests="4" failures="0" errors="0" skipped="0" time="0.105" timestamp="2026-09-21T03:04:37" hostname="localhost">
+    <properties>
+      <property name="device" value="CHG028_Room_API35(AVD) - 15" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="mandadoWithoutActiveSessionPersistsCaptureAndRejectsWithZeroMutations" classname="com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest" time="0.043" />
+    <testcase name="mixedUnsupportedPlanPersistsCaptureAndAddsNoExecutionRows" classname="com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest" time="0.001" />
+    <testcase name="eligibleCapturePersistsCaptureItemsOneSourceLinkedLedgerAndExactReceipt" classname="com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest" time="0.031" />
+    <testcase name="targetedUndoUsesReturnedIdsDeletesExactBatchMarksLedgerAndPreservesCapture" classname="com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest" time="0.03" />
+  </testsuite>
+</testsuites>

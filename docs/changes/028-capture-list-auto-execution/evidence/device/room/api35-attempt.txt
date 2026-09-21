@@ -1,0 +1,19 @@
+# CHG-028 Room instrumentation attempt — API 35 emulator
+
+- Invocation start: `2026-09-21T02:51:29Z` (UTC)
+- Branch: `chg-028-capture-list-auto-execution`
+- Branch HEAD: `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`
+- Emulator: `CHG028_Room_API35`, Pixel 9 Pro AVD profile; Android product/model `sdk_gphone64_arm64`; API 35
+- Boot check: `adb -s emulator-5554 shell getprop sys.boot_completed` returned `1`
+- Gradle exit code: `1`
+- Result: `:app:connectedDebugAndroidTest` failed with `java.util.concurrent.ExecutionException: java.lang.UnsupportedOperationException`. No JUnit XML or runner result was generated, so the Room test count and expected 4/4 result are unavailable.
+- Gradle output: [api35-gradle-output.txt](api35-gradle-output.txt)
+- Runner output snapshot: [api35-runner-output/](api35-runner-output/); the connected-result directory contained no files after this failure.
+
+Exact shell invocation:
+
+```sh
+env GRADLE_USER_HOME=/private/tmp/chg028-gradle ANDROID_USER_HOME=/private/tmp/chg028-android ./gradlew :app:connectedDebugAndroidTest --serial emulator-5554 -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest > docs/changes/028-capture-list-auto-execution/evidence/device/room/api35-gradle-output.txt 2>&1
+```
+
+The explicit `--serial emulator-5554` target kept the Room task scoped to the disposable emulator. No production acceptance or other gate was run. The existing OPPO signing-conflict and Pixel 9 Pro boot-failure artifacts remain intact as historical infrastructure evidence.

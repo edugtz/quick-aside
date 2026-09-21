@@ -1,11 +1,59 @@
 # CHG-028 QA and Evidence Record
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTED — TEXT AND REAL-HUMAN VOICE DEVICE ACCEPTANCE PASS; REVIEW PENDING**
+- Status: **IMPLEMENTED — ACCEPTANCE RECORDED; EVIDENCE CLOSEOUT COMPLETE; REVIEW PENDING**
 - Branch: `chg-028-capture-list-auto-execution`
 - Verified base: `6ede3d08f298a376cfdfd7749fc2d92a2eca3f5c`
 - At the time acceptance evidence was recorded, local HEAD remained the base
   SHA; the user subsequently authorized the CHG-028 commit and push.
+
+## Evidence closeout follow-up — 2026-09-21
+
+Round-1 independent review was **BLOCKED** because verification/runtime
+evidence recorded here was not independently inspectable through GitHub. The
+evidence index is now [evidence/README.md](evidence/README.md), reviewed at
+implementation SHA `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`.
+
+- The three focused JVM classes sum to 17/17 in the preserved full-suite
+  reports; prior task history records the focused command's exit 0. Full JVM
+  (174/174), Compose (8/8), five connected regressions (35/35), compile,
+  assemble, lint, acceptance screenshots,
+  sanitized Room acceptance facts, and the sampled privacy log have inspectable
+  artifacts or recovered machine output. Their provenance limits are recorded
+  in the evidence index.
+- The prior QA record says the Room database regression passed 4/4, but its
+  original JUnit/runner output could not be recovered. The evidence-only rerun
+  started **0 tests** and exited 1 because Android rejected the installed app
+  update with `INSTALL_FAILED_UPDATE_INCOMPATIBLE` (signing-key mismatch).
+  This is an infrastructure result, not a passing or failing Room assertion.
+  No product-app uninstall succeeded; UTP also reported that uninstalling the
+  test APK failed. No pairing operation was performed during that attempt; see
+  [the recovery record](evidence/device/room/recovery-attempt.txt) and
+  [the machine report](evidence/device/room/attempt-install-failure.xml).
+- A separate fresh focused API 35 emulator run now independently verifies the
+  Room instrumentation gate at unchanged implementation SHA
+  `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`: 4 tests started and finished,
+  the XML reports 4 tests with no failures/errors/skips, and Gradle reported
+  `BUILD SUCCESSFUL`. The canonical artifacts are
+  [the JUnit XML](evidence/device/room/TEST-CHG028_Room_API35-AVD.xml) and
+  [the successful run record](evidence/device/room/api35-successful-run.txt).
+  This fresh verification covers the same gate and does not reproduce the
+  original OPPO historical 4/4 run. The older historical note, OPPO signing
+  conflict, Pixel 9 Pro boot failure, and first API 35 infrastructure failure
+  remain preserved.
+- The sanitized post-Undo Room excerpt supports the listed Capture, ledger,
+  mutation, Undo, target-absence, and duplicate-count facts for the text and
+  voice acceptance markers. It cannot independently establish
+  `listDefinitionId=compras` for the deleted voice target because the mutation
+  stores null before/after state. No standalone successful human-voice
+  execution screenshot for the accepted `uvas moradas` marker was recovered.
+  The included Compras image is representative only; the user-provided voice
+  screenshot documents Undo.
+
+The earlier evidence package was partial; this closeout makes the Room gate
+independently inspectable. The documented voice destination and screenshot
+limitations remain review notes, and no independent engineering verdict is
+assigned here.
 
 ## Baseline and device
 
@@ -20,17 +68,17 @@
 | Gate | Exact command | Result |
 |---|---|---|
 | Existing focused submission regression / initial compile | `./gradlew :app:testDebugUnitTest --tests com.edu.quickaside.application.capture.CaptureSubmissionTest --tests com.edu.quickaside.application.capture.CaptureSubmissionRemoteIntegrationTest` | PASS. Initial default-sandbox wrapper attempt could not open the external Gradle cache lock; the identical approved-cache rerun built successfully. |
-| Focused CHG-028 orchestration + submission regressions | `./gradlew :app:testDebugUnitTest --tests com.edu.quickaside.application.capture.CaptureSubmissionExecutionTest --tests com.edu.quickaside.application.capture.CaptureSubmissionTest --tests com.edu.quickaside.application.capture.CaptureSubmissionRemoteIntegrationTest` | PASS: 17/17 total (9 CHG-028, 6 existing submission, 2 existing remote integration), 0 failed/errors/skipped. |
+| Focused CHG-028 orchestration + submission regressions | `./gradlew :app:testDebugUnitTest --tests com.edu.quickaside.application.capture.CaptureSubmissionExecutionTest --tests com.edu.quickaside.application.capture.CaptureSubmissionTest --tests com.edu.quickaside.application.capture.CaptureSubmissionRemoteIntegrationTest` | Prior task history records the focused command exit 0; its standalone JUnit output was not retained. The three suite reports preserved from the full run total 17/17 (9 CHG-028, 6 existing submission, 2 existing remote integration), 0 failed/errors/skipped. |
 | Android-test compile before final UI test source | `./gradlew :app:compileDebugAndroidTestKotlin` | PASS. |
 | Android-test compile after final UI test source | `./gradlew :app:compileDebugAndroidTestKotlin` | First run failed only on two invalid Compose test imports; one focused import correction was applied. Rerun PASS. |
-| Real-Room CHG-028 pipeline | `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest` | PASS on CPH2791 / Android 16: 4/4, 0 failed, 0 skipped. |
+| Real-Room CHG-028 pipeline — fresh API 35 run | `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest --stacktrace` | PASS: **4 tests started / 4 finished**, XML reports 4 tests, 0 failures/errors/skips, and Gradle reported `BUILD SUCCESSFUL`. Canonical evidence: [JUnit XML](evidence/device/room/TEST-CHG028_Room_API35-AVD.xml) and [successful run record](evidence/device/room/api35-successful-run.txt). This is a fresh focused verification at unchanged SHA `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`, not a reproduction of the original OPPO historical run. Earlier infrastructure attempts remain preserved. |
 | Focused CHG-028 Compose class | `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.CaptureListAutoExecutionUiTest` | BLOCKED before feature assertion. The first of 8 methods reported no Compose hierarchy; the runner was manually interrupted after it did not finish unwinding. |
 | Exact failed Compose method | `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.CaptureListAutoExecutionUiTest#executorRejectionShowsNonSuccessCopyWithoutUndo` | BLOCKED 1/1 with the same no-Compose-hierarchy startup condition. Device diagnostics immediately afterward showed `mWakefulness=Dozing`, active dreaming lockscreen, and NotificationShade focus. No third attempt was made under the two-attempt rule. |
 | Full JVM | `./gradlew :app:testDebugUnitTest` | PASS: 174/174 across 28 reports, 0 failed/errors/skipped. |
 | Debug assembly | `./gradlew :app:assembleDebug` | PASS. |
 | Lint | `./gradlew :app:lintDebug` | PASS: 0 errors, 16 warnings, 2 hints. |
 
-The focused Room test proves:
+The Room test source is intended to exercise:
 
 - eligible Capture persistence followed by real atomic list execution;
 - exact returned ListItem IDs, ordered ledger mutations, and source Capture;
@@ -39,7 +87,7 @@ The focused Room test proves:
 - exact returned ledger/item identities drive targeted Undo, delete the exact
   batch, mark the ledger undone, and preserve the original Capture.
 
-## Continuation run — connected gates completed
+## Original implementation continuation run — connected gates completed
 
 Resumed from the same unmodified worktree (production sources last modified
 18:50–18:56, test sources 18:54–18:56) with the OPPO CPH2791 / Android 16 /
@@ -52,12 +100,15 @@ dozing-lockscreen startup condition, not on a product/test defect.
 |---|---|---|
 | Directly affected existing device regressions | One five-class connected run; combined report `TEST-CPH2791 - 16-_app-.xml` inspected at 19:40 local before the later focused run replaced the same output directory | PASS: **35/35**, 0 failed/errors/skipped, `time=48.308`, report timestamp `2026-09-20T01:26:27`, exit code 0. Exact classes/counts: `QuickAsideAppTest` 1 (`inicioMicrophoneOpensCaptureWithoutAddingNavigationDestination`); `CaptureTextSubmissionTest` 2 (`enteredTextShowsReceiptClearsFieldAndUsesRealRoomTestDatabase`, `failedPersistenceKeepsEnteredTextAndShowsError`); `VoiceCaptureTest` 10 (including `finalTranscriptCreatesExactlyOneVoiceCaptureAndPreservesItExactly`, `successfulVoiceCaptureClosesSurfaceShowsReceiptAndIsVisibleInMemoria`); `MandadoUiTest` 12 (including `addFailureRetainsInputAndShowsError`, `exactItemTextUsesReversibleBoundaryShowsReceiptAndUndoRemovesExactItem`, `backFromMandadoReturnsToListasRoot`, `listasExposesInteractiveMandadoAndComprasWithoutAFifthDestination`); `ComprasUiTest` 10 (including `bottomNavigationSwitchResetsNestedListRoute`, `androidBackFromComprasReturnsToListasRoot`, `exactTextUsesReversibleBoundaryWithNullSessionAndUndoRemovesExactItem`). |
 | Focused CHG-028 Compose class (previously BLOCKED) | `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.CaptureListAutoExecutionUiTest` | PASS: **8/8**, 0 failed/errors/skipped, `time=11.738`, report timestamp `2026-09-20T01:45:08`, exit code 0. Methods: `textSingleExecutionShowsMutationReceiptAndUndo`, `textBatchShowsAccurateCountAndForwardsOneExactOrderedUndo`, `unsupportedValidPlanKeepsHonestNotAppliedCopyWithoutUndo`, `executorRejectionShowsNonSuccessCopyWithoutUndo`, `executorFailureShowsNonSuccessCopyWithoutUndo`, `undoFailureDoesNotClaimSuccessAndShowsGenericError`, `voiceUsesSameReceiptExecutesOnceAndClosesCaptureSurface`, `globalVoiceCaptureRefreshesVisibleComprasAndUndoRemovesTheExactItem`. |
-| Real-Room pipeline class | `CaptureSubmissionListExecutionDatabaseTest` from the deterministic table above | PASS 4/4 retained; not rerun because source/test revision is unchanged. |
+| Real-Room pipeline class | `CaptureSubmissionListExecutionDatabaseTest` | Fresh focused API 35 run PASS 4/4 at unchanged reviewed implementation SHA. The canonical XML and run record are in `evidence/device/room/`. This does not reproduce the original OPPO historical run; its original report remains unrecoverable. The earlier OPPO signing-conflict and API 35 infrastructure attempts remain preserved as failures before a Room test result. |
 
-No production, test, schema, dependency, gateway, or configuration file changed
-during this continuation. Full JVM (174/174), debug assembly, lint,
-Android-test compile, schema/config comparisons, and the real-Room gate were
-not rerun because their passing evidence from the same revision stands.
+At that time, no production, test, schema, dependency, gateway, or
+configuration file changed during the continuation. Full JVM (174/174), debug
+assembly, lint, Android-test compile, schema/config comparisons, and the
+real-Room gate were not rerun during that continuation because the prior
+passing evidence from the same source revision stood. A subsequent OPPO
+evidence-only attempt started 0 tests on a signing conflict; the later fresh
+API 35 run passed and is the canonical Room verification above.
 
 The eight focused Compose scenarios now have passing execution evidence
 (`CaptureListAutoExecutionUiTest` 8/8). They cover single and batch receipts,
@@ -96,8 +147,8 @@ Observed, all on the reinstalled debug app against the private gateway:
   contained zero matches for the capture text, QA/device auth headers,
   signature material, or provider request bodies; only system/UI noise
   (InsetsController, DynamicFramerate, WindowOnBackDispatcher, etc.).
-- Screenshots retained outside the repository at
-  `/tmp/chg028/memoria_rejected.png` and `/tmp/chg028/compras_rejected.png`.
+- The historical screenshots from this superseded, unpaired attempt were not
+  included in the CHG-028 evidence package and are not relied upon here.
 
 The masked pairing dialog was then reopened with a disposable probe capture
 and left open on the device so the user can enter a fresh pairing code. Once
@@ -137,16 +188,15 @@ The UI exposed `Producto agregado` and `Deshacer` in the post-submit
 accessibility hierarchy. The action expired before it was invoked. The current
 ledger row has `undone_at_epoch_millis = NULL`, and the item remains in
 Compras. Therefore the text control did not complete its required Undo and is
-not a PASS. The later screenshot
-`/tmp/chg028/text_compras_list_detail.png` visibly shows the item in Compras;
-`/tmp/chg028/text_success_receipt.png` was captured after the transient receipt
-was no longer visible, so it is not receipt evidence. The original Capture
-remains in Room; no duplicate marker item exists.
+not a PASS. The representative image now at
+`evidence/acceptance/compras-representative-list.png` shows a list view, but
+not this item's accepted marker. The screenshot captured after the transient
+receipt disappeared is not receipt evidence and is not included. The original
+Capture remains in Room; no duplicate marker item exists.
 
 That run's stop state is superseded by the 2026-09-20 continuation below.
-Existing prior batch screenshots remain at
-`/tmp/chg028/batch_receipt.png` and `/tmp/chg028/batch_post_undo.png`; this run
-did not repeat or alter that acceptance.
+The prior batch screenshots are not included in this package; this run did
+not repeat or alter that acceptance.
 
 ## CHG-028 acceptance evidence reconciliation — 2026-09-20
 
@@ -154,14 +204,16 @@ did not repeat or alter that acceptance.
 |---|---|---|
 | TEXT execution | **PASS** | One Capture, one Compras CREATE, success receipt, and no duplicate. |
 | TEXT Undo | **PASS** | `Deshacer` succeeded; item absent and Capture retained in Room. |
-| VOICE human execution | **PASS** | Human VOICE Capture links to exactly one CREATE mutation; the execution screenshot shows the target in Compras, and the Capture remains after Undo. |
+| VOICE human execution | **PASS (recorded; destination evidence incomplete)** | The human VOICE Capture links to exactly one CREATE mutation and remains after Undo. The included post-Undo Room excerpt cannot recover the deleted row's list ID; the exact accepted-marker execution screenshot was not recovered. |
 | VOICE Undo | **PASS** | Latest human VOICE Capture has one CREATE mutation; the ledger is marked undone and its target no longer exists. User screenshot shows `Cambio deshecho`. |
-| Visual evidence | **PASS** | Text success/Undo/Capture screenshots, existing Compras execution screenshot, and user-provided human voice Undo screenshot are retained as evidence. |
+| Visual evidence | **PARTIAL** | Text success/Undo/Capture and user-provided voice Undo screenshots are retained. A representative Compras screenshot is included, but no standalone successful voice execution screenshot for the accepted marker was found. |
 | Privacy evidence | **PASS** | Previously recorded post-voice 32-line app-process Logcat sample has zero targeted transcript/item, auth/signature, API-key, request-body, or prompt matches; no logging-sensitive behavior changed. |
 
-Latency and UI responsiveness observations are recorded below. All requested
-device acceptance evidence is complete. The user authorized the CHG-028
-commit/push; the next gate after push is independent HIGH-ASSURANCE review.
+Latency and UI responsiveness observations are recorded below. The prior QA
+session recorded the text and voice production acceptance as complete. This
+evidence package preserves the inspectable subset and states the remaining
+limits above; the fresh API 35 Room 4/4 is independently verified, while the
+original OPPO historical report remains unrecoverable.
 
 ### Environment correction supplied by the user
 
@@ -204,10 +256,10 @@ The successful text acceptance used one unique marker:
   state was observed; the app remained on Inicio/Captura while the request was
   pending and displayed the receipt. The UI was not stress-tapped during the
   wait.
-- Visual evidence: `/tmp/chg028/text_retry_receipt.png` shows the success
-  receipt and Undo; `/tmp/chg028/text_retry_undo.png` shows `Cambio deshecho`.
-  `/tmp/chg028/text_capture_remains_memoria.png` shows the accepted Capture
-  still listed in Memoria after Undo.
+- Visual evidence: `evidence/acceptance/text-success-receipt.png` shows the
+  success receipt and Undo; `evidence/acceptance/text-undo.png` shows
+  `Cambio deshecho`. `evidence/acceptance/capture-retained-in-memoria.png`
+  shows the accepted Capture still listed in Memoria after Undo.
   The screen uses the existing light Material surface, the global capture
   action, and the established concise snackbar pattern; the receipt remains
   lightweight and consistent with the accepted v3 direction.
@@ -235,20 +287,21 @@ above.
 - It has exactly one linked ActionLedgerEntry:
   `16b4bd34-c05a-4aaa-ac10-4b9e8d48bdda`. The ledger contains exactly one
   mutation: position 0, `CREATE`, target type `list_item`, target ListItem ID
-  `b044cec6-1b94-47a4-9f56-426a35f78bf7`. The existing Compras execution
-  screenshot identifies the target list as `listDefinitionId=compras`. The
-  current Room database no longer has the deleted item row; this executor's
-  CREATE mutation stores null before/after state, so the list ID is established
-  by that execution screenshot rather than a remaining item row.
+  `b044cec6-1b94-47a4-9f56-426a35f78bf7`. The current Room database no longer
+  has the deleted item row; this executor's CREATE mutation stores null
+  before/after state. The stored transcript names `compras` and prior QA
+  records the destination, but the exact successful execution screenshot for
+  this marker was not recovered, so this package cannot independently verify
+  `listDefinitionId=compras` for the deleted target.
 - The ledger's `undone_at_epoch_millis` is populated at
   `2026-09-20T18:34:14-06:00`. The target item ID has **0** current rows, the
   `uvas moradas` text has **0** current matches in Compras, and exactly one
   mutation row references the target ID. Thus the target was undone, no
   duplicate item remains, and no duplicate mutation was recorded.
-- The user-provided screenshot
-  `/var/folders/6_/wvl8zb0936x0d5jsdxbqs8s80000gn/T/codex-clipboard-71d4390f-1596-406d-9831-a798be0af2b3.png`
-  visibly shows `Cambio deshecho`. Together with the read-only Room state, this
-  closes real-human voice execution and Undo: **PASS**.
+- The user-provided screenshot at
+  `evidence/acceptance/voice-undo.png` visibly shows `Cambio deshecho`.
+  Together with the read-only Room state, this supports the recorded human
+  voice Undo result. It does not show the prior successful execution receipt.
 - The earlier human voice execution Capture
   `b7bd11ad-e075-45b6-9494-b2e8737fa41f` (`comprar Giovanni en Costco`) is a
   separate prior run. Its one `CREATE/list_item` ledger remains active and its
@@ -268,8 +321,11 @@ above.
   These durable intervals are perceptible waits, not failures.
 - The UI appeared to wait in the capture/saving flow rather than freeze or
   become unresponsive. No UI freeze was observed.
-- No new capture was initiated during this documentation closeout. No install,
-  re-pair, app-data clear, source edit, test, or connected test was performed.
+- No new capture was initiated during the original 2026-09-20 acceptance
+  closeout. The 2026-09-21 evidence closeout preserved a fresh focused Room
+  run on the API 35 emulator only. It did not touch the OPPO or repeat
+  production acceptance. No re-pair, app-data clear, source edit, or
+  production acceptance rerun occurred.
 
 ### Visual and privacy evidence
 
@@ -277,14 +333,16 @@ above.
   the existing four management destinations and global capture affordance;
   the success and Undo receipts use concise Material snackbar feedback, with
   no new route, modal, or mandatory review step.
-- Visual evidence is **PASS**: `/tmp/chg028/text_retry_receipt.png`
+- Visual evidence is **PARTIAL**: `evidence/acceptance/text-success-receipt.png`
   shows the success receipt and `Deshacer`;
-  `/tmp/chg028/text_retry_undo.png` shows `Cambio deshecho`; and
-  `/tmp/chg028/text_capture_remains_memoria.png` shows the Capture retained.
-  The existing Compras execution screenshot shows the real-human voice target
-  in Compras. The user-provided voice Undo screenshot above shows
-  `Cambio deshecho`.
-- App-process Logcat snapshot `/tmp/chg028/logcat_acceptance_all.txt` was
+  `evidence/acceptance/text-undo.png` shows `Cambio deshecho`; and
+  `evidence/acceptance/capture-retained-in-memoria.png` shows the Capture
+  retained. `evidence/acceptance/compras-representative-list.png` is a
+  representative list view from an earlier test marker, not the accepted
+  voice marker. `evidence/acceptance/voice-undo.png` shows voice Undo. No
+  successful accepted-marker voice execution screenshot was recovered.
+- App-process Logcat snapshot
+  `evidence/privacy/logcat-acceptance-sample.txt` was
   captured at approximately `2026-09-20 17:45:46-06:00`, after the human voice
   Capture at 17:25. Count-only scanning found 0 matches for the exact voice
   transcript/item name and keywords, capture/transcript/raw-text patterns,

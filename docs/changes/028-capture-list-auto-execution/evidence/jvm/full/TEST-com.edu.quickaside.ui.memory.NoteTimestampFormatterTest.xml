@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.ui.memory.NoteTimestampFormatterTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-20T01:02:27.427Z" hostname="redacted-local-host" time="0.001">
+  <properties/>
+  <testcase name="convertsInstantToInjectedLocalTimezoneForOlderDates" classname="com.edu.quickaside.ui.memory.NoteTimestampFormatterTest" time="0.0"/>
+  <testcase name="formatsNoteOnCurrentLocalDateAsToday" classname="com.edu.quickaside.ui.memory.NoteTimestampFormatterTest" time="0.0"/>
+  <testcase name="formatsNoteOnPreviousLocalDateAsYesterday" classname="com.edu.quickaside.ui.memory.NoteTimestampFormatterTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

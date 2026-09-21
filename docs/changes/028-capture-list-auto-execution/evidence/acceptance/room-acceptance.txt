@@ -1,0 +1,29 @@
+CHG-028 accepted marker Room evidence — sanitized, two-marker excerpt only
+Reviewed branch SHA: b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67
+Excerpt generated: 2026-09-20T19:52:03-06:00 (America/Mexico_City)
+Source: recovered local Room snapshot voice_undo_quick_aside.db and its WAL, modified 2026-09-20 18:38 CST after the coordinated voice Undo. The raw DB/WAL/SHM files are not included in this repository.
+Read-only method: Python sqlite3 URI mode=ro plus PRAGMA query_only=ON. Only the two acceptance Capture IDs, their linked ledgers/mutations, target item IDs, and exact marker predicates were queried.
+Source limitation: the precommit Room snapshot was not hash-bound to the precommit Git tree; QA and file chronology attribute it to the worktree that became the implementation commit.
+
+Query predicates used:
+- captures: SELECT id,kind,original_text,captured_at_epoch_millis,corrected_transcript FROM captures WHERE id=?; plus COUNT(*) WHERE kind=? AND original_text=?
+- action_ledger_entries: SELECT id,source_capture_id,undone_at_epoch_millis WHERE id=?; plus COUNT(*) WHERE source_capture_id=?
+- action_ledger_mutations: SELECT position,operation,target_type,target_id,before_state,after_state WHERE action_ledger_entry_id=? ORDER BY position
+- list_items: COUNT(*) WHERE id=?; and COUNT(*) WHERE lower(text) LIKE lower(?) using only the exact text marker or voice phrase fragment
+
+TEXT acceptance marker:
+- Capture: id=c29df422-79a6-4eab-8fd7-ad5513d663d5; kind=TEXT; original_text='Agrega pan QA028-TEXT-ACCEPT-20260920 a Compras'; captured_at=2026-09-20T17:37:08.075-06:00; corrected_transcript=None.
+- Exact matching Capture rows: 1.
+- Linked Action Ledger entries: 1; ledger id=eb4c4fa5-42b2-4021-855c-fda30ebfde81; source_capture_id=c29df422-79a6-4eab-8fd7-ad5513d663d5; undone_at=2026-09-20T17:37:15.849-06:00.
+- Mutations: 1; position=0; operation=CREATE; target_type=list_item; target_id=1c2e9107-a3eb-4e0d-9dde-33fab4181c66; before_state=None; after_state=None.
+- Target item rows after Undo: 0; duplicate marker item matches after Undo: 0.
+
+VOICE acceptance marker:
+- Capture: id=f9bcffbf-429e-424d-9981-fe2184405f3d; kind=VOICE; original_text='agregar uvas moradas a compras'; captured_at=2026-09-20T18:34:06.889-06:00; corrected_transcript=None.
+- Exact matching Capture rows: 1.
+- Linked Action Ledger entries: 1; ledger id=16b4bd34-c05a-4aaa-ac10-4b9e8d48bdda; source_capture_id=f9bcffbf-429e-424d-9981-fe2184405f3d; undone_at=2026-09-20T18:34:14.292-06:00.
+- Mutations: 1; position=0; operation=CREATE; target_type=list_item; target_id=b044cec6-1b94-47a4-9f56-426a35f78bf7; before_state=None; after_state=None.
+- Target item rows after Undo: 0; duplicate marker item matches after Undo: 0.
+
+Voice destination caveat: the stored transcript names “compras,” and QA records the target as Compras. After Undo the target row is absent, and the CREATE mutation stores null before_state/after_state, so this post-Undo Room snapshot cannot independently establish listDefinitionId=compras.
+No unrelated captures/items, database pages, credentials, or user records are present in this excerpt.

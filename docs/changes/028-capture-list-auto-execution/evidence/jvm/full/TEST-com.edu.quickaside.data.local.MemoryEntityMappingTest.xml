@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.data.local.MemoryEntityMappingTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-09-20T01:02:27.379Z" hostname="redacted-local-host" time="0.002">
+  <properties/>
+  <testcase name="emptyStructuredLogIsRejected" classname="com.edu.quickaside.data.local.MemoryEntityMappingTest" time="0.001"/>
+  <testcase name="structuredLogRoundTripsExactFieldsSourceAndTimestamp" classname="com.edu.quickaside.data.local.MemoryEntityMappingTest" time="0.0"/>
+  <testcase name="blankStructuredLogFieldValueIsRejected" classname="com.edu.quickaside.data.local.MemoryEntityMappingTest" time="0.0"/>
+  <testcase name="noteRoundTripsExactTextSourceAndTimestamp" classname="com.edu.quickaside.data.local.MemoryEntityMappingTest" time="0.001"/>
+  <testcase name="mismatchedStructuredLogFieldParentFailsVisibly" classname="com.edu.quickaside.data.local.MemoryEntityMappingTest" time="0.0"/>
+  <testcase name="blankStructuredLogFieldKeyIsRejected" classname="com.edu.quickaside.data.local.MemoryEntityMappingTest" time="0.0"/>
+  <testcase name="blankNoteTextIsRejected" classname="com.edu.quickaside.data.local.MemoryEntityMappingTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

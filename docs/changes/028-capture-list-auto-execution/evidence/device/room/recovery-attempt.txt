@@ -1,0 +1,23 @@
+Recovery check — Room list execution regression
+
+Checked before rerunning:
+- Current connected-test output under app/build/outputs/androidTest-results/connected/debug: only the later Compose UI report remained; the Room report had been overwritten.
+- /tmp/chg028: no Room JUnit XML or test result report was present.
+- Prior implementation task command history: the exact Room command and exit code 0 were retained, but no Gradle output, JUnit report, or per-test result was retained.
+- Gradle daemon logs: no recoverable passing Room result report.
+
+The prior exit code alone does not establish which tests ran or their counts. The Room gate is therefore rerun once to capture the machine-generated JUnit result. No other connected gate is being rerun.
+
+Initial wrapper invocation (before the instrumented test task): Gradle failed to create its wrapper lock under the protected default `~/.gradle` and exited before starting the Android build. The raw tool output was not retained in this package. The next invocation redirected `GRADLE_USER_HOME` to `/private/tmp` and reached Android Gradle Plugin setup.
+
+First corrected-cache attempt did not reach instrumentation: the wrapper ran with GRADLE_USER_HOME in /private/tmp, but the Android Gradle plugin still tried to create its UTP temp directory under the protected default ~/.android and failed with Operation not permitted. The next and final retry redirects both Gradle and Android user homes to /private/tmp.
+
+Final authorized Room rerun result (2026-09-20 local evening / 2026-09-21 UTC):
+- Command: ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest
+- Environment: GRADLE_USER_HOME=/private/tmp/chg028-gradle; ANDROID_USER_HOME=/private/tmp/chg028-android.
+- Device: OPPO CPH2791, Android 16 / API 36; ADB remained authorized.
+- Gradle exit code: 1. Instrumentation started 0 tests. UTP failed while installing app-debug.apk with INSTALL_FAILED_UPDATE_INCOMPATIBLE because the existing com.edu.quickaside package has a different signing key. The generated JUnit XML reports tests=0; its system-err contains the install failure, so the zero counts are not a passing test result.
+- The attempt also reported failure to uninstall the test APK. No product-app uninstall succeeded; no data clear, re-pair, pairing-code operation, or production acceptance was attempted afterward. No further connected run was made.
+- Sanitized Gradle output, JUnit install-failure report, and exit code are retained beside this note. Device transport identity and absolute repository path were redacted/normalized.
+
+The earlier QA record's Room 4/4 claim remains a historical recorded result only; the original runner report/output is unrecoverable, and this evidence-only rerun did not execute the Room test class. The Room regression gate is not independently substantiated by this package.

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.AppDestinationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-09-20T01:02:27.265Z" hostname="redacted-local-host" time="0.019">
+  <properties/>
+  <testcase name="managementDestinationsMatchTheAcceptedInformationArchitecture" classname="com.edu.quickaside.AppDestinationTest" time="0.018"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

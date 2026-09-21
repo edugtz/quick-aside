@@ -1,6 +1,6 @@
 # ACTIVE WORK
 
-Status: **CHG-028 IMPLEMENTED — TEXT AND REAL-HUMAN VOICE DEVICE ACCEPTANCE PASS; REVIEW PENDING**
+Status: **CHG-028 IMPLEMENTED — ACCEPTANCE RECORDED; EVIDENCE CLOSEOUT COMPLETE; REVIEW PENDING**
 
 ## Current Change selection
 
@@ -15,13 +15,24 @@ Status: **CHG-028 IMPLEMENTED — TEXT AND REAL-HUMAN VOICE DEVICE ACCEPTANCE PA
   an accurate lightweight receipt and exact targeted batch Undo.
 - Room remains v7; no schema, migration, dependency, gateway, provider, Google,
   reminder, or other action-family work is selected.
-- Focused JVM and real-Room implementation evidence passes. All required
-  deterministic connected gates now pass on the awake OPPO CPH2791 / Android
-  16: `CaptureListAutoExecutionUiTest` 8/8 and the directly affected
-  five-class regression set 35/35 (`QuickAsideAppTest` 1,
+- The Round-1 independent review was **BLOCKED** historically because required
+  verification evidence was not GitHub-inspectable. The evidence package is
+  indexed at `docs/changes/028-capture-list-auto-execution/evidence/README.md`.
+  Focused JVM 17/17, full JVM 174/174, `CaptureListAutoExecutionUiTest` 8/8,
+  the five-class connected regression set 35/35, build/lint outputs, acceptance,
+  privacy, and scope evidence are now indexed there. The Room 4/4 gate is
+  independently inspectable in the canonical API 35 JUnit artifact and run
+  record under `docs/changes/028-capture-list-auto-execution/evidence/device/room/`.
+  This was a fresh focused verification of the same instrumentation gate at
+  unchanged reviewed implementation SHA `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`,
+  not a reproduction of the original OPPO historical 4/4 run. The earlier
+  historical note, OPPO signing-conflict attempt, Pixel 9 Pro boot failure,
+  and first API 35 infrastructure failure remain preserved.
+- The connected gates with retained/recovered passing evidence ran on the awake
+  OPPO CPH2791 / Android 16. Regression counts: `QuickAsideAppTest` 1,
   `CaptureTextSubmissionTest` 2, `VoiceCaptureTest` 10, `MandadoUiTest` 12,
-  `ComprasUiTest` 10). The earlier dozing-lockscreen blocker is superseded and
-  was environmental, not a product defect.
+  and `ComprasUiTest` 10. The earlier dozing-lockscreen blocker is superseded
+  and was environmental, not a product defect.
 - Historical note: connected-test cleanup removed the old install; the
   reinstalled app's first real capture was correctly rejected until pairing.
   That no longer describes the current identity. Three earlier production
@@ -46,9 +57,11 @@ Status: **CHG-028 IMPLEMENTED — TEXT AND REAL-HUMAN VOICE DEVICE ACCEPTANCE PA
   `agregar uvas moradas a compras`, captured at `2026-09-20T18:34:06-06:00`.
   It remains persisted with one linked ledger,
   `16b4bd34-c05a-4aaa-ac10-4b9e8d48bdda`, and exactly one CREATE/list_item
-  mutation targeting `b044cec6-1b94-47a4-9f56-426a35f78bf7`. The existing
-  Compras execution screenshot establishes `listDefinitionId=compras`; after
-  Undo the deleted row no longer stores that field. The ledger was marked
+  mutation targeting `b044cec6-1b94-47a4-9f56-426a35f78bf7`. The prior QA says
+  an execution screenshot established `listDefinitionId=compras`, but that
+  exact accepted-marker screenshot was not recovered. After Undo the deleted
+  row no longer stores that field, so this package cannot independently verify
+  the target list. The ledger was marked
   undone at 18:34:14; Room confirms the target ID and any `uvas moradas` item
   are absent. The user-provided screenshot shows `Cambio deshecho`. The Capture
   remains and no duplicate mutation/item exists.
@@ -71,12 +84,14 @@ Status: **CHG-028 IMPLEMENTED — TEXT AND REAL-HUMAN VOICE DEVICE ACCEPTANCE PA
   `interpretación no disponible` feedback; this is environmental UX feedback
   debt. NOTE — remote interpretation latency is perceptible and should be
   evaluated separately after CHG-028; do not redesign the async flow here.
-- No tests were run, and no source code was changed during this documentation
-  closeout. Existing production/test working-tree changes were left untouched.
-  No install/uninstall, pairing, `pm clear`, JDWP, commit, push, merge, release,
-  or later Change work was performed. The post-voice app-process Logcat
-  privacy scan found no voice transcript/item keywords, auth/signature
-  headers, API-key pattern, request body, or prompt pattern (0 matches).
+- No production or test source changed during this evidence closeout. The
+  original production acceptance closeout ran no tests. This closeout ran only
+  the focused Room instrumentation gate on the clean API 35 emulator; it did
+  not touch the OPPO, rerun another gate, or repeat production acceptance. No
+  re-pair, `pm clear`, JDWP, commit, push, merge, release, or CHG-029 work
+  occurred. The post-voice app-process Logcat privacy scan found no voice
+  transcript/item keywords, auth/signature headers, API-key pattern, request
+  body, or prompt pattern (0 matches).
 - The user retains commit, push, merge, release, and production authority.
 
 ## Most recently completed normal Change

@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="8" failures="0" errors="0" skipped="0" time="13.296" timestamp="2026-09-20T01:45:08" hostname="localhost">
+  <testsuite name="com.edu.quickaside.CaptureListAutoExecutionUiTest" tests="8" failures="0" errors="0" skipped="0" time="11.738" timestamp="2026-09-20T01:45:08" hostname="localhost">
+    <properties>
+      <property name="device" value="CPH2791 - 16" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="executorRejectionShowsNonSuccessCopyWithoutUndo" classname="com.edu.quickaside.CaptureListAutoExecutionUiTest" time="1.867" />
+    <testcase name="globalVoiceCaptureRefreshesVisibleComprasAndUndoRemovesTheExactItem" classname="com.edu.quickaside.CaptureListAutoExecutionUiTest" time="1.588" />
+    <testcase name="undoFailureDoesNotClaimSuccessAndShowsGenericError" classname="com.edu.quickaside.CaptureListAutoExecutionUiTest" time="1.422" />
+    <testcase name="unsupportedValidPlanKeepsHonestNotAppliedCopyWithoutUndo" classname="com.edu.quickaside.CaptureListAutoExecutionUiTest" time="1.331" />
+    <testcase name="executorFailureShowsNonSuccessCopyWithoutUndo" classname="com.edu.quickaside.CaptureListAutoExecutionUiTest" time="1.369" />
+    <testcase name="voiceUsesSameReceiptExecutesOnceAndClosesCaptureSurface" classname="com.edu.quickaside.CaptureListAutoExecutionUiTest" time="1.182" />
+    <testcase name="textBatchShowsAccurateCountAndForwardsOneExactOrderedUndo" classname="com.edu.quickaside.CaptureListAutoExecutionUiTest" time="1.652" />
+    <testcase name="textSingleExecutionShowsMutationReceiptAndUndo" classname="com.edu.quickaside.CaptureListAutoExecutionUiTest" time="1.327" />
+  </testsuite>
+</testsuites>

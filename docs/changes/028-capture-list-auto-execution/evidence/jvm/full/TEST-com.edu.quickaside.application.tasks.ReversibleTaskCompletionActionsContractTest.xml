@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.application.tasks.ReversibleTaskCompletionActionsContractTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-20T01:02:27.369Z" hostname="redacted-local-host" time="0.0">
+  <properties/>
+  <testcase name="completionUpdatePayloadVersionRemainsExplicitAndSeparateFromCreate" classname="com.edu.quickaside.application.tasks.ReversibleTaskCompletionActionsContractTest" time="0.0"/>
+  <testcase name="completionAndUndoOutcomesExposeDeterministicNoOpAndValidationStates" classname="com.edu.quickaside.application.tasks.ReversibleTaskCompletionActionsContractTest" time="0.0"/>
+  <testcase name="changedResultCarriesExactPersistedTaskAndLedgerReceiptIdentity" classname="com.edu.quickaside.application.tasks.ReversibleTaskCompletionActionsContractTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

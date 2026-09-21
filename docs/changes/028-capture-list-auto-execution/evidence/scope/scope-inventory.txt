@@ -1,0 +1,46 @@
+CHG-028 scope and provenance record
+Evidence review date: 2026-09-21 UTC / 2026-09-20 America/Mexico_City
+Branch: chg-028-capture-list-auto-execution
+Reviewed base: 6ede3d08f298a376cfdfd7749fc2d92a2eca3f5c
+Implementation commit / reviewed HEAD: b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67
+Implementation commit time: 2026-09-20T19:05:48-06:00
+
+Base-to-implementation inventory (git diff --name-status BASE HEAD):
+
+Production files (7):
+- M app/src/main/java/com/edu/quickaside/MainActivity.kt
+- M app/src/main/java/com/edu/quickaside/QuickAsideApplication.kt
+- M app/src/main/java/com/edu/quickaside/application/capture/CaptureSubmission.kt
+- M app/src/main/java/com/edu/quickaside/ui/QuickAsideApp.kt
+- M app/src/main/java/com/edu/quickaside/ui/lists/ComprasScreen.kt
+- M app/src/main/java/com/edu/quickaside/ui/lists/MandadoScreen.kt
+- M app/src/main/java/com/edu/quickaside/ui/voice/VoiceCaptureScreen.kt
+
+Test files (3):
+- A app/src/androidTest/java/com/edu/quickaside/CaptureListAutoExecutionUiTest.kt
+- A app/src/androidTest/java/com/edu/quickaside/data/local/CaptureSubmissionListExecutionDatabaseTest.kt
+- A app/src/test/java/com/edu/quickaside/application/capture/CaptureSubmissionExecutionTest.kt
+
+Change documentation files (5):
+- M docs/ACTIVE_WORK.md
+- A docs/changes/028-capture-list-auto-execution/PLAN.md
+- A docs/changes/028-capture-list-auto-execution/QA.md
+- A docs/changes/028-capture-list-auto-execution/SPEC.md
+- A docs/changes/028-capture-list-auto-execution/TASKS.md
+
+The base-to-implementation name-status output contains only the 15 files above. It contains no Room schema/migration, dependency/version catalog, Gradle build, app manifest, network-security, gateway/provider/QA1/Tailscale, or runtime configuration change. The evidence remediation did not modify any production or test source; it added this evidence package and made documentation-only corrections in ACTIVE_WORK.md, CHG-028 QA.md, and CHG-028 TASKS.md to point at inspectable artifacts and disclose the Room gate gap.
+
+Precommit artifact provenance: the recovered JVM JUnit XML timestamps are 2026-09-20T01:02:27Z, equivalent to 2026-09-19 19:02:27 in America/Mexico_City. Prior implementation-task records and the QA chronology associate the recovered Compose and five-class regression outputs, compile/assemble/lint results, and acceptance screenshots/Logcat with the precommit worktree that became b8a14bf. No pre-run source-tree SHA was saved; association is documentary/chronological and is not a cryptographic source binding.
+
+Acceptance Room provenance: the local Room/WAL snapshot was captured before the implementation commit after the 2026-09-20 text/voice Undo observations. The sanitized two-marker excerpt in acceptance/room-acceptance.txt was generated after the commit using read-only queries against only those accepted marker IDs and exact predicates. The raw database files were not copied.
+
+Postcommit attempt: on 2026-09-21 UTC, the missing Room instrumentation gate was attempted at unchanged HEAD b8a14bf. It started 0 tests and failed before instrumentation because the existing installed app had a different signing key (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). No successful app uninstall, data clear, re-pair, production acceptance rerun, source/test edit, commit, push, or merge occurred.
+
+Working-tree checks (completed after the documentation edits):
+- Initial checkout for this remediation was clean at the reviewed implementation SHA.
+- Final `git diff --check`: exit 0, no output (tracked documentation diff).
+- Final `git diff --name-status`: only M `docs/ACTIVE_WORK.md`, M CHG-028 `QA.md`, and M CHG-028 `TASKS.md`; no production or test files.
+- Final `git diff --stat`: 3 tracked documentation files, 144 insertions(+), 72 deletions(-); Git's stat omits untracked evidence. The evidence package contains 55 files.
+- Final `git status --short`: the same three modified docs plus untracked `docs/changes/028-capture-list-auto-execution/evidence/`; no staged changes.
+- Separate inspection of the 55 evidence files found no trailing whitespace, credential/authorization value matches, device transport serial, raw DB/WAL/SHM/audio/APK/test-result binary, or broken README-relative link.
+- No commit or push was performed.

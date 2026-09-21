@@ -1,0 +1,12 @@
+Recovered focused JVM command result
+
+Reviewed implementation SHA: b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67
+Original command:
+./gradlew :app:testDebugUnitTest --tests com.edu.quickaside.application.capture.CaptureSubmissionExecutionTest --tests com.edu.quickaside.application.capture.CaptureSubmissionTest --tests com.edu.quickaside.application.capture.CaptureSubmissionRemoteIntegrationTest
+
+Recorded process exit code: 0.
+The prior implementation task retained the exact command and exit code, but not this invocation's JUnit XML or a complete stdout log. No test count is inferred from this exit code.
+
+The three XML files beside this record are copies of the same suite reports from the preserved full JVM run, not output from the focused invocation. Their machine-readable suite attributes sum to 17 tests (9 CaptureSubmissionExecutionTest, 6 CaptureSubmissionTest, 2 CaptureSubmissionRemoteIntegrationTest), 0 failures, 0 errors, 0 skipped. The XML timestamps are 2026-09-20T01:02:27Z.
+
+The record and reports are associated with the implementation worktree that became the reviewed SHA above by prior task history and chronology; no pre-run source-tree hash was saved.

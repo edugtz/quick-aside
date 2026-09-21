@@ -1,0 +1,36 @@
+# CHG-028 Room verification — fresh API 35 run
+
+Result: **PASS — canonical Room verification artifact for pre-review.**
+
+This was a fresh focused verification of the same `CaptureSubmissionListExecutionDatabaseTest` instrumentation gate on a clean API 35 emulator at the unchanged reviewed implementation SHA. It does not reproduce the original OPPO historical 4/4 run.
+
+- Branch: `chg-028-capture-list-auto-execution`
+- Branch HEAD: `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`
+- Target: `CHG028_Room_API35(AVD)`
+- JUnit device label: `CHG028_Room_API35(AVD) - 15`
+- Android/API: API 35
+- JUnit timestamp: `2026-09-21T03:04:37` (the XML does not include a timezone)
+- Generated XML file modification time: `2026-09-20 21:04:37 -0600` (host local time)
+- Tests started / finished: **4 / 4**
+- JUnit result: **4 tests, 0 failures, 0 errors, 0 skipped**
+- Gradle result: **BUILD SUCCESSFUL**
+- `UnsupportedOperationException`: not observed
+- Production/test source changes during the run: none
+
+Exact command:
+
+```sh
+./gradlew :app:connectedDebugAndroidTest \
+-Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.data.local.CaptureSubmissionListExecutionDatabaseTest \
+\--stacktrace
+```
+
+Observed successful console result:
+
+```text
+BUILD SUCCESSFUL
+```
+
+This record preserves the exact command and the successful console result supplied for this closeout. The full unabridged Gradle stdout was not present in the workspace. The canonical machine-generated result is [TEST-CHG028_Room_API35-AVD.xml](TEST-CHG028_Room_API35-AVD.xml), which includes all four testcase rows and the device label.
+
+The earlier historical 4/4 note, OPPO signing-conflict attempt, Pixel 9 Pro boot-failure record, and first API 35 infrastructure-failure output remain preserved as separate historical artifacts in this directory.

@@ -1,0 +1,32 @@
+--------- beginning of system
+         1789947062.139  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947062.165  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947062.173  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947163.578  5762  5762 D InsetsController: Setting requestedVisibleTypes to -9 (was -1)
+         1789947163.596  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947163.615  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947163.925  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947163.929  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947390.705  5762  5762 D InsetsController: Setting requestedVisibleTypes to -1 (was -9)
+         1789947390.725  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947390.756  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947390.759  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947428.104  5762  5762 D InsetsController: Setting requestedVisibleTypes to -9 (was -1)
+         1789947428.135  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947428.158  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947428.452  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947428.459  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947482.903  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947486.429  5762  5762 D ResourcesManagerExtImpl: applyConfigurationToAppResourcesLocked app.getDisplayId() return callback.displayId:0
+         1789947486.435  5762  5762 D ActivityThread: ComponentInfo{com.edu.quickaside/com.edu.quickaside.MainActivity} checkFinished=false 2
+         1789947486.435  5762  5762 D ResourcesManagerExtImpl: applyConfigurationToAppResourcesLocked app.getDisplayId() return callback.displayId:0
+         1789947486.479  5762  5762 D VRI[MainActivity]: relayoutWindow result, sizeChanged:true, surfaceControlChanged:true, transformHintChanged:true, mSurfaceSize:Point(2354, 1080), mLastSurfaceSize:Point(0, 0), mWidth:-1, mHeight:-1, requestedWidth:2354, requestedHeight:1080, transformHint:4, installOrientation:0, displayRotation:1, isSurfaceValid:true, attr.flag:-2122252032, tmpFrames:ClientWindowFrames{frame=[0,0][2354,1080] display=[0,0][2354,1080] parentFrame=[0,0][0,0]}, relayoutResult:3, relayoutAsync:false, mSyncSeqId:0
+         1789947486.479  5762  5762 W VRI[MainActivity]: updateBlastSurfaceIfNeeded, surfaceSize:Point(2354, 1080), lastSurfaceSize:Point(0, 0), format:-1, blastBufferQueue:null
+         1789947486.537  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947489.768  5762  5762 D ResourcesManagerExtImpl: applyConfigurationToAppResourcesLocked app.getDisplayId() return callback.displayId:0
+         1789947489.774  5762  5762 D ActivityThread: ComponentInfo{com.edu.quickaside/com.edu.quickaside.MainActivity} checkFinished=false 2
+         1789947489.774  5762  5762 D ResourcesManagerExtImpl: applyConfigurationToAppResourcesLocked app.getDisplayId() return callback.displayId:0
+         1789947489.818  5762  5762 D VRI[MainActivity]: relayoutWindow result, sizeChanged:true, surfaceControlChanged:true, transformHintChanged:false, mSurfaceSize:Point(1080, 2354), mLastSurfaceSize:Point(0, 0), mWidth:-1, mHeight:-1, requestedWidth:1080, requestedHeight:2354, transformHint:0, installOrientation:0, displayRotation:0, isSurfaceValid:true, attr.flag:-2122252032, tmpFrames:ClientWindowFrames{frame=[0,0][1080,2354] display=[0,0][1080,2354] parentFrame=[0,0][0,0]}, relayoutResult:3, relayoutAsync:false, mSyncSeqId:0
+         1789947489.819  5762  5762 W VRI[MainActivity]: updateBlastSurfaceIfNeeded, surfaceSize:Point(1080, 2354), lastSurfaceSize:Point(0, 0), format:-1, blastBufferQueue:null
+         1789947491.356  5762  5762 W VRI[MainActivity]: handleResized abandoned!
+         1789947670.629  5762  5762 W VRI[MainActivity]: handleResized abandoned!

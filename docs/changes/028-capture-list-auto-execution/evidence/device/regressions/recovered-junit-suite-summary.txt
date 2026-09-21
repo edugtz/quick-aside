@@ -1,0 +1,13 @@
+Recovered machine-generated JUnit suite summary excerpt (raw report was overwritten by the later Compose connected run).
+Original connected command: ./gradlew :app:connectedDebugAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.edu.quickaside.CaptureTextSubmissionTest,com.edu.quickaside.VoiceCaptureTest,com.edu.quickaside.QuickAsideAppTest,com.edu.quickaside.MandadoUiTest,com.edu.quickaside.ComprasUiTest'
+Stored command exit code: 0
+Report timestamp as emitted by JUnit (timezone not present): 2026-09-20T01:26:27
+Device from contemporaneous QA record: OPPO CPH2791 / Android 16 / API 36; the preserved command excerpt contains testsuite lines only.
+The following exact XML testsuite lines were recovered from the previous task output of a command that read the generated JUnit report; they are not reconstructed from QA counts.
+  <testsuite name="com.edu.quickaside.QuickAsideAppTest" tests="1" failures="0" errors="0" skipped="0" time="1.578" timestamp="2026-09-20T01:26:27" hostname="localhost">
+  <testsuite name="com.edu.quickaside.ComprasUiTest" tests="10" failures="0" errors="0" skipped="0" time="14.857" timestamp="2026-09-20T01:26:27" hostname="localhost">
+  <testsuite name="com.edu.quickaside.VoiceCaptureTest" tests="10" failures="0" errors="0" skipped="0" time="10.921" timestamp="2026-09-20T01:26:27" hostname="localhost">
+  <testsuite name="com.edu.quickaside.MandadoUiTest" tests="12" failures="0" errors="0" skipped="0" time="16.908" timestamp="2026-09-20T01:26:27" hostname="localhost">
+  <testsuite name="com.edu.quickaside.CaptureTextSubmissionTest" tests="2" failures="0" errors="0" skipped="0" time="2.607" timestamp="2026-09-20T01:26:27" hostname="localhost">
+Derived total from these five suite attributes: 35 tests, 0 failures, 0 errors, 0 skipped.
+Limitation: individual testcase elements and the complete XML file were not retained.
