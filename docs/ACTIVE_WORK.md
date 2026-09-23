@@ -1,20 +1,20 @@
 # ACTIVE WORK
 
-Status: **CHG-028 IMPLEMENTED — ACCEPTANCE RECORDED; EVIDENCE CLOSEOUT COMPLETE; REVIEW PENDING**
+Status: **CHG-028 COMPLETED — MERGED INTO MAIN; ROUND 2 PASS_WITH_NOTES**
 
-## Current Change selection
+## Current project state — no active Change selected
 
 - Change: `CHG-028 — Capture List Auto-Execution + Receipt/Undo Integration`
 - Package: `docs/changes/028-capture-list-auto-execution/`
-- Branch: `chg-028-capture-list-auto-execution`
+- Integrated main: `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`
 - Verified base: live GitHub `main` / `origin/main` / starting `HEAD` at
   `6ede3d08f298a376cfdfd7749fc2d92a2eca3f5c`.
 - Governance: **HIGH-ASSURANCE**.
 - Objective: connect persistence-first text and voice Capture submission to
   the CHG-027 executor only for validated all-`AddListItem` plans, then expose
   an accurate lightweight receipt and exact targeted batch Undo.
-- Room remains v7; no schema, migration, dependency, gateway, provider, Google,
-  reminder, or other action-family work is selected.
+- Room remains v7; no schema, migration, dependency, gateway, provider,
+  Google, reminder, or other action-family work was added by CHG-028.
 - The Round-1 independent review was **BLOCKED** historically because required
   verification evidence was not GitHub-inspectable. The evidence package is
   indexed at `docs/changes/028-capture-list-auto-execution/evidence/README.md`.
@@ -84,17 +84,40 @@ Status: **CHG-028 IMPLEMENTED — ACCEPTANCE RECORDED; EVIDENCE CLOSEOUT COMPLET
   `interpretación no disponible` feedback; this is environmental UX feedback
   debt. NOTE — remote interpretation latency is perceptible and should be
   evaluated separately after CHG-028; do not redesign the async flow here.
-- No production or test source changed during this evidence closeout. The
-  original production acceptance closeout ran no tests. This closeout ran only
-  the focused Room instrumentation gate on the clean API 35 emulator; it did
-  not touch the OPPO, rerun another gate, or repeat production acceptance. No
-  re-pair, `pm clear`, JDWP, commit, push, merge, release, or CHG-029 work
-  occurred. The post-voice app-process Logcat privacy scan found no voice
+- No production or test source changed during the post-merge documentation
+  closeout. The pre-merge evidence closeout ran only the focused Room
+  instrumentation gate on the clean API 35 emulator; this post-merge
+  documentation closeout ran no tests and did not touch the OPPO or repeat
+  production acceptance. No re-pair, `pm clear`, JDWP, commit, push, merge,
+  release, or CHG-029 work occurred. The post-voice app-process Logcat privacy
+  scan found no voice
   transcript/item keywords, auth/signature headers, API-key pattern, request
   body, or prompt pattern (0 matches).
+- Persistence-first Capture remains in place. Validated all-`AddListItem`
+  plans now auto-execute through the CHG-027 executor, with exact targeted
+  batch Undo for that list-only path. Other CapturePlan action families remain
+  non-executable. No new Change is currently selected; CHG-029 is not reserved.
 - The user retains commit, push, merge, release, and production authority.
 
 ## Most recently completed normal Change
+
+- Change: `CHG-028 — Capture List Auto-Execution + Receipt/Undo Integration`
+- Package: `docs/changes/028-capture-list-auto-execution/`
+- Governance: **HIGH-ASSURANCE**.
+- Implementation commit: `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`.
+- Evidence remediation commit: `d8d5acdd9ae6982cb790054bdccaefdc0b1701be`.
+- Evidence command correction commit / merged branch head:
+  `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`.
+- Round 1: **BLOCKED** due evidence provenance only.
+- Round 2: **PASS_WITH_NOTES** — 0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
+- Integrated main SHA: `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`.
+- Acceptance: real text execution and exact Undo passed; real human voice
+  execution and exact Undo passed. The evidence package is indexed at
+  `docs/changes/028-capture-list-auto-execution/evidence/`.
+- No schema, dependency, gateway, provider, or other unrelated architecture
+  change was introduced. CHG-028 is merged into `main`.
+
+## Previous completed normal Change
 
 - Change: `CHG-027 — CapturePlan List Execution Foundation`
 - Package: `docs/changes/027-captureplan-list-execution/`
@@ -127,10 +150,9 @@ Status: **CHG-028 IMPLEMENTED — ACCEPTANCE RECORDED; EVIDENCE CLOSEOUT COMPLET
 - No production code, test source, or test semantics changed during either
   review closeout. No schema, dependency, manifest, or runtime changes were
   introduced during closeout.
-- Normal capture/UI still stops at the validated `CapturePlan`; it does not
-  automatically execute the plan.
-- CHG-028 is now selected by explicit user instruction. No later Change ID is
-  reserved.
+- At CHG-027 completion, normal Capture/UI still stopped at the validated
+  `CapturePlan`. CHG-028 later superseded that limitation for validated
+  all-`AddListItem` plans and added exact targeted batch Undo.
 - The user retains product, commit, push, merge, release, and production
   authority.
 
@@ -159,10 +181,10 @@ Status: **CHG-028 IMPLEMENTED — ACCEPTANCE RECORDED; EVIDENCE CLOSEOUT COMPLET
   and is corrected by this documentation-only closeout.
 - Stale governance/provenance was largely corrected in Round 2. No Round 3
   independent security review is required for this documentation-only closeout.
-- The QAG-004H gateway/client flow remains stopped at validated `CapturePlan`.
-  CHG-027 adds a separate provider-independent list executor for plans whose
-  every action is `AddListItem`, but the QAG flow does not call it and normal
-  capture/UI does not execute plans automatically.
+- QAG-004H itself remains a historical gateway/client hardening change and was
+  not rewritten by CHG-028. At QAG-004H completion its flow stopped at the
+  validated `CapturePlan`; CHG-028 later connected the CHG-027 list-only
+  executor to normal text and voice Capture with exact targeted Undo.
 - Integration: branch head `9db98f2e808d076ab29ca1e1dd7dddb74c6fed49`
   was fast-forwarded into `main` after explicit user authorization.
 - The documentation-only review closeout required no Round 3 security review.
@@ -233,12 +255,10 @@ initiative, remains dependent on evidence from actual use. It is not
 automatically scheduled as the next implementation change or reserved under a
 global Change ID.
 
-The completed normal global reviewable-change history runs through Change 027.
-CHG-027 — CapturePlan List Execution Foundation is the most recently completed
-normal Change and is integrated into `main` with **PASS_WITH_NOTES**. Its
-implementation scope and verification record remain in
-`docs/changes/027-captureplan-list-execution/`. CHG-028 is the selected active
-Change; no later Change ID is reserved.
+The completed normal global reviewable-change history runs through Change 028.
+CHG-028 is integrated into `main` with **PASS_WITH_NOTES**. No active Change is
+selected, CHG-029 is not reserved, and future work remains candidate scope
+only.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates
 only; this closeout does not schedule them.

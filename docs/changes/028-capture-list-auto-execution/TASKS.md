@@ -1,8 +1,18 @@
 # Change 028 — Capture List Auto-Execution + Receipt/Undo Integration — TASKS
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTED — ACCEPTANCE RECORDED; EVIDENCE CLOSEOUT COMPLETE; REVIEW PENDING**
+- Status: **COMPLETED — MERGED INTO MAIN; ROUND 2 PASS_WITH_NOTES**
 - Branch: `chg-028-capture-list-auto-execution`
+
+## Post-merge provenance
+
+- Implementation commit: `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`.
+- Evidence remediation commit: `d8d5acdd9ae6982cb790054bdccaefdc0b1701be`.
+- Evidence command correction commit / merged branch head:
+  `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`.
+- Round 1: **BLOCKED** due evidence provenance only.
+- Round 2: **PASS_WITH_NOTES** — 0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
+- Integrated main SHA: `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`.
 
 ## Preflight and package
 
@@ -13,7 +23,8 @@
       inspect the canonical v3 image.
 - [x] Inspect current capture, interpretation, executor, app/UI, list refresh,
       Undo, Action Ledger, and relevant test boundaries.
-- [x] Confirm the production flow still stops at validated `CapturePlan`.
+- [x] Confirm the pre-CHG-028 production flow stopped at validated
+      `CapturePlan`; CHG-028 later added list-only execution wiring.
 - [x] Confirm Room v7/schema/migration sufficiency and attached OPPO device.
 - [x] Record unavailable `software-project-orchestrator` skill and follow the
       direct HIGH-ASSURANCE workflow.
@@ -84,7 +95,8 @@
 ## Stop state
 
 The implementation and prior production acceptance are complete as recorded
-in `QA.md`; evidence closeout is complete and independent review is pending.
+in `QA.md`; evidence closeout is complete and the change is merged into
+`main` with Round 2 **PASS_WITH_NOTES**.
 Machine evidence for the focused/full JVM, Room 4/4, Compose, existing
 connected regressions, build, lint, text acceptance, and privacy sample is
 indexed under `evidence/`. The fresh API 35 Room result independently verifies
@@ -92,7 +104,7 @@ the same instrumentation gate at unchanged reviewed implementation SHA; it
 does not reproduce the original OPPO historical run. The earlier Room
 historical note and infrastructure failures remain preserved. Stop before any
 further gate, OPPO interaction, app uninstall, re-pair, commit, push, merge,
-release, Round 2, or CHG-029.
+release, another review round, or CHG-029.
 The earlier workstation-synthesized attempt produced a separate `comprar
 carne` Capture without a ledger or mutation; it is not human-voice acceptance.
 No synthesized speech or capture was initiated during documentation closeout.

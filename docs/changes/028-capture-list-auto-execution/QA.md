@@ -1,11 +1,19 @@
 # CHG-028 QA and Evidence Record
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTED — ACCEPTANCE RECORDED; EVIDENCE CLOSEOUT COMPLETE; REVIEW PENDING**
+- Status: **COMPLETED — MERGED INTO MAIN; ROUND 2 PASS_WITH_NOTES**
 - Branch: `chg-028-capture-list-auto-execution`
 - Verified base: `6ede3d08f298a376cfdfd7749fc2d92a2eca3f5c`
-- At the time acceptance evidence was recorded, local HEAD remained the base
-  SHA; the user subsequently authorized the CHG-028 commit and push.
+- Implementation commit: `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`.
+- Evidence remediation commit: `d8d5acdd9ae6982cb790054bdccaefdc0b1701be`.
+- Evidence command correction commit / merged branch head:
+  `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`.
+- Round 1: **BLOCKED** due evidence provenance only.
+- Round 2: **PASS_WITH_NOTES** — 0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
+- Integrated main SHA: `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`.
+- Acceptance evidence was recorded before the implementation commit; the
+  implementation, evidence remediation, and command-correction commits were
+  subsequently reviewed and fast-forward merged into `main` as recorded above.
 
 ## Evidence closeout follow-up — 2026-09-21
 

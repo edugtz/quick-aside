@@ -35,7 +35,7 @@ Implemented/current foundation includes:
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **IN PROGRESS — private gateway, Android integration/client hardening, and CHG-027's list-only CapturePlan execution foundation are integrated into main; remaining product work is scope-selected, and normal-use gateway hardening is evidence-triggered.**
+Status: **IN PROGRESS — private gateway, Android integration/client hardening, and CHG-028 list-only CapturePlan auto-execution are integrated into main; remaining product work is candidate scope, and normal-use gateway hardening is evidence-triggered.**
 
 Outcome: natural-language input becomes validated structured actions with
 minimal friction.
@@ -86,12 +86,12 @@ automatically scheduled as the next implementation change.
 
 M2 runtime interpretation is integrated end-to-end through QAG-004, and
 Android client trust-boundary hardening is complete through QAG-004H. Both are
-integrated into `main`. CHG-027 adds a provider-independent list execution
-foundation for validated `CapturePlan`s whose every action is `AddListItem`,
-with targeted batch Undo. Other CapturePlan action types are not covered. The
-normal capture/UI path still stops at a validated `CapturePlan` and does not
-execute it automatically. M2 remains open for the remaining fast-capture
-interpretation/UX policies listed above and any separately selected work.
+integrated into `main`. CHG-027 provides the provider-independent list
+execution foundation, and CHG-028 connects it to normal text and voice
+Capture: validated plans whose every action is `AddListItem` now auto-execute
+with targeted batch Undo. Other CapturePlan action types are not covered. M2
+remains open for the remaining fast-capture interpretation/UX policies listed
+above and any separately selected work.
 
 ## M3 — Google Tasks + Calendar
 
@@ -151,7 +151,7 @@ Capabilities:
 
 ## M6 — Personal MVP polish
 
-Status: **FINAL COMPLETION BLOCKED** — interpretation is integrated, but the full north-star happy path still requires normal capture/UI execution wiring, Task/Event/Reminder action support beyond CHG-027's list-only contract, and the remaining sync/reminder/product polish. Other polish may continue independently.
+Status: **FINAL COMPLETION BLOCKED** — interpretation and list-only normal capture/UI execution are integrated, but the full north-star happy path still requires Task/Event/Reminder action support beyond CHG-028's list-only contract, and the remaining sync/reminder/product polish. Other polish may continue independently.
 
 Outcome: the user can adopt Quick Aside as the default capture tool in everyday life.
 
@@ -187,13 +187,12 @@ and safe diagnostics.
 QAG-003R subsequently deployed the gateway through private Tailscale
 Services/Serve, preserved localhost-only FastAPI and QA1, and proved service
 restart plus VPS reboot persistence without making Personal Admin an
-application dependency. QAG-004 completed Android integration and is
-integrated into `main`. QAG-004H completed Android client trust-boundary
-hardening and is integrated into `main`; those QAG paths stop at validated
-`CapturePlan`. CHG-027 adds a separate provider-independent executor foundation
-for validated all-`AddListItem` plans with targeted batch Undo. Other action
-types remain outside its scope, and normal capture/UI does not execute plans
-automatically.
+application dependency. QAG-004 completed Android integration and QAG-004H
+completed Android client trust-boundary hardening; both are integrated into
+`main` and remain historical QAG boundaries. CHG-027 adds the provider-
+independent executor foundation, and CHG-028 wires validated all-`AddListItem`
+plans from normal text and voice Capture into that executor with targeted batch
+Undo. Other action types remain outside its scope.
 
 ## Milestone dependency summary
 
@@ -203,14 +202,14 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | IN PROGRESS — gateway + Android integration/client hardening and CHG-027 list-only execution foundation integrated; remaining policy and UX scope is undecided; normal-use hardening is evidence-triggered |
+| M2 | IN PROGRESS — gateway + Android integration/client hardening and CHG-028 list-only auto-execution integrated; remaining policy and UX scope is undecided; normal-use hardening is evidence-triggered |
 | M3 | NOT globally blocked; runtime interpretation is available, but Task/Event execution support + Google sync remain |
 | M4 | NOT globally blocked; runtime interpretation is integrated, while natural-language reminder creation awaits reminder-domain/actions, reminder-specific plan execution, and scheduling work |
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
-The normal global reviewable-change history now runs through Change 027.
-CHG-027 — CapturePlan List Execution Foundation is **COMPLETE —
+The normal global reviewable-change history now runs through Change 028.
+CHG-027 — CapturePlan List Execution Foundation remains **COMPLETE —
 PASS_WITH_NOTES — INTEGRATED INTO main**. Its verified base was
 `cb67494a7b57d0f7a939ec06396ccbc665edff7c`; its implementation commit was
 `b9ba067ff442259225127645c8a4c04eeb65dfc6`. Round 1 reviewed that
@@ -222,13 +221,18 @@ production correctness defect remained. Final review debt was documentation/
 evidence provenance only. The final documentation closeout was integrated into
 `main` at `979b8e6abb9a57ac5936559c252726a1ca84a98c`.
 
-CHG-027 provides a provider-independent list execution foundation limited to
+CHG-027 provides the provider-independent list execution foundation limited to
 validated plans whose every action is `AddListItem`, plus targeted batch Undo.
-It does not make all CapturePlan actions executable, and normal capture/UI does
-not automatically execute a plan. No next Change is selected or reserved;
-CHG-028 remains unselected and no later Change ID is reserved.
+CHG-028 — Capture List Auto-Execution + Receipt/Undo Integration is **COMPLETE
+— PASS_WITH_NOTES — INTEGRATED INTO main** at
+`44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`; its implementation SHA is
+`b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67` and evidence remediation SHA is
+`d8d5acdd9ae6982cb790054bdccaefdc0b1701be`. CHG-028 connects the list-only
+executor to normal text and voice Capture with exact targeted batch Undo.
+Other CapturePlan actions remain non-executable. No next Change is selected or
+reserved; CHG-029 is not reserved.
 
-## Candidate work after CHG-027 (not scheduled)
+## Candidate work after CHG-028 (not scheduled)
 
 Candidate work only; none is automatically scheduled:
 
@@ -240,7 +244,7 @@ Candidate work only; none is automatically scheduled:
 - M5 foundations: backup/snapshot, export center, structured reimport format,
   and archive-before-prune verification;
 - Further M2 provider-independent execution/application foundations beyond
-  CHG-027's list-only scope, only if independently justified;
+  CHG-028's list-only scope, only if independently justified;
 - M1/M6 polish that does not depend on automated interpretation.
 
 This list records options, not a schedule.

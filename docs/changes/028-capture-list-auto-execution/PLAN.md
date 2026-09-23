@@ -1,9 +1,19 @@
 # Change 028 — Capture List Auto-Execution + Receipt/Undo Integration — PLAN
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTED — TEXT AND REAL-HUMAN VOICE ACCEPTANCE PASS; INDEPENDENT REVIEW PENDING**
+- Status: **COMPLETED — MERGED INTO MAIN; ROUND 2 PASS_WITH_NOTES**
 - Branch: `chg-028-capture-list-auto-execution`
 - Verified base: `6ede3d08f298a376cfdfd7749fc2d92a2eca3f5c`
+
+## Post-merge provenance
+
+- Implementation commit: `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`.
+- Evidence remediation commit: `d8d5acdd9ae6982cb790054bdccaefdc0b1701be`.
+- Evidence command correction commit / merged branch head:
+  `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`.
+- Round 1: **BLOCKED** due evidence provenance only.
+- Round 2: **PASS_WITH_NOTES** — 0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
+- Integrated main SHA: `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`.
 
 Verification evidence and the device blocker are recorded in `QA.md`.
 
@@ -78,4 +88,6 @@ finds a real integration defect.
 10. Run `git diff --check`, status/stat/name-status, and inspect the complete
     diff for unrelated files, secrets, generated junk, and future scope.
 
-No commit, push, merge, release, or CHG-029 work is authorized.
+At planning time, no commit, push, merge, release, or CHG-029 work was
+authorized by the plan. CHG-028 was later reviewed and merged into `main` as
+recorded above; no CHG-029 work is selected or reserved.

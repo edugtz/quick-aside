@@ -4,7 +4,11 @@
 
 - Branch: `chg-028-capture-list-auto-execution`
 - Reviewed implementation SHA: `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67`
+- Evidence remediation commit: `d8d5acdd9ae6982cb790054bdccaefdc0b1701be`
+- Evidence command correction commit / merged branch head: `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`
 - Reviewed base SHA: `6ede3d08f298a376cfdfd7749fc2d92a2eca3f5c`
+- Round 1: **BLOCKED** due evidence provenance only; Round 2: **PASS_WITH_NOTES** — 0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
+- Integrated main SHA: `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`.
 - Device for the original connected-test and acceptance records: OPPO CPH2791, Android 16 / API 36.
 - Device for the fresh canonical Room verification: `CHG028_Room_API35(AVD)`, Android API 35.
 - This evidence package and the linked QA/TASKS/ACTIVE_WORK edits were created after the implementation commit. No implementation, test, schema, dependency, manifest, gateway, provider, QA1, Tailscale, or network-security file was changed for this remediation.
@@ -55,9 +59,11 @@ The prior Logcat collection command was not retained. The sample itself and its 
 ## Scope and limitations
 
 - [Base-to-implementation inventory and prior evidence-remediation snapshot](scope/scope-inventory.txt). Its working-tree counts describe the earlier evidence package before this API 35 closeout; the current requested Git checks are reported in this closeout.
-- Evidence-only files are under this `evidence/` directory; the only other remediation edits are QA/TASKS/ACTIVE_WORK documentation updates.
+- Evidence-only files are under this `evidence/` directory; the closeout edits
+  are documentation-only changes to the evidence index, change records, and
+  durable project status documents.
 - No production or test source, dependency, Room schema/migration, manifest, network-security, gateway/provider/QA1/Tailscale, or runtime configuration file was changed.
 - The recovered reports and command excerpts are attributed to the precommit worktree through prior task output and timestamps, not a saved source-tree hash. The sanitized acceptance Room excerpt is a postcommit derivative of a precommit snapshot. The postcommit Room artifacts include the earlier OPPO installation-failure report and the current successful API 35 JUnit report/run record; the latter is canonical for current Room verification.
-- The Room 4/4 instrumentation result is now independently inspectable in the canonical API 35 JUnit report and run record. The historical original OPPO report remains unrecoverable. Independent review has not yet assigned a verdict.
+- The Room 4/4 instrumentation result is independently inspectable in the canonical API 35 JUnit report and run record. The historical original OPPO report remains unrecoverable. Round 2 independently reviewed this evidence package and returned **PASS_WITH_NOTES** with 0 BLOCKER / 0 MAJOR / 1 MINOR / 2 NOTE.
 - The included voice acceptance facts establish a recorded human VOICE Capture with one undone CREATE mutation and absent target, but the exact destination list and standalone successful execution visual are not independently established by the included post-Undo artifacts.
 - No raw Room database, WAL/SHM, audio recording, auth material, secret, or unrelated personal record is included.
