@@ -1,0 +1,10 @@
+CHG-029 gate started: 2026-09-23T20:32:07.749978+00:00
+Command: ./gradlew :app:testDebugUnitTest --tests com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest --tests com.edu.quickaside.application.capture.CapturePlanValidatorTest
+Device/emulator: not applicable
+
+Exception in thread "main" java.io.FileNotFoundException: /Users/eduardo/.gradle/wrapper/dists/gradle-9.5.0-bin/bvnork1r7n8i6kp5cnkibsc9q/gradle-9.5.0-bin.zip.lck (Operation not permitted)
+	at java.base/java.io.RandomAccessFile.open0(Native Method)
+	at java.base/java.io.RandomAccessFile.open(RandomAccessFile.java:344)
+	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:259)
+	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:213)
+	at org.gradle.wrapper.GradleWrapperMain.main(SourceFile:67)

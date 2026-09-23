@@ -1,0 +1,4 @@
+83ef3f2644e4f00e377c306f6242d451dc86a201b98fe9ac2b42d6295f5e2cf3  app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt
+9e3558986979a38c2e7d19f90604a5eb6f38b4315ced964bfd8c8c384a81db9b  app/src/main/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutor.kt
+311d1ff3690db73b1515f9560038a40764318714c509268dee2c5156296a7f77  app/src/main/java/com/edu/quickaside/data/local/RoomCapturePlanTaskExecutor.kt
+522ca0ffcf975c226b5847618dbfd7fb9cf8b70e8c542d95ba3925ba230efb8c  app/src/test/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutorContractTest.kt

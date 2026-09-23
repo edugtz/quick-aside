@@ -1,0 +1,11 @@
+{
+  "status": "FAILED",
+  "process_exit_code": 0,
+  "instrumentation_code": -1,
+  "reported_cases": 1,
+  "initialization_errors": 1,
+  "actual_test_methods_executed": 0,
+  "cause": "Stale app APK lacked UndoCapturePlanTaskExecutionResult; the newly assembled test APK referenced it.",
+  "raw_output": "instrumentation-output.txt",
+  "app_apk_sha256": "stale app APK fingerprinted in apk-build/retry-1/apk-sha256-manifest.txt"
+}

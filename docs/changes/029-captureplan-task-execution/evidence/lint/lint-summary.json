@@ -1,0 +1,15 @@
+{
+  "gradle_task": "./gradlew :app:lintDebug",
+  "exit_code": 0,
+  "sarif_version": "2.1.0",
+  "total_findings": 19,
+  "findings_by_rule": {
+    "AndroidGradlePluginVersion": 2,
+    "GradleDependency": 7,
+    "NewerVersionAvailable": 1,
+    "AutoboxingStateCreation": 2,
+    "UnusedResources": 7
+  },
+  "findings_in_changed_executor_files": [],
+  "note": "Findings are existing dependency/version availability and legacy unused-resource warnings; no findings point to CHG-029 executor files."
+}

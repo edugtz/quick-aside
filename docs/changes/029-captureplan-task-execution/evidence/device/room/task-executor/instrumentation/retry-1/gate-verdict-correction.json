@@ -1,0 +1,9 @@
+{
+  "initial_wrapper_exit_code": 1,
+  "adb_process_exit_code": 0,
+  "raw_test_summary": "OK (15 tests)",
+  "instrumentation_result_code": -1,
+  "result_code_semantics": "Activity.RESULT_OK, verified in the cached AndroidJUnitRunner 1.7.0 source",
+  "corrected_gate_verdict": "PASS",
+  "reason": "The runner return code alone is not a test failure marker; no FAILURES marker or failing test status was present."
+}

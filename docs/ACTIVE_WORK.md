@@ -1,10 +1,40 @@
 # ACTIVE WORK
 
-Status: **CHG-028 COMPLETED — MERGED INTO MAIN; ROUND 2 PASS_WITH_NOTES**
+Status: **CHG-029 IMPLEMENTED — READY FOR INDEPENDENT REVIEW**
 
-## Current project state — no active Change selected
+## Current project state — CHG-029 implementation
 
-- Change: `CHG-028 — Capture List Auto-Execution + Receipt/Undo Integration`
+- Change: `CHG-029 — CapturePlan Task Execution Foundation`.
+- Package: `docs/changes/029-captureplan-task-execution/`.
+- Governance: **HIGH-ASSURANCE**.
+- Planning baseline: request-supplied canonical `main` SHA
+  `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`; local `main`, `origin/main`,
+  and starting `HEAD` matched. The starting worktree was clean.
+- Objective: add a provider-independent, atomic Room boundary for validated
+  all-`CreateTask` CapturePlans, one source-linked Action Ledger batch, and
+  exact ordered batch Undo.
+- The boundary is supported by existing Task/Action Ledger DAOs and Task
+  contracts. Room remains v7; no schema, migration, dependency, or Task-domain
+  change was made.
+- Implementation is on branch `chg-029-captureplan-task-execution` at the
+  canonical base HEAD above. The two production additions are
+  `CapturePlanTaskExecutor` and `RoomCapturePlanTaskExecutor`; one JVM contract
+  test and one real-Room instrumentation class cover the boundary.
+- Focused JVM (32), focused Room (15), existing reversible Task Room
+  regression (12), and full JVM (178) tests passed. Android-test Kotlin
+  compilation, debug assembly, lint, and the Room/schema/config/dependency
+  comparison passed. Inspectable outputs and per-run source fingerprints are
+  under `docs/changes/029-captureplan-task-execution/evidence/`.
+- Room tests ran only on `CHG028_Room_API35` (API 35), explicitly targeting
+  `emulator-5556`. The connected OPPO was not used. No Capture/UI wiring,
+  schema/dependency change, commit, push, or CHG-030 work occurred.
+- Final Git/scope evidence and the pre-review readiness check passed; see the
+  CHG-029 evidence index.
+
+## CHG-028 closeout context at the selected baseline
+
+- Most recently completed Change at this baseline: `CHG-028 — Capture List
+  Auto-Execution + Receipt/Undo Integration`
 - Package: `docs/changes/028-capture-list-auto-execution/`
 - Integrated main: `44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`
 - Verified base: live GitHub `main` / `origin/main` / starting `HEAD` at
@@ -89,14 +119,16 @@ Status: **CHG-028 COMPLETED — MERGED INTO MAIN; ROUND 2 PASS_WITH_NOTES**
   instrumentation gate on the clean API 35 emulator; this post-merge
   documentation closeout ran no tests and did not touch the OPPO or repeat
   production acceptance. No re-pair, `pm clear`, JDWP, commit, push, merge,
-  release, or CHG-029 work occurred. The post-voice app-process Logcat privacy
-  scan found no voice
+  release, or implementation work occurred in that closeout. The post-voice
+  app-process Logcat privacy scan found no voice
   transcript/item keywords, auth/signature headers, API-key pattern, request
   body, or prompt pattern (0 matches).
-- Persistence-first Capture remains in place. Validated all-`AddListItem`
+- At this CHG-028 closeout point, persistence-first Capture remained in place.
+  Validated all-`AddListItem`
   plans now auto-execute through the CHG-027 executor, with exact targeted
   batch Undo for that list-only path. Other CapturePlan action families remain
-  non-executable. No new Change is currently selected; CHG-029 is not reserved.
+  non-executable. That historical closeout preceded the CHG-029 planning
+  selection recorded above.
 - The user retains commit, push, merge, release, and production authority.
 
 ## Most recently completed normal Change
@@ -212,8 +244,10 @@ Status: **CHG-028 COMPLETED — MERGED INTO MAIN; ROUND 2 PASS_WITH_NOTES**
     automatic `ActionExecutor`;
   - `HttpsURLConnection` cancellation cleanup is bounded but not guaranteed
     to abort blocking I/O immediately.
-- QAG-004 remains stopped at validated `CapturePlan` + observable result.
-  No interpreted action is executed automatically.
+- QAG-004 closed at validated `CapturePlan` + observable result. CHG-028
+  later added automatic execution only for all-list-item plans. CHG-029 now
+  supplies a Task-only execution foundation, still unwired to product Capture
+  flows.
 
 ## Current project state
 
@@ -241,7 +275,9 @@ CHG-028 connects that list-only boundary to normal text and voice Capture with
 exact targeted Undo. Text execution/Undo and human-voice execution/Undo have
 passed real-device acceptance with visual and privacy evidence recorded in
 the CHG-028 QA package. The user retains commit, push, merge, and release
-authority. No other action family is selected.
+authority. CHG-029's Task-only execution foundation is implemented and has
+passed its required verification; independent review remains. No CHG-030 is
+reserved.
 
 ## Workstream and Change selection
 
@@ -256,9 +292,10 @@ automatically scheduled as the next implementation change or reserved under a
 global Change ID.
 
 The completed normal global reviewable-change history runs through Change 028.
-CHG-028 is integrated into `main` with **PASS_WITH_NOTES**. No active Change is
-selected, CHG-029 is not reserved, and future work remains candidate scope
-only.
+CHG-028 is integrated into `main` with **PASS_WITH_NOTES**. CHG-029 is
+implemented with required verification passed and is awaiting independent
+review. Future work beyond CHG-029 remains candidate scope only, and CHG-030 is
+not reserved.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates
 only; this closeout does not schedule them.

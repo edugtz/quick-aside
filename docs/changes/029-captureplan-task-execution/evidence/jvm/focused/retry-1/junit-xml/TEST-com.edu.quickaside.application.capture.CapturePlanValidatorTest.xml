@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.application.capture.CapturePlanValidatorTest" tests="28" skipped="0" failures="0" errors="0" timestamp="2026-09-23T20:32:45.481Z" hostname="MacBook-Pro-de-Eduardo.local" time="0.025">
+  <properties/>
+  <testcase name="nullableTaskDueDateIsAccepted" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.007"/>
+  <testcase name="emptyActionListIsRejectedAsPlanIssue" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.001"/>
+  <testcase name="personalAndTrabajoRemainDistinctInValidatedTasks" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="maxPlusOneGatewayFieldValuesAreRejected" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.001"/>
+  <testcase name="validStructuredLogPreservesExactKeysAndValues" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="blankTaskTitleIsRejectedAtTheActionIndex" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="invalidActionReportsItsDeterministicZeroBasedActionIndex" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.001"/>
+  <testcase name="validAddListItemPlanProducesTypedPlan" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="blankStructuredLogValueIsRejectedAtTheActionIndex" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="validMultiActionPlanPreservesEveryTypedActionInDraftOrder" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.001"/>
+  <testcase name="outOfContractRemoteValueCannotBecomeAValidatedDomainAction" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="exactGatewayFieldLimitsAreAccepted" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="blankListDefinitionIdIsRejectedAtTheActionIndex" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="onlyMandadoAndComprasListDefinitionsAreAcceptedWithoutNormalization" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="blankListItemTextIsRejectedAtTheActionIndex" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="validPlanPreservesSourceAndActionTextWhitespaceExactly" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="blankStructuredLogKeyIsRejectedAtTheActionIndex" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.001"/>
+  <testcase name="structuredLogFieldCountBoundaryIsEnforced" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.001"/>
+  <testcase name="newProductionFilesUseOnlyPureKotlinAndApprovedDomainOrTimeImports" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.01"/>
+  <testcase name="blankNoteTextIsRejectedAtTheActionIndex" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="blankSourceCaptureIdIsRejectedAsPlanIssue" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="nonNullTaskDueDateIsPreservedExactly" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="validNotePreservesExactText" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="validationIssuesDoNotEmbedRejectedOrSensitiveInputContent" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.001"/>
+  <testcase name="seventeenthActionIsRejectedBeforeProducingAValidatedPlan" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="sixteenActionsAreAcceptedWhenEachActionIsOtherwiseValid" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="emptyStructuredLogFieldsAreRejectedAtTheActionIndex" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <testcase name="undoLastValidatesWithoutTargetPayload" classname="com.edu.quickaside.application.capture.CapturePlanValidatorTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

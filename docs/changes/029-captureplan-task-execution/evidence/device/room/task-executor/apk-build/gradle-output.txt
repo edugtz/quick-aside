@@ -1,0 +1,4 @@
+CHG-029 gate started: 2026-09-23T20:36:42.326871+00:00
+Command: --device-info 'CHG028_Room_API35, serial emulator-5556, API 35; Gradle only builds APKs in this step' -- ./gradlew :app:assembleDebugAndroidTest
+Device/emulator: not applicable
+

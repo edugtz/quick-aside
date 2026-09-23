@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-23T20:43:06.754Z" hostname="MacBook-Pro-de-Eduardo.local" time="0.002">
+  <properties/>
+  <testcase name="successOutcomesRequireNonEmptyUniqueTaskBatches" classname="com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest" time="0.001"/>
+  <testcase name="undoOutcomesPreserveMutationAndTaskIndexes" classname="com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest" time="0.0"/>
+  <testcase name="successRetainsExactTasksAndOrderedIdentities" classname="com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest" time="0.0"/>
+  <testcase name="executionOutcomesPreserveIndexedAndPlanLevelRejections" classname="com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

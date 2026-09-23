@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-09-23T20:43:06.836Z" hostname="MacBook-Pro-de-Eduardo.local" time="0.005">
+  <properties/>
+  <testcase name="documentedTransportFailureMappingsRemainExplicit" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.001"/>
+  <testcase name="documentedHttpFailureMappingsRemainExplicit" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.0"/>
+  <testcase name="blankDeviceIdIsRejectedAsMalformed" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.001"/>
+  <testcase name="matchingActiveDeviceIdIsTheOnlySuccessfulPairingResponse" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.0"/>
+  <testcase name="cancellationPropagatesInsteadOfBecomingPairingFailure" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.001"/>
+  <testcase name="pairResponseStatusRequiresAJsonString" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.0"/>
+  <testcase name="malformedPairingResponsesAreRejected" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.001"/>
+  <testcase name="mismatchedDeviceIdIsRejectedAsMalformedAndDoesNotBecomeSuccess" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.0"/>
+  <testcase name="pairResponseDeviceIdRequiresAJsonString" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.0"/>
+  <testcase name="invalidStatusIsRejectedAsMalformed" classname="com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

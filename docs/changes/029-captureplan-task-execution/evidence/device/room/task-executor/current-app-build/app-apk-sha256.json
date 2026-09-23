@@ -1,0 +1,8 @@
+{
+  "path": "docs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/app-apk-output/app-debug.apk",
+  "sha256": "24352f4c3a53c6814ea9b90252cc9e0658ee0d30a8f37282df8a4ee981084c35",
+  "contains_new_executor_result_types": {
+    "UndoCapturePlanTaskExecutionResult": true,
+    "CapturePlanTaskExecutor": true
+  }
+}

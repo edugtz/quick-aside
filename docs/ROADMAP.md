@@ -229,12 +229,14 @@ CHG-028 — Capture List Auto-Execution + Receipt/Undo Integration is **COMPLETE
 `b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67` and evidence remediation SHA is
 `d8d5acdd9ae6982cb790054bdccaefdc0b1701be`. CHG-028 connects the list-only
 executor to normal text and voice Capture with exact targeted batch Undo.
-Other CapturePlan actions remain non-executable. No next Change is selected or
-reserved; CHG-029 is not reserved.
+Other CapturePlan actions remain non-executable. CHG-029 — CapturePlan Task
+Execution Foundation is implemented with required verification passed and is
+awaiting independent review. No CHG-030 is reserved.
 
-## Candidate work after CHG-028 (not scheduled)
+## Other candidate work (not scheduled)
 
-Candidate work only; none is automatically scheduled:
+The options below remain unscheduled. CHG-029 implementation is complete and
+awaits independent review.
 
 - Normal-use hardening (historically Phase QAG-5 in the gateway initiative): pending real-use evidence; not a reserved Change ID;
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,
@@ -244,7 +246,7 @@ Candidate work only; none is automatically scheduled:
 - M5 foundations: backup/snapshot, export center, structured reimport format,
   and archive-before-prune verification;
 - Further M2 provider-independent execution/application foundations beyond
-  CHG-028's list-only scope, only if independently justified;
+  CHG-029, only if independently justified;
 - M1/M6 polish that does not depend on automated interpretation.
 
 This list records options, not a schedule.

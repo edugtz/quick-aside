@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.data.local.CaptureEntityMappingTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-09-23T20:43:06.799Z" hostname="MacBook-Pro-de-Eduardo.local" time="0.001">
+  <properties/>
+  <testcase name="correctedVoiceCaptureRoundTripsWithOriginalAndCorrection" classname="com.edu.quickaside.data.local.CaptureEntityMappingTest" time="0.0"/>
+  <testcase name="textCaptureRoundTripsThroughPersistenceRepresentation" classname="com.edu.quickaside.data.local.CaptureEntityMappingTest" time="0.001"/>
+  <testcase name="voiceCaptureRoundTripsThroughPersistenceRepresentation" classname="com.edu.quickaside.data.local.CaptureEntityMappingTest" time="0.0"/>
+  <testcase name="persistenceRepresentationUsesDeterministicStorageValues" classname="com.edu.quickaside.data.local.CaptureEntityMappingTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

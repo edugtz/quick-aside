@@ -1,0 +1,6 @@
+CHG-029 gate started: 2026-09-23T20:38:46.960613+00:00
+Command: adb -s emulator-5556 install -r docs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/android-test-apk-output/app-debug-androidTest.apk
+Device/emulator: CHG028_Room_API35; emulator-5556; API 35
+
+Performing Streamed Install
+Success

@@ -1,0 +1,50 @@
+{
+  "timestamp_utc": "2026-09-23T20:48:53.026219+00:00",
+  "branch": "chg-029-captureplan-task-execution",
+  "base_head": "797e1557e8b5d94d4c8611a9b72749a8d7ac53f7",
+  "base_head_label": "canonical base / current commit; not an implementation SHA",
+  "room_database_version": 7,
+  "migration_symbols": [
+    "1_2",
+    "2_3",
+    "3_4",
+    "4_5",
+    "5_6",
+    "6_7"
+  ],
+  "migration_range": "1->2 through 6->7; unchanged",
+  "schema_count_at_base": 7,
+  "config_schema_build_manifest_network_status": "unchanged",
+  "checks": [
+    {
+      "label": "tracked config/schema diff",
+      "command": "git diff --name-status HEAD -- app/schemas app/src/main/java/com/edu/quickaside/data/local/QuickAsideDatabase.kt app/src/main/java/com/edu/quickaside/data/local/TaskDao.kt app/src/main/java/com/edu/quickaside/data/local/ActionLedgerDao.kt app/build.gradle.kts gradle/libs.versions.toml build.gradle.kts settings.gradle.kts gradle/wrapper/gradle-wrapper.properties app/src/main/AndroidManifest.xml app/src/main/res/xml",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "untracked config/schema inventory",
+      "command": "git ls-files --others --exclude-standard -- app/schemas app/src/main/java/com/edu/quickaside/data/local/QuickAsideDatabase.kt app/src/main/java/com/edu/quickaside/data/local/TaskDao.kt app/src/main/java/com/edu/quickaside/data/local/ActionLedgerDao.kt app/build.gradle.kts gradle/libs.versions.toml build.gradle.kts settings.gradle.kts gradle/wrapper/gradle-wrapper.properties app/src/main/AndroidManifest.xml app/src/main/res/xml",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "scoped git status",
+      "command": "git status --short -- app/schemas app/src/main/java/com/edu/quickaside/data/local/QuickAsideDatabase.kt app/src/main/java/com/edu/quickaside/data/local/TaskDao.kt app/src/main/java/com/edu/quickaside/data/local/ActionLedgerDao.kt app/build.gradle.kts gradle/libs.versions.toml build.gradle.kts settings.gradle.kts gradle/wrapper/gradle-wrapper.properties app/src/main/AndroidManifest.xml app/src/main/res/xml",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "tracked schema inventory",
+      "command": "git ls-tree -r --name-only HEAD app/schemas",
+      "exit_code": 0,
+      "stdout": "app/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/1.json\napp/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/2.json\napp/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/3.json\napp/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/4.json\napp/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/5.json\napp/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/6.json\napp/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/7.json",
+      "stderr": ""
+    }
+  ],
+  "worktree_source_fingerprint_sha256": "368c63c203e4201e4e10f40ac7a96ee8ea1d878fe11549def092a041c7434ee4",
+  "exit_code": 0
+}

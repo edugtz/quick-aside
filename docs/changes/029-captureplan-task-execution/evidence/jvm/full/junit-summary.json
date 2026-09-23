@@ -1,0 +1,213 @@
+{
+  "status": "PASS",
+  "xml_files": 29,
+  "tests": 178,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suites": [
+    {
+      "file": "TEST-com.edu.quickaside.AppDestinationTest.xml",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.capture.CaptureInterpreterTest.xml",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.capture.CapturePlanListExecutorContractTest.xml",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest.xml",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.capture.CapturePlanValidatorTest.xml",
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.capture.CaptureSubmissionExecutionTest.xml",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.capture.CaptureSubmissionRemoteIntegrationTest.xml",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.capture.CaptureSubmissionTest.xml",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.lists.ReversibleListItemActionsContractTest.xml",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.search.LocalSearchContractTest.xml",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.tasks.ReversibleTaskActionsContractTest.xml",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.tasks.ReversibleTaskCompletionActionsContractTest.xml",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.tasks.TaskCompletionLedgerPayloadTest.xml",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.local.ActionLedgerEntityMappingTest.xml",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.local.CaptureEntityMappingTest.xml",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.local.ListEntityMappingTest.xml",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.local.MemoryEntityMappingTest.xml",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.local.TaskEntityMappingTest.xml",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.remote.gateway.GatewayTransportTest.xml",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.remote.gateway.Qa1Test.xml",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProviderTest.xml",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.domain.CoreDomainContractsTest.xml",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.domain.actions.ActionLedgerDomainTest.xml",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.domain.capture.CaptureTranscriptCorrectionDomainTest.xml",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.ui.lists.MandadoHistoryTimestampFormatterTest.xml",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.ui.memory.CaptureTimestampFormatterTest.xml",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.ui.memory.NoteTimestampFormatterTest.xml",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.domain.actions.ActionLedgerDomainTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-23T20:43:06.843Z" hostname="MacBook-Pro-de-Eduardo.local" time="0.001">
+  <properties/>
+  <testcase name="emptyMutationEntryIsRejected" classname="com.edu.quickaside.domain.actions.ActionLedgerDomainTest" time="0.0"/>
+  <testcase name="blankTargetIdIsRejected" classname="com.edu.quickaside.domain.actions.ActionLedgerDomainTest" time="0.0"/>
+  <testcase name="validEntryPreservesMutationOrderAndOpaqueValues" classname="com.edu.quickaside.domain.actions.ActionLedgerDomainTest" time="0.0"/>
+  <testcase name="blankTargetTypeIsRejectedWithoutTrimmingAcceptedValues" classname="com.edu.quickaside.domain.actions.ActionLedgerDomainTest" time="0.0"/>
+  <testcase name="nonPositivePayloadVersionIsRejected" classname="com.edu.quickaside.domain.actions.ActionLedgerDomainTest" time="0.0"/>
+  <testcase name="operationVocabularyContainsOnlyTheThreeGenericOperations" classname="com.edu.quickaside.domain.actions.ActionLedgerDomainTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

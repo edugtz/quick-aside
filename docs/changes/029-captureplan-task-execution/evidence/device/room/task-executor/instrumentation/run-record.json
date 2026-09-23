@@ -1,0 +1,31 @@
+{
+  "started_at_utc": "2026-09-23T20:38:54.332993+00:00",
+  "ended_at_utc": "2026-09-23T20:38:54.821821+00:00",
+  "command": [
+    "adb",
+    "-s",
+    "emulator-5556",
+    "shell",
+    "am",
+    "instrument",
+    "-w",
+    "-r",
+    "-e",
+    "class",
+    "com.edu.quickaside.data.local.CapturePlanTaskExecutorDatabaseTest",
+    "com.edu.quickaside.test/androidx.test.runner.AndroidJUnitRunner"
+  ],
+  "command_display": "adb -s emulator-5556 shell am instrument -w -r -e class com.edu.quickaside.data.local.CapturePlanTaskExecutorDatabaseTest com.edu.quickaside.test/androidx.test.runner.AndroidJUnitRunner",
+  "exit_code": 1,
+  "branch": "chg-029-captureplan-task-execution",
+  "base_head": "797e1557e8b5d94d4c8611a9b72749a8d7ac53f7",
+  "device_emulator_api": "CHG028_Room_API35; emulator-5556; API 35; test app com.edu.quickaside.test only",
+  "start_worktree_source_fingerprint_sha256": "368c63c203e4201e4e10f40ac7a96ee8ea1d878fe11549def092a041c7434ee4",
+  "end_worktree_source_fingerprint_sha256": "368c63c203e4201e4e10f40ac7a96ee8ea1d878fe11549def092a041c7434ee4",
+  "log": "docs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/instrumentation-output.txt",
+  "runner_exit_detail": null,
+  "command_exit_code": 0,
+  "test_gate_status": "FAILED",
+  "failure_marker": "INSTRUMENTATION_CODE: -1",
+  "diagnosis": "The installed app-debug.apk was stale (2026-09-20) and did not contain the new executor result types referenced by the test APK; current app rebuild evidence is in ../current-app-build/."
+}

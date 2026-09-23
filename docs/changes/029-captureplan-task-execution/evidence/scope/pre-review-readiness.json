@@ -1,0 +1,245 @@
+{
+  "checked_at_utc": "2026-09-23T21:23:26.225959+00:00",
+  "result": "READY FOR INDEPENDENT REVIEW",
+  "branch": "chg-029-captureplan-task-execution",
+  "base_head": "797e1557e8b5d94d4c8611a9b72749a8d7ac53f7",
+  "base_head_label": "canonical base / current commit; not an implementation SHA",
+  "worktree_source_fingerprint_sha256": "62d46a058954faf283e449dc9748c9213690738f3c60cb3ae997d36a208d2718",
+  "changed_production_test_source_manifest_sha256": "4ed7d3e16821ab9e030bb0c1f3a916c4735720ad10ae4bf62e8da82433143e32",
+  "apk_binary_retention": {
+    "policy": "APK binaries are intentionally not retained in the repository; build identity is preserved by SHA-256 and gate metadata.",
+    "initial_android_test_apk_sha256": "e4267440024cd8c147d2dd19043ec536e3145b0f08966ae35a4efa2386f20ca8",
+    "initial_app_apk_sha256": "b29838bd458f4f94a1d5c89fc9610fe6b977244576382ec0a5c195f9bfc277fd",
+    "current_app_apk_sha256": "24352f4c3a53c6814ea9b90252cc9e0658ee0d30a8f37282df8a4ee981084c35"
+  },
+  "checks": [
+    {
+      "name": "canonical base and branch",
+      "passed": true,
+      "evidence": "HEAD=797e1557e8b5d94d4c8611a9b72749a8d7ac53f7; branch=chg-029-captureplan-task-execution"
+    },
+    {
+      "name": "tracked changes limited to approved status docs",
+      "passed": true,
+      "evidence": "['docs/ACTIVE_WORK.md', 'docs/ROADMAP.md']"
+    },
+    {
+      "name": "app source scope limited to two production and two test additions",
+      "passed": true,
+      "evidence": "['app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt', 'app/src/main/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutor.kt', 'app/src/main/java/com/edu/quickaside/data/local/RoomCapturePlanTaskExecutor.kt', 'app/src/test/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutorContractTest.kt']"
+    },
+    {
+      "name": "no staged changes",
+      "passed": true,
+      "evidence": "git diff --cached --name-only is empty"
+    },
+    {
+      "name": "no schema, migration, DAO, build, dependency, manifest, or network-config changes",
+      "passed": true,
+      "evidence": "scoped git status is empty"
+    },
+    {
+      "name": "git diff --check",
+      "passed": true,
+      "evidence": "exit=0; "
+    },
+    {
+      "name": "each required gate's production/test source manifest matches final sources",
+      "passed": true,
+      "evidence": "compared 9 repository-local manifests"
+    },
+    {
+      "name": "focused_jvm pass record",
+      "passed": true,
+      "evidence": "exit=0; tests=32; path=docs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/run-record.json"
+    },
+    {
+      "name": "focused_jvm raw output",
+      "passed": true,
+      "evidence": "docs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/gradle-output.txt"
+    },
+    {
+      "name": "focused_room pass record",
+      "passed": true,
+      "evidence": "exit=0; tests=15; path=docs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/run-record.json"
+    },
+    {
+      "name": "focused_room raw output",
+      "passed": true,
+      "evidence": "docs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/instrumentation-output.txt"
+    },
+    {
+      "name": "existing_task_room_regression pass record",
+      "passed": true,
+      "evidence": "exit=0; tests=12; path=docs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/run-record.json"
+    },
+    {
+      "name": "existing_task_room_regression raw output",
+      "passed": true,
+      "evidence": "docs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/instrumentation-output.txt"
+    },
+    {
+      "name": "full_jvm pass record",
+      "passed": true,
+      "evidence": "exit=0; tests=178; path=docs/changes/029-captureplan-task-execution/evidence/jvm/full/run-record.json"
+    },
+    {
+      "name": "full_jvm raw output",
+      "passed": true,
+      "evidence": "docs/changes/029-captureplan-task-execution/evidence/jvm/full/command-output.txt"
+    },
+    {
+      "name": "focused JVM JUnit XML copied and clean",
+      "passed": true,
+      "evidence": "jvm/focused/retry-1/junit-xml/"
+    },
+    {
+      "name": "full JVM JUnit XML copied and clean",
+      "passed": true,
+      "evidence": "jvm/full/junit-xml/"
+    },
+    {
+      "name": "device/room/task-executor/instrumentation/retry-1 raw instrumentation verdict",
+      "passed": true,
+      "evidence": "tests=15; output=instrumentation-output.txt"
+    },
+    {
+      "name": "device/room/reversible-task-regression/instrumentation raw instrumentation verdict",
+      "passed": true,
+      "evidence": "tests=12; output=instrumentation-output.txt"
+    },
+    {
+      "name": "Android-test Kotlin compile pass",
+      "passed": true,
+      "evidence": "compileDebugAndroidTestKotlin run record and output"
+    },
+    {
+      "name": "debug assembly pass with APK hash and build metadata",
+      "passed": true,
+      "evidence": "assembleDebug run record, SHA-256 record, and Gradle output metadata; APK binary intentionally not retained"
+    },
+    {
+      "name": "lint pass and report copied",
+      "passed": true,
+      "evidence": "lintDebug SARIF/HTML and summary"
+    },
+    {
+      "name": "schema/config/dependency comparison pass",
+      "passed": true,
+      "evidence": "repository-local schema comparison and run record"
+    },
+    {
+      "name": "APK binaries not retained; SHA-256 and gate metadata preserved",
+      "passed": true,
+      "evidence": "binary retention=none; initial APK hashes={'android-test-apk-output/app-debug-androidTest.apk': 'e4267440024cd8c147d2dd19043ec536e3145b0f08966ae35a4efa2386f20ca8', 'app-apk-output/app-debug.apk': 'b29838bd458f4f94a1d5c89fc9610fe6b977244576382ec0a5c195f9bfc277fd'}; current app SHA-256=24352f4c3a53c6814ea9b90252cc9e0658ee0d30a8f37282df8a4ee981084c35"
+    },
+    {
+      "name": "all required outcomes and logs are repository-local",
+      "passed": true,
+      "evidence": "all referenced gate artifacts are below docs/changes/029-captureplan-task-execution/evidence/"
+    },
+    {
+      "name": "new source and change-package text formatting",
+      "passed": true,
+      "evidence": "no trailing whitespace or missing final newlines"
+    }
+  ],
+  "git_commands": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit_code": 0,
+      "stdout": " M docs/ACTIVE_WORK.md\n M docs/ROADMAP.md\n?? app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt\n?? app/src/main/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutor.kt\n?? app/src/main/java/com/edu/quickaside/data/local/RoomCapturePlanTaskExecutor.kt\n?? app/src/test/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutorContractTest.kt\n?? docs/changes/029-captureplan-task-execution/\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--stat"
+      ],
+      "exit_code": 0,
+      "stdout": " docs/ACTIVE_WORK.md | 63 ++++++++++++++++++++++++++++++++++++++++++-----------\n docs/ROADMAP.md     | 12 +++++-----\n 2 files changed, 57 insertions(+), 18 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--name-status"
+      ],
+      "exit_code": 0,
+      "stdout": "M\tdocs/ACTIVE_WORK.md\nM\tdocs/ROADMAP.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "ls-files",
+        "--others",
+        "--exclude-standard"
+      ],
+      "exit_code": 0,
+      "stdout": "app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt\napp/src/main/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutor.kt\napp/src/main/java/com/edu/quickaside/data/local/RoomCapturePlanTaskExecutor.kt\napp/src/test/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutorContractTest.kt\ndocs/changes/029-captureplan-task-execution/PLAN.md\ndocs/changes/029-captureplan-task-execution/QA.md\ndocs/changes/029-captureplan-task-execution/SPEC.md\ndocs/changes/029-captureplan-task-execution/TASKS.md\ndocs/changes/029-captureplan-task-execution/evidence/README.md\ndocs/changes/029-captureplan-task-execution/evidence/build-results/compileDebugAndroidTestKotlin/command-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/build-results/compileDebugAndroidTestKotlin/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/build-results/compileDebugAndroidTestKotlin/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/build-results/compileDebugAndroidTestKotlin/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/build-results/compileDebugAndroidTestKotlin/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/build-results/compileDebugAndroidTestKotlin/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/build-results/compileDebugAndroidTestKotlin/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/instrumentation-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression/instrumentation/test-verdict.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/gradle-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/harness-attempt-1.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/android-test-apk-output/output-metadata.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/apk-sha256-manifest.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/app-apk-output/output-metadata.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/gradle-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/app-apk-output/output-metadata.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/app-apk-sha256.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/command-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/install-current-app/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/install-current-app/install-current-app-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/install-current-app/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/install-current-app/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/install-current-app/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/install-current-app/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/install-current-app/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/current-app-build/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-app/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-app/install-app-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-app/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-app/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-app/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-app/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-app/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-test-apk/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-test-apk/install-test-apk-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-test-apk/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-test-apk/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-test-apk/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-test-apk/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-test-apk/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/instrumentation-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/gate-verdict-correction.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/instrumentation-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/retry-1/test-verdict.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/instrumentation/test-verdict.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/gradle-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/gradle-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/junit-summary.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/junit-xml/TEST-com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/junit-xml/TEST-com.edu.quickaside.application.capture.CapturePlanValidatorTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/junit-xml/binary/output-events.bin\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/junit-xml/binary/results-generic.bin\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/retry-1/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/focused/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/command-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-summary.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.AppDestinationTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.capture.CaptureInterpreterTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.capture.CapturePlanListExecutorContractTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.capture.CapturePlanValidatorTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.capture.CaptureSubmissionExecutionTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.capture.CaptureSubmissionRemoteIntegrationTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.capture.CaptureSubmissionTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.lists.ReversibleListItemActionsContractTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.search.LocalSearchContractTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.tasks.ReversibleTaskActionsContractTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.tasks.ReversibleTaskCompletionActionsContractTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.application.tasks.TaskCompletionLedgerPayloadTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.local.ActionLedgerEntityMappingTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.local.CaptureEntityMappingTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.local.ListEntityMappingTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.local.MemoryEntityMappingTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.local.TaskEntityMappingTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.remote.gateway.GatewayJsonCodecTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.remote.gateway.GatewayTransportTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.remote.gateway.Qa1Test.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProviderTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairerTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.domain.CoreDomainContractsTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.domain.actions.ActionLedgerDomainTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.domain.capture.CaptureTranscriptCorrectionDomainTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.ui.lists.MandadoHistoryTimestampFormatterTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.ui.memory.CaptureTimestampFormatterTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/TEST-com.edu.quickaside.ui.memory.NoteTimestampFormatterTest.xml\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/binary/output-events.bin\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/junit-xml/binary/results-generic.bin\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/jvm/full/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/lint/command-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/lint/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/lint/lint-results-debug.html\ndocs/changes/029-captureplan-task-execution/evidence/lint/lint-results-debug.sarif\ndocs/changes/029-captureplan-task-execution/evidence/lint/lint-summary.json\ndocs/changes/029-captureplan-task-execution/evidence/lint/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/lint/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/lint/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/lint/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/lint/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/pre_review_readiness.py\ndocs/changes/029-captureplan-task-execution/evidence/provenance.py\ndocs/changes/029-captureplan-task-execution/evidence/provenance/pre-verification/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/provenance/pre-verification/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/run_gate.py\ndocs/changes/029-captureplan-task-execution/evidence/scope/final-review/provenance/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/scope/final-review/provenance/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/scope/git-scope-review.txt\ndocs/changes/029-captureplan-task-execution/evidence/scope/pre-review-readiness.json\ndocs/changes/029-captureplan-task-execution/evidence/scope/schema-config-dependency-comparison.txt\ndocs/changes/029-captureplan-task-execution/evidence/scope/schema-config-dependency-run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/scope/schema-config-dependency/provenance/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/scope/schema-config-dependency/provenance/source-manifest.sha256\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short",
+        "--",
+        "app/schemas",
+        "app/src/main/java/com/edu/quickaside/data/local/QuickAsideDatabase.kt",
+        "app/src/main/java/com/edu/quickaside/data/local/TaskDao.kt",
+        "app/src/main/java/com/edu/quickaside/data/local/ActionLedgerDao.kt",
+        "app/build.gradle.kts",
+        "gradle/libs.versions.toml",
+        "build.gradle.kts",
+        "settings.gradle.kts",
+        "gradle/wrapper/gradle-wrapper.properties",
+        "app/src/main/AndroidManifest.xml",
+        "app/src/main/res/xml"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "tracked_changes": [
+    "docs/ACTIVE_WORK.md",
+    "docs/ROADMAP.md"
+  ],
+  "changed_app_source_files": [
+    "app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt",
+    "app/src/main/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutor.kt",
+    "app/src/main/java/com/edu/quickaside/data/local/RoomCapturePlanTaskExecutor.kt",
+    "app/src/test/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutorContractTest.kt"
+  ],
+  "untracked_file_count": 166,
+  "review_note": "Complete source, test, package-document, and evidence scope was inspected. No out-of-scope app, schema, migration, dependency, build, manifest, or network configuration changes were found."
+}

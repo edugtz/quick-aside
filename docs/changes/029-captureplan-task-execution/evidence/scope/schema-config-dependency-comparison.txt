@@ -1,0 +1,32 @@
+CHG-029 schema/config/dependency comparison
+Timestamp UTC: 2026-09-23T20:48:53.026219+00:00
+Branch: chg-029-captureplan-task-execution
+Base HEAD: 797e1557e8b5d94d4c8611a9b72749a8d7ac53f7 (canonical base/current commit; not an implementation SHA)
+Worktree/source fingerprint: 368c63c203e4201e4e10f40ac7a96ee8ea1d878fe11549def092a041c7434ee4
+Room version: 7
+Migrations: 1_2, 2_3, 3_4, 4_5, 5_6, 6_7
+Tracked schemas at base: 7 (versions 1–7)
+Result: unchanged
+No DAO/entity/schema, migration, dependency/catalog, build, manifest, or network-security configuration changes are in scope or present.
+
+[tracked config/schema diff] exit 0
+$ git diff --name-status HEAD -- app/schemas app/src/main/java/com/edu/quickaside/data/local/QuickAsideDatabase.kt app/src/main/java/com/edu/quickaside/data/local/TaskDao.kt app/src/main/java/com/edu/quickaside/data/local/ActionLedgerDao.kt app/build.gradle.kts gradle/libs.versions.toml build.gradle.kts settings.gradle.kts gradle/wrapper/gradle-wrapper.properties app/src/main/AndroidManifest.xml app/src/main/res/xml
+(no output)
+
+[untracked config/schema inventory] exit 0
+$ git ls-files --others --exclude-standard -- app/schemas app/src/main/java/com/edu/quickaside/data/local/QuickAsideDatabase.kt app/src/main/java/com/edu/quickaside/data/local/TaskDao.kt app/src/main/java/com/edu/quickaside/data/local/ActionLedgerDao.kt app/build.gradle.kts gradle/libs.versions.toml build.gradle.kts settings.gradle.kts gradle/wrapper/gradle-wrapper.properties app/src/main/AndroidManifest.xml app/src/main/res/xml
+(no output)
+
+[scoped git status] exit 0
+$ git status --short -- app/schemas app/src/main/java/com/edu/quickaside/data/local/QuickAsideDatabase.kt app/src/main/java/com/edu/quickaside/data/local/TaskDao.kt app/src/main/java/com/edu/quickaside/data/local/ActionLedgerDao.kt app/build.gradle.kts gradle/libs.versions.toml build.gradle.kts settings.gradle.kts gradle/wrapper/gradle-wrapper.properties app/src/main/AndroidManifest.xml app/src/main/res/xml
+(no output)
+
+[tracked schema inventory] exit 0
+$ git ls-tree -r --name-only HEAD app/schemas
+app/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/1.json
+app/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/2.json
+app/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/3.json
+app/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/4.json
+app/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/5.json
+app/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/6.json
+app/schemas/com.edu.quickaside.data.local.QuickAsideDatabase/7.json

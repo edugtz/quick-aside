@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.application.capture.CaptureInterpreterTest" tests="18" skipped="0" failures="0" errors="0" timestamp="2026-09-23T20:43:06.716Z" hostname="MacBook-Pro-de-Eduardo.local" time="0.034">
+  <properties/>
+  <testcase name="newProductionFilesStayInProviderNeutralApplicationBoundary" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.007"/>
+  <testcase name="voiceCaptureWithoutCorrectionSendsExactOriginalTranscript" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.017"/>
+  <testcase name="providerCandidateCannotSupplySourceCaptureId" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.0"/>
+  <testcase name="invalidAddListItemCandidateReturnsExpectedValidatorIssue" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.001"/>
+  <testcase name="providerFailureBecomesProviderFailureResult" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.0"/>
+  <testcase name="emptyProviderActionListReturnsInvalidPlanWithEmptyActionsIssue" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.001"/>
+  <testcase name="providerCancellationIsRethrown" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.0"/>
+  <testcase name="validProviderCandidateProducesSuccessWithValidatedPlan" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.001"/>
+  <testcase name="validationIssueActionIndexesSurviveIntoInvalidPlan" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.001"/>
+  <testcase name="providerRequestAndCandidateExposeOnlyProviderNeutralInterpretationData" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.0"/>
+  <testcase name="trustedCaptureIdBecomesPlanSourceIdWithoutNormalization" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.001"/>
+  <testcase name="providerIsInvokedExactlyOnceForNormalInterpretation" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.0"/>
+  <testcase name="multiActionCandidatePreservesExactOrderAndFieldsEndToEnd" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.001"/>
+  <testcase name="invalidNoteCandidateReturnsExpectedValidatorIssue" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.001"/>
+  <testcase name="validSurroundingWhitespaceIsPreservedWhenPassedToProvider" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.0"/>
+  <testcase name="blankEffectiveInputReturnsBlankInputWithoutInvokingProvider" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.001"/>
+  <testcase name="textCaptureSendsExactOriginalTextToProvider" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.0"/>
+  <testcase name="correctedVoiceCaptureSendsCorrectionInsteadOfOriginalTranscript" classname="com.edu.quickaside.application.capture.CaptureInterpreterTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

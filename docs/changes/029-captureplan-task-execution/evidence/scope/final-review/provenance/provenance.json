@@ -1,0 +1,25 @@
+{
+  "captured_at_utc": "2026-09-23T21:23:26.103655+00:00",
+  "branch": "chg-029-captureplan-task-execution",
+  "base_head": "797e1557e8b5d94d4c8611a9b72749a8d7ac53f7",
+  "base_head_label": "canonical base / current commit; not an implementation SHA",
+  "git_status_short": [
+    " M docs/ACTIVE_WORK.md",
+    " M docs/ROADMAP.md",
+    "?? app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt",
+    "?? app/src/main/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutor.kt",
+    "?? app/src/main/java/com/edu/quickaside/data/local/RoomCapturePlanTaskExecutor.kt",
+    "?? app/src/test/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutorContractTest.kt",
+    "?? docs/changes/029-captureplan-task-execution/"
+  ],
+  "tracked_git_diff_sha256": "f32abea3fe2c472e8108a4d8fc81d40bcf70c93a62f3004a106e4bc62203c168",
+  "changed_production_test_source_manifest": "docs/changes/029-captureplan-task-execution/evidence/scope/final-review/provenance/source-manifest.sha256",
+  "changed_production_test_source_manifest_sha256": "4ed7d3e16821ab9e030bb0c1f3a916c4735720ad10ae4bf62e8da82433143e32",
+  "worktree_source_fingerprint_sha256": "62d46a058954faf283e449dc9748c9213690738f3c60cb3ae997d36a208d2718",
+  "changed_production_test_source_files": [
+    "app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt",
+    "app/src/main/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutor.kt",
+    "app/src/main/java/com/edu/quickaside/data/local/RoomCapturePlanTaskExecutor.kt",
+    "app/src/test/java/com/edu/quickaside/application/capture/CapturePlanTaskExecutorContractTest.kt"
+  ]
+}

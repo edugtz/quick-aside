@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edu.quickaside.data.local.TaskEntityMappingTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-09-23T20:43:06.806Z" hostname="MacBook-Pro-de-Eduardo.local" time="0.001">
+  <properties/>
+  <testcase name="completedTaskRoundTripsExactInstantAndKeepsDueDateIndependent" classname="com.edu.quickaside.data.local.TaskEntityMappingTest" time="0.001"/>
+  <testcase name="trabajoTaskRoundTripsWithIsoDateOnlyDueDate" classname="com.edu.quickaside.data.local.TaskEntityMappingTest" time="0.0"/>
+  <testcase name="mappingPreservesStableIdAndDoesNotInventTaskValidation" classname="com.edu.quickaside.data.local.TaskEntityMappingTest" time="0.0"/>
+  <testcase name="malformedPersistedDueDateFailsVisibly" classname="com.edu.quickaside.data.local.TaskEntityMappingTest" time="0.0"/>
+  <testcase name="personalTaskRoundTripsWithNullDueDateAndExactTitle" classname="com.edu.quickaside.data.local.TaskEntityMappingTest" time="0.0"/>
+  <testcase name="unknownPersistedSpaceFailsVisibly" classname="com.edu.quickaside.data.local.TaskEntityMappingTest" time="0.0"/>
+  <testcase name="reopeningClearsCompletionWithoutChangingDueDate" classname="com.edu.quickaside.data.local.TaskEntityMappingTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

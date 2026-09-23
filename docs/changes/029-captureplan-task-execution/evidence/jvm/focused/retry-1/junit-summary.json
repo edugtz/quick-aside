@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "xml_files": 2,
+  "tests": 32,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suites": [
+    {
+      "file": "TEST-com.edu.quickaside.application.capture.CapturePlanTaskExecutorContractTest.xml",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.edu.quickaside.application.capture.CapturePlanValidatorTest.xml",
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ]
+}

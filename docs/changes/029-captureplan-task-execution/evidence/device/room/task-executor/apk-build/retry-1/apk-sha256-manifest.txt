@@ -1,0 +1,2 @@
+e4267440024cd8c147d2dd19043ec536e3145b0f08966ae35a4efa2386f20ca8  android-test-apk-output/app-debug-androidTest.apk
+b29838bd458f4f94a1d5c89fc9610fe6b977244576382ec0a5c195f9bfc277fd  app-apk-output/app-debug.apk

@@ -1,0 +1,21 @@
+{
+  "started_at_utc": "2026-09-23T20:38:46.960613+00:00",
+  "ended_at_utc": "2026-09-23T20:38:47.098212+00:00",
+  "command": [
+    "adb",
+    "-s",
+    "emulator-5556",
+    "install",
+    "-r",
+    "docs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/android-test-apk-output/app-debug-androidTest.apk"
+  ],
+  "command_display": "adb -s emulator-5556 install -r docs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/apk-build/retry-1/android-test-apk-output/app-debug-androidTest.apk",
+  "exit_code": 0,
+  "branch": "chg-029-captureplan-task-execution",
+  "base_head": "797e1557e8b5d94d4c8611a9b72749a8d7ac53f7",
+  "device_emulator_api": "CHG028_Room_API35; emulator-5556; API 35",
+  "start_worktree_source_fingerprint_sha256": "368c63c203e4201e4e10f40ac7a96ee8ea1d878fe11549def092a041c7434ee4",
+  "end_worktree_source_fingerprint_sha256": "368c63c203e4201e4e10f40ac7a96ee8ea1d878fe11549def092a041c7434ee4",
+  "log": "docs/changes/029-captureplan-task-execution/evidence/device/room/task-executor/install-test-apk/install-test-apk-output.txt",
+  "runner_exit_detail": null
+}

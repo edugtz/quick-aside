@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "process_exit_code": 0,
+  "instrumentation_result_code": -1,
+  "instrumentation_result_code_meaning": "Activity.RESULT_OK",
+  "tests_reported": 12,
+  "failures": 0,
+  "test_methods": [
+    "blankTitleIsRejectedWithoutAnyTaskOrLedgerRows",
+    "createCancellationPropagatesWithoutPartialState",
+    "undoRejectsMissingEntryMismatchAndMissingTargetWithoutChangingLedger",
+    "undoDeleteFailureRollsBackTaskAndLedgerUpdate",
+    "undoCancellationPropagatesAndRollsBackTaskDeletion",
+    "createPersistsPersonalAndTrabajoTasksAsPendingWithExactLedgerShape",
+    "createChildFailureRollsBackTaskParentAndMutation",
+    "ledgerEntryIdCollisionRollsBackTaskWithoutChangingExistingLedger",
+    "undoRejectsUnsupportedAndMalformedLedgerShapesWithoutDeletingTasks",
+    "undoMarkFailureRollsBackTaskDeletionAndLedgerUpdate",
+    "undoDeletesOnlyExactTaskMarksEntryAndSurvivesReopen",
+    "generatedIdCollisionFailsWithoutOverwritingExistingTaskOrRecordingLedger"
+  ],
+  "raw_output": "instrumentation-output.txt"
+}
