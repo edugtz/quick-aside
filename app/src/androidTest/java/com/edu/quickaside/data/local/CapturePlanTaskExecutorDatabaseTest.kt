@@ -260,6 +260,76 @@ class CapturePlanTaskExecutorDatabaseTest {
     }
 
     @Test
+    fun firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val existing = Task(
+            id = TaskId("existing-task"),
+            title = "  existing exact value  ",
+            space = TaskSpace.TRABAJO,
+            dueDate = LocalDate.of(2026, 10, 9),
+            completedAt = Instant.parse("2026-09-20T11:00:00Z"),
+        )
+        database.taskDao().insertStrict(existing.toEntity())
+        insertUnrelatedDurableState()
+        val tasksBefore = database.taskDao().getAll()
+        val entriesBefore = database.actionLedgerEntryDao().getRecent(50)
+        val unrelatedMutationsBefore = database.actionLedgerMutationDao()
+            .getByEntryId("unrelated-entry")
+        val sourceCaptureBefore = database.captureDao().getById("plan-source")
+
+        val action = RoomCapturePlanTaskExecutor(
+            database = database,
+            taskIdProvider = QueueTaskIdProvider(listOf("existing-task", "new-task")),
+            actionLedgerIdProvider = QueueEntryIdProvider(listOf("first-collision-entry")),
+            clock = QueueActionClock(listOf(Instant.parse("2026-09-23T15:05:00Z"))),
+        )
+        val result = action.execute(plan(task("must not persist"), task("also must not persist")))
+
+        assertTrue(result is CapturePlanTaskExecutionResult.Failed)
+        assertEquals(existing, database.taskDao().getById("existing-task")?.toDomain())
+        assertNull(database.taskDao().getById("new-task"))
+        assertEquals(tasksBefore, database.taskDao().getAll())
+        assertEquals(entriesBefore, database.actionLedgerEntryDao().getRecent(50))
+        assertTrue(database.actionLedgerMutationDao().getByEntryId("first-collision-entry").isEmpty())
+        assertEquals(unrelatedMutationsBefore, database.actionLedgerMutationDao().getByEntryId("unrelated-entry"))
+        assertEquals(sourceCaptureBefore, database.captureDao().getById("plan-source"))
+    }
+
+    @Test
+    fun duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        insertUnrelatedDurableState()
+        val taskIds = RepeatingTaskIdProvider("duplicate-task")
+        val entryIds = CountingEntryIdProvider()
+        val clock = CountingClock()
+        val tasksBefore = database.taskDao().getAll()
+        val entriesBefore = database.actionLedgerEntryDao().getRecent(50)
+        val unrelatedMutationsBefore = database.actionLedgerMutationDao()
+            .getByEntryId("unrelated-entry")
+        val sourceCaptureBefore = database.captureDao().getById("plan-source")
+        val action = RoomCapturePlanTaskExecutor(database, taskIds, entryIds, clock)
+
+        val result = action.execute(plan(task("first plan task"), task("second plan task")))
+
+        assertTrue(result is CapturePlanTaskExecutionResult.Failed)
+        assertEquals(
+            "Task ID provider returned duplicate IDs",
+            (result as CapturePlanTaskExecutionResult.Failed).cause.message,
+        )
+        assertEquals(2, taskIds.calls)
+        assertEquals(0, entryIds.calls)
+        assertEquals(0, clock.calls)
+        assertNull(database.taskDao().getById("duplicate-task"))
+        assertEquals(tasksBefore, database.taskDao().getAll())
+        assertEquals(entriesBefore, database.actionLedgerEntryDao().getRecent(50))
+        assertTrue(database.actionLedgerMutationDao().getByEntryId("duplicate-entry").isEmpty())
+        assertEquals(unrelatedMutationsBefore, database.actionLedgerMutationDao().getByEntryId("unrelated-entry"))
+        assertEquals(sourceCaptureBefore, database.captureDao().getById("plan-source"))
+    }
+
+    @Test
     fun laterTaskIdCollisionRollsBackEarlierInsertAndPreservesExistingTask() = runBlocking {
         openFreshDatabase()
         insertSourceCapture()
@@ -645,6 +715,25 @@ class CapturePlanTaskExecutorDatabaseTest {
         )
     }
 
+    private suspend fun insertUnrelatedDurableState() {
+        insertTask(
+            id = "unrelated-task",
+            title = "unrelated exact task",
+            space = TaskSpace.PERSONAL,
+            dueDate = LocalDate.of(2026, 11, 1),
+        )
+        database.actionLedgerEntryDao().insert(
+            ActionLedgerEntryEntity(
+                id = "unrelated-entry",
+                occurredAtEpochMillis = 1_234,
+                sourceCaptureId = "plan-source",
+            ),
+        )
+        database.actionLedgerMutationDao().insertAll(
+            listOf(mutation("unrelated-entry", 0, "unrelated-task")),
+        )
+    }
+
     private fun executor(
         taskIds: List<String> = emptyList(),
         entryIds: List<String> = emptyList(),
@@ -770,6 +859,15 @@ class CapturePlanTaskExecutorDatabaseTest {
     private class QueueTaskIdProvider(ids: List<String>) : TaskIdProvider {
         private val ids = ArrayDeque(ids)
         override fun nextTaskId(): TaskId = TaskId(ids.removeFirst())
+    }
+
+    private class RepeatingTaskIdProvider(
+        private val id: String,
+    ) : TaskIdProvider {
+        var calls: Int = 0
+            private set
+
+        override fun nextTaskId(): TaskId = TaskId(id).also { calls++ }
     }
 
     private class QueueEntryIdProvider(ids: List<String>) : ActionLedgerIdProvider {

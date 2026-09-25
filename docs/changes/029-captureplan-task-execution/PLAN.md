@@ -1,7 +1,7 @@
 # Change 029 — CapturePlan Task Execution Foundation — PLAN
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTED — READY FOR INDEPENDENT REVIEW**
+- Status: **ROUND-1 REVIEW: BLOCKED — REMEDIATION COMPLETE — ROUND-2 REVIEW PENDING**
 - Planning baseline: `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`
 
 This package selects only the provider-independent Task batch execution
@@ -56,8 +56,43 @@ before that commit against worktree/source fingerprint
 production/test source manifest SHA-256
 `4ed7d3e16821ab9e030bb0c1f3a916c4735720ad10ae4bf62e8da82433143e32`. They
 identify the tested source state; they were not originally commit-bound.
-Results and provenance records remain under `evidence/`. Independent review
-has not run, and CHG-030 is unreserved.
+Results and provenance records remain under `evidence/`.
+
+## Round-1 independent review and remediation
+
+Independent Round-1 review reviewed branch HEAD
+`ad845759c85346c8fe4a976ba211a6f5f53a12c6` (implementation commit
+`2dc0425434c3b5b40a3ff25f1feba85bf3130efb`) and returned **BLOCKED**:
+0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE.
+
+- MAJOR-1 — the new batch executor lacked direct executed evidence for two
+  ID-integrity paths. Remediation added two focused Room tests directly
+  against `RoomCapturePlanTaskExecutor`:
+  `firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState` and
+  `duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState`.
+  Both executed and passed; the focused class now reports **17/17** on
+  `CHG028_Room_API35` (API 35, `emulator-5556`). New artifacts are under
+  `evidence/review-round-1-remediation/`; the original 15-test artifacts
+  remain unchanged.
+- MINOR-1 — stale current-state wording was reconciled here and in
+  `TASKS.md`, `QA.md`, `SPEC.md`, `docs/ACTIVE_WORK.md`, and
+  `docs/ROADMAP.md`. The Task execution foundation exists but remains
+  unwired to normal CaptureSubmission/text/voice; Google Tasks sync and Event
+  execution remain pending; end-to-end Task natural-language mutation is not
+  complete.
+- MINOR-2 — the `QA.md` schema/config/dependency pointer now names the actual
+  structured artifact `scope/schema-config-dependency-run-record.json`. No
+  historical machine evidence was renamed or regenerated.
+- NOTE-1/2/3 — the Round-1 historical notes (focused-JVM Gradle/cache
+  environment failure, harness argument-order failure, stale APK / zero-test
+  initial Room attempt, the successful 15/15 canonical Room run,
+  `INSTRUMENTATION_CODE -1` / `Activity.RESULT_OK` correction, evidence
+  hygiene conclusions, and intentionally absent APKs with hashes/metadata
+  retained) remain preserved unchanged in `QA.md` and `evidence/README.md`.
+
+Production source changed by this remediation: none. Round 1 found no
+production correctness defect, so remediation is tests/evidence/docs only.
+Round 2 has not run, and CHG-030 remains unreserved.
 
 ## Expected files
 

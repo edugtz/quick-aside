@@ -1,0 +1,6 @@
+CHG-029 gate started: 2026-09-25T23:04:17.509377+00:00
+Command: adb -s emulator-5556 install -r app/build/outputs/apk/debug/app-debug.apk
+Device/emulator: CHG028_Room_API35; emulator-5556; API 35
+
+Performing Streamed Install
+Success

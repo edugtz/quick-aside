@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "process_exit_code": 0,
+  "instrumentation_result_code": -1,
+  "instrumentation_result_code_meaning": "Activity.RESULT_OK",
+  "tests_reported": 17,
+  "failures": 0,
+  "test_methods": [
+    "markUndoneFailureRollsBackEveryTaskDelete",
+    "deleteFailureAfterEarlierDeleteRollsBackWholeUndo",
+    "undoCancellationAfterDeletesPropagatesAndRestoresEveryTask",
+    "undoRejectsMissingLedgerMismatchedIdsOrderAndMissingTargetWithoutPartialDelete",
+    "cancellationAfterTaskInsertsPropagatesAndRollsBackCompletePlan",
+    "multiTaskBatchPreservesOrderAllowsDuplicateTitlesAndWritesOneLedger",
+    "singlePersonalAndTrabajoTasksPreserveExactFieldsAndStartPending",
+    "everyUnsupportedActionFamilyRejectsWholePlanBeforeAnyMutation",
+    "parentLedgerIdCollisionRollsBackEveryInsertedTask",
+    "laterTaskIdCollisionRollsBackEarlierInsertAndPreservesExistingTask",
+    "targetedUndoPreservesUnrelatedTasksCaptureAndSurvivesReopen",
+    "firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState",
+    "malformedLedgerProvenancePositionsOperationsTypesVersionsPayloadsAndTargetsRejectUndo",
+    "missingSourceCaptureWritesNothingAndDoesNotConsumeProviders",
+    "childMutationFailureRollsBackTasksParentAndEarlierChild",
+    "duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState",
+    "overLimitTitleAndActionCountAreRejectedWithoutWrites"
+  ],
+  "remediation_tests": {
+    "firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState": "executed; final status code 0",
+    "duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState": "executed; final status code 0"
+  },
+  "raw_output": "instrumentation-output.txt"
+}

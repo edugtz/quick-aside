@@ -1,0 +1,1 @@
+fb2f5dd710a02d62efd592c66d559970dd5b29c1a8869f12183b249976df0351  android-test-apk-output/app-debug-androidTest.apk

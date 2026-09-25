@@ -1,0 +1,243 @@
+{
+  "checked_at_utc": "2026-09-25T23:08:21.780888+00:00",
+  "result": "REMEDIATION READY FOR ROUND-2 INDEPENDENT REVIEW",
+  "branch": "chg-029-captureplan-task-execution",
+  "reviewed_round1_head": "ad845759c85346c8fe4a976ba211a6f5f53a12c6",
+  "head_at_readiness": "ad845759c85346c8fe4a976ba211a6f5f53a12c6",
+  "gate_worktree_source_fingerprint_sha256": "6fd26bc13d6c3c25f9e096720a0a6b1642de584510ec1adddce782960f490b45",
+  "final_readiness_worktree_source_fingerprint_sha256": "4b8d422d583265068e59c897ee865e25fe70fe5f296a344cd15f794bd338c5c2",
+  "remediation_test_source": {
+    "path": "app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt",
+    "sha256": "1dd19613d1d94e599a0faeb9005c18f98ba3e47703b239e992cfba35b8c9c9e3",
+    "new_tests": {
+      "firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState": true,
+      "duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState": true
+    }
+  },
+  "discovered_room_test_count": 17,
+  "remediation_room_gate_status": "PASS",
+  "historical_round1_room_test_count": 15,
+  "checks": [
+    {
+      "name": "branch and reviewed Round-1 HEAD",
+      "passed": true,
+      "evidence": "branch=chg-029-captureplan-task-execution; HEAD=ad845759c85346c8fe4a976ba211a6f5f53a12c6"
+    },
+    {
+      "name": "no staged changes",
+      "passed": true,
+      "evidence": "git diff --cached --name-only is empty"
+    },
+    {
+      "name": "git diff --check",
+      "passed": true,
+      "evidence": "exit=0"
+    },
+    {
+      "name": "production source unchanged",
+      "passed": true,
+      "evidence": "changed production paths=[]"
+    },
+    {
+      "name": "exactly the intended test source change",
+      "passed": true,
+      "evidence": "changed app paths=['app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt']"
+    },
+    {
+      "name": "docs/evidence remediation only otherwise",
+      "passed": true,
+      "evidence": "out-of-scope changed paths=[]"
+    },
+    {
+      "name": "both requested MAJOR-1 test scenarios exist",
+      "passed": true,
+      "evidence": "{\"firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState\": true, \"duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState\": true}"
+    },
+    {
+      "name": "new focused Room artifact is repository-local",
+      "passed": true,
+      "evidence": "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation"
+    },
+    {
+      "name": "actual discovered test count recorded and matches raw output",
+      "passed": true,
+      "evidence": "verdict=17; run-record=17; raw=17"
+    },
+    {
+      "name": "exactly two remediation tests were added",
+      "passed": true,
+      "evidence": "discovered=17; original=15; expected=17"
+    },
+    {
+      "name": "remediation gate PASS with zero failures",
+      "passed": true,
+      "evidence": "{\"status\": \"PASS\", \"failures\": 0, \"run_record_status\": \"PASS\"}"
+    },
+    {
+      "name": "both new tests executed with final status code 0",
+      "passed": true,
+      "evidence": "{\"firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState\": 0, \"duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState\": 0}"
+    },
+    {
+      "name": "no required artifact relies only on terminal prose",
+      "passed": true,
+      "evidence": "missing artifacts=[]"
+    },
+    {
+      "name": "original Round-1 evidence not overwritten",
+      "passed": true,
+      "evidence": "{\"single_allowed_evidence_doc_change\": true, \"historical_artifact_diffs\": {\"docs/changes/029-captureplan-task-execution/evidence/device/room/task-executor\": true, \"docs/changes/029-captureplan-task-execution/evidence/device/room/reversible-task-regression\": true, \"docs/changes/029-captureplan-task-execution/evidence/jvm\": true, \"docs/changes/029-captureplan-task-execution/evidence/lint\": true, \"docs/changes/029-captureplan-task-execution/evidence/scope\": true, \"docs/changes/029-captureplan-task-execution/evidence/provenance\": true}, \"original_verdict_tests\": 15, \"original_run_record_tests\": 15}"
+    },
+    {
+      "name": "no APK/AAB/DB/WAL/SHM binaries retained in evidence",
+      "passed": true,
+      "evidence": "binary scan=[]"
+    },
+    {
+      "name": "schema/dependency/config surfaces untouched",
+      "passed": true,
+      "evidence": "changed excluded paths=[]"
+    },
+    {
+      "name": "CHG-030 not started",
+      "passed": true,
+      "evidence": "CHG-030 paths=[]"
+    },
+    {
+      "name": "historical gates remain historical, not rerun",
+      "passed": true,
+      "evidence": "remediation gates record the reviewed HEAD and their own artifacts"
+    }
+  ],
+  "tracked_changes": [
+    "app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt",
+    "docs/ACTIVE_WORK.md",
+    "docs/ROADMAP.md",
+    "docs/changes/029-captureplan-task-execution/PLAN.md",
+    "docs/changes/029-captureplan-task-execution/QA.md",
+    "docs/changes/029-captureplan-task-execution/SPEC.md",
+    "docs/changes/029-captureplan-task-execution/TASKS.md",
+    "docs/changes/029-captureplan-task-execution/evidence/README.md"
+  ],
+  "untracked_changes": [
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/README.md",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/android-test-apk-output/output-metadata.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/apk-sha256-manifest.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/exit-code.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/gradle-output.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/provenance-end/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/provenance-end/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/provenance-start/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/provenance-start/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/run-record.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-content-verification.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/app-apk-output/output-metadata.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/app-apk-sha256.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/exit-code.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/gradle-output.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/provenance-end/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/provenance-end/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/provenance-start/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/provenance-start/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/run-record.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/exit-code.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/gradle-output.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/provenance-end/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/provenance-end/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/provenance-start/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/provenance-start/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/run-record.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/device-identity.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/exit-code.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/install-app-output.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/provenance-end/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/provenance-end/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/provenance-start/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/provenance-start/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/run-record.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/exit-code.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/install-test-apk-output.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/provenance-end/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/provenance-end/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/provenance-start/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/provenance-start/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/run-record.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/exit-code.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/instrumentation-output.txt",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/provenance-end/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/provenance-end/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/provenance-start/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/provenance-start/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/run-record.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/test-verdict.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/parse_room_verdict.py",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/readiness/provenance/provenance.json",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/readiness/provenance/source-manifest.sha256",
+    "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/remediation_readiness.py"
+  ],
+  "git_commands": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit_code": 0,
+      "stdout": " M app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt\n M docs/ACTIVE_WORK.md\n M docs/ROADMAP.md\n M docs/changes/029-captureplan-task-execution/PLAN.md\n M docs/changes/029-captureplan-task-execution/QA.md\n M docs/changes/029-captureplan-task-execution/SPEC.md\n M docs/changes/029-captureplan-task-execution/TASKS.md\n M docs/changes/029-captureplan-task-execution/evidence/README.md\n?? docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--stat"
+      ],
+      "exit_code": 0,
+      "stdout": " .../local/CapturePlanTaskExecutorDatabaseTest.kt   | 98 ++++++++++++++++++++++\n docs/ACTIVE_WORK.md                                | 36 ++++++--\n docs/ROADMAP.md                                    | 34 +++++---\n .../changes/029-captureplan-task-execution/PLAN.md | 41 ++++++++-\n docs/changes/029-captureplan-task-execution/QA.md  | 42 +++++++++-\n .../changes/029-captureplan-task-execution/SPEC.md | 22 ++++-\n .../029-captureplan-task-execution/TASKS.md        | 36 +++++++-\n .../evidence/README.md                             | 45 +++++++++-\n 8 files changed, 322 insertions(+), 32 deletions(-)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--name-status"
+      ],
+      "exit_code": 0,
+      "stdout": "M\tapp/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt\nM\tdocs/ACTIVE_WORK.md\nM\tdocs/ROADMAP.md\nM\tdocs/changes/029-captureplan-task-execution/PLAN.md\nM\tdocs/changes/029-captureplan-task-execution/QA.md\nM\tdocs/changes/029-captureplan-task-execution/SPEC.md\nM\tdocs/changes/029-captureplan-task-execution/TASKS.md\nM\tdocs/changes/029-captureplan-task-execution/evidence/README.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "ls-files",
+        "--others",
+        "--exclude-standard"
+      ],
+      "exit_code": 0,
+      "stdout": "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/README.md\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/android-test-apk-output/output-metadata.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/apk-sha256-manifest.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/gradle-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-build/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/apk-content-verification.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/app-apk-output/output-metadata.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/app-apk-sha256.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/gradle-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/gradle-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/device-identity.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/install-app-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-app/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/install-test-apk-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/install-test-apk/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/exit-code.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/instrumentation-output.txt\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/provenance-end/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/provenance-end/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/provenance-start/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/provenance-start/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/run-record.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/instrumentation/test-verdict.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/parse_room_verdict.py\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/readiness/provenance/provenance.json\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/readiness/provenance/source-manifest.sha256\ndocs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/remediation_readiness.py\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "note": "Previously accepted CHG-029 gates were not rerun: production source is unchanged from the published implementation and Round-1 evidence remains valid. The only newly required behavioral gate is the Round-1 remediation focused Room run."
+}

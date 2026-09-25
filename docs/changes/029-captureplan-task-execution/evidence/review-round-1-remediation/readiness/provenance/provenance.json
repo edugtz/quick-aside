@@ -1,0 +1,24 @@
+{
+  "captured_at_utc": "2026-09-25T23:08:21.622793+00:00",
+  "branch": "chg-029-captureplan-task-execution",
+  "base_head": "ad845759c85346c8fe4a976ba211a6f5f53a12c6",
+  "base_head_label": "canonical base / current commit; not an implementation SHA",
+  "git_status_short": [
+    " M app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt",
+    " M docs/ACTIVE_WORK.md",
+    " M docs/ROADMAP.md",
+    " M docs/changes/029-captureplan-task-execution/PLAN.md",
+    " M docs/changes/029-captureplan-task-execution/QA.md",
+    " M docs/changes/029-captureplan-task-execution/SPEC.md",
+    " M docs/changes/029-captureplan-task-execution/TASKS.md",
+    " M docs/changes/029-captureplan-task-execution/evidence/README.md",
+    "?? docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/"
+  ],
+  "tracked_git_diff_sha256": "6e1c968e1bd13a0be29a3536aa954e5ea27b78888f543b3bf380115424679649",
+  "changed_production_test_source_manifest": "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/readiness/provenance/source-manifest.sha256",
+  "changed_production_test_source_manifest_sha256": "eb33c595e32251cea75674595f0acdf175fa51028feea3bfddcb5ade70291a95",
+  "worktree_source_fingerprint_sha256": "4b8d422d583265068e59c897ee865e25fe70fe5f296a344cd15f794bd338c5c2",
+  "changed_production_test_source_files": [
+    "app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt"
+  ]
+}

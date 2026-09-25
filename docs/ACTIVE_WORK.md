@@ -1,6 +1,6 @@
 # ACTIVE WORK
 
-Status: **CHG-029 IMPLEMENTED — COMMITTED/PUSHED — INDEPENDENT REVIEW PENDING**
+Status: **CHG-029 ROUND-1 REVIEW: BLOCKED — REMEDIATION COMPLETE — ROUND-2 REVIEW PENDING**
 
 ## Current project state — CHG-029 implementation
 
@@ -41,6 +41,26 @@ Status: **CHG-029 IMPLEMENTED — COMMITTED/PUSHED — INDEPENDENT REVIEW PENDIN
   tested implementation.
 - Final Git/scope evidence and the pre-review readiness check passed; see the
   CHG-029 evidence index.
+- Independent Round-1 review reviewed
+  `ad845759c85346c8fe4a976ba211a6f5f53a12c6` and returned **BLOCKED**:
+  0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE. Remediation is test/evidence/docs
+  only; no production source changed.
+- MAJOR-1 added two focused Room tests directly against
+  `RoomCapturePlanTaskExecutor`: first persisted Task-ID collision and
+  duplicate generated IDs within one batch. Both executed and passed; the
+  focused class now reports **17/17** on `CHG028_Room_API35` (API 35,
+  `emulator-5556`). New artifacts are under
+  `evidence/review-round-1-remediation/`; the original 15-test artifacts are
+  preserved unchanged.
+- MINOR-1 reconciled stale current-state wording in this package and the
+  roadmap. MINOR-2 corrected the schema/config/dependency evidence pointer to
+  `schema-config-dependency-run-record.json` without renaming or regenerating
+  machine evidence. Round-1 NOTE findings remain preserved.
+- Current capability: the CHG-029 Task execution foundation exists but is
+  **unwired** to normal CaptureSubmission/text/voice. Google Tasks sync and
+  Event execution remain pending, and end-to-end Task natural-language
+  mutation is **not** complete. Round 2 has not run, and CHG-030 remains
+  unreserved.
 
 ## CHG-028 closeout context at the selected baseline
 
@@ -286,9 +306,12 @@ CHG-028 connects that list-only boundary to normal text and voice Capture with
 exact targeted Undo. Text execution/Undo and human-voice execution/Undo have
 passed real-device acceptance with visual and privacy evidence recorded in
 the CHG-028 QA package. The user retains commit, push, merge, and release
-authority. CHG-029's Task-only execution foundation is implemented and has
-passed its required verification; independent review remains. No CHG-030 is
-reserved.
+authority. CHG-029's Task-only execution foundation is implemented, passed its
+required verification, and received an independent Round-1 **BLOCKED**
+verdict for missing direct executed ID-integrity evidence. Round-1
+remediation is complete and Round 2 remains pending. The foundation is unwired
+to normal CaptureSubmission/text/voice; Google Tasks sync and Event execution
+remain pending. No CHG-030 is reserved.
 
 ## Workstream and Change selection
 
@@ -304,8 +327,9 @@ global Change ID.
 
 The completed normal global reviewable-change history runs through Change 028.
 CHG-028 is integrated into `main` with **PASS_WITH_NOTES**. CHG-029 is
-implemented, committed, and pushed with required verification passed; it is
-awaiting independent review. Future work beyond CHG-029 remains candidate
+implemented, committed, and pushed with required verification passed. Round-1
+independent review returned **BLOCKED** and its test/evidence/docs remediation
+is complete; Round 2 is pending. Future work beyond CHG-029 remains candidate
 scope only, and CHG-030 is not reserved.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates

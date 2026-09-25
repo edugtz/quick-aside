@@ -42,6 +42,11 @@
   and the passing raw test stream/verdict are under
   `device/room/task-executor/`. Every install/test command explicitly used
   `adb -s emulator-5556`.
+- Round-1 remediation focused Room rerun: **PASS, 17 tests** on
+  `CHG028_Room_API35`, API 35, serial `emulator-5556`. This is a new, separate
+  artifact set under `review-round-1-remediation/`; both new ID-integrity
+  tests executed and finished with status code 0. The original 15-test
+  canonical run above is preserved unchanged.
 - Existing `ReversibleTaskActionsDatabaseTest` regression: **PASS, 12 tests**.
   Raw instrumentation output, verdict, run record, and provenance are in
   `device/room/reversible-task-regression/instrumentation/`.
@@ -57,10 +62,36 @@
   resource findings, with no findings in the new executor files.
 - Room v7/schema/migration/build/dependency/manifest/network comparison:
   **PASS, unchanged**. Commands and results are in
-  `scope/schema-config-dependency-comparison.txt` and its JSON run record.
+  `scope/schema-config-dependency-comparison.txt` plus its structured run
+  record `scope/schema-config-dependency-run-record.json`.
 - Final Git/scope review and PRE-REVIEW READINESS CHECK: **PASS — READY FOR
   INDEPENDENT REVIEW**. The captured commands, inventory, and criteria are in
   `scope/git-scope-review.txt` and `scope/pre-review-readiness.json`.
+
+## Round-1 review remediation
+
+Independent Round-1 review reviewed `ad845759c85346c8fe4a976ba211a6f5f53a12c6`
+and returned **BLOCKED**: 0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE.
+
+- MAJOR-1 added two focused Room tests directly against
+  `RoomCapturePlanTaskExecutor`
+  (`firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState`,
+  `duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState`).
+  Both executed and passed; the class reported 17 tests with zero failures.
+  Raw output, `test-verdict.json`, `run-record.json`, APK SHA-256 metadata,
+  install records, device identity, and per-run provenance are under
+  `review-round-1-remediation/`.
+- MINOR-1 reconciled stale current-state wording in the CHG-029 package,
+  `docs/ACTIVE_WORK.md`, and `docs/ROADMAP.md`; the Task execution foundation
+  exists but remains unwired to Capture, and Google Tasks sync and Event
+  execution remain pending.
+- MINOR-2 corrected the schema/config/dependency pointer in `QA.md` and this
+  index to `scope/schema-config-dependency-run-record.json`. No historical
+  machine evidence was renamed or regenerated.
+- Round-1 NOTE findings remain preserved exactly as recorded below.
+
+Remediation changed no production source. The original 15-test artifacts were
+not overwritten, and no APK/AAB/DB/WAL/SHM binary was added to the repository.
 
 ## Preserved failed attempts and interpretation
 
@@ -88,5 +119,13 @@ The builder stopped before commit/push; the user subsequently committed and
 pushed the tested implementation. This post-push closeout changes documentation
 and provenance wording only and did not rerun tests or alter historical test
 artifacts. The connected OPPO was not used. No production-device,
-private-gateway, or Capture/UI work was performed. Independent HIGH-ASSURANCE
-review has not run, and CHG-030 remains unreserved.
+private-gateway, or Capture/UI work was performed.
+
+Independent HIGH-ASSURANCE Round-1 review subsequently reviewed
+`ad845759c85346c8fe4a976ba211a6f5f53a12c6` and returned **BLOCKED**
+(0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE). The MAJOR-1 remediation added and
+executed two focused Room tests (17/17 on `CHG028_Room_API35`, API 35,
+`emulator-5556`); MINOR-1 and MINOR-2 reconciled current-state wording and the
+structured evidence pointer. All Round-1 NOTE findings and every earlier
+failed attempt remain preserved unchanged. Remediation changed no production
+source. Round 2 has not run, and CHG-030 remains unreserved.

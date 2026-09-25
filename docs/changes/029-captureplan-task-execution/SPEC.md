@@ -1,7 +1,7 @@
 # Change 029 — CapturePlan Task Execution Foundation — SPEC
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTED — COMMITTED/PUSHED — INDEPENDENT REVIEW PENDING**
+- Status: **ROUND-1 REVIEW: BLOCKED — REMEDIATION COMPLETE — ROUND-2 REVIEW PENDING**
 - Repository: `edugtz/quick-aside`
 - Verified planning baseline: `main` / `origin/main` / `HEAD` at
   `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`; starting worktree clean.
@@ -198,5 +198,21 @@ production/test source manifest SHA-256
 tested implementation was subsequently committed and pushed by the user as
 `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`; this closeout changes documentation
 and provenance wording only. The historical test artifacts were not generated
-against or labeled with the commit SHA. Independent review has not run, and
-CHG-030 remains unreserved.
+against or labeled with the commit SHA.
+
+Round-1 independent review reviewed branch HEAD
+`ad845759c85346c8fe4a976ba211a6f5f53a12c6` and returned **BLOCKED**
+(0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE). MAJOR-1 required direct executed
+evidence for a first persisted Task-ID collision and for duplicate generated
+IDs within one batch. Two focused Room tests were added and executed:
+`firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState` and
+`duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState`. The
+focused class now passes **17/17** on `CHG028_Room_API35` (API 35,
+`emulator-5556`), with artifacts under
+`evidence/review-round-1-remediation/`. MINOR-1 corrected stale current-state
+wording and MINOR-2 corrected the structured evidence pointer. This
+remediation changes no production source because Round 1 found no production
+correctness defect. The foundation remains unwired to normal
+CaptureSubmission/text/voice; Google Tasks sync and Event execution remain
+pending; end-to-end Task natural-language mutation is not complete. Round 2
+has not run, and CHG-030 remains unreserved.

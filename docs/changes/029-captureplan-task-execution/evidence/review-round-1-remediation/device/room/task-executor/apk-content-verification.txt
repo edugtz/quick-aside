@@ -1,0 +1,18 @@
+CHG-029 Round-1 remediation APK content verification
+Timestamp UTC: 2026-09-25T23:04:03Z
+App APK: app/build/outputs/apk/debug/app-debug.apk
+App APK SHA-256: 24352f4c3a53c6814ea9b90252cc9e0658ee0d30a8f37282df8a4ee981084c35
+Test APK: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+Test APK SHA-256: fb2f5dd710a02d62efd592c66d559970dd5b29c1a8869f12183b249976df0351
+
+App APK executor symbols (strings over classes*.dex):
+  CapturePlanTaskExecutor: 52
+  RoomCapturePlanTaskExecutor: 36
+  UndoCapturePlanTaskExecutionResult: 26
+
+Test APK CHG-029 test class and remediation methods (strings over classes*.dex):
+  CapturePlanTaskExecutorDatabaseTest: 123
+  firstTaskIdCollisionFailsWithoutChangingExistingOrUnrelatedState: 3
+  duplicateGeneratedTaskIdsFailBeforeInsertionAndPreserveAllExistingState: 3
+  RepeatingTaskIdProvider: 4
+  insertUnrelatedDurableState: 3

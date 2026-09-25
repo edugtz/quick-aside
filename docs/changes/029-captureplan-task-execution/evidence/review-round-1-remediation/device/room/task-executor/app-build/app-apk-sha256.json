@@ -1,0 +1,5 @@
+{
+  "path": "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/app-apk-output/app-debug.apk",
+  "sha256": "24352f4c3a53c6814ea9b90252cc9e0658ee0d30a8f37282df8a4ee981084c35",
+  "built_by": "./gradlew :app:assembleDebug (UP-TO-DATE; artifact already matched the current verified build output)"
+}

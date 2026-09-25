@@ -1,0 +1,17 @@
+{
+  "captured_at_utc": "2026-09-25T23:03:47.403006+00:00",
+  "branch": "chg-029-captureplan-task-execution",
+  "base_head": "ad845759c85346c8fe4a976ba211a6f5f53a12c6",
+  "base_head_label": "canonical base / current commit; not an implementation SHA",
+  "git_status_short": [
+    " M app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt",
+    "?? docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/"
+  ],
+  "tracked_git_diff_sha256": "c05f3c1501e1f1dad9d11c1f4cc52c9dc90a80bc6e7587f9e1b30c494f138364",
+  "changed_production_test_source_manifest": "docs/changes/029-captureplan-task-execution/evidence/review-round-1-remediation/device/room/task-executor/app-build/provenance-end/source-manifest.sha256",
+  "changed_production_test_source_manifest_sha256": "eb33c595e32251cea75674595f0acdf175fa51028feea3bfddcb5ade70291a95",
+  "worktree_source_fingerprint_sha256": "6fd26bc13d6c3c25f9e096720a0a6b1642de584510ec1adddce782960f490b45",
+  "changed_production_test_source_files": [
+    "app/src/androidTest/java/com/edu/quickaside/data/local/CapturePlanTaskExecutorDatabaseTest.kt"
+  ]
+}

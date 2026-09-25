@@ -1,7 +1,7 @@
 # CHG-029 QA and Evidence Plan
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **REQUIRED GATES PASS — IMPLEMENTATION COMMITTED/PUSHED — INDEPENDENT REVIEW PENDING**
+- Status: **ROUND-1 REVIEW: BLOCKED — REMEDIATION COMPLETE — ROUND-2 REVIEW PENDING**
 - Canonical base HEAD: `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`
 - Branch: `chg-029-captureplan-task-execution`
 - Published implementation commit: `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`
@@ -53,7 +53,7 @@ as an index to the underlying artifacts.
 | Android test Kotlin compile | `./gradlew :app:compileDebugAndroidTestKotlin` | `evidence/build-results/compileDebugAndroidTestKotlin/` includes output, exit code, run record, and source manifests | **PASS** |
 | Debug assembly | `./gradlew :app:assembleDebug` | `evidence/device/room/task-executor/current-app-build/` includes Gradle output metadata, the APK SHA-256 record, command output, run record, and source manifests. The APK binary is intentionally not retained in the repository. | **PASS** |
 | Lint | `./gradlew :app:lintDebug` | `evidence/lint/` includes raw output, HTML/SARIF, run record, source manifests, and a finding summary | **PASS — 19 existing findings; none on the new executor files** |
-| Schema/config/dependency | Compared v7 database/migrations/schemas, DAOs, build/dependency files, manifest, and network-security configuration to base | `evidence/scope/schema-config-dependency-comparison.txt` and `.json`, with scoped Git checks and source provenance | **PASS — unchanged** |
+| Schema/config/dependency | Compared v7 database/migrations/schemas, DAOs, build/dependency files, manifest, and network-security configuration to base | `evidence/scope/schema-config-dependency-comparison.txt` plus the structured run record `evidence/scope/schema-config-dependency-run-record.json`, with scoped Git checks and source provenance | **PASS — unchanged** |
 | Git/scope | `git diff --check`, `git status --short`, `git diff --stat`, `git diff --name-status`, untracked-file inventory, complete diff review | `evidence/scope/git-scope-review.txt`, `evidence/scope/pre-review-readiness.json`, and final provenance | **PASS — within approved scope** |
 
 For each test command, preserve console output, test results, and per-run source
@@ -65,6 +65,39 @@ preserved. The first direct Room attempt loaded an app APK from September 20
 that lacked current CHG-029 classes; it ran zero test methods and failed. The
 current app was then assembled and installed, and the Room class passed all 15
 tests. The earlier failed output remains in evidence.
+
+## Round-1 review and remediation
+
+Independent HIGH-ASSURANCE Round-1 review reviewed branch HEAD
+`ad845759c85346c8fe4a976ba211a6f5f53a12c6` and returned **BLOCKED**:
+0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE.
+
+| Finding | Disposition | Evidence |
+|---|---|---|
+| MAJOR-1 — no direct executed evidence for a first persisted Task-ID collision and duplicate generated IDs within one batch | **Addressed.** Two focused Room tests were added directly against `RoomCapturePlanTaskExecutor`; both executed and passed. | `evidence/review-round-1-remediation/device/room/task-executor/instrumentation/`; `test-verdict.json` records the discovered count and per-test final status codes. |
+| MINOR-1 — stale current-state wording | **Addressed.** Reconciled in `PLAN.md`, `TASKS.md`, `QA.md`, `SPEC.md`, `docs/ACTIVE_WORK.md`, and `docs/ROADMAP.md`. The foundation exists but is unwired; Google Tasks sync and Event execution remain pending; end-to-end Task natural-language mutation is not complete. | Documentation diff for this remediation. |
+| MINOR-2 — QA pointer named `schema-config-dependency-comparison.txt` and `.json` | **Addressed in documentation.** The structured artifact is `scope/schema-config-dependency-run-record.json`; historical machine evidence was not renamed or regenerated. | `scope/schema-config-dependency-run-record.json` remains tracked and unmodified. |
+| NOTE-1/2/3 — historical verification notes | **Preserved unchanged.** Focused-JVM Gradle/cache failure, harness argument-order failure, stale-APK zero-test attempt, successful 15/15 canonical Room run, `INSTRUMENTATION_CODE -1` / `Activity.RESULT_OK`, evidence hygiene, and intentionally absent APKs with hashes/metadata retained. | Original `evidence/device/room/task-executor/` and `evidence/jvm/` artifacts unmodified. |
+
+Round-1 remediation gates (new artifacts only):
+
+| Gate | Command | Result | Artifact |
+|---|---|---|---|
+| Modified androidTest compile | `./gradlew :app:compileDebugAndroidTestKotlin` | **PASS** | `evidence/review-round-1-remediation/device/room/task-executor/compile-android-test-kotlin/` |
+| androidTest APK rebuild | `./gradlew :app:assembleDebugAndroidTest` | **PASS** | `evidence/review-round-1-remediation/device/room/task-executor/apk-build/` |
+| App APK build | `./gradlew :app:assembleDebug` | **PASS (UP-TO-DATE)**; SHA-256 `24352f4c3a53c6814ea9b90252cc9e0658ee0d30a8f37282df8a4ee981084c35`, matching the reviewed `current-app-build` artifact | `evidence/review-round-1-remediation/device/room/task-executor/app-build/` |
+| Install app + test APK | `adb -s emulator-5556 install -r ...` | **PASS** | `install-app/`, `install-test-apk/` |
+| Focused Room remediation | `adb -s emulator-5556 shell am instrument -w -r -e class com.edu.quickaside.data.local.CapturePlanTaskExecutorDatabaseTest com.edu.quickaside.test/androidx.test.runner.AndroidJUnitRunner` | **PASS — 17 tests, 0 failures**; both new tests executed and finished with status code 0 | `device/room/task-executor/instrumentation/` with raw output, `test-verdict.json`, `run-record.json`, and provenance |
+
+The remediation run records branch `chg-029-captureplan-task-execution`,
+starting HEAD `ad845759c85346c8fe4a976ba211a6f5f53a12c6`, and worktree/source
+fingerprint `6fd26bc13d6c3c25f9e096720a0a6b1642de584510ec1adddce782960f490b45`
+for every remediation gate. App and test APK SHA-256 values are recorded in the
+remediation `app-build/` and `apk-build/` metadata; APK binaries are
+intentionally not retained in the repository. Production source is unchanged:
+only the focused Room test source, this package's documentation, and the new
+remediation evidence changed. The original Round-1 artifacts were not
+overwritten. Round 2 has not run.
 
 ## Required contract coverage
 
@@ -101,7 +134,10 @@ changed. CaptureSubmission, app/UI/voice/text wiring, Google Tasks/OAuth/sync,
 outbox/retry, Event/Note/StructuredLog/UndoLast, reminders, provider/gateway,
 confidence, and CHG-030 remain excluded.
 
-Independent HIGH-ASSURANCE review has not run. CHG-030 remains unreserved.
+Independent HIGH-ASSURANCE Round-1 review reviewed
+`ad845759c85346c8fe4a976ba211a6f5f53a12c6` and returned **BLOCKED**
+(0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE). Round-1 remediation is complete in
+the working tree; Round 2 has not run. CHG-030 remains unreserved.
 
 Follow `AGENTS.md`: identify the first root error before a build fix, stop
 after two failed attempts on the same root error, do not run destructive
