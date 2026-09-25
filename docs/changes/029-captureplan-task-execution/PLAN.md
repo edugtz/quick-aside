@@ -47,8 +47,17 @@ action family.
    Do not commit or push.
 
 Implementation steps 1–6, final Git/scope review, and the pre-review readiness
-check are complete. Results and exact worktree provenance are recorded under
-`evidence/`.
+check are complete. The builder stopped before commit/push; the user
+subsequently committed and pushed the implementation as
+`2dc0425434c3b5b40a3ff25f1feba85bf3130efb` on
+`chg-029-captureplan-task-execution`. The verification artifacts were generated
+before that commit against worktree/source fingerprint
+`62d46a058954faf283e449dc9748c9213690738f3c60cb3ae997d36a208d2718` and
+production/test source manifest SHA-256
+`4ed7d3e16821ab9e030bb0c1f3a916c4735720ad10ae4bf62e8da82433143e32`. They
+identify the tested source state; they were not originally commit-bound.
+Results and provenance records remain under `evidence/`. Independent review
+has not run, and CHG-030 is unreserved.
 
 ## Expected files
 

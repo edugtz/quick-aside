@@ -1,6 +1,6 @@
 # ACTIVE WORK
 
-Status: **CHG-029 IMPLEMENTED — READY FOR INDEPENDENT REVIEW**
+Status: **CHG-029 IMPLEMENTED — COMMITTED/PUSHED — INDEPENDENT REVIEW PENDING**
 
 ## Current project state — CHG-029 implementation
 
@@ -10,24 +10,35 @@ Status: **CHG-029 IMPLEMENTED — READY FOR INDEPENDENT REVIEW**
 - Planning baseline: request-supplied canonical `main` SHA
   `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`; local `main`, `origin/main`,
   and starting `HEAD` matched. The starting worktree was clean.
+- Implementation branch: `chg-029-captureplan-task-execution`.
+- Implementation commit: `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`
+  (committed and pushed by the user). The implementation branch is no longer
+  at the canonical base HEAD.
 - Objective: add a provider-independent, atomic Room boundary for validated
   all-`CreateTask` CapturePlans, one source-linked Action Ledger batch, and
   exact ordered batch Undo.
 - The boundary is supported by existing Task/Action Ledger DAOs and Task
   contracts. Room remains v7; no schema, migration, dependency, or Task-domain
   change was made.
-- Implementation is on branch `chg-029-captureplan-task-execution` at the
-  canonical base HEAD above. The two production additions are
+- The two production additions are
   `CapturePlanTaskExecutor` and `RoomCapturePlanTaskExecutor`; one JVM contract
   test and one real-Room instrumentation class cover the boundary.
 - Focused JVM (32), focused Room (15), existing reversible Task Room
   regression (12), and full JVM (178) tests passed. Android-test Kotlin
   compilation, debug assembly, lint, and the Room/schema/config/dependency
   comparison passed. Inspectable outputs and per-run source fingerprints are
-  under `docs/changes/029-captureplan-task-execution/evidence/`.
+  under `docs/changes/029-captureplan-task-execution/evidence/`. The gate
+  artifacts were generated before commit against worktree/source fingerprint
+  `62d46a058954faf283e449dc9748c9213690738f3c60cb3ae997d36a208d2718` and
+  production/test source manifest SHA-256
+  `4ed7d3e16821ab9e030bb0c1f3a916c4735720ad10ae4bf62e8da82433143e32`.
+  Production and test source in the published commit is unchanged from that
+  tested implementation.
 - Room tests ran only on `CHG028_Room_API35` (API 35), explicitly targeting
   `emulator-5556`. The connected OPPO was not used. No Capture/UI wiring,
-  schema/dependency change, commit, push, or CHG-030 work occurred.
+  schema/dependency/config change, or CHG-030 work was included. The builder
+  stopped before commit/push; the user subsequently committed and pushed the
+  tested implementation.
 - Final Git/scope evidence and the pre-review readiness check passed; see the
   CHG-029 evidence index.
 
@@ -293,9 +304,9 @@ global Change ID.
 
 The completed normal global reviewable-change history runs through Change 028.
 CHG-028 is integrated into `main` with **PASS_WITH_NOTES**. CHG-029 is
-implemented with required verification passed and is awaiting independent
-review. Future work beyond CHG-029 remains candidate scope only, and CHG-030 is
-not reserved.
+implemented, committed, and pushed with required verification passed; it is
+awaiting independent review. Future work beyond CHG-029 remains candidate
+scope only, and CHG-030 is not reserved.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates
 only; this closeout does not schedule them.

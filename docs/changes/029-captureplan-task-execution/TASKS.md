@@ -1,8 +1,10 @@
 # Change 029 — CapturePlan Task Execution Foundation — TASKS
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTED — READY FOR INDEPENDENT REVIEW**
+- Status: **IMPLEMENTED — COMMITTED/PUSHED — INDEPENDENT REVIEW PENDING**
 - Verified planning base: `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`
+- Implementation branch: `chg-029-captureplan-task-execution`.
+- Implementation commit: `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`.
 
 ## Preflight and package
 
@@ -36,7 +38,9 @@
       into `evidence/`.
 - [x] Reconcile actual evidence and current implementation status in QA.md and
       ACTIVE_WORK.
-- [x] Stop before commit/push; user retains commit and release authority.
+- [x] The builder stopped before commit/push; the user subsequently
+      committed and pushed the implementation as
+      `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`.
 - [x] Complete final Git/scope review and PRE-REVIEW READINESS CHECK.
 
 ## Preflight evidence log
@@ -55,3 +59,10 @@ historical note is superseded by the implementation verification records under
 - `compileDebugAndroidTestKotlin`, `assembleDebug`, and `lintDebug`: **PASS**.
 - Room v7/schema/migration/config/dependency comparison: **PASS — unchanged**.
 - Final Git/scope review and readiness check: **PASS — READY FOR INDEPENDENT REVIEW**.
+
+The test artifacts were generated against the precommit worktree/source
+fingerprint `62d46a058954faf283e449dc9748c9213690738f3c60cb3ae997d36a208d2718`
+and production/test source manifest SHA-256
+`4ed7d3e16821ab9e030bb0c1f3a916c4735720ad10ae4bf62e8da82433143e32`. The
+published commit contains the same production and test source. Independent
+review has not run, and CHG-030 remains unreserved.

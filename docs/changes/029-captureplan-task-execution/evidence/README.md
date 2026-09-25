@@ -5,7 +5,16 @@
 - Governance: **HIGH-ASSURANCE**.
 - Branch: `chg-029-captureplan-task-execution`.
 - Canonical base HEAD: `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7` (not an
-  implementation SHA; implementation remains uncommitted).
+  implementation SHA).
+- Published implementation commit: `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`
+  (committed and pushed by the user; independent review remains pending).
+- Verification was generated before commit against precommit worktree/source
+  fingerprint `62d46a058954faf283e449dc9748c9213690738f3c60cb3ae997d36a208d2718`
+  and production/test source manifest SHA-256
+  `4ed7d3e16821ab9e030bb0c1f3a916c4735720ad10ae4bf62e8da82433143e32`.
+  The tested implementation was subsequently committed and pushed as the
+  commit above. The historical artifacts were not generated against or labeled
+  with that commit SHA.
 - Initial pre-verification worktree/source fingerprint:
   `368c63c203e4201e4e10f40ac7a96ee8ea1d878fe11549def092a041c7434ee4`.
 - The repeatable fingerprint algorithm is recorded in `provenance.py`; every
@@ -75,5 +84,9 @@
   result code as a failure; the corrected PASS and reason are recorded in
   `device/room/task-executor/instrumentation/retry-1/gate-verdict-correction.json`.
 
-No commit or push was made. The connected OPPO was not used. No production
-device, private-gateway, Capture/UI, or CHG-030 work was performed.
+The builder stopped before commit/push; the user subsequently committed and
+pushed the tested implementation. This post-push closeout changes documentation
+and provenance wording only and did not rerun tests or alter historical test
+artifacts. The connected OPPO was not used. No production-device,
+private-gateway, or Capture/UI work was performed. Independent HIGH-ASSURANCE
+review has not run, and CHG-030 remains unreserved.

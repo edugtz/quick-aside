@@ -1,8 +1,10 @@
 # CHG-029 QA and Evidence Plan
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ALL REQUIRED GATES PASS — READY FOR INDEPENDENT REVIEW**
+- Status: **REQUIRED GATES PASS — IMPLEMENTATION COMMITTED/PUSHED — INDEPENDENT REVIEW PENDING**
 - Canonical base HEAD: `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`
+- Branch: `chg-029-captureplan-task-execution`
+- Published implementation commit: `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`
 - Evidence root: `docs/changes/029-captureplan-task-execution/evidence/`
 
 The planning preflight ran no implementation verification. This file records
@@ -25,12 +27,20 @@ recover output. For every run, record:
   untracked source files. Together these form the reproducible worktree/source
   fingerprint for the gate.
 
-The source commit and worktree are separate facts while implementation is
-uncommitted. Record the base HEAD and branch, but do not label base HEAD as an
-implementation SHA. Record the diff hash and file-level source hashes so the
-tested source state can be identified exactly. Preserve raw logs and reports;
-do not replace earlier failed attempts. Add a short summary only as an index
-to the underlying artifacts.
+At verification time, implementation was uncommitted. The recorded base HEAD
+and branch identify that historical run context; the diff hash and file-level
+source hashes identify the tested source state. The verification artifacts
+were generated against precommit worktree/source fingerprint
+`62d46a058954faf283e449dc9748c9213690738f3c60cb3ae997d36a208d2718` and
+production/test source manifest SHA-256
+`4ed7d3e16821ab9e030bb0c1f3a916c4735720ad10ae4bf62e8da82433143e32`. The
+tested implementation was subsequently committed and pushed by the user as
+`2dc0425434c3b5b40a3ff25f1feba85bf3130efb`; production and test source are
+unchanged from that tested implementation. This documentation/provenance
+closeout does not change code. Historical test artifacts remain bound to the
+precommit fingerprints and were not originally commit-bound. Preserve raw logs
+and reports; do not replace earlier failed attempts. Add a short summary only
+as an index to the underlying artifacts.
 
 ## Required gates and artifact destinations
 
@@ -90,6 +100,8 @@ changes are present; and only the planned application/data/test/docs files
 changed. CaptureSubmission, app/UI/voice/text wiring, Google Tasks/OAuth/sync,
 outbox/retry, Event/Note/StructuredLog/UndoLast, reminders, provider/gateway,
 confidence, and CHG-030 remain excluded.
+
+Independent HIGH-ASSURANCE review has not run. CHG-030 remains unreserved.
 
 Follow `AGENTS.md`: identify the first root error before a build fix, stop
 after two failed attempts on the same root error, do not run destructive

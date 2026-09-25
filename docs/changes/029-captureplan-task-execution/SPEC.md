@@ -1,10 +1,12 @@
 # Change 029 — CapturePlan Task Execution Foundation — SPEC
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **IMPLEMENTED — REQUIRED VERIFICATION PASS; INDEPENDENT REVIEW PENDING**
+- Status: **IMPLEMENTED — COMMITTED/PUSHED — INDEPENDENT REVIEW PENDING**
 - Repository: `edugtz/quick-aside`
 - Verified planning baseline: `main` / `origin/main` / `HEAD` at
   `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`; starting worktree clean.
+- Implementation branch: `chg-029-captureplan-task-execution`.
+- Published implementation commit: `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`.
 
 ## Objective
 
@@ -165,7 +167,7 @@ or Pendientes refresh changes; no Event, Note, StructuredLog, or UndoLast
 execution; no generic `ActionExecutor`, registry, replay, or retry; no Google
 Tasks/OAuth/API/sync/outbox; no Calendar, reminder, schema/migration,
 dependency, build configuration, Task-domain format, or broad Action Ledger
-change; no CHG-030 reservation or implementation; no commit or push.
+change; no CHG-030 reservation or implementation.
 
 ## Verification evidence
 
@@ -188,5 +190,13 @@ with the authorized cache access. See per-run records and source fingerprints
 under `evidence/`.
 
 No Capture/UI integration or production-device/private-gateway acceptance is
-part of this foundation. No commit or push was made; independent review is the
-next step.
+part of this foundation. The test artifacts were generated against the
+precommit worktree/source fingerprint
+`62d46a058954faf283e449dc9748c9213690738f3c60cb3ae997d36a208d2718` and
+production/test source manifest SHA-256
+`4ed7d3e16821ab9e030bb0c1f3a916c4735720ad10ae4bf62e8da82433143e32`. That
+tested implementation was subsequently committed and pushed by the user as
+`2dc0425434c3b5b40a3ff25f1feba85bf3130efb`; this closeout changes documentation
+and provenance wording only. The historical test artifacts were not generated
+against or labeled with the commit SHA. Independent review has not run, and
+CHG-030 remains unreserved.
