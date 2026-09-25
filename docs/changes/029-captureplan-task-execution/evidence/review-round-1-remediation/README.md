@@ -102,5 +102,6 @@ Independent HIGH-ASSURANCE Round-2 review reviewed
 **PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE); MAJOR-1,
 MINOR-1, and MINOR-2 are closed. Both new tests, their execution, the raw Room
 output, and this provenance were independently inspected without remediation.
-CHG-029 is engineering-ready for user-authorized merge; merge has not
-occurred, and CHG-030 remains unreserved.
+CHG-029 is **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main** at
+`bcaa53d1993c44304029f6be29937ce42dbaa1e5` (fast-forward; also the pre-merge
+review-closeout SHA). CHG-030 remains unreserved.

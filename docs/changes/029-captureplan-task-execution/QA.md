@@ -1,7 +1,9 @@
 # CHG-029 QA and Evidence Plan
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ROUND-2 REVIEW: PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERGE (Round 1 was BLOCKED; remediation complete)**
+- Status: **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main**
+- Integrated main SHA: `bcaa53d1993c44304029f6be29937ce42dbaa1e5` (fast-forward; also the pre-merge review-closeout SHA)
+- Final reviewed implementation/remediation HEAD: `b466407ae8b98400fe52da40750d18529ff9a3b9`
 - Canonical base HEAD: `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`
 - Branch: `chg-029-captureplan-task-execution`
 - Published implementation commit: `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`
@@ -117,13 +119,15 @@ Independent HIGH-ASSURANCE Round-2 review reviewed
   `Activity.RESULT_OK` handling remains recorded and supported by the raw
   successful runner output; NOTE-3 evidence hygiene/privacy remains
   acceptable.
-- The reviewer concluded that CHG-029 is engineering-ready for merge.
+- The reviewer concluded that CHG-029 is engineering-ready for merge; the
+  user-authorized fast-forward merge was subsequently completed.
 - This Round-2 record is documentation only. It adds no machine test evidence
   and did not change any raw log, run record, verdict, manifest, provenance
   record, APK hash record, production source, or test source.
 
-CHG-029 is engineering-ready for user-authorized merge. Merge has not
-occurred. CHG-030 remains unreserved.
+CHG-029 is **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main** at
+`bcaa53d1993c44304029f6be29937ce42dbaa1e5` (fast-forward; also the pre-merge
+review-closeout SHA). CHG-030 remains unreserved.
 
 ## Required contract coverage
 
@@ -166,7 +170,7 @@ Independent HIGH-ASSURANCE Round-1 review reviewed
 in the Round-2 reviewed HEAD, and Round-2 independent review reviewed
 `b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
 **PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE). CHG-029 is
-engineering-ready for user-authorized merge; merge has not occurred. CHG-030
+integrated into `main` at `bcaa53d1993c44304029f6be29937ce42dbaa1e5`. CHG-030
 remains unreserved.
 
 Follow `AGENTS.md`: identify the first root error before a build fix, stop

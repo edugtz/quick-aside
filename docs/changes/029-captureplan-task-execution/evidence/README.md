@@ -140,5 +140,6 @@ documentation-only record of the independent reviewer result. It adds no
 machine test evidence and does not alter any raw log, run record, verdict,
 manifest, provenance record, APK hash record, or readiness artifact.
 
-CHG-029 is engineering-ready for user-authorized merge. Merge has not
-occurred. CHG-030 remains unreserved.
+CHG-029 is **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main** at
+`bcaa53d1993c44304029f6be29937ce42dbaa1e5` (fast-forward; also the pre-merge
+review-closeout SHA). CHG-030 remains unreserved.

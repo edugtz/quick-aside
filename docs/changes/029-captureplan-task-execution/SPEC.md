@@ -1,7 +1,9 @@
 # Change 029 — CapturePlan Task Execution Foundation — SPEC
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ROUND-2 REVIEW: PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERGE (Round 1 was BLOCKED; remediation complete)**
+- Status: **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main**
+- Integrated main SHA: `bcaa53d1993c44304029f6be29937ce42dbaa1e5` (fast-forward; also the pre-merge review-closeout SHA)
+- Final reviewed implementation/remediation HEAD: `b466407ae8b98400fe52da40750d18529ff9a3b9`
 - Repository: `edugtz/quick-aside`
 - Verified planning baseline: `main` / `origin/main` / `HEAD` at
   `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`; starting worktree clean.
@@ -216,7 +218,7 @@ correctness defect. Round-2 independent review reviewed
 `b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
 **PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE); MAJOR-1,
 MINOR-1, and MINOR-2 are closed, and no required gate remains. CHG-029 is
-engineering-ready for user-authorized merge; merge has not occurred. The
+**integrated into `main`** at `bcaa53d1993c44304029f6be29937ce42dbaa1e5`. The
 foundation remains unwired to normal CaptureSubmission/text/voice; Google
 Tasks sync and Event execution remain pending; end-to-end Task natural-language
 mutation is not complete. CHG-030 remains unreserved.

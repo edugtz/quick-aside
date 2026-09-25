@@ -1,7 +1,9 @@
 # Change 029 — CapturePlan Task Execution Foundation — TASKS
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ROUND-2 REVIEW: PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERGE (Round 1 was BLOCKED; remediation complete)**
+- Status: **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main**
+- Integrated main SHA: `bcaa53d1993c44304029f6be29937ce42dbaa1e5` (fast-forward; also the pre-merge review-closeout SHA)
+- Final reviewed implementation/remediation HEAD: `b466407ae8b98400fe52da40750d18529ff9a3b9`
 - Verified planning base: `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`
 - Implementation branch: `chg-029-captureplan-task-execution`.
 - Implementation commit: `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`.
@@ -60,6 +62,8 @@ historical note is superseded by the implementation verification records under
 - Round-2 independent review: **PASS_WITH_NOTES — 0 BLOCKER / 0 MAJOR /
   0 MINOR / 3 NOTE** at reviewed HEAD
   `b466407ae8b98400fe52da40750d18529ff9a3b9`; no required gate remains.
+- Integration: **COMPLETE — fast-forwarded into `main` at
+  `bcaa53d1993c44304029f6be29937ce42dbaa1e5`**. No further Change is selected.
 - Existing `ReversibleTaskActionsDatabaseTest`: **PASS — 12 tests**.
 - Full JVM: **PASS — 178 tests**.
 - `compileDebugAndroidTestKotlin`, `assembleDebug`, and `lintDebug`: **PASS**.
@@ -97,6 +101,8 @@ published commit contains the same production and test source.
       `b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
       **PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE);
       MAJOR-1, MINOR-1, and MINOR-2 are closed.
+- [x] User-authorized fast-forward merge completed; integrated main SHA is
+      `bcaa53d1993c44304029f6be29937ce42dbaa1e5`.
 
 Remediation changed no production source. The Task execution foundation
 remains unwired to normal CaptureSubmission/text/voice; Google Tasks sync and

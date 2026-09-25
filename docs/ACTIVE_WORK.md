@@ -1,8 +1,30 @@
 # ACTIVE WORK
 
-Status: **CHG-029 — ROUND-2 PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERGE**
+Status: **NO ACTIVE CHANGE — CHG-029 COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main**
 
-## Current project state — CHG-029 implementation
+## Current state
+
+- **No active Change.** No Change is currently selected, reserved, or in
+  progress; the next Change has not been selected.
+- Most recently completed Change: `CHG-029 — CapturePlan Task Execution
+  Foundation` (`docs/changes/029-captureplan-task-execution/`).
+- Integrated main SHA: `bcaa53d1993c44304029f6be29937ce42dbaa1e5`
+  (fast-forward; identical to the pre-merge review-closeout SHA).
+- Final independent verdict: **PASS_WITH_NOTES** — 0 BLOCKER / 0 MAJOR /
+  0 MINOR / 3 NOTE. All Round-1 MAJOR/MINOR findings are closed; production
+  correctness defects: 0; test correctness defects requiring remediation: 0;
+  unresolved required gates: 0.
+- Historical review trail: Round 1 was **BLOCKED** for missing direct executed
+  ID-integrity evidence; remediation added the two missing direct Room tests
+  and focused Room remediation passed **17/17**; Round 2 returned
+  **PASS_WITH_NOTES**. Production source did not change during remediation.
+- Capability: the Task execution foundation exists but remains **unwired** to
+  normal CaptureSubmission/text/voice. Google Tasks sync remains pending,
+  Event execution remains pending, and end-to-end Task natural-language
+  mutation remains incomplete.
+- `CHG-030` is **not reserved**.
+
+## Completed Change — CHG-029 implementation history
 
 - Change: `CHG-029 — CapturePlan Task Execution Foundation`.
 - Package: `docs/changes/029-captureplan-task-execution/`.
@@ -71,9 +93,9 @@ Status: **CHG-029 — ROUND-2 PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERG
   **unwired** to normal CaptureSubmission/text/voice. Google Tasks sync and
   Event execution remain pending, and end-to-end Task natural-language
   mutation is **not** complete.
-- CHG-029 is engineering-ready for **user-authorized merge**. Merge has not
-  occurred. CHG-030 remains unreserved and no CHG-030 work is reserved or
-  started.
+- CHG-029 is **integrated into `main`** at
+  `bcaa53d1993c44304029f6be29937ce42dbaa1e5` after the user-authorized merge.
+  CHG-030 remains unreserved and no CHG-030 work is reserved or started.
 
 ## CHG-028 closeout context at the selected baseline
 
@@ -175,7 +197,7 @@ Status: **CHG-029 — ROUND-2 PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERG
   selection recorded above.
 - The user retains commit, push, merge, release, and production authority.
 
-## Most recently completed normal Change
+## Previous completed normal Change — CHG-028
 
 - Change: `CHG-028 — Capture List Auto-Execution + Receipt/Undo Integration`
 - Package: `docs/changes/028-capture-list-auto-execution/`
@@ -193,7 +215,7 @@ Status: **CHG-029 — ROUND-2 PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERG
 - No schema, dependency, gateway, provider, or other unrelated architecture
   change was introduced. CHG-028 is merged into `main`.
 
-## Previous completed normal Change
+## Earlier completed normal Change — CHG-027
 
 - Change: `CHG-027 — CapturePlan List Execution Foundation`
 - Package: `docs/changes/027-captureplan-list-execution/`
@@ -293,7 +315,7 @@ Status: **CHG-029 — ROUND-2 PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERG
   supplies a Task-only execution foundation, still unwired to product Capture
   flows.
 
-## Current project state
+## Historical project context
 
 QAG-003R private Tailnet gateway deployment and QAG-004 Android gateway
 integration are both integrated. The private production path is now:
@@ -319,14 +341,13 @@ CHG-028 connects that list-only boundary to normal text and voice Capture with
 exact targeted Undo. Text execution/Undo and human-voice execution/Undo have
 passed real-device acceptance with visual and privacy evidence recorded in
 the CHG-028 QA package. The user retains commit, push, merge, and release
-authority. CHG-029's Task-only execution foundation is implemented, passed its
-required verification, and received an independent Round-1 **BLOCKED**
-verdict for missing direct executed ID-integrity evidence. Round-1 remediation
-is complete and Round-2 independent review returned **PASS_WITH_NOTES**
-(0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE). The change is engineering-ready for
-user-authorized merge; merge has not occurred. The foundation remains unwired
-to normal CaptureSubmission/text/voice; Google Tasks sync and Event execution
-remain pending. No CHG-030 is reserved.
+authority. CHG-029's Task-only execution foundation is implemented and
+integrated into `main` at `bcaa53d1993c44304029f6be29937ce42dbaa1e5` with a
+Round-2 **PASS_WITH_NOTES** verdict (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE)
+after a Round-1 **BLOCKED** verdict that was resolved by test/evidence/docs
+remediation. The foundation remains unwired to normal
+CaptureSubmission/text/voice; Google Tasks sync and Event execution remain
+pending. No CHG-030 is reserved.
 
 ## Workstream and Change selection
 
@@ -340,14 +361,14 @@ initiative, remains dependent on evidence from actual use. It is not
 automatically scheduled as the next implementation change or reserved under a
 global Change ID.
 
-The completed normal global reviewable-change history runs through Change 028.
+The completed normal global reviewable-change history runs through Change 029.
 CHG-028 is integrated into `main` with **PASS_WITH_NOTES**. CHG-029 is
-implemented, committed, and pushed with required verification passed. Round-1
-independent review returned **BLOCKED**; its test/evidence/docs remediation is
-complete, and Round-2 independent review returned **PASS_WITH_NOTES**
-(0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE). CHG-029 is engineering-ready for
-user-authorized merge and is not merged. Future work beyond CHG-029 remains
-candidate scope only, and CHG-030 is not reserved.
+**COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main** at
+`bcaa53d1993c44304029f6be29937ce42dbaa1e5`. Round-1 independent review returned
+**BLOCKED**; its test/evidence/docs remediation is complete, and Round-2
+independent review returned **PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR /
+0 MINOR / 3 NOTE). No Change is currently selected. Future work beyond CHG-029
+remains candidate scope only, and CHG-030 is not reserved.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates
 only; this closeout does not schedule them.

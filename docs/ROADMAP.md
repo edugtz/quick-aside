@@ -215,7 +215,7 @@ Non-blocked, provider-independent work may continue.
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
-The normal global reviewable-change history now runs through Change 028.
+The normal global reviewable-change history now runs through Change 029.
 CHG-027 — CapturePlan List Execution Foundation remains **COMPLETE —
 PASS_WITH_NOTES — INTEGRATED INTO main**. Its verified base was
 `cb67494a7b57d0f7a939ec06396ccbc665edff7c`; its implementation commit was
@@ -237,22 +237,21 @@ CHG-028 — Capture List Auto-Execution + Receipt/Undo Integration is **COMPLETE
 `d8d5acdd9ae6982cb790054bdccaefdc0b1701be`. CHG-028 connects the list-only
 executor to normal text and voice Capture with exact targeted batch Undo.
 Other CapturePlan actions remain non-executable. CHG-029 — CapturePlan Task
-Execution Foundation is implemented with required verification passed. Round-1
-independent review returned **BLOCKED** (0 BLOCKER / 1 MAJOR / 2 MINOR /
-3 NOTE); the test/evidence/docs remediation is complete, and Round-2
-independent review returned **PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR /
-0 MINOR / 3 NOTE) at reviewed HEAD
-`b466407ae8b98400fe52da40750d18529ff9a3b9`. CHG-029 is engineering-ready for
-user-authorized merge and is not merged. The foundation remains unwired to
+Execution Foundation is **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main**
+at `bcaa53d1993c44304029f6be29937ce42dbaa1e5` (fast-forward; the same commit
+as the pre-merge review-closeout HEAD). Round-1 independent review returned
+**BLOCKED** (0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE); the test/evidence/docs
+remediation is complete, and Round-2 independent review returned
+**PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE) at reviewed HEAD
+`b466407ae8b98400fe52da40750d18529ff9a3b9`. The foundation remains unwired to
 normal Capture, Google Tasks synchronization and Event execution remain
 pending, and end-to-end Task natural-language mutation is not complete. No
 CHG-030 is reserved.
 
 ## Other candidate work (not scheduled)
 
-The options below remain unscheduled. CHG-029's execution foundation is
-implemented, its Round-1 remediation is complete, and Round-2 review returned
-**PASS_WITH_NOTES**; user-authorized merge is the next gate.
+The options below remain unscheduled. CHG-029 is complete and integrated into
+`main`; no Change is currently selected.
 
 - Normal-use hardening (historically Phase QAG-5 in the gateway initiative): pending real-use evidence; not a reserved Change ID;
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,
