@@ -1,7 +1,7 @@
 # Change 029 — CapturePlan Task Execution Foundation — PLAN
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ROUND-1 REVIEW: BLOCKED — REMEDIATION COMPLETE — ROUND-2 REVIEW PENDING**
+- Status: **ROUND-2 REVIEW: PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERGE (Round 1 was BLOCKED; remediation complete)**
 - Planning baseline: `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`
 
 This package selects only the provider-independent Task batch execution
@@ -92,7 +92,12 @@ Independent Round-1 review reviewed branch HEAD
 
 Production source changed by this remediation: none. Round 1 found no
 production correctness defect, so remediation is tests/evidence/docs only.
-Round 2 has not run, and CHG-030 remains unreserved.
+Round-2 independent review reviewed
+`b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
+**PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE); MAJOR-1,
+MINOR-1, and MINOR-2 are closed. No required gate remains, and CHG-029 is
+engineering-ready for user-authorized merge; merge has not occurred. CHG-030
+remains unreserved.
 
 ## Expected files
 

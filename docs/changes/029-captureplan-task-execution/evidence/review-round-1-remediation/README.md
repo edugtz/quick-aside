@@ -97,6 +97,10 @@ ignored Gradle build directory and are not tracked.
 
 ## Round-2 status
 
-Round 2 has not run. Independent review should re-inspect both new tests,
-their actual execution, the raw Room output, this provenance, and the
-documentation corrections. CHG-030 remains unreserved.
+Independent HIGH-ASSURANCE Round-2 review reviewed
+`b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
+**PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE); MAJOR-1,
+MINOR-1, and MINOR-2 are closed. Both new tests, their execution, the raw Room
+output, and this provenance were independently inspected without remediation.
+CHG-029 is engineering-ready for user-authorized merge; merge has not
+occurred, and CHG-030 remains unreserved.

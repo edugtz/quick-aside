@@ -1,7 +1,7 @@
 # Change 029 — CapturePlan Task Execution Foundation — SPEC
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ROUND-1 REVIEW: BLOCKED — REMEDIATION COMPLETE — ROUND-2 REVIEW PENDING**
+- Status: **ROUND-2 REVIEW: PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERGE (Round 1 was BLOCKED; remediation complete)**
 - Repository: `edugtz/quick-aside`
 - Verified planning baseline: `main` / `origin/main` / `HEAD` at
   `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`; starting worktree clean.
@@ -212,7 +212,11 @@ focused class now passes **17/17** on `CHG028_Room_API35` (API 35,
 `evidence/review-round-1-remediation/`. MINOR-1 corrected stale current-state
 wording and MINOR-2 corrected the structured evidence pointer. This
 remediation changes no production source because Round 1 found no production
-correctness defect. The foundation remains unwired to normal
-CaptureSubmission/text/voice; Google Tasks sync and Event execution remain
-pending; end-to-end Task natural-language mutation is not complete. Round 2
-has not run, and CHG-030 remains unreserved.
+correctness defect. Round-2 independent review reviewed
+`b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
+**PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE); MAJOR-1,
+MINOR-1, and MINOR-2 are closed, and no required gate remains. CHG-029 is
+engineering-ready for user-authorized merge; merge has not occurred. The
+foundation remains unwired to normal CaptureSubmission/text/voice; Google
+Tasks sync and Event execution remain pending; end-to-end Task natural-language
+mutation is not complete. CHG-030 remains unreserved.

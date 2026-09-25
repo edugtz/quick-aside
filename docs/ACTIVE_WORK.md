@@ -1,6 +1,6 @@
 # ACTIVE WORK
 
-Status: **CHG-029 ROUND-1 REVIEW: BLOCKED — REMEDIATION COMPLETE — ROUND-2 REVIEW PENDING**
+Status: **CHG-029 — ROUND-2 PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERGE**
 
 ## Current project state — CHG-029 implementation
 
@@ -56,11 +56,24 @@ Status: **CHG-029 ROUND-1 REVIEW: BLOCKED — REMEDIATION COMPLETE — ROUND-2 R
   roadmap. MINOR-2 corrected the schema/config/dependency evidence pointer to
   `schema-config-dependency-run-record.json` without renaming or regenerating
   machine evidence. Round-1 NOTE findings remain preserved.
+- Independent Round-2 review reviewed
+  `b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
+  **PASS_WITH_NOTES**: 0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE. MAJOR-1,
+  MINOR-1, and MINOR-2 are **CLOSED**. Production-code correctness defects: 0.
+  Test correctness defects requiring remediation: 0. Unresolved required
+  gates: 0.
+- Round-2 reviewed HEAD `b466407ae8b98400fe52da40750d18529ff9a3b9` contains
+  the Round-1 remediation commit on top of implementation commit
+  `2dc0425434c3b5b40a3ff25f1feba85bf3130efb` and post-push provenance closeout
+  `ad845759c85346c8fe4a976ba211a6f5f53a12c6`. Production source did not change
+  during remediation, and the previously accepted gates remain valid.
 - Current capability: the CHG-029 Task execution foundation exists but is
   **unwired** to normal CaptureSubmission/text/voice. Google Tasks sync and
   Event execution remain pending, and end-to-end Task natural-language
-  mutation is **not** complete. Round 2 has not run, and CHG-030 remains
-  unreserved.
+  mutation is **not** complete.
+- CHG-029 is engineering-ready for **user-authorized merge**. Merge has not
+  occurred. CHG-030 remains unreserved and no CHG-030 work is reserved or
+  started.
 
 ## CHG-028 closeout context at the selected baseline
 
@@ -308,8 +321,10 @@ passed real-device acceptance with visual and privacy evidence recorded in
 the CHG-028 QA package. The user retains commit, push, merge, and release
 authority. CHG-029's Task-only execution foundation is implemented, passed its
 required verification, and received an independent Round-1 **BLOCKED**
-verdict for missing direct executed ID-integrity evidence. Round-1
-remediation is complete and Round 2 remains pending. The foundation is unwired
+verdict for missing direct executed ID-integrity evidence. Round-1 remediation
+is complete and Round-2 independent review returned **PASS_WITH_NOTES**
+(0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE). The change is engineering-ready for
+user-authorized merge; merge has not occurred. The foundation remains unwired
 to normal CaptureSubmission/text/voice; Google Tasks sync and Event execution
 remain pending. No CHG-030 is reserved.
 
@@ -328,9 +343,11 @@ global Change ID.
 The completed normal global reviewable-change history runs through Change 028.
 CHG-028 is integrated into `main` with **PASS_WITH_NOTES**. CHG-029 is
 implemented, committed, and pushed with required verification passed. Round-1
-independent review returned **BLOCKED** and its test/evidence/docs remediation
-is complete; Round 2 is pending. Future work beyond CHG-029 remains candidate
-scope only, and CHG-030 is not reserved.
+independent review returned **BLOCKED**; its test/evidence/docs remediation is
+complete, and Round-2 independent review returned **PASS_WITH_NOTES**
+(0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE). CHG-029 is engineering-ready for
+user-authorized merge and is not merged. Future work beyond CHG-029 remains
+candidate scope only, and CHG-030 is not reserved.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates
 only; this closeout does not schedule them.

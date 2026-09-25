@@ -1,7 +1,7 @@
 # CHG-029 QA and Evidence Plan
 
 - Governance: **HIGH-ASSURANCE**
-- Status: **ROUND-1 REVIEW: BLOCKED — REMEDIATION COMPLETE — ROUND-2 REVIEW PENDING**
+- Status: **ROUND-2 REVIEW: PASS_WITH_NOTES — READY FOR USER-AUTHORIZED MERGE (Round 1 was BLOCKED; remediation complete)**
 - Canonical base HEAD: `797e1557e8b5d94d4c8611a9b72749a8d7ac53f7`
 - Branch: `chg-029-captureplan-task-execution`
 - Published implementation commit: `2dc0425434c3b5b40a3ff25f1feba85bf3130efb`
@@ -97,7 +97,33 @@ remediation `app-build/` and `apk-build/` metadata; APK binaries are
 intentionally not retained in the repository. Production source is unchanged:
 only the focused Room test source, this package's documentation, and the new
 remediation evidence changed. The original Round-1 artifacts were not
-overwritten. Round 2 has not run.
+overwritten. Round-2 independent review later reviewed
+`b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
+**PASS_WITH_NOTES**; see the Round-2 review closeout below.
+
+## Round-2 review closeout
+
+Independent HIGH-ASSURANCE Round-2 review reviewed
+`b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
+**PASS_WITH_NOTES**.
+
+- Counts: 0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE.
+- Production-code correctness defects: 0.
+- Test correctness defects requiring remediation: 0.
+- Unresolved required gates: 0.
+- MAJOR-1: **CLOSED**; MINOR-1: **CLOSED**; MINOR-2: **CLOSED**.
+- Retained non-blocking notes: NOTE-1 historical environment/harness
+  failures remain recorded; NOTE-2 `INSTRUMENTATION_CODE -1` /
+  `Activity.RESULT_OK` handling remains recorded and supported by the raw
+  successful runner output; NOTE-3 evidence hygiene/privacy remains
+  acceptable.
+- The reviewer concluded that CHG-029 is engineering-ready for merge.
+- This Round-2 record is documentation only. It adds no machine test evidence
+  and did not change any raw log, run record, verdict, manifest, provenance
+  record, APK hash record, production source, or test source.
+
+CHG-029 is engineering-ready for user-authorized merge. Merge has not
+occurred. CHG-030 remains unreserved.
 
 ## Required contract coverage
 
@@ -136,8 +162,12 @@ confidence, and CHG-030 remain excluded.
 
 Independent HIGH-ASSURANCE Round-1 review reviewed
 `ad845759c85346c8fe4a976ba211a6f5f53a12c6` and returned **BLOCKED**
-(0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE). Round-1 remediation is complete in
-the working tree; Round 2 has not run. CHG-030 remains unreserved.
+(0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE). Round-1 remediation is committed
+in the Round-2 reviewed HEAD, and Round-2 independent review reviewed
+`b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
+**PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE). CHG-029 is
+engineering-ready for user-authorized merge; merge has not occurred. CHG-030
+remains unreserved.
 
 Follow `AGENTS.md`: identify the first root error before a build fix, stop
 after two failed attempts on the same root error, do not run destructive

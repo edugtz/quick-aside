@@ -128,4 +128,17 @@ executed two focused Room tests (17/17 on `CHG028_Room_API35`, API 35,
 `emulator-5556`); MINOR-1 and MINOR-2 reconciled current-state wording and the
 structured evidence pointer. All Round-1 NOTE findings and every earlier
 failed attempt remain preserved unchanged. Remediation changed no production
-source. Round 2 has not run, and CHG-030 remains unreserved.
+source.
+
+## Round-2 review closeout
+
+Independent HIGH-ASSURANCE Round-2 review reviewed
+`b466407ae8b98400fe52da40750d18529ff9a3b9` and returned
+**PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE); MAJOR-1,
+MINOR-1, and MINOR-2 are closed, and no required gate remains. This is a
+documentation-only record of the independent reviewer result. It adds no
+machine test evidence and does not alter any raw log, run record, verdict,
+manifest, provenance record, APK hash record, or readiness artifact.
+
+CHG-029 is engineering-ready for user-authorized merge. Merge has not
+occurred. CHG-030 remains unreserved.
