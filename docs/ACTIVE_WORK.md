@@ -1,11 +1,20 @@
 # ACTIVE WORK
 
-Status: **NO ACTIVE CHANGE — CHG-029 COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main**
+Status: **CHG-030 SELECTED — PLANNED — IMPLEMENTATION PENDING**
 
 ## Current state
 
-- **No active Change.** No Change is currently selected, reserved, or in
-  progress; the next Change has not been selected.
+- **Selected Change:** `CHG-030 — Capture Task Auto-Execution + Receipt/Undo
+  Integration` (`docs/changes/030-capture-task-auto-execution/`), governance
+  **HIGH-ASSURANCE**.
+- Branch: `chg-030-capture-task-auto-execution`, created locally and **not
+  pushed**.
+- Verified base: `main` / `origin/main` / starting `HEAD` at
+  `61c2c0b8aae6a5adab9306409cc5c6dc903a96da`; starting worktree clean.
+- Status: **PLANNED — IMPLEMENTATION PENDING**. Planning created
+  `SPEC.md`/`PLAN.md`/`TASKS.md`/`QA.md` and the selection records only. No
+  production/test/schema/dependency change, no build/test/lint/instrumentation/
+  device gate, and no commit/push/merge/release has occurred.
 - Most recently completed Change: `CHG-029 — CapturePlan Task Execution
   Foundation` (`docs/changes/029-captureplan-task-execution/`).
 - Integrated main SHA: `bcaa53d1993c44304029f6be29937ce42dbaa1e5`
@@ -22,7 +31,41 @@ Status: **NO ACTIVE CHANGE — CHG-029 COMPLETE — PASS_WITH_NOTES — INTEGRAT
   normal CaptureSubmission/text/voice. Google Tasks sync remains pending,
   Event execution remains pending, and end-to-end Task natural-language
   mutation remains incomplete.
-- `CHG-030` is **not reserved**.
+- CHG-030 is **not implemented**: its typed outcome evolution, Task
+  Capture/UI wiring, receipt/Undo, and Pendientes freshness work are planned in
+  the selected package. CHG-031 is not created or reserved.
+
+## Selected Change — CHG-030
+
+- Change: `CHG-030 — Capture Task Auto-Execution + Receipt/Undo Integration`.
+- Package: `docs/changes/030-capture-task-auto-execution/`.
+- Governance: **HIGH-ASSURANCE**.
+- Branch: `chg-030-capture-task-auto-execution` (local only; not pushed).
+- Base: `main` / `origin/main` / starting `HEAD` at
+  `61c2c0b8aae6a5adab9306409cc5c6dc903a96da`; starting worktree clean.
+- Status: **PLANNED — IMPLEMENTATION PENDING**.
+- Objective: wire the existing, reviewed CHG-029 `CapturePlanTaskExecutor` into
+  normal persistence-first text/voice Capture for validated all-`CreateTask`
+  plans, with one compact receipt and exact targeted batch Undo, while the
+  CHG-028 all-`AddListItem` path stays unchanged in behavior.
+- Eligibility remains conservative: all-list executes the list path, all-task
+  executes the Task path, and mixed/unsupported/non-representable families
+  execute nothing.
+- Explicit exclusions: Google Tasks/OAuth/Calendar/sync, Event/Note/
+  StructuredLog/UndoLast/reminder execution, mixed-family execution, generic
+  executor registries, gateway/provider/QA1/Tailscale/VPS changes, Room
+  schema/migration changes, new dependencies, and CHG-031.
+- Required HIGH-ASSURANCE acceptance: controlled real-device TEXT Task capture
+  and coordinated real-human VOICE Task capture with exact durable
+  Task/ledger/Capture provenance, receipt, Pendientes visibility, exact Undo,
+  duplicate check, and sanitized visual/privacy evidence. If the environment is
+  unavailable, the gate stays PENDING and pre-review readiness is
+  `NOT REVIEW-READY — REQUIRED REAL-ENVIRONMENT ACCEPTANCE PENDING`; independent
+  implementation review must not begin while it is pending.
+- No implementation, test, build, instrumentation, or production-device gate
+  has been run for CHG-030; the planned contract and gates are in the package.
+- The user retains product, commit, push, merge, release, and production
+  authority.
 
 ## Completed Change — CHG-029 implementation history
 
@@ -95,7 +138,8 @@ Status: **NO ACTIVE CHANGE — CHG-029 COMPLETE — PASS_WITH_NOTES — INTEGRAT
   mutation is **not** complete.
 - CHG-029 is **integrated into `main`** at
   `bcaa53d1993c44304029f6be29937ce42dbaa1e5` after the user-authorized merge.
-  CHG-030 remains unreserved and no CHG-030 work is reserved or started.
+  CHG-030 was later selected for planning as recorded above; the CHG-029
+  foundation remains unwired to normal CaptureSubmission/text/voice.
 
 ## CHG-028 closeout context at the selected baseline
 
@@ -347,7 +391,7 @@ Round-2 **PASS_WITH_NOTES** verdict (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE)
 after a Round-1 **BLOCKED** verdict that was resolved by test/evidence/docs
 remediation. The foundation remains unwired to normal
 CaptureSubmission/text/voice; Google Tasks sync and Event execution remain
-pending. No CHG-030 is reserved.
+pending. CHG-030 is selected for planning only; implementation has not begun.
 
 ## Workstream and Change selection
 
@@ -367,8 +411,10 @@ CHG-028 is integrated into `main` with **PASS_WITH_NOTES**. CHG-029 is
 `bcaa53d1993c44304029f6be29937ce42dbaa1e5`. Round-1 independent review returned
 **BLOCKED**; its test/evidence/docs remediation is complete, and Round-2
 independent review returned **PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR /
-0 MINOR / 3 NOTE). No Change is currently selected. Future work beyond CHG-029
-remains candidate scope only, and CHG-030 is not reserved.
+0 MINOR / 3 NOTE). CHG-030 is now **selected** for the narrow Capture-Task
+wiring described above; implementation has not begun. Future work beyond
+CHG-030 (Google Tasks/OAuth/Calendar sync, Event execution, reminders, and
+M3/M4/M5/M6 scope) remains candidate scope only, and CHG-031 is not reserved.
 
 M3/M4/M5 foundations and other provider-independent work remain candidates
 only; this closeout does not schedule them.
