@@ -33,6 +33,37 @@ Do not make runtime product architecture depend on which coding agent implemente
 
 Prefer deterministic tools (build/tests/lint/static analysis) over builder self-report.
 
+The implementation agent runs the Change-specific required automated checks
+and reports exact commands and results. Default to tests for changed behavior,
+directly affected regressions, and applicable compile/build/static checks.
+Full suites, broad lint, and real-device QA require CI policy, justified
+cross-cutting risk, a concrete finding, or an explicit user request.
+HIGH-ASSURANCE strengthens affected-risk review rather than generic test count.
+Commit the implementation after those required checks as a provenance
+checkpoint; optional manual QA, documentation polish, and independent review
+do not delay it. The user controls commit, push, review, and merge.
+
+Manual user QA requires a material newly changed property, no reasonable
+automated substitute, and an inherently human or unavailable external action.
+Before asking, name the property, the automation gap, and the single minimal
+action. Change-local SPEC/PLAN/TASKS/QA and verification results are ephemeral
+orchestration records, not repository documentation; the implementation report
+is their default record. Do not persist a `docs/changes/<id>/` package or
+repository-local evidence directory by default. Persist a separate artifact
+only when it has lasting value that source/tests/report/CI cannot reasonably
+represent.
+
+### Verification routing
+
+Every resumed STANDARD or HIGH-ASSURANCE implementation prompt and report must include a **Verification delta**:
+
+- Previously valid gates: retained PASS evidence and matching relevant source fingerprints.
+- Invalidated gates: each gate and its concrete source, artifact, or environment reason.
+- New evidence required: only uncovered properties and changed-risk checks.
+- Must-not-rerun gates: valid gates whose dependencies remain unchanged.
+
+Read retained evidence before proposing commands. No invalidation reason means no rerun. Assign each property one owner gate, aggregate complementary evidence, and route routine connected checks to the emulator. HIGH-ASSURANCE increases provenance and independence, not test repetition. Independent reviewers evaluate retained evidence and request a rerun only for an explicit mismatch, provenance gap, missing/corrupt artifact, relevant environment change, or concrete uncovered failure mode.
+
 ## 3. Runtime interpretation models
 
 QAG-1 and QAG-2 are complete.

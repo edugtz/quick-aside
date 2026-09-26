@@ -37,7 +37,6 @@ import com.edu.quickaside.domain.common.CaptureId
 import com.edu.quickaside.domain.common.ListItemId
 import com.edu.quickaside.domain.lists.BuiltInListDefinitions
 import com.edu.quickaside.domain.lists.ListItem
-import com.edu.quickaside.domain.tasks.TaskSpace
 import com.edu.quickaside.ui.QuickAsideApp
 import com.edu.quickaside.ui.theme.QuickAsideTheme
 import java.time.Instant
@@ -123,7 +122,7 @@ class CaptureListAutoExecutionUiTest {
         val executor = RecordingExecutor(executed("unused", "unused"))
         setContent(
             submission(
-                listOf(CapturePlanAction.CreateTask(TaskSpace.PERSONAL, "Pagar luz")),
+                listOf(CapturePlanAction.CreateNote("Pagar luz")),
                 executor,
             ),
             executor,
