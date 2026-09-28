@@ -1,4 +1,4 @@
-# Quick Aside — Project Spec v0.3
+# Quick Aside — Project Spec v0.4
 
 Status: **Accepted baseline for personal MVP design**  
 Product owner: user  
@@ -93,6 +93,17 @@ Initial list definitions:
 
 - **Mandado** — session-based list with historical sessions.
 - **Compras** — continuous list.
+
+Mandado lifecycle for fast Capture:
+
+- Management remains explicit: opening `Listas`/`Mandado` does not itself create, end, or rotate a session; manual Start/Finish remains available.
+- A validated high-confidence `AddListItem` Capture targeting Mandado must not require the user to pre-start a session.
+- If no Mandado session is active, Quick Aside creates exactly one active Mandado session and applies the captured Mandado items as one local operation.
+- If an active Mandado has material activity within the last **7 elapsed days**, Capture reuses that session.
+- If the active Mandado has **more than 7 elapsed days of inactivity**, Quick Aside does not apply the pending Mandado mutation yet. It asks the smallest focused lifecycle question: **Continuar** the existing Mandado or start **Nuevo**.
+- `Continuar` reuses the existing active session. `Nuevo` ends the previous session, creates a new active Mandado session, and then applies the pending Mandado items as one local operation. Cancel leaves the durable Capture intact and does not mutate Mandado sessions or items.
+- Material activity for the stale-session threshold includes session creation, adding an item, and changing an item's completed/pending state. Merely opening Mandado, navigating the app, or viewing history does not reset the threshold.
+- Staleness is not expiration: crossing the 7-day threshold never silently ends, deletes, or prunes a Mandado session. Historical sessions remain independently retrievable.
 
 Future list types are allowed by the data model but are not MVP UI scope unless needed by real use.
 

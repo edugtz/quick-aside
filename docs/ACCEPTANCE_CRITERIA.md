@@ -1,4 +1,4 @@
-# Quick Aside — Global Acceptance Criteria v0.2
+# Quick Aside — Global Acceptance Criteria v0.3
 
 These are product-wide gates. Active changes add narrower acceptance scenarios.
 
@@ -23,6 +23,18 @@ These are product-wide gates. Active changes add narrower acceptance scenarios.
 - Room migrations for user data are explicit and tested.
 - No destructive fallback is accepted for durable user data.
 - No durable personal information expires or is pruned silently.
+
+## List lifecycle
+
+- Mandado remains session-based with independently retrievable historical sessions; Compras remains continuous.
+- A valid high-confidence Capture targeting Mandado does not require the user to manually start a Mandado session first.
+- With no active Mandado, applying the Capture creates exactly one active session and its captured Mandado items atomically; failure/cancellation cannot leave a partial session/item result.
+- With an active Mandado whose last material activity is no more than 7 elapsed days old, Capture reuses that session.
+- With an active Mandado whose last material activity is more than 7 elapsed days old, Quick Aside performs no Mandado mutation until it obtains the focused `Continuar` / `Nuevo` lifecycle choice.
+- `Continuar` reuses the existing Mandado. `Nuevo` ends the old session, creates the new active session, and applies the pending captured items as one atomic local operation.
+- Canceling the stale-session question leaves the original Capture durable and leaves Mandado sessions/items unchanged.
+- The 7-day stale threshold never silently expires, ends, deletes, or prunes durable Mandado data. Passive reads/navigation do not count as material activity.
+- Automated Mandado mutations continue to provide targeted reversible feedback without deleting or altering unrelated list data.
 
 ## Google Tasks
 

@@ -134,6 +134,17 @@ Preserve:
 - previous Mandado sessions discoverable;
 - fast checkbox interactions.
 
+Fast Capture must not make Mandado session setup a prerequisite:
+
+- no active Mandado → create one implicitly and save the captured items without a confirmation step;
+- active Mandado with activity within 7 elapsed days → reuse it;
+- active Mandado with more than 7 elapsed days of inactivity → before mutating the list, show a small focused choice: `Continuar` / `Nuevo`;
+- choosing `Nuevo` ends the previous session and starts the new one before applying the pending captured items;
+- cancel leaves the Capture durable and the Mandado state unchanged;
+- the stale threshold never auto-expires or deletes the prior Mandado.
+
+This lifecycle clarification is an ambiguity surface, not a mandatory review screen. Passive navigation/history views do not reset Mandado activity.
+
 ### 7. Memoria
 
 Purpose: unified retrieval and durable personal history.

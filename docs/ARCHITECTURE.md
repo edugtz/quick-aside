@@ -1,4 +1,4 @@
-# Quick Aside — Architecture v0.3
+# Quick Aside — Architecture v0.4
 
 Status: accepted implementation baseline derived from current product/UX decisions. Exact Android/API versions are verified only when a Change depends on them. Runtime-AI sections originated 2026-09-12 (`docs/adr/0001-private-remote-ai-runtime.md`, `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`, and `docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md`).
 
@@ -100,6 +100,17 @@ Possible action families:
 
 `Mandado` = session-based.  
 `Compras` = continuous.
+
+Mandado fast-capture lifecycle is resolved by the Android-owned list execution boundary, not by the remote provider:
+
+- no active Mandado session: the executor creates one and applies the pending Mandado items in the same local atomic operation;
+- active Mandado with material activity within 7 elapsed days: reuse that session;
+- active Mandado with more than 7 elapsed days of inactivity: treat the session as **stale for routing/lifecycle clarification only** and perform no Mandado mutation until the user selects `Continuar` or `Nuevo`;
+- `Continuar` applies the pending items to the existing session;
+- `Nuevo` ends the previous session, creates a new active session, and applies the pending items as one atomic local operation after the user's choice;
+- cancel/no resolution preserves the already-durable Capture and leaves Mandado sessions/items unchanged.
+
+The stale threshold is not a retention TTL. A stale session remains active and durable until an explicit lifecycle decision is applied. Material activity includes session creation, item creation, and item completion/reopen changes; passive reads/navigation do not count. The activity calculation must be deterministic and testable.
 
 ### Tasks
 
@@ -321,6 +332,7 @@ Automatic execution is Android-owned and deliberately family-gated:
 - a Capture is durable before interpretation starts;
 - provider output is decoded/validated into `CapturePlan`;
 - validated all-`AddListItem` plans execute through the local list executor;
+- for Mandado, absence of a pre-existing active session is a lifecycle-bootstrap case rather than a reason to require manual preparation before high-confidence Capture; stale-session ambiguity is resolved before any list mutation;
 - validated all-`CreateTask` plans execute through the local Task executor;
 - mixed-family or unsupported plans execute nothing, with no splitting, subsetting, or reordering;
 - successful local mutations are represented through the Action Ledger and targeted Undo;
