@@ -39,12 +39,13 @@ Implemented/integrated baseline:
 - QAG-004H Android trust-boundary hardening;
 - CHG-027 local list execution foundation;
 - CHG-028 normal text/voice auto-execution for validated all-`AddListItem` plans;
-- CHG-029 local Task execution foundation.
+- CHG-029 local Task execution foundation;
+- CHG-030 normal text/voice auto-execution for validated all-`CreateTask` plans;
+- supported list and Task execution paths use targeted Undo;
+- mixed-family and unsupported plans execute nothing.
 
-Current active work:
-
-- CHG-030 wires validated all-`CreateTask` plans into normal text/voice Capture with lightweight receipt and targeted Undo.
-- CHG-030 is published and awaiting independent review; it is not yet accepted/merged.
+CHG-027/028 list execution and Capture wiring are integrated. CHG-029/030 Task
+execution and Capture wiring are integrated. CHG-030 is COMPLETE.
 
 Still candidate/pending:
 
@@ -52,6 +53,10 @@ Still candidate/pending:
 - evidence-triggered normal-use gateway hardening;
 - optional DeepSeek V4 Flash fallback;
 - additional supported action families only when selected as separate Changes.
+
+M2 remains IN PROGRESS only for remaining interpretation/policy/UX work and
+evidence-triggered runtime hardening/fallback candidates. Google sync,
+Calendar/Event execution, reminders, and other action families remain pending.
 
 ## M3 — Google Tasks + Calendar
 
@@ -61,8 +66,8 @@ Outcome: Personal/Trabajo tasks and events synchronize reliably with Google.
 
 Current facts:
 
-- local Task execution exists through CHG-029;
-- CHG-030, if accepted, connects natural-language Capture to local Task creation;
+- local Task execution is no longer a blocker;
+- natural-language Task Capture reaches local Task creation;
 - Google Tasks OAuth/sync, external mapping, outbox/retry/idempotency/conflicts are not implemented;
 - Calendar/Event execution and sync are not implemented.
 
@@ -141,13 +146,13 @@ Normal-use hardening remains evidence-triggered and is not automatically schedul
 |---|---|
 | M0 | COMPLETE |
 | M1 | SUBSTANTIALLY IMPLEMENTED / NOT BLOCKED |
-| M2 | IN PROGRESS; CHG-030 published, review pending |
+| M2 | IN PROGRESS; CHG-030 COMPLETE and integrated; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
 | M3 | NOT globally blocked; Google Tasks/Calendar sync and Event execution pending |
 | M4 | NOT globally blocked; reminder-domain/execution/scheduling pending |
 | M5 | NOT blocked |
 | M6 | Final completion blocked by remaining sync/event/reminder capabilities |
 
-CHG-031 is not reserved. Selecting the next Change requires a separate product/architecture decision after CHG-030 review.
+CHG-031 is NOT RESERVED. Select the next reviewable Change from the accepted roadmap and current repository state.
 
 ## Post-MVP — evidence-triggered candidates
 

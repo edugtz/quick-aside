@@ -86,10 +86,10 @@ and log-privacy evidence with final `PASS_WITH_NOTES`. QAG-004 completed the
 HIGH-ASSURANCE Android integration gate, including device pairing, QA1 signing,
 the remote `AIProvider` adapter, local validation, and true Android end-to-end
 latency measurement. QAG-004H subsequently closed the accepted client-side
-trust-boundary hardening debt. CHG-027/028 then introduced validated list
-execution and Capture wiring; CHG-029 added the local Task executor. The
-published CHG-030 branch adds normal Capture wiring for validated all-`CreateTask`
-plans and is awaiting independent review.
+trust-boundary hardening debt. CHG-027/028 then added validated all-`AddListItem`
+local execution and normal text/voice Capture wiring. CHG-029/030 then added
+validated all-`CreateTask` local execution and normal text/voice Capture wiring.
+CHG-030 is COMPLETE and integrated into main.
 
 Provider auth and credentials belong to the isolated Quick Aside
 gateway/runtime, not Android or Personal Admin/Hermes. Runtime code remains
@@ -140,5 +140,5 @@ Standard UI icons should come from Material/platform icon sets rather than AI-ge
 For every material UI change:
 
 - builder references the canonical UX visual + written contract;
-- reviewer compares actual visual result against those references and the active Change's orchestration acceptance criteria;
+- reviewer compares actual visual result against those references and the active Change orchestration acceptance criteria/context;
 - visual differences that materially change the product direction require explicit product approval.

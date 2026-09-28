@@ -108,11 +108,12 @@ capture lossy: persist the capture locally first.
 QAG-2 minimal gateway implementation, QAG-003R private Tailnet deployment,
 QAG-004 Android gateway integration, and QAG-004H Android gateway client
 hardening are complete. QAG-004H closed the trust-boundary debt before local
-automatic execution was introduced. CHG-027/028 added validated list execution
-and normal Capture wiring; CHG-029 added the local Task executor. The published
-CHG-030 branch wires validated all-`CreateTask` plans into normal text/voice
-Capture and is awaiting independent review; Google Tasks sync, Event execution,
-and other action families remain separate future scope.
+automatic execution was introduced. CHG-027/028 subsequently added validated
+all-`AddListItem` local execution and normal text/voice Capture wiring.
+CHG-029/030 subsequently added validated all-`CreateTask` local execution and
+normal text/voice Capture wiring. CHG-030 is COMPLETE and integrated into main.
+Google Tasks sync, Calendar/Event execution, reminders, and other action
+families remain separate future scope.
 
 Do not spend time on broad model benchmarking without observed product
 evidence requiring it. Model/provider changes must not alter the domain

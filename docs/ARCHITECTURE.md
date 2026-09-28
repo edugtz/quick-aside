@@ -147,9 +147,10 @@ private Tailscale Services/Serve with localhost-only FastAPI, QA1 retained as
 the application authorization boundary, and no public Quick Aside ingress.
 QAG-004 completed Android remote-provider integration. QAG-004H subsequently
 closed the accepted client-side hardening debt. CHG-027/028 then introduced
-validated local list execution and normal Capture wiring; CHG-029 added the
-local Task executor. The published CHG-030 branch adds normal Capture wiring
-for validated all-`CreateTask` plans and is awaiting independent review.
+validated all-`AddListItem` local execution and normal text/voice Capture
+wiring. CHG-029/030 then introduced validated all-`CreateTask` local execution
+and normal text/voice Capture wiring. CHG-030 is COMPLETE and integrated into
+main.
 
 ### Selected provider invocation
 
@@ -268,8 +269,9 @@ QAG-004H completed only the accepted client-side hardening findings: pairing
 response identity binding, local action/field bounds, strict JSON structural
 typing, and bounded transport cancellation handling. It did not add action
 execution or change the gateway contract. Local automatic execution arrived
-later through the CHG-027/028 list path and CHG-029 Task executor foundation;
-CHG-030's Task Capture wiring is published and review-pending.
+later through the CHG-027/028 list execution and Capture wiring, followed by
+CHG-029/030 Task execution and Capture wiring. CHG-030 is COMPLETE and
+integrated into main.
 
 Fallback implementation remains later and evidence-triggered.
 
@@ -318,9 +320,9 @@ Automatic execution is Android-owned and deliberately family-gated:
 
 - a Capture is durable before interpretation starts;
 - provider output is decoded/validated into `CapturePlan`;
-- validated all-`AddListItem` plans may execute through the local list executor;
-- the local all-`CreateTask` executor foundation is integrated; CHG-030's normal Capture wiring is published and pending review;
-- mixed-family or unsupported plans execute nothing rather than being split or partially applied;
+- validated all-`AddListItem` plans execute through the local list executor;
+- validated all-`CreateTask` plans execute through the local Task executor;
+- mixed-family or unsupported plans execute nothing, with no splitting, subsetting, or reordering;
 - successful local mutations are represented through the Action Ledger and targeted Undo;
 - Google Tasks sync, Calendar/Event execution, reminders, and other action families are separate boundaries and are not implied by local execution.
 
