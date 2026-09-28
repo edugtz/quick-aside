@@ -35,7 +35,11 @@ Implemented/current foundation includes:
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **IN PROGRESS — private gateway, Android integration/client hardening, and CHG-028 list-only CapturePlan auto-execution are integrated into main; remaining product work is candidate scope, and normal-use gateway hardening is evidence-triggered.**
+Status: **IN PROGRESS — private gateway, Android integration/client hardening,
+CHG-028 list-only CapturePlan auto-execution, and CHG-030 Task Capture wiring
+are implemented; CHG-030 required automated verification passes and awaits
+commit/push and independent review. Remaining product work is candidate scope,
+and normal-use gateway hardening is evidence-triggered.**
 
 Outcome: natural-language input becomes validated structured actions with
 minimal friction.
@@ -89,17 +93,19 @@ Android client trust-boundary hardening is complete through QAG-004H. Both are
 integrated into `main`. CHG-027 provides the provider-independent list
 execution foundation, and CHG-028 connects it to normal text and voice
 Capture: validated plans whose every action is `AddListItem` now auto-execute
-with targeted batch Undo. Other CapturePlan action types are not covered. M2
-remains open for the remaining fast-capture interpretation/UX policies listed
-above and any separately selected work.
+with targeted batch Undo. The CHG-029/CHG-030 Task path follows the same
+pattern for validated all-`CreateTask` plans. Other CapturePlan action types
+are not covered. M2 remains open for the remaining fast-capture
+interpretation/UX policies listed above and any separately selected work.
 
 ## M3 — Google Tasks + Calendar
 
 Status: **NOT globally blocked** — runtime interpretation is available.
-Task execution foundation: **implemented by CHG-029** (provider-independent,
-currently unwired to Capture). Capture wiring / Google Tasks synchronization /
-Event execution: **pending**. End-to-end task/event natural-language mutation
-is therefore not complete.
+Task execution foundation (CHG-029) and Capture Task wiring (CHG-030) are
+implemented; CHG-030's required automated gates pass and it awaits commit/push
+and independent review. Google Tasks synchronization / Event execution:
+**pending**. End-to-end task/event natural-language mutation is therefore not
+complete; selecting CHG-030 does not schedule M3 as a whole.
 
 Outcome: Personal/Trabajo tasks and events synchronize reliably with Google.
 
@@ -109,12 +115,14 @@ implemented independently of the AI provider when scoped coherently.
 
 End-to-end natural-language capture → interpreted Task/Event → Google
 acceptance is no longer blocked by provider integration. CHG-029 supplies the
-Task-specific validated-plan execution foundation, but it is not wired to
-normal text/voice Capture and no Google synchronization exists yet, so
-end-to-end Task mutation is not complete. Event execution remains pending. The
-CHG-027/CHG-028 list path and the CHG-029 Task foundation do not provide Event
-coverage or Google sync. M3 as a whole does not need to wait for all remaining
-M2 polish.
+Task-specific validated-plan execution foundation, and CHG-030 wires that
+foundation into normal text/voice Capture with a compact receipt and exact
+targeted Undo. Google synchronization does not exist yet, so end-to-end Task
+mutation is not complete. Google OAuth, Google Tasks synchronization,
+outbox/retry/idempotency, and Calendar/Event execution remain separate,
+unscheduled work. The CHG-027/CHG-028 list path and the CHG-029/CHG-030 Task
+path do not provide Event coverage or Google sync. M3 as a whole does not need
+to wait for all remaining M2 polish.
 
 Capabilities:
 
@@ -158,7 +166,10 @@ Capabilities:
 
 ## M6 — Personal MVP polish
 
-Status: **FINAL COMPLETION BLOCKED** — interpretation and list-only normal capture/UI execution are integrated, but the full north-star happy path still requires Capture-wired Task/Event/Reminder action support (CHG-029 provides only an unwired Task execution foundation) and the remaining sync/reminder/product polish. Other polish may continue independently.
+Status: **FINAL COMPLETION BLOCKED** — interpretation, list-only normal
+capture/UI execution, and CHG-030 Task wiring are implemented, but
+Event/Reminder action support and the remaining sync/reminder/product polish
+are still pending. Other polish may continue independently.
 
 Outcome: the user can adopt Quick Aside as the default capture tool in everyday life.
 
@@ -186,20 +197,17 @@ The gateway may run on the same VPS as Personal Admin/Hermes, but this is
 infrastructure reuse only. Personal Admin/Hermes is not an application
 dependency of Quick Aside.
 
-QAG-1 selected the provider invocation route. QAG-2 implemented and verified
-the repository gateway server, HTTP contract, trusted temporal context,
-timeout/cancellation, concurrency bounds, health/readiness, Codex version pin,
-and safe diagnostics.
+QAG-1 selected the provider invocation route. QAG-2 implemented the repository
+gateway server, HTTP contract, trusted temporal context, timeout/cancellation,
+concurrency bounds, health/readiness, Codex version pin, and safe diagnostics.
 
-QAG-003R subsequently deployed the gateway through private Tailscale
-Services/Serve, preserved localhost-only FastAPI and QA1, and proved service
-restart plus VPS reboot persistence without making Personal Admin an
-application dependency. QAG-004 completed Android integration and QAG-004H
-completed Android client trust-boundary hardening; both are integrated into
-`main` and remain historical QAG boundaries. CHG-027 adds the provider-
-independent executor foundation, and CHG-028 wires validated all-`AddListItem`
-plans from normal text and voice Capture into that executor with targeted batch
-Undo. Other action types remain outside its scope.
+QAG-003R deployed the gateway through private Tailscale Services/Serve with
+localhost-only FastAPI and QA1, without making Personal Admin an application
+dependency. QAG-004 Android integration and QAG-004H client trust-boundary
+hardening are integrated into `main`. CHG-027 adds the provider-independent
+executor foundation, and CHG-028 wires validated all-`AddListItem` plans from
+normal text and voice Capture into that executor with targeted batch Undo.
+Other action types remain outside its scope.
 
 ## Milestone dependency summary
 
@@ -209,49 +217,24 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | IN PROGRESS — gateway + Android integration/client hardening and CHG-028 list-only auto-execution integrated; remaining policy and UX scope is undecided; normal-use hardening is evidence-triggered |
-| M3 | NOT globally blocked; Task execution foundation implemented by CHG-029 but unwired to Capture; Capture wiring, Google Tasks/Calendar sync, and Event execution remain pending |
+| M2 | IN PROGRESS — gateway + Android integration/client hardening, CHG-028 list-only auto-execution, and CHG-029/CHG-030 Task execution/wiring implemented; CHG-030 awaits commit/push and independent review; remaining policy/UX scope undecided; normal-use hardening is evidence-triggered |
+| M3 | NOT globally blocked; Task execution foundation and Capture Task wiring implemented; CHG-030 awaits commit/push and independent review; Google Tasks/Calendar sync/Event execution remain pending |
 | M4 | NOT globally blocked; runtime interpretation is integrated, while natural-language reminder creation awaits reminder-domain/actions, reminder-specific plan execution, and scheduling work |
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
-The normal global reviewable-change history now runs through Change 029.
-CHG-027 — CapturePlan List Execution Foundation remains **COMPLETE —
-PASS_WITH_NOTES — INTEGRATED INTO main**. Its verified base was
-`cb67494a7b57d0f7a939ec06396ccbc665edff7c`; its implementation commit was
-`b9ba067ff442259225127645c8a4c04eeb65dfc6`. Round 1 reviewed that
-implementation commit and returned **BLOCKED** with 1 BLOCKER / 0 MAJOR /
-1 MINOR / 2 NOTE. The evidence/remediation commit and Round-2 reviewed SHA was
-`eddbfcd505a89ff7f7f0d4a37d511ad92abdcd24`; Round 2 returned
-**PASS_WITH_NOTES**. The Round-1 evidence BLOCKER was resolved and no
-production correctness defect remained. Final review debt was documentation/
-evidence provenance only. The final documentation closeout was integrated into
-`main` at `979b8e6abb9a57ac5936559c252726a1ca84a98c`.
-
-CHG-027 provides the provider-independent list execution foundation limited to
-validated plans whose every action is `AddListItem`, plus targeted batch Undo.
-CHG-028 — Capture List Auto-Execution + Receipt/Undo Integration is **COMPLETE
-— PASS_WITH_NOTES — INTEGRATED INTO main** at
-`44c4d3befd97ad37dadc8fcf93fb2dc7a5ab8232`; its implementation SHA is
-`b8a14bf4a435b33870ee9bbf2127a2fd8f7b1d67` and evidence remediation SHA is
-`d8d5acdd9ae6982cb790054bdccaefdc0b1701be`. CHG-028 connects the list-only
-executor to normal text and voice Capture with exact targeted batch Undo.
-Other CapturePlan actions remain non-executable. CHG-029 — CapturePlan Task
-Execution Foundation is **COMPLETE — PASS_WITH_NOTES — INTEGRATED INTO main**
-at `bcaa53d1993c44304029f6be29937ce42dbaa1e5` (fast-forward; the same commit
-as the pre-merge review-closeout HEAD). Round-1 independent review returned
-**BLOCKED** (0 BLOCKER / 1 MAJOR / 2 MINOR / 3 NOTE); the test/evidence/docs
-remediation is complete, and Round-2 independent review returned
-**PASS_WITH_NOTES** (0 BLOCKER / 0 MAJOR / 0 MINOR / 3 NOTE) at reviewed HEAD
-`b466407ae8b98400fe52da40750d18529ff9a3b9`. The foundation remains unwired to
-normal Capture, Google Tasks synchronization and Event execution remain
-pending, and end-to-end Task natural-language mutation is not complete. No
-CHG-030 is reserved.
+CHG-027 (provider-independent list execution foundation), CHG-028 (list
+auto-execution wiring), and CHG-029 (Task execution foundation) are COMPLETE
+and integrated into `main`. CHG-030 (Task capture wiring) is implemented with
+required automated gates passing; it awaits commit/push and independent review.
+Other CapturePlan action types remain non-executable. Google Tasks
+synchronization and Event execution remain pending, and end-to-end Task
+natural-language mutation is not complete. CHG-031 is not reserved.
 
 ## Other candidate work (not scheduled)
 
-The options below remain unscheduled. CHG-029 is complete and integrated into
-`main`; no Change is currently selected.
+The options below remain unscheduled. CHG-030 is implemented within its narrow
+scope and does not schedule M3 or any Google/Calendar/reminder work.
 
 - Normal-use hardening (historically Phase QAG-5 in the gateway initiative): pending real-use evidence; not a reserved Change ID;
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,
@@ -261,7 +244,7 @@ The options below remain unscheduled. CHG-029 is complete and integrated into
 - M5 foundations: backup/snapshot, export center, structured reimport format,
   and archive-before-prune verification;
 - Further M2 provider-independent execution/application foundations beyond
-  CHG-029, only if independently justified;
+  CHG-029/CHG-030, only if independently justified;
 - M1/M6 polish that does not depend on automated interpretation.
 
 This list records options, not a schedule.

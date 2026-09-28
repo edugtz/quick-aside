@@ -15,6 +15,7 @@ class MainActivity : ComponentActivity() {
                 QuickAsideApp(
                     captureSubmission = app.captureSubmission,
                     capturePlanListExecutor = app.capturePlanListExecutor,
+                    capturePlanTaskExecutor = app.capturePlanTaskExecutor,
                     captureReader = app.captureReader,
                     listStore = app.listStore,
                     reversibleListItemActions = app.reversibleListItemActions,

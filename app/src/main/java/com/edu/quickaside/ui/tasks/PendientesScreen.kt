@@ -97,6 +97,7 @@ fun PendientesScreen(
     taskStore: TaskStore?,
     reversibleTaskActions: ReversibleTaskActions?,
     snackbarHostState: SnackbarHostState,
+    refreshToken: Int = 0,
 ) {
     var state by remember(taskStore) {
         mutableStateOf<PendientesState>(PendientesState.Loading)
@@ -304,7 +305,7 @@ fun PendientesScreen(
         }
     }
 
-    LaunchedEffect(taskStore) { loadState() }
+    LaunchedEffect(taskStore, refreshToken) { loadState() }
     Column(
         modifier = Modifier
             .fillMaxSize()

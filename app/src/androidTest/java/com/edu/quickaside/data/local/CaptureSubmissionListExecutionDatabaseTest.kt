@@ -69,7 +69,7 @@ class CaptureSubmissionListExecutionDatabaseTest {
         )
 
         val saved = submission.submit("Compra leche y pan") as CaptureSubmissionResult.Saved
-        val receipt = (saved.execution as CaptureExecutionOutcome.Executed).receipt
+        val receipt = (saved.execution as CaptureExecutionOutcome.Executed.ListItems).receipt
 
         assertNotNull(database.captureDao().getById(captureId.value))
         assertEquals(listOf("item-leche", "item-pan"), receipt.items.map { it.id.value })
@@ -124,7 +124,7 @@ class CaptureSubmissionListExecutionDatabaseTest {
 
         val saved = submission.submitVoice("Agrega aguacate al mandado") as
             CaptureSubmissionResult.Saved
-        val rejection = saved.execution as CaptureExecutionOutcome.Rejected
+        val rejection = saved.execution as CaptureExecutionOutcome.Rejected.ListItems
 
         assertEquals(
             CapturePlanListExecutionResult.Rejected(
@@ -153,7 +153,7 @@ class CaptureSubmissionListExecutionDatabaseTest {
             actions = listOf(compras("cuerdas"), compras("plumillas")),
             executor = executor,
         ).submit("Compra cuerdas y plumillas") as CaptureSubmissionResult.Saved
-        val receipt = (saved.execution as CaptureExecutionOutcome.Executed).receipt
+        val receipt = (saved.execution as CaptureExecutionOutcome.Executed.ListItems).receipt
 
         val undo = executor.undoExecution(
             actionLedgerEntryId = receipt.actionLedgerEntryId,

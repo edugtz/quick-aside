@@ -46,6 +46,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,11 +64,13 @@ import com.edu.quickaside.application.capture.AIProviderFailureReason
 import com.edu.quickaside.application.capture.CaptureInterpretationResult
 import com.edu.quickaside.application.capture.CaptureExecutionOutcome
 import com.edu.quickaside.application.capture.CapturePlanListExecutor
+import com.edu.quickaside.application.capture.CapturePlanTaskExecutor
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
 import com.edu.quickaside.application.capture.UndoCapturePlanListExecutionResult
+import com.edu.quickaside.application.capture.UndoCapturePlanTaskExecutionResult
 import com.edu.quickaside.application.gateway.DevicePairer
 import com.edu.quickaside.application.lists.ListSessionWithItems
 import com.edu.quickaside.application.lists.ListStore
@@ -122,6 +125,7 @@ fun QuickAsideApp(
     captureSubmission: CaptureSubmission,
     captureReader: CaptureReader,
     capturePlanListExecutor: CapturePlanListExecutor? = null,
+    capturePlanTaskExecutor: CapturePlanTaskExecutor? = null,
     listStore: ListStore? = null,
     reversibleListItemActions: ReversibleListItemActions? = null,
     taskStore: TaskStore? = null,
@@ -147,8 +151,9 @@ fun QuickAsideApp(
     var memoryRoute by remember { mutableStateOf(MemoryRoute.History) }
     var historyDetailSession by remember { mutableStateOf<ListSessionWithItems?>(null) }
     var captureRequested by remember { mutableStateOf(false) }
-    var historyRefreshToken by remember { mutableStateOf(0) }
-    var listRefreshToken by remember { mutableStateOf(0) }
+    var historyRefreshToken by remember { mutableIntStateOf(0) }
+    var listRefreshToken by remember { mutableIntStateOf(0) }
+    var taskRefreshToken by remember { mutableIntStateOf(0) }
     var pairingRequested by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -181,52 +186,92 @@ fun QuickAsideApp(
     val onCaptureSaved: (CaptureSubmissionResult.Saved, Boolean) -> Unit = { result, closeCapture ->
         onInterpretationObserved(result.interpretation)
         historyRefreshToken += 1
-        if (result.execution is CaptureExecutionOutcome.Executed) {
-            listRefreshToken += 1
+        when (result.execution) {
+            is CaptureExecutionOutcome.Executed.ListItems -> listRefreshToken += 1
+            is CaptureExecutionOutcome.Executed.Tasks -> taskRefreshToken += 1
+            else -> Unit
         }
         if (closeCapture) {
             captureRequested = false
         }
         scope.launch {
             val execution = result.execution
-            if (execution !is CaptureExecutionOutcome.Executed) {
-                snackbarHostState.showSnackbar(savedCaptureMessage(result))
-                return@launch
-            }
+            when (execution) {
+                is CaptureExecutionOutcome.Executed.ListItems -> {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    val receipt = execution.receipt
+                    val snackbarResult = snackbarHostState.showSnackbar(
+                        message = if (receipt.items.size == 1) {
+                            "Producto agregado"
+                        } else {
+                            "${receipt.items.size} elementos guardados"
+                        },
+                        actionLabel = "Deshacer",
+                        duration = SnackbarDuration.Long,
+                    )
+                    if (snackbarResult != SnackbarResult.ActionPerformed) {
+                        return@launch
+                    }
 
-            snackbarHostState.currentSnackbarData?.dismiss()
-            val receipt = execution.receipt
-            val snackbarResult = snackbarHostState.showSnackbar(
-                message = if (receipt.items.size == 1) {
-                    "Producto agregado"
-                } else {
-                    "${receipt.items.size} elementos guardados"
-                },
-                actionLabel = "Deshacer",
-                duration = SnackbarDuration.Long,
-            )
-            if (snackbarResult != SnackbarResult.ActionPerformed) {
-                return@launch
-            }
+                    val undoResult = try {
+                        capturePlanListExecutor?.undoExecution(
+                            actionLedgerEntryId = receipt.actionLedgerEntryId,
+                            expectedItemIds = receipt.items.map { it.id },
+                        )
+                    } catch (cancellation: CancellationException) {
+                        throw cancellation
+                    } catch (_: Exception) {
+                        null
+                    }
+                    listRefreshToken += 1
+                    snackbarHostState.showSnackbar(
+                        if (undoResult is UndoCapturePlanListExecutionResult.Undone) {
+                            "Cambio deshecho"
+                        } else {
+                            "No se pudo deshacer."
+                        },
+                    )
+                }
 
-            val undoResult = try {
-                capturePlanListExecutor?.undoExecution(
-                    actionLedgerEntryId = receipt.actionLedgerEntryId,
-                    expectedItemIds = receipt.items.map { it.id },
-                )
-            } catch (cancellation: CancellationException) {
-                throw cancellation
-            } catch (_: Exception) {
-                null
+                is CaptureExecutionOutcome.Executed.Tasks -> {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    val receipt = execution.receipt
+                    val snackbarResult = snackbarHostState.showSnackbar(
+                        message = if (receipt.tasks.size == 1) {
+                            "Pendiente guardado"
+                        } else {
+                            "${receipt.tasks.size} pendientes guardados"
+                        },
+                        actionLabel = "Deshacer",
+                        duration = SnackbarDuration.Long,
+                    )
+                    if (snackbarResult != SnackbarResult.ActionPerformed) {
+                        return@launch
+                    }
+
+                    val undoResult = try {
+                        capturePlanTaskExecutor?.undoExecution(
+                            actionLedgerEntryId = receipt.actionLedgerEntryId,
+                            expectedTaskIds = receipt.tasks.map { it.id },
+                        )
+                    } catch (cancellation: CancellationException) {
+                        throw cancellation
+                    } catch (_: Exception) {
+                        null
+                    } finally {
+                        taskRefreshToken += 1
+                    }
+                    snackbarHostState.showSnackbar(
+                        if (undoResult is UndoCapturePlanTaskExecutionResult.Undone) {
+                            "Cambio deshecho"
+                        } else {
+                            "No se pudo deshacer."
+                        },
+                    )
+                }
+
+                else -> snackbarHostState.showSnackbar(savedCaptureMessage(result))
             }
-            listRefreshToken += 1
-            snackbarHostState.showSnackbar(
-                if (undoResult is UndoCapturePlanListExecutionResult.Undone) {
-                    "Cambio deshecho"
-                } else {
-                    "No se pudo deshacer."
-                },
-            )
         }
     }
 
@@ -359,6 +404,7 @@ fun QuickAsideApp(
                 onCaptureSaved = { result -> onCaptureSaved(result, false) },
                 snackbarHostState = snackbarHostState,
                 listRefreshToken = listRefreshToken,
+                taskRefreshToken = taskRefreshToken,
                 listStore = listStore,
                 reversibleListItemActions = reversibleListItemActions,
                 taskStore = taskStore,
@@ -423,6 +469,7 @@ private fun ManagementScreen(
     onCaptureSaved: (CaptureSubmissionResult.Saved) -> Unit,
     snackbarHostState: SnackbarHostState,
     listRefreshToken: Int,
+    taskRefreshToken: Int,
     listStore: ListStore?,
     reversibleListItemActions: ReversibleListItemActions?,
     taskStore: TaskStore?,
@@ -508,6 +555,7 @@ private fun ManagementScreen(
             taskStore = taskStore,
             reversibleTaskActions = reversibleTaskActions,
             snackbarHostState = snackbarHostState,
+            refreshToken = taskRefreshToken,
         )
         return
     }

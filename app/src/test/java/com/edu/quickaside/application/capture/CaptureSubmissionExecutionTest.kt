@@ -43,7 +43,7 @@ class CaptureSubmissionExecutionTest {
         assertEquals(listOf("persist", "interpret", "execute"), events)
         assertEquals(1, executor.executeCalls)
         assertSame(plan, executor.executedPlans.single())
-        assertEquals(CaptureExecutionOutcome.Executed(receipt), saved.execution)
+        assertEquals(CaptureExecutionOutcome.Executed.ListItems(receipt), saved.execution)
     }
 
     @Test
@@ -76,7 +76,7 @@ class CaptureSubmissionExecutionTest {
 
         assertEquals(1, executor.executeCalls)
         assertEquals(listOf(plan), executor.executedPlans)
-        val execution = saved.execution as CaptureExecutionOutcome.Executed
+        val execution = saved.execution as CaptureExecutionOutcome.Executed.ListItems
         assertEquals(ActionLedgerEntryId("ledger-batch"), execution.receipt.actionLedgerEntryId)
         assertEquals(
             listOf(ListItemId("item-a"), ListItemId("item-b"), ListItemId("item-c")),
@@ -104,7 +104,6 @@ class CaptureSubmissionExecutionTest {
     @Test
     fun everyUnsupportedActionFamilyIsSavedWithoutExecutorInvocation() = runBlocking {
         val unsupportedActions = listOf(
-            CapturePlanAction.CreateTask(TaskSpace.TRABAJO, "Revisar PR"),
             CapturePlanAction.CreateNote("Nota"),
             CapturePlanAction.CreateStructuredLog(mapOf("peso" to "210 lbs")),
             CapturePlanAction.UndoLast,
@@ -169,7 +168,7 @@ class CaptureSubmissionExecutionTest {
         ).submit("Agrega aguacate") as CaptureSubmissionResult.Saved
 
         assertEquals(captureId, saved.capture.id)
-        assertEquals(CaptureExecutionOutcome.Rejected(rejection), saved.execution)
+        assertEquals(CaptureExecutionOutcome.Rejected.ListItems(rejection), saved.execution)
     }
 
     @Test
@@ -183,7 +182,7 @@ class CaptureSubmissionExecutionTest {
         ).submit("Compra cuerdas") as CaptureSubmissionResult.Saved
 
         assertEquals(captureId, saved.capture.id)
-        assertEquals(CaptureExecutionOutcome.Failed(failure), saved.execution)
+        assertEquals(CaptureExecutionOutcome.Failed.ListItems(failure), saved.execution)
     }
 
     @Test
