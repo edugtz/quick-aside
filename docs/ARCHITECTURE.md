@@ -146,8 +146,9 @@ the minimal repository-owned gateway. QAG-003R then deployed it through
 private Tailscale Services/Serve with localhost-only FastAPI, QA1 retained as
 the application authorization boundary, and no public Quick Aside ingress.
 QAG-004 completed Android remote-provider integration. QAG-004H subsequently
-closed the accepted client-side hardening debt before any future automatic
-execution.
+closed the accepted client-side hardening debt before local automatic
+execution was introduced. CHG-027/CHG-028 then introduced list execution and
+Capture wiring; CHG-029/CHG-030 introduced Task execution and Capture wiring.
 
 ### Selected provider invocation
 
@@ -227,7 +228,7 @@ Quick Aside Android
     -> Codex / ChatGPT OAuth
     -> GPT-5.6 Luna Low
     -> provider-neutral untrusted result
-    -> Android validation / future execution
+    -> Android validation -> eligible local execution
 ```
 
 Quick Aside owns the gateway and all Quick Aside-specific runtime behavior.
@@ -263,8 +264,9 @@ QAG-004 completed:
 
 QAG-004H completed only the accepted client-side hardening findings: pairing
 response identity binding, local action/field bounds, strict JSON structural
-typing, and bounded transport cancellation handling. It did not add action
-execution or change the gateway contract.
+typing, and bounded transport cancellation handling. It closed the Android
+trust boundary before local automatic execution was introduced and did not
+itself add action execution or change the gateway contract.
 
 Fallback implementation remains later and evidence-triggered.
 
@@ -278,6 +280,7 @@ speak/type
     -> persist capture locally
     -> private gateway interpretation
     -> local validation
+    -> eligible local execution
     -> UI reflects result / lightweight receipt
 ```
 
@@ -298,7 +301,7 @@ QAG-004H preserves that path and its persistence-first boundary.
 
 - Remote model output is untrusted.
 - Flow:
-  `remote interpretation -> untrusted structured result -> Quick Aside validation -> future execution`.
+  `remote interpretation -> untrusted structured result -> Android validation -> eligible local execution`.
 - The remote runtime never directly mutates Room, Google Tasks, Google
   Calendar, or reminders.
 - Android never receives/stores ChatGPT/Codex OAuth tokens or provider auth
@@ -306,6 +309,18 @@ QAG-004H preserves that path and its persistence-first boundary.
 - Model changes must not require domain-schema changes.
 - Logs/diagnostics avoid raw capture content by default and must never log
   tokens, keys, auth headers, or OAuth credentials.
+
+### Local execution boundary
+
+Capture is durable before interpretation. Current execution-family boundary:
+
+- validated all-`AddListItem` plans execute through the list executor;
+- validated all-`CreateTask` plans execute through the Task executor;
+- mixed or unsupported action families execute nothing rather than a subset;
+- successful mutations are recorded in the Action Ledger with targeted Undo;
+- Google Tasks/Calendar synchronization, Event/Calendar execution, reminders,
+  and other action families remain separate future boundaries and are not
+  executable merely because `CapturePlan` represents them.
 
 ### Local-first failure behavior
 

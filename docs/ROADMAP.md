@@ -36,10 +36,10 @@ Implemented/current foundation includes:
 ## M2 — AI interpretation and fast-capture flow
 
 Status: **IN PROGRESS — private gateway, Android integration/client hardening,
-CHG-028 list-only CapturePlan auto-execution, and CHG-030 Task Capture wiring
-are implemented; CHG-030 required automated verification passes and awaits
-commit/push and independent review. Remaining product work is candidate scope,
-and normal-use gateway hardening is evidence-triggered.**
+CHG-028 list-only CapturePlan auto-execution, and CHG-030 Task Capture
+auto-execution are implemented and integrated into `main`. Remaining
+interpretation/UX policy work is candidate scope, and normal-use gateway
+hardening is evidence-triggered.**
 
 Outcome: natural-language input becomes validated structured actions with
 minimal friction.
@@ -102,10 +102,11 @@ interpretation/UX policies listed above and any separately selected work.
 
 Status: **NOT globally blocked** — runtime interpretation is available.
 Task execution foundation (CHG-029) and Capture Task wiring (CHG-030) are
-implemented; CHG-030's required automated gates pass and it awaits commit/push
-and independent review. Google Tasks synchronization / Event execution:
+implemented and integrated into `main`; local Task Capture execution is no
+longer the blocker. Google OAuth, Google Tasks synchronization, mapping,
+outbox/retries, idempotency/conflicts, and Calendar/Event execution remain
 **pending**. End-to-end task/event natural-language mutation is therefore not
-complete; selecting CHG-030 does not schedule M3 as a whole.
+complete, and M3 as a whole is not scheduled.
 
 Outcome: Personal/Trabajo tasks and events synchronize reliably with Google.
 
@@ -166,10 +167,10 @@ Capabilities:
 
 ## M6 — Personal MVP polish
 
-Status: **FINAL COMPLETION BLOCKED** — interpretation, list-only normal
-capture/UI execution, and CHG-030 Task wiring are implemented, but
-Event/Reminder action support and the remaining sync/reminder/product polish
-are still pending. Other polish may continue independently.
+Status: **FINAL COMPLETION BLOCKED** — interpretation, list Capture
+auto-execution, and Task Capture auto-execution are integrated, but
+Event/Reminder execution and the remaining sync/reminder/product polish are
+still pending. Other polish may continue independently.
 
 Outcome: the user can adopt Quick Aside as the default capture tool in everyday life.
 
@@ -207,7 +208,8 @@ dependency. QAG-004 Android integration and QAG-004H client trust-boundary
 hardening are integrated into `main`. CHG-027 adds the provider-independent
 executor foundation, and CHG-028 wires validated all-`AddListItem` plans from
 normal text and voice Capture into that executor with targeted batch Undo.
-Other action types remain outside its scope.
+CHG-029/CHG-030 do the same for validated all-`CreateTask` plans. Other action
+types remain outside its scope.
 
 ## Milestone dependency summary
 
@@ -217,24 +219,39 @@ Non-blocked, provider-independent work may continue.
 | Milestone | Status |
 |---|---|
 | M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | IN PROGRESS — gateway + Android integration/client hardening, CHG-028 list-only auto-execution, and CHG-029/CHG-030 Task execution/wiring implemented; CHG-030 awaits commit/push and independent review; remaining policy/UX scope undecided; normal-use hardening is evidence-triggered |
-| M3 | NOT globally blocked; Task execution foundation and Capture Task wiring implemented; CHG-030 awaits commit/push and independent review; Google Tasks/Calendar sync/Event execution remain pending |
+| M2 | IN PROGRESS — gateway + Android integration/client hardening, CHG-028 list-only auto-execution, and CHG-029/CHG-030 Task execution/wiring integrated; remaining interpretation/policy UX scope undecided; normal-use hardening is evidence-triggered |
+| M3 | NOT globally blocked; local Task execution foundation and Capture Task wiring integrated; Google OAuth/Tasks sync/outbox/idempotency/Calendar-Event execution remain pending |
 | M4 | NOT globally blocked; runtime interpretation is integrated, while natural-language reminder creation awaits reminder-domain/actions, reminder-specific plan execution, and scheduling work |
 | M5 | NOT blocked by AI runtime |
 | M6 | FINAL COMPLETION BLOCKED; other polish may continue |
 
 CHG-027 (provider-independent list execution foundation), CHG-028 (list
-auto-execution wiring), and CHG-029 (Task execution foundation) are COMPLETE
-and integrated into `main`. CHG-030 (Task capture wiring) is implemented with
-required automated gates passing; it awaits commit/push and independent review.
-Other CapturePlan action types remain non-executable. Google Tasks
-synchronization and Event execution remain pending, and end-to-end Task
-natural-language mutation is not complete. CHG-031 is not reserved.
+auto-execution wiring), CHG-029 (Task execution foundation), and CHG-030 (Task
+Capture auto-execution + receipt/Undo integration) are COMPLETE and integrated
+into `main`; CHG-030's independent review finished **PASS_WITH_NOTES**. Other
+CapturePlan action types remain non-executable. Google Tasks synchronization
+and Event execution remain pending, and end-to-end Task natural-language
+mutation is not complete. CHG-031 is not reserved.
+
+Accepted execution state after CHG-030:
+
+- CHG-027: local all-`AddListItem` executor foundation;
+- CHG-028: normal text/voice Capture auto-executes validated all-`AddListItem`
+  plans;
+- CHG-029: local all-`CreateTask` executor foundation;
+- CHG-030: normal text/voice Capture auto-executes validated all-`CreateTask`
+  plans;
+- both supported families provide targeted batch Undo;
+- mixed-family or unsupported plans execute nothing;
+- Google Tasks synchronization remains unimplemented;
+- Calendar/Event execution remains unimplemented;
+- reminders and other action families remain unimplemented.
 
 ## Other candidate work (not scheduled)
 
-The options below remain unscheduled. CHG-030 is implemented within its narrow
-scope and does not schedule M3 or any Google/Calendar/reminder work.
+The options below remain unscheduled. CHG-027/CHG-028/CHG-029/CHG-030 closed
+within their narrow scopes and do not schedule M3 or any
+Google/Calendar/reminder work.
 
 - Normal-use hardening (historically Phase QAG-5 in the gateway initiative): pending real-use evidence; not a reserved Change ID;
 - M3 foundations: Google OAuth, sync contracts, local/external mapping,

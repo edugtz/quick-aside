@@ -7,7 +7,7 @@ Quick Aside is a personal-first Android utility for zero-friction capture and ex
 When sources disagree, use this order unless the user explicitly overrides it:
 
 1. The user's latest explicit product decision.
-2. The active Change's specification/planning context, when one exists.
+2. The active Change's orchestration acceptance criteria/planning context, when one exists.
 3. `docs/PROJECT_SPEC.md` for accepted product behavior and scope.
 4. Accepted ADRs under `docs/adr/` for durable architectural decisions and supersession history.
 5. `docs/NAMING.md` for the accepted product name and legacy-codename rule.
@@ -41,7 +41,8 @@ Any change that creates or materially alters UI/UX MUST, before implementation:
 
 1. Read `docs/UX_UI_REFERENCE.md`.
 2. Inspect `docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png`.
-3. Identify which accepted UX invariants are affected in the active Change.
+3. Identify which accepted UX invariants are affected in the active Change's
+   orchestration acceptance criteria/context.
 4. Preserve the visual/product direction unless the user explicitly approves a deviation.
 5. Verify the result visually with screenshots or real-device evidence when the change is reviewable.
 
@@ -107,8 +108,12 @@ capture lossy: persist the capture locally first.
 
 QAG-2 minimal gateway implementation, QAG-003R private Tailnet deployment,
 QAG-004 Android gateway integration, and QAG-004H Android gateway client
-hardening are complete. QAG-004H finished with **PASS_WITH_NOTES** and remains
-stopped at a validated `CapturePlan`; it does not execute actions.
+hardening are complete. QAG-004H finished with **PASS_WITH_NOTES** and closed
+the trust-boundary hardening. CHG-027/CHG-028 subsequently added validated
+all-`AddListItem` list execution and Capture wiring; CHG-029/CHG-030 added
+validated all-`CreateTask` Task execution and Capture wiring. Google sync,
+Event/Calendar execution, reminders, and other-family execution remain
+separate future scope.
 
 Do not spend time on broad model benchmarking without observed product
 evidence requiring it. Model/provider changes must not alter the domain

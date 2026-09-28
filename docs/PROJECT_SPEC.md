@@ -218,8 +218,11 @@ Accepted personal-MVP runtime direction:
 - no automatic reasoning escalation.
 
 QAG-0, QAG-1, QAG-2, QAG-003R, QAG-004, and QAG-004H are complete.
-QAG-004H closed the accepted Android client-hardening debt before any future
-automatic action execution.
+QAG-004H closed the accepted Android client-hardening debt before local
+automatic execution was introduced. CHG-027/CHG-028 subsequently added
+validated all-`AddListItem` list execution and its Capture wiring, and
+CHG-029/CHG-030 added validated all-`CreateTask` Task execution and its
+Capture wiring. CHG-030 is complete and integrated into `main`.
 
 QAG-2 established the repository-owned minimal gateway contract and runtime:
 
@@ -234,9 +237,25 @@ QAG-2 established the repository-owned minimal gateway contract and runtime:
 - privacy-safe diagnostics and stable provider failure responses.
 
 Remote model output remains untrusted and must pass Quick Aside validation
-before any future execution. A remote AI dependency must not make capture
-lossy: Android persists the original capture locally before interpretation is
-attempted, and that capture remains durable if interpretation is unavailable.
+before any execution. Accepted boundary:
+
+```text
+Capture -> persist locally -> remote interpretation -> local validation -> eligible local execution
+```
+
+Current supported automatic execution:
+
+- validated all-`AddListItem` plans;
+- validated all-`CreateTask` plans;
+- mixed or unsupported action families execute nothing rather than a subset.
+
+Task/list execution is Android/local and provider-independent. Google Tasks
+synchronization is still pending, Event/Calendar execution is pending, and
+reminders are pending; other CapturePlan action families do not become
+executable merely because they are represented in the schema. A remote AI
+dependency must not make capture lossy: Android persists the original capture
+locally before interpretation is attempted, and that capture remains durable
+if interpretation is unavailable.
 
 Trusted capture provenance remains Android-owned. The gateway/provider must
 not invent `sourceCaptureId`.
@@ -244,8 +263,11 @@ not invent `sourceCaptureId`.
 QAG-2 defined trusted temporal transport for relative-date interpretation.
 QAG-003R completed the live private deployment, and QAG-004 integrated the
 Android `AIProvider`, QA1 identity/pairing, local validation, and the complete
-Android/private-network/gateway/provider path. QAG-004H closes the accepted
-client-side hardening debt before any future automatic action execution.
+Android/private-network/gateway/provider path. QAG-004H closed the accepted
+client-side hardening debt before local automatic execution was introduced;
+CHG-027/CHG-028 (Lists) and CHG-029/CHG-030 (Tasks) subsequently added that
+execution. The gateway/provider still MUST NOT directly mutate Room, Google
+Tasks, Google Calendar, or reminders.
 
 QAG-1/QAG-2 provider timings are not final Android end-to-end latency evidence.
 QAG-004 recorded the Android end-to-end measurement; QAG-004H does not change

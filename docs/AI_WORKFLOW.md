@@ -104,8 +104,11 @@ and log-privacy evidence with final `PASS_WITH_NOTES`. QAG-004 completed the
 HIGH-ASSURANCE Android integration gate, including device pairing, QA1 signing,
 the remote `AIProvider` adapter, local validation, and true Android end-to-end
 latency measurement. QAG-004H completed the accepted client-side hardening
-before any future automatic action execution and finished with
-**PASS_WITH_NOTES**.
+before local automatic execution was introduced and finished with
+**PASS_WITH_NOTES**. CHG-027/CHG-028 subsequently added validated
+all-`AddListItem` list execution and Capture wiring; CHG-029/CHG-030 added
+validated all-`CreateTask` Task execution and Capture wiring. CHG-030 is
+COMPLETE and integrated into `main`.
 
 Provider auth and credentials belong to the isolated Quick Aside
 gateway/runtime, not Android or Personal Admin/Hermes. Runtime code remains
@@ -156,5 +159,5 @@ Standard UI icons should come from Material/platform icon sets rather than AI-ge
 For every material UI change:
 
 - builder references the canonical UX visual + written contract;
-- reviewer compares actual screenshot/device result against those references and the active change spec;
+- reviewer compares actual screenshot/device result against those references and the active Change's orchestration acceptance criteria/context;
 - visual differences that materially change the product direction require explicit product approval.
