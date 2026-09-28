@@ -15,7 +15,7 @@ These are product-wide gates. Active changes add narrower acceptance scenarios.
 - Any material UI change is reviewed against `docs/UX_UI_REFERENCE.md` and `docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png`.
 - Main information architecture remains Inicio / Pendientes / Listas / Memoria + global capture action unless product approval changes it.
 - UI remains Android-native in behavior and accessible; reference images guide direction rather than override platform correctness.
-- Meaningful UI changes include screenshot or real-device visual evidence before PASS.
+- Meaningful UI changes receive a visual check appropriate to the touched UI. Emulator screenshots are the default; real-device evidence is required only when the changed property depends on device/platform behavior that reasonable automation cannot prove.
 
 ## Persistence
 
@@ -91,31 +91,59 @@ These are product-wide gates. Active changes add narrower acceptance scenarios.
 
 ## Engineering gates
 
-Before a change can receive `PASS`, its required applicable gates must have actual evidence. Test the Change delta by default: changed-behavior tests, directly affected regressions, and compile/build/static checks when applicable. Do not make full JVM/connected suites, unrelated regressions, repository-wide lint, or real-device QA automatic gates. Require repository/CI policy, justified cross-cutting risk, a concrete failure/reviewer finding, or explicit user request to add them. HIGH-ASSURANCE strengthens correctness and review of the affected risk, not generic test count. Possible gates include:
+Before a Change can receive `PASS`, the applicable Change-specific gates must have actual evidence.
 
-- build;
-- targeted tests;
-- static analysis/lint/type checks as configured;
-- integration/sandbox checks where external APIs are touched;
-- current official vendor/runtime documentation verification where provider behavior matters;
-- real-device QA when the Change modifies a device/platform property that reasonable automated checks cannot prove;
-- real-VPS evidence where gateway/network/auth/systemd behavior is changed;
-- visual evidence for material UI changes.
+Default verification is the minimum sufficient delta:
 
-A model statement that something works is not evidence.
+- automated tests for changed/new behavior;
+- directly affected regressions when justified by the touched boundary;
+- compile/build/static/schema checks that apply to the changed surface;
+- integration/sandbox checks only when an external API or service contract is changed;
+- real-VPS or other live-environment checks only when that environment is part of the Change;
+- visual checks for material UI changes, normally on the emulator;
+- real-device checks only for newly changed device/platform behavior that reasonable automation cannot establish.
 
-### Verification reuse and ownership
+Do **not** automatically require full JVM suites, full connected suites, unrelated regressions, repository-wide lint, broad privacy rescans, or physical-device acceptance. HIGH-ASSURANCE strengthens verification of the affected risk, provenance, failure-path coverage, and independent review; it does not mean maximizing test count or human involvement.
 
-A passed gate remains valid while the facts it depends on remain unchanged. Reuse its recorded source manifest/fingerprint and provenance by default. A rerun needs a concrete invalidator: relevant production source or material test-seam change; a dependency, build, schema, or configuration change affecting that gate; relevant environment change; artifact mismatch; missing, corrupt, or unreviewable evidence; or a concrete new defect/finding the old gate did not cover. Invalidate only the affected claims.
+A model statement that something works is not evidence. The implementation agent must report exact automated verification commands and results.
 
-Another session or agent, HIGH-ASSURANCE by itself, implementation moving to review, a commit/push of identical tested source, documentation/evidence-only edits, and a wish for fresh timestamps do not invalidate evidence. Reviewers must identify a source/evidence mismatch, provenance gap, missing/corrupt artifact, relevant environment change, or concrete uncovered failure mode before requesting repetition. HIGH-ASSURANCE strengthens provenance and independence, not the number of executions.
+### Verification ownership and reuse
 
-Assign each property one primary owner gate: the strongest inexpensive gate capable of proving it. A requirement may aggregate complementary gates; one end-to-end run need not re-prove lower-level invariants. Real devices, networks, and services verify the delta that requires that environment. Physical QA does not repeat deterministic Room, JVM, or Compose guarantees; use an emulator for routine connected instrumentation. After an operator, harness, or environment error, recover existing evidence and repeat only the missing observation before asking for another human acceptance interaction.
+For every nontrivial Change, define in orchestration context which gate owns each acceptance property. Use the strongest inexpensive gate that actually proves the property; do not make multiple gates re-prove the same invariant unless they cover a distinct failure mode.
 
-Every future Change plan (and QA notes when useful, held in the agent/orchestrator work context) includes a Verification Ownership Matrix with **Requirement**, **Owner gate**, **Why this gate is sufficient**, **Supplemental real-environment evidence, if any**, and **Invalidation trigger**. Verify newly changed behavior, directly affected regressions, repository-required baseline gates, and unique real-environment risks. Do not copy a previous Change's whole gate suite into a cumulative burden.
+A passed result remains valid while the facts it depends on remain unchanged. Rerun only when there is a concrete invalidator, such as:
 
-QA1 pairing on the physical phone is persistent environment state. Never revoke, reset, or delete it during test, acceptance, evidence cleanup, or Change closeout. Alter it only when the active Change explicitly tests pairing, revocation, key rotation, or another auth lifecycle behavior.
+- relevant production source changed;
+- a materially relevant test seam changed;
+- dependency/build/schema/config changed in a way that affects the claim;
+- the tested artifact differs from the reviewed artifact;
+- a relevant environment changed;
+- retained evidence is missing/corrupt/unreviewable;
+- a concrete new defect or review finding exposes a failure mode the old gate did not cover.
 
-User-operated QA is exceptional. Request it only when the Change alters a material property that inherently needs genuine human or unavailable external interaction and no reasonable automated substitute proves it. State the newly changed property, why automation is insufficient, and the single minimal human action before asking. Reuse historical acceptance of unchanged voice, Android, network, and device subsystems.
+Not invalidators:
 
-Change-local SPEC/PLAN/TASKS/QA and verification results are ephemeral orchestration records, not repository documentation; they live in the agent/orchestrator work context and the implementation report. Normal Changes MUST NOT create or persist `docs/changes/<id>/` packages or repository-local evidence directories by default, and must not commit per-test run records, JUnit XML, source manifests, status snapshots, attempt diaries, raw command logs, or low-value screenshots. Persist a separate artifact only when it has lasting value that source/tests/report/CI cannot reasonably represent. Complete required Change-specific automated verification before the implementation commit; optional manual QA, documentation polish, and independent review do not delay that provenance checkpoint. Commit, push, review, and merge remain user-controlled.
+- another chat/session/agent;
+- HIGH-ASSURANCE by itself;
+- moving from implementation to review;
+- commit/push of identical tested source;
+- documentation-only edits;
+- wanting a newer timestamp.
+
+Use commit SHA/diff and existing test provenance to establish identity. A separate source-manifest artifact is optional and must not be generated by default.
+
+### Manual QA and real environments
+
+User-operated QA is exceptional. Request it only when the Change modifies a material property that inherently requires genuine human or unavailable external interaction and no reasonable automated substitute proves it. Before asking the user, identify the exact newly changed property, why automation is insufficient, and the single minimal human action required.
+
+Voice support, Android use, networking, or physical-device availability alone do not make human QA mandatory. Reuse historical acceptance for unchanged subsystems.
+
+QA1 pairing on the physical Android phone is durable environment state. Never revoke, reset, or delete it during routine testing, evidence cleanup, acceptance cleanup, or Change closeout. Alter it only when the active work explicitly tests pairing/revocation/key rotation or another auth-lifecycle behavior.
+
+### Documentation and evidence
+
+Normal Changes do not create `docs/changes/<id>/` packages or evidence trees by default. Change-local specification, planning, task decomposition, verification notes, and implementation reports remain ephemeral orchestration context.
+
+Persist repository documentation only when the Change alters a durable project contract. Keep a separate evidence artifact only when it has lasting review value that cannot reasonably be represented by source/tests, CI, or the implementation report.
+
+Once the implementation and required Change-specific automated verification are complete, the Change is commit-ready. Optional manual QA, documentation polish, and independent review do not delay that provenance checkpoint. The user retains commit/push/merge/release authority.

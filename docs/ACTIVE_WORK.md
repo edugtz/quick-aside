@@ -1,8 +1,13 @@
 # ACTIVE WORK
 
-- Active Change: NONE
-- main accepted through: CHG-030
-- main HEAD: 9f86df6705ff9b8571e6016724c715959febac8c
-- CHG-030: COMPLETE — independent review PASS_WITH_NOTES — integrated
-- Pending next action: select the next reviewable Change from the roadmap
-- CHG-031: NOT STARTED / NOT RESERVED
+- Active Change: `CHG-030 — Capture Task Auto-Execution + Receipt/Undo Integration`
+- Governance: **HIGH-ASSURANCE**
+- Branch: `chg-030-capture-task-auto-execution`
+- Published HEAD: `9d0869e8c0cbe1f762050dffe09de9f1b362ab62`
+- Branch state: **2 commits ahead / 0 behind `main`** at the current published state.
+- Implementation: **complete**
+- Required Change-specific automated verification: **PASS**
+- Manual/user-operated QA required: **NONE**
+- Per-Change repository package/evidence tree: **not used**
+- Exact next gate: **independent HIGH-ASSURANCE review of the published CHG-030 diff and implementation report**
+- CHG-031: **not started / not reserved**

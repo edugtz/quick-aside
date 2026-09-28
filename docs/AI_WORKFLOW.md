@@ -33,36 +33,18 @@ Do not make runtime product architecture depend on which coding agent implemente
 
 Prefer deterministic tools (build/tests/lint/static analysis) over builder self-report.
 
-The implementation agent runs the Change-specific required automated checks
-and reports exact commands and results. Default to tests for changed behavior,
-directly affected regressions, and applicable compile/build/static checks.
-Full suites, broad lint, and real-device QA require CI policy, justified
-cross-cutting risk, a concrete finding, or an explicit user request.
-HIGH-ASSURANCE strengthens affected-risk review rather than generic test count.
-Commit the implementation after those required checks as a provenance
-checkpoint; optional manual QA, documentation polish, and independent review
-do not delay it. The user controls commit, push, review, and merge.
-
-Manual user QA requires a material newly changed property, no reasonable
-automated substitute, and an inherently human or unavailable external action.
-Before asking, name the property, the automation gap, and the single minimal
-action. Change-local SPEC/PLAN/TASKS/QA and verification results are ephemeral
-orchestration records, not repository documentation; the implementation report
-is their default record. Do not persist a `docs/changes/<id>/` package or
-repository-local evidence directory by default. Persist a separate artifact
-only when it has lasting value that source/tests/report/CI cannot reasonably
-represent.
 
 ### Verification routing
 
-Every resumed STANDARD or HIGH-ASSURANCE implementation prompt and report must include a **Verification delta**:
+Implementation agents verify the Change delta themselves and report exact commands/results. Default to changed-behavior tests, directly affected regressions when justified, and build/static/schema checks relevant to the changed surface. Full suites, broad lint, and real-device QA require a concrete reason; HIGH-ASSURANCE increases rigor for the affected risk, not generic test count.
 
-- Previously valid gates: retained PASS evidence and matching relevant source fingerprints.
-- Invalidated gates: each gate and its concrete source, artifact, or environment reason.
-- New evidence required: only uncovered properties and changed-risk checks.
-- Must-not-rerun gates: valid gates whose dependencies remain unchanged.
+Reuse valid results while the relevant source/config/environment is unchanged. A rerun requires an explicit invalidator. Do not treat a new session/agent, documentation edit, commit/push of identical source, review stage, or a wish for fresher evidence as an invalidator.
 
-Read retained evidence before proposing commands. No invalidation reason means no rerun. Assign each property one owner gate, aggregate complementary evidence, and route routine connected checks to the emulator. HIGH-ASSURANCE increases provenance and independence, not test repetition. Independent reviewers evaluate retained evidence and request a rerun only for an explicit mismatch, provenance gap, missing/corrupt artifact, relevant environment change, or concrete uncovered failure mode.
+User-operated QA is exceptional. Ask only when a newly changed material property cannot reasonably be established by the agent through automated tests, emulator/device automation, source inspection, or existing valid evidence. State the changed property, automation gap, and one minimal human action before asking.
+
+Normal Changes do not persist `docs/changes/<id>/` packages or evidence trees. Change-local SPEC/PLAN/TASKS/QA and implementation reports are ephemeral orchestration records unless the user explicitly requests persistence or a durable operational need justifies it.
+
+After required Change-specific automated verification passes, the implementation is commit-ready. The user retains commit, push, merge, and release authority; ChatGPT/orchestrator remains responsible for independent engineering review unless the user chooses another reviewer.
 
 ## 3. Runtime interpretation models
 
@@ -103,12 +85,11 @@ real signed Luna Low, replay-rejection, restart/reboot-persistence, isolation,
 and log-privacy evidence with final `PASS_WITH_NOTES`. QAG-004 completed the
 HIGH-ASSURANCE Android integration gate, including device pairing, QA1 signing,
 the remote `AIProvider` adapter, local validation, and true Android end-to-end
-latency measurement. QAG-004H completed the accepted client-side hardening
-before local automatic execution was introduced and finished with
-**PASS_WITH_NOTES**. CHG-027/CHG-028 subsequently added validated
-all-`AddListItem` list execution and Capture wiring; CHG-029/CHG-030 added
-validated all-`CreateTask` Task execution and Capture wiring. CHG-030 is
-COMPLETE and integrated into `main`.
+latency measurement. QAG-004H subsequently closed the accepted client-side
+trust-boundary hardening debt. CHG-027/028 then introduced validated list
+execution and Capture wiring; CHG-029 added the local Task executor. The
+published CHG-030 branch adds normal Capture wiring for validated all-`CreateTask`
+plans and is awaiting independent review.
 
 Provider auth and credentials belong to the isolated Quick Aside
 gateway/runtime, not Android or Personal Admin/Hermes. Runtime code remains
@@ -159,5 +140,5 @@ Standard UI icons should come from Material/platform icon sets rather than AI-ge
 For every material UI change:
 
 - builder references the canonical UX visual + written contract;
-- reviewer compares actual screenshot/device result against those references and the active Change's orchestration acceptance criteria/context;
+- reviewer compares actual visual result against those references and the active Change's orchestration acceptance criteria;
 - visual differences that materially change the product direction require explicit product approval.

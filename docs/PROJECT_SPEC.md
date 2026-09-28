@@ -1,4 +1,4 @@
-# Quick Aside — Project Spec v0.2
+# Quick Aside — Project Spec v0.3
 
 Status: **Accepted baseline for personal MVP design**  
 Product owner: user  
@@ -218,11 +218,11 @@ Accepted personal-MVP runtime direction:
 - no automatic reasoning escalation.
 
 QAG-0, QAG-1, QAG-2, QAG-003R, QAG-004, and QAG-004H are complete.
-QAG-004H closed the accepted Android client-hardening debt before local
-automatic execution was introduced. CHG-027/CHG-028 subsequently added
-validated all-`AddListItem` list execution and its Capture wiring, and
-CHG-029/CHG-030 added validated all-`CreateTask` Task execution and its
-Capture wiring. CHG-030 is complete and integrated into `main`.
+QAG-004H closed the accepted Android trust-boundary hardening debt before local
+automatic action execution was introduced. CHG-027/028 added validated local
+list execution and normal Capture wiring; CHG-029 added the local Task executor.
+The published CHG-030 branch wires validated all-`CreateTask` plans into normal
+text/voice Capture and is awaiting independent review.
 
 QAG-2 established the repository-owned minimal gateway contract and runtime:
 
@@ -237,25 +237,10 @@ QAG-2 established the repository-owned minimal gateway contract and runtime:
 - privacy-safe diagnostics and stable provider failure responses.
 
 Remote model output remains untrusted and must pass Quick Aside validation
-before any execution. Accepted boundary:
-
-```text
-Capture -> persist locally -> remote interpretation -> local validation -> eligible local execution
-```
-
-Current supported automatic execution:
-
-- validated all-`AddListItem` plans;
-- validated all-`CreateTask` plans;
-- mixed or unsupported action families execute nothing rather than a subset.
-
-Task/list execution is Android/local and provider-independent. Google Tasks
-synchronization is still pending, Event/Calendar execution is pending, and
-reminders are pending; other CapturePlan action families do not become
-executable merely because they are represented in the schema. A remote AI
-dependency must not make capture lossy: Android persists the original capture
-locally before interpretation is attempted, and that capture remains durable
-if interpretation is unavailable.
+before any supported local execution. Unsupported or mixed action families must
+not be partially executed. A remote AI dependency must not make capture
+lossy: Android persists the original capture locally before interpretation is
+attempted, and that capture remains durable if interpretation is unavailable.
 
 Trusted capture provenance remains Android-owned. The gateway/provider must
 not invent `sourceCaptureId`.
@@ -264,10 +249,9 @@ QAG-2 defined trusted temporal transport for relative-date interpretation.
 QAG-003R completed the live private deployment, and QAG-004 integrated the
 Android `AIProvider`, QA1 identity/pairing, local validation, and the complete
 Android/private-network/gateway/provider path. QAG-004H closed the accepted
-client-side hardening debt before local automatic execution was introduced;
-CHG-027/CHG-028 (Lists) and CHG-029/CHG-030 (Tasks) subsequently added that
-execution. The gateway/provider still MUST NOT directly mutate Room, Google
-Tasks, Google Calendar, or reminders.
+client-side hardening debt. CHG-028 subsequently connected validated list plans
+to local execution, CHG-029 added the Task executor foundation, and CHG-030 is
+the active review-pending Task Capture-wiring Change.
 
 QAG-1/QAG-2 provider timings are not final Android end-to-end latency evidence.
 QAG-004 recorded the Android end-to-end measurement; QAG-004H does not change
@@ -275,6 +259,18 @@ the request or provider contract.
 
 Model/provider changes must not alter domain contracts or stored data formats.
 Do not restart broad benchmark work unless real use shows a concrete blocker.
+
+## 11.1 Current local execution status
+
+Current supported automatic execution is intentionally narrower than the full `CapturePlan` schema:
+
+- validated all-`AddListItem` plans execute locally and are reversible;
+- the local `CreateTask` executor foundation is integrated;
+- the published CHG-030 branch adds normal Capture auto-execution for validated all-`CreateTask` plans and is pending independent review;
+- mixed-family or unsupported plans do not partially execute;
+- Google Tasks synchronization, Event execution, reminder execution, and other action families remain separate future work.
+
+The Capture is persisted before remote interpretation or local plan execution. Provider/gateway code never mutates Room or Google services directly.
 
 ## 12. MVP must-have capabilities
 

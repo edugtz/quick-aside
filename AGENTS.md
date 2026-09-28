@@ -7,7 +7,7 @@ Quick Aside is a personal-first Android utility for zero-friction capture and ex
 When sources disagree, use this order unless the user explicitly overrides it:
 
 1. The user's latest explicit product decision.
-2. The active Change's orchestration acceptance criteria/planning context, when one exists.
+2. The active Change's orchestration context and current branch/diff, when one exists.
 3. `docs/PROJECT_SPEC.md` for accepted product behavior and scope.
 4. Accepted ADRs under `docs/adr/` for durable architectural decisions and supersession history.
 5. `docs/NAMING.md` for the accepted product name and legacy-codename rule.
@@ -41,10 +41,9 @@ Any change that creates or materially alters UI/UX MUST, before implementation:
 
 1. Read `docs/UX_UI_REFERENCE.md`.
 2. Inspect `docs/design/QUICK_ASIDE_UX_UI_REFERENCE_V3.png`.
-3. Identify which accepted UX invariants are affected in the active Change's
-   orchestration acceptance criteria/context.
+3. Identify which accepted UX invariants are affected in the active Change's orchestration context.
 4. Preserve the visual/product direction unless the user explicitly approves a deviation.
-5. Verify the result visually with screenshots or real-device evidence when the change is reviewable.
+5. Verify material visual changes with the smallest suitable visual check; use emulator screenshots by default and real-device evidence only when the changed property genuinely depends on the device/platform.
 
 The image is a **canonical visual-direction reference, not a pixel-perfect implementation spec**. Do not blindly copy generated text, dimensions, or impossible controls. Prefer native Android/Material behavior, accessibility, touch targets, responsive layout, and the written UX contract when the image is ambiguous.
 
@@ -108,12 +107,12 @@ capture lossy: persist the capture locally first.
 
 QAG-2 minimal gateway implementation, QAG-003R private Tailnet deployment,
 QAG-004 Android gateway integration, and QAG-004H Android gateway client
-hardening are complete. QAG-004H finished with **PASS_WITH_NOTES** and closed
-the trust-boundary hardening. CHG-027/CHG-028 subsequently added validated
-all-`AddListItem` list execution and Capture wiring; CHG-029/CHG-030 added
-validated all-`CreateTask` Task execution and Capture wiring. Google sync,
-Event/Calendar execution, reminders, and other-family execution remain
-separate future scope.
+hardening are complete. QAG-004H closed the trust-boundary debt before local
+automatic execution was introduced. CHG-027/028 added validated list execution
+and normal Capture wiring; CHG-029 added the local Task executor. The published
+CHG-030 branch wires validated all-`CreateTask` plans into normal text/voice
+Capture and is awaiting independent review; Google Tasks sync, Event execution,
+and other action families remain separate future scope.
 
 Do not spend time on broad model benchmarking without observed product
 evidence requiring it. Model/provider changes must not alter the domain
@@ -128,22 +127,24 @@ See:
 
 ## Verification
 
-Treat tests/build/lint/static analysis/sync evidence/real-device checks as stronger than model self-report. Do not claim PASS for a required gate that was not run.
+Treat deterministic tools and direct runtime evidence as stronger than model self-report. Do not claim PASS for a required gate that was not run.
 
-## Change documentation and evidence policy
+### Change documentation and evidence
 
-- Normal Changes MUST NOT create or persist `docs/changes/<id>/` packages. Change-local planning, SPEC, PLAN, TASKS, QA, and implementation reports are ephemeral orchestration artifacts; they live in the agent/orchestrator work context and the implementation report, not in repository documentation.
-- Persist repository documentation only when the Change modifies a durable project contract, for example `PROJECT_SPEC`, `ARCHITECTURE`, `ACCEPTANCE_CRITERIA`, `AI_WORKFLOW`, the UX/UI contract, an operational runbook, migration documentation, or an ADR-worthy architectural decision. Do not create documentation merely to record that a Change happened.
-- Repository-local evidence directories are NOT the default. Automated verification evidence belongs in the implementation report, test output, CI, and independent review of the committed source/tests. Do not commit per-test run records, copied JUnit XML by default, source manifests by default, git status snapshots, readiness JSON/TXT, attempt diaries, raw command logs, or screenshots that add no durable product value. Persist a separate artifact only when it has lasting value that source/tests/report/CI cannot reasonably represent.
-- Independent review evaluates the actual committed diff, tests, and implementation report.
+- Normal Changes MUST NOT create or persist `docs/changes/<id>/` packages by default.
+- Change-local SPEC/PLAN/TASKS/QA and implementation reports are ephemeral orchestration context unless the user explicitly requests repository persistence or a durable operational need justifies it.
+- Persist only durable project contracts such as `PROJECT_SPEC`, `ARCHITECTURE`, `ROADMAP`, `ACCEPTANCE_CRITERIA`, `AI_WORKFLOW`, UX/UI references, runbooks, migration docs, and warranted ADRs.
+- Do not create repository-local evidence trees by default. Test output, CI, source/tests, and the implementation report are the normal verification record. Keep a separate artifact only when it has lasting review value that those sources cannot reasonably represent.
 
-## Minimum sufficient verification
+### Minimum sufficient verification
 
-- Test only the Change delta: added/changed behavior tests, directly affected regressions where justified, and required build/static checks for the changed surface. Full JVM/connected suites, unrelated regressions, repository-wide lint, and real-device QA are not defaults; require CI policy, justified cross-cutting risk, a concrete finding, or the user's request. HIGH-ASSURANCE strengthens verification of the affected risk, not test count.
-- The implementation agent runs and reports the required automated verification with exact commands and results. After implementation and required Change-specific automated checks, the implementation should be committed as a provenance checkpoint; optional manual QA, documentation polish, and independent review do not delay that commit. The user retains commit, push, review, and merge authority. Source changes after review invalidate only affected gates.
-- User-operated QA is exceptional. Request it only for a material newly changed property requiring genuine human or unavailable external interaction with no reasonable automated substitute. First state that property, why automation is insufficient, and the one minimal human action. Voice support, Android use, gateway use, or physical-device availability alone do not require manual QA; reuse historical acceptance for unchanged subsystems.
-- Reuse valid PASS evidence by default. Rerun a gate only for an explicit invalidator or uncovered risk; a new session/agent, HIGH-ASSURANCE, review, commit/push of identical tested source, documentation edit, or desire for a newer timestamp is not one.
-- Compare relevant source manifests/fingerprints. Relevant source, test seam, build/schema/config, artifact, or environment changes may invalidate only affected evidence.
-- Give each property one primary owner gate: the strongest inexpensive gate that proves it. Aggregate complementary deterministic and real-environment evidence; physical QA covers only device/platform/environment risks, not Room/JVM/Compose invariants again.
-- Recover from operator/harness mistakes with the smallest missing observation. Before requesting another human interaction, recover and reuse retained evidence. Reviewers must name an invalidator or concrete uncovered risk before requesting a rerun. HIGH-ASSURANCE strengthens provenance and independence, not execution count.
-- QA1 pairing on the physical Android phone is persistent environment state: never revoke, reset, delete, or clean it during test, evidence, acceptance, or Change closeout. Use an emulator for routine instrumentation; the paired phone is reserved for narrow real-device acceptance. Alter pairing only when the active Change explicitly tests its auth lifecycle.
+- Test only the Change delta: changed/new behavior, directly affected regressions when justified, and build/static/schema checks applicable to the changed surface.
+- Full JVM/connected suites, broad unrelated regressions, repository-wide lint, and real-device QA are not automatic gates. Require a repository/CI rule, justified cross-cutting blast radius, a concrete failure/reviewer finding, or explicit user request.
+- The implementation agent runs the required automated checks and reports exact commands/results.
+- Reuse valid PASS results while the relevant source/config/environment remains unchanged. A new session/agent, HIGH-ASSURANCE, commit/push of identical source, documentation edits, review stage, or desire for fresher timestamps is not an invalidator.
+- Use commit SHA/diff and existing provenance to establish identity. Create a special source manifest only when it materially improves a high-risk review; never create one by default.
+- Give each acceptance property one owner gate. Real-environment checks prove only the device/network/service behavior that deterministic checks cannot prove; they do not repeat Room/JVM/Compose invariants.
+- User-operated QA is exceptional. Request it only when a newly changed material property genuinely needs human or unavailable external interaction and no reasonable automated substitute exists. Before asking, state the changed property, why automation is insufficient, and the single minimal human action.
+- QA1 pairing on the physical Android phone is durable environment state. Never revoke/reset/delete it as test, evidence, acceptance, or Change cleanup. Routine connected verification uses an emulator.
+- Once implementation and required Change-specific automated verification pass, the Change is commit-ready. The user retains commit, push, merge, and release authority unless explicitly delegated.
+- Independent review evaluates the committed diff, relevant tests, durable contracts, and the implementation report. Review may request new execution only for a concrete uncovered risk or invalidated prior result.

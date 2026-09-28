@@ -1,165 +1,106 @@
-# Quick Aside — Roadmap v0.2
+# Quick Aside — Roadmap v0.3
 
-Roadmap milestones are product outcomes, not branch/PR units. Each milestone should be delivered through small reviewable changes.
+Roadmap milestones are product outcomes, not branch/PR units. Each milestone is delivered through small reviewable Changes. The roadmap records product state and dependencies, not test/evidence history.
 
 ## M0 — Project foundation
 
+Status: **COMPLETE**
+
 Outcome: repository boots, builds, tests, and has canonical project/design context.
-
-Likely changes:
-
-- project bootstrap + Compose/Room/test baseline;
-- design system/navigation shell;
-- core domain contracts.
 
 ## M1 — Local capture and memory core
 
-Status: **NOT BLOCKED** — local foundation has advanced through Change 026.
+Status: **SUBSTANTIALLY IMPLEMENTED / NOT BLOCKED**
 
-Outcome: the app is useful locally without Google/AI dependencies.
-
-Implemented/current foundation includes:
+Implemented foundation includes:
 
 - text capture;
-- basic voice/STT capture;
-- editable transcript;
-- lists (Mandado/Compras);
-- notes;
-- basic structured logs;
-- action ledger/undo foundation;
+- basic voice/STT capture and transcript correction;
+- Mandado/Compras lists;
+- notes and basic structured logs;
+- action ledger / reversible local actions;
 - local search/history basics;
-- local task persistence/completion/reopen;
-- reversible task create/completion;
-- Pendientes UI foundation;
-- UI aligned with UX v3.
+- local Task persistence, completion/reopen, reversible create/completion;
+- Pendientes UI;
+- UI direction aligned with UX v3.
 
 ## M2 — AI interpretation and fast-capture flow
 
-Status: **IN PROGRESS — private gateway, Android integration/client hardening,
-CHG-028 list-only CapturePlan auto-execution, and CHG-030 Task Capture
-auto-execution are implemented and integrated into `main`. Remaining
-interpretation/UX policy work is candidate scope, and normal-use gateway
-hardening is evidence-triggered.**
+Status: **IN PROGRESS**
 
-Outcome: natural-language input becomes validated structured actions with
-minimal friction.
+Implemented/integrated baseline:
 
-Already complete and valid:
+- typed `CapturePlan` schema + validator;
+- provider-independent `CaptureInterpreter` / `AIProvider`;
+- private Quick Aside gateway;
+- GPT-5.6 Luna Low through `codex exec --ephemeral`;
+- QAG-003R private Tailnet deployment with QA1;
+- QAG-004 Android gateway integration;
+- QAG-004H Android trust-boundary hardening;
+- CHG-027 local list execution foundation;
+- CHG-028 normal text/voice auto-execution for validated all-`AddListItem` plans;
+- CHG-029 local Task execution foundation.
 
-- typed CapturePlan schema + validator (Change 020);
-- provider-independent CaptureInterpreter / AIProvider boundary (Change 021);
-- QAG-0 read-only VPS preflight;
-- QAG-1 provider runtime/protocol decision;
-- QAG-2 minimal repository gateway implementation and contract.
+Current active work:
 
-QAG-1/QAG-2 established:
+- CHG-030 wires validated all-`CreateTask` plans into normal text/voice Capture with lightweight receipt and targeted Undo.
+- CHG-030 is published and awaiting independent review; it is not yet accepted/merged.
 
-- GPT-5.6 Luna with explicit Low reasoning;
-- ChatGPT/Codex OAuth;
-- `codex exec --ephemeral`;
-- one fresh bounded provider process per interpretation request;
-- strict structured output;
-- Quick Aside-specific provider auth namespace;
-- trusted capture time/timezone transport;
-- bounded request/output/concurrency/timeout behavior;
-- health/readiness and stable provider failure contracts.
+Still candidate/pending:
 
-Still pending:
-
-- real-use evidence before deciding whether normal-use hardening is warranted;
+- low-confidence clarification policy and adaptive receipt/edit behavior where not already covered;
+- evidence-triggered normal-use gateway hardening;
 - optional DeepSeek V4 Flash fallback;
-- interpreter outcomes such as PLAN/CLARIFY/UNSUPPORTED where not already
-  covered by local foundations;
-- low-confidence policy, adaptive receipt, optional edit/review branch, and
-  correction/routing examples where not already covered.
-
-Current gateway gates:
-
-- QAG-0 — read-only VPS preflight: **COMPLETE — PASS**
-- QAG-1 — runtime/protocol decision: **COMPLETE — PASS**
-- QAG-2 — minimal gateway implementation: **COMPLETE — PASS_WITH_NOTES**
-- QAG-3 — public ingress deployment attempt: **SUPERSEDED**
-- QAG-003R — private tailnet gateway deployment: **COMPLETE — PASS_WITH_NOTES**
-- QAG-004 — Android integration: **COMPLETE — PASS_WITH_NOTES; integrated into `main`**
-- QAG-004H — Android client trust-boundary hardening: **COMPLETE — PASS_WITH_NOTES; integrated into `main`**
-- Normal-use hardening (historically Phase QAG-5 in the gateway initiative): pending real-use evidence; not a reserved Change ID
-
-The specialized QAG gateway workstream is complete and closed for now.
-Normal-use hardening is contingent on actual-use evidence and is not
-automatically scheduled as the next implementation change.
-
-M2 runtime interpretation is integrated end-to-end through QAG-004, and
-Android client trust-boundary hardening is complete through QAG-004H. Both are
-integrated into `main`. CHG-027 provides the provider-independent list
-execution foundation, and CHG-028 connects it to normal text and voice
-Capture: validated plans whose every action is `AddListItem` now auto-execute
-with targeted batch Undo. The CHG-029/CHG-030 Task path follows the same
-pattern for validated all-`CreateTask` plans. Other CapturePlan action types
-are not covered. M2 remains open for the remaining fast-capture
-interpretation/UX policies listed above and any separately selected work.
+- additional supported action families only when selected as separate Changes.
 
 ## M3 — Google Tasks + Calendar
 
-Status: **NOT globally blocked** — runtime interpretation is available.
-Task execution foundation (CHG-029) and Capture Task wiring (CHG-030) are
-implemented and integrated into `main`; local Task Capture execution is no
-longer the blocker. Google OAuth, Google Tasks synchronization, mapping,
-outbox/retries, idempotency/conflicts, and Calendar/Event execution remain
-**pending**. End-to-end task/event natural-language mutation is therefore not
-complete, and M3 as a whole is not scheduled.
+Status: **NOT globally blocked; synchronization/event work remains pending**
 
 Outcome: Personal/Trabajo tasks and events synchronize reliably with Google.
 
-Google OAuth, sync contracts, local/external mapping, outbox/retry,
-idempotency/conflict behavior, and Calendar integration can be designed and
-implemented independently of the AI provider when scoped coherently.
+Current facts:
 
-End-to-end natural-language capture → interpreted Task/Event → Google
-acceptance is no longer blocked by provider integration. CHG-029 supplies the
-Task-specific validated-plan execution foundation, and CHG-030 wires that
-foundation into normal text/voice Capture with a compact receipt and exact
-targeted Undo. Google synchronization does not exist yet, so end-to-end Task
-mutation is not complete. Google OAuth, Google Tasks synchronization,
-outbox/retry/idempotency, and Calendar/Event execution remain separate,
-unscheduled work. The CHG-027/CHG-028 list path and the CHG-029/CHG-030 Task
-path do not provide Event coverage or Google sync. M3 as a whole does not need
-to wait for all remaining M2 polish.
+- local Task execution exists through CHG-029;
+- CHG-030, if accepted, connects natural-language Capture to local Task creation;
+- Google Tasks OAuth/sync, external mapping, outbox/retry/idempotency/conflicts are not implemented;
+- Calendar/Event execution and sync are not implemented.
 
-Capabilities:
+Candidate capabilities:
 
 - OAuth/scopes;
 - Google Tasks mapping + bidirectional sync;
-- Calendar integration + incremental sync where applicable;
 - offline outbox/retry;
 - conflict/idempotency policy;
-- real-account QA.
+- Calendar event execution + incremental sync where applicable.
 
-Because sync can create data-loss/idempotency risk, break this milestone into small high-confidence changes and elevate governance where required.
+Because sync/idempotency can create correctness and data-loss risk, implement this milestone through small focused Changes and elevate governance only for the affected risk.
 
 ## M4 — Reminders and daily reliability
 
-Status: **NOT globally blocked** — runtime interpretation is integrated; natural-language reminder creation still requires reminder-domain/action work, reminder-specific validated-plan execution, and scheduling.
+Status: **NOT globally blocked**
 
 Outcome: user-configured reminders reliably fire and are actionable.
 
-Capabilities:
+Pending capabilities:
 
-- Note/Task local reminders;
+- Note/Task local reminder actions;
+- scheduler integration;
 - snooze;
 - notification actions;
-- restart/background/idle behavior;
-- real-device QA.
+- background/restart/idle reliability.
+
+Real-device verification is appropriate only for reminder behaviors whose Android scheduling/background semantics cannot be established by emulator automation alone; user-operated QA remains exceptional.
 
 ## M5 — Durable history, backup, and archive
 
-Status: **NOT blocked by AI runtime.**
+Status: **NOT blocked**
 
 Outcome: years of personal memory can be recovered/exported without silent loss.
 
-Capabilities:
+Candidate capabilities:
 
 - backup/snapshot foundation;
-- export center;
 - reimportable structured format;
 - human-readable PDF/DOCX export;
 - archive warnings;
@@ -167,119 +108,61 @@ Capabilities:
 
 ## M6 — Personal MVP polish
 
-Status: **FINAL COMPLETION BLOCKED** — interpretation, list Capture
-auto-execution, and Task Capture auto-execution are integrated, but
-Event/Reminder execution and the remaining sync/reminder/product polish are
-still pending. Other polish may continue independently.
+Status: **FINAL COMPLETION BLOCKED BY REMAINING SYNC / EVENT / REMINDER CAPABILITIES**
 
-Outcome: the user can adopt Quick Aside as the default capture tool in everyday life.
+Outcome: Quick Aside becomes the user's default low-friction capture tool.
 
-Capabilities driven by observed usage:
+Polish is evidence-driven:
 
-- latency/friction polish;
+- latency/friction;
 - one-handed/accessibility refinement;
-- sync/reminder edge-case hardening;
-- search/retrieval improvements;
-- UI polish against canonical reference;
-- real usage acceptance period.
+- sync/reminder edge cases;
+- search/retrieval;
+- visual polish against canonical UX reference;
+- normal-use observations.
 
-## Quick Aside private runtime gateway
+## Runtime gateway status
 
-Quick Aside owns its private AI gateway.
+The specialized gateway workstream is complete and closed for now:
 
-```text
-Quick Aside Android
-    -> Quick Aside private AI gateway
-    -> bounded codex exec --ephemeral
-    -> GPT-5.6 Luna / Low
-```
+- QAG-0: **PASS**
+- QAG-1: **PASS**
+- QAG-2: **PASS_WITH_NOTES**
+- QAG-3 public-ingress attempt: **SUPERSEDED**
+- QAG-003R private Tailnet deployment: **PASS_WITH_NOTES**
+- QAG-004 Android integration: **PASS_WITH_NOTES**
+- QAG-004H Android client hardening: **PASS_WITH_NOTES**
 
-The gateway may run on the same VPS as Personal Admin/Hermes, but this is
-infrastructure reuse only. Personal Admin/Hermes is not an application
-dependency of Quick Aside.
-
-QAG-1 selected the provider invocation route. QAG-2 implemented the repository
-gateway server, HTTP contract, trusted temporal context, timeout/cancellation,
-concurrency bounds, health/readiness, Codex version pin, and safe diagnostics.
-
-QAG-003R deployed the gateway through private Tailscale Services/Serve with
-localhost-only FastAPI and QA1, without making Personal Admin an application
-dependency. QAG-004 Android integration and QAG-004H client trust-boundary
-hardening are integrated into `main`. CHG-027 adds the provider-independent
-executor foundation, and CHG-028 wires validated all-`AddListItem` plans from
-normal text and voice Capture into that executor with targeted batch Undo.
-CHG-029/CHG-030 do the same for validated all-`CreateTask` plans. Other action
-types remain outside its scope.
+Normal-use hardening remains evidence-triggered and is not automatically scheduled.
 
 ## Milestone dependency summary
 
-A milestone having dependencies is not the same as all development stopping.
-Non-blocked, provider-independent work may continue.
-
-| Milestone | Status |
+| Milestone | Current state |
 |---|---|
-| M1 | NOT BLOCKED — local foundation advanced through Change 026 |
-| M2 | IN PROGRESS — gateway + Android integration/client hardening, CHG-028 list-only auto-execution, and CHG-029/CHG-030 Task execution/wiring integrated; remaining interpretation/policy UX scope undecided; normal-use hardening is evidence-triggered |
-| M3 | NOT globally blocked; local Task execution foundation and Capture Task wiring integrated; Google OAuth/Tasks sync/outbox/idempotency/Calendar-Event execution remain pending |
-| M4 | NOT globally blocked; runtime interpretation is integrated, while natural-language reminder creation awaits reminder-domain/actions, reminder-specific plan execution, and scheduling work |
-| M5 | NOT blocked by AI runtime |
-| M6 | FINAL COMPLETION BLOCKED; other polish may continue |
+| M0 | COMPLETE |
+| M1 | SUBSTANTIALLY IMPLEMENTED / NOT BLOCKED |
+| M2 | IN PROGRESS; CHG-030 published, review pending |
+| M3 | NOT globally blocked; Google Tasks/Calendar sync and Event execution pending |
+| M4 | NOT globally blocked; reminder-domain/execution/scheduling pending |
+| M5 | NOT blocked |
+| M6 | Final completion blocked by remaining sync/event/reminder capabilities |
 
-CHG-027 (provider-independent list execution foundation), CHG-028 (list
-auto-execution wiring), CHG-029 (Task execution foundation), and CHG-030 (Task
-Capture auto-execution + receipt/Undo integration) are COMPLETE and integrated
-into `main`; CHG-030's independent review finished **PASS_WITH_NOTES**. Other
-CapturePlan action types remain non-executable. Google Tasks synchronization
-and Event execution remain pending, and end-to-end Task natural-language
-mutation is not complete. CHG-031 is not reserved.
+CHG-031 is not reserved. Selecting the next Change requires a separate product/architecture decision after CHG-030 review.
 
-Accepted execution state after CHG-030:
+## Post-MVP — evidence-triggered candidates
 
-- CHG-027: local all-`AddListItem` executor foundation;
-- CHG-028: normal text/voice Capture auto-executes validated all-`AddListItem`
-  plans;
-- CHG-029: local all-`CreateTask` executor foundation;
-- CHG-030: normal text/voice Capture auto-executes validated all-`CreateTask`
-  plans;
-- both supported families provide targeted batch Undo;
-- mixed-family or unsupported plans execute nothing;
-- Google Tasks synchronization remains unimplemented;
-- Calendar/Event execution remains unimplemented;
-- reminders and other action families remain unimplemented.
+Likely early candidates:
 
-## Other candidate work (not scheduled)
-
-The options below remain unscheduled. CHG-027/CHG-028/CHG-029/CHG-030 closed
-within their narrow scopes and do not schedule M3 or any
-Google/Calendar/reminder work.
-
-- Normal-use hardening (historically Phase QAG-5 in the gateway initiative): pending real-use evidence; not a reserved Change ID;
-- M3 foundations: Google OAuth, sync contracts, local/external mapping,
-  outbox/retry, idempotency/conflict behavior, Calendar integration;
-- M4 foundations: reminder domain, scheduling, notification actions, and
-  background/restart reliability;
-- M5 foundations: backup/snapshot, export center, structured reimport format,
-  and archive-before-prune verification;
-- Further M2 provider-independent execution/application foundations beyond
-  CHG-029/CHG-030, only if independently justified;
-- M1/M6 polish that does not depend on automated interpretation.
-
-This list records options, not a schedule.
-
-## Post-MVP — Evidence-triggered candidates
-
-Likely early:
-
-- Quick Settings capture tile.
-- Home widget.
-- Share-to-Quick Aside.
-- richer history queries.
+- Quick Settings capture tile;
+- home widget;
+- share-to-Quick Aside;
+- richer history queries;
 - recurring/multiple reminders.
 
 Later only if evidence supports them:
 
 - FCM remote notifications / agent integrations;
-- on-device local model/routing;
+- on-device local inference;
 - cross-device cloud sync;
 - lock-screen capture;
 - Wear OS;
@@ -287,4 +170,4 @@ Later only if evidence supports them:
 - hardware-button invocation;
 - shared lists/collaboration.
 
-Do not implement these simply because they are listed here.
+Do not implement future scope merely because it appears here.

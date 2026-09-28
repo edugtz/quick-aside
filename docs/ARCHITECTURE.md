@@ -1,6 +1,6 @@
-# Quick Aside — Architecture v0.2
+# Quick Aside — Architecture v0.3
 
-Status: proposed implementation baseline derived from accepted product/UX decisions. Exact Android/API versions must be verified during implementation preflight. Runtime-AI sections reconciled 2026-09-12 (`docs/adr/0001-private-remote-ai-runtime.md`, `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`, and `docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md`).
+Status: accepted implementation baseline derived from current product/UX decisions. Exact Android/API versions are verified only when a Change depends on them. Runtime-AI sections originated 2026-09-12 (`docs/adr/0001-private-remote-ai-runtime.md`, `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`, and `docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md`).
 
 ## 1. Architecture goals
 
@@ -146,9 +146,10 @@ the minimal repository-owned gateway. QAG-003R then deployed it through
 private Tailscale Services/Serve with localhost-only FastAPI, QA1 retained as
 the application authorization boundary, and no public Quick Aside ingress.
 QAG-004 completed Android remote-provider integration. QAG-004H subsequently
-closed the accepted client-side hardening debt before local automatic
-execution was introduced. CHG-027/CHG-028 then introduced list execution and
-Capture wiring; CHG-029/CHG-030 introduced Task execution and Capture wiring.
+closed the accepted client-side hardening debt. CHG-027/028 then introduced
+validated local list execution and normal Capture wiring; CHG-029 added the
+local Task executor. The published CHG-030 branch adds normal Capture wiring
+for validated all-`CreateTask` plans and is awaiting independent review.
 
 ### Selected provider invocation
 
@@ -228,7 +229,8 @@ Quick Aside Android
     -> Codex / ChatGPT OAuth
     -> GPT-5.6 Luna Low
     -> provider-neutral untrusted result
-    -> Android validation -> eligible local execution
+    -> Android validation
+    -> eligible local execution
 ```
 
 Quick Aside owns the gateway and all Quick Aside-specific runtime behavior.
@@ -264,9 +266,10 @@ QAG-004 completed:
 
 QAG-004H completed only the accepted client-side hardening findings: pairing
 response identity binding, local action/field bounds, strict JSON structural
-typing, and bounded transport cancellation handling. It closed the Android
-trust boundary before local automatic execution was introduced and did not
-itself add action execution or change the gateway contract.
+typing, and bounded transport cancellation handling. It did not add action
+execution or change the gateway contract. Local automatic execution arrived
+later through the CHG-027/028 list path and CHG-029 Task executor foundation;
+CHG-030's Task Capture wiring is published and review-pending.
 
 Fallback implementation remains later and evidence-triggered.
 
@@ -280,7 +283,6 @@ speak/type
     -> persist capture locally
     -> private gateway interpretation
     -> local validation
-    -> eligible local execution
     -> UI reflects result / lightweight receipt
 ```
 
@@ -301,7 +303,7 @@ QAG-004H preserves that path and its persistence-first boundary.
 
 - Remote model output is untrusted.
 - Flow:
-  `remote interpretation -> untrusted structured result -> Android validation -> eligible local execution`.
+  `remote interpretation -> untrusted structured result -> Quick Aside validation -> eligible local execution`.
 - The remote runtime never directly mutates Room, Google Tasks, Google
   Calendar, or reminders.
 - Android never receives/stores ChatGPT/Codex OAuth tokens or provider auth
@@ -310,17 +312,19 @@ QAG-004H preserves that path and its persistence-first boundary.
 - Logs/diagnostics avoid raw capture content by default and must never log
   tokens, keys, auth headers, or OAuth credentials.
 
-### Local execution boundary
+### Current local execution boundary
 
-Capture is durable before interpretation. Current execution-family boundary:
+Automatic execution is Android-owned and deliberately family-gated:
 
-- validated all-`AddListItem` plans execute through the list executor;
-- validated all-`CreateTask` plans execute through the Task executor;
-- mixed or unsupported action families execute nothing rather than a subset;
-- successful mutations are recorded in the Action Ledger with targeted Undo;
-- Google Tasks/Calendar synchronization, Event/Calendar execution, reminders,
-  and other action families remain separate future boundaries and are not
-  executable merely because `CapturePlan` represents them.
+- a Capture is durable before interpretation starts;
+- provider output is decoded/validated into `CapturePlan`;
+- validated all-`AddListItem` plans may execute through the local list executor;
+- the local all-`CreateTask` executor foundation is integrated; CHG-030's normal Capture wiring is published and pending review;
+- mixed-family or unsupported plans execute nothing rather than being split or partially applied;
+- successful local mutations are represented through the Action Ledger and targeted Undo;
+- Google Tasks sync, Calendar/Event execution, reminders, and other action families are separate boundaries and are not implied by local execution.
+
+The gateway/provider cannot directly mutate Room, Google Tasks, Google Calendar, or reminders.
 
 ### Local-first failure behavior
 
@@ -488,5 +492,5 @@ Productization would be a separate architectural phase and likely requires backe
 - Room migration tests;
 - sync tests + sandbox/real-account verification;
 - reminder real-device verification;
-- UI screenshot/interaction review against UX v3;
+- visual review against UX v3 for material UI changes, normally using emulator screenshots; real-device evidence only where the changed platform behavior cannot reasonably be simulated;
 - backup/export round-trip checks before archive/prune is accepted.
