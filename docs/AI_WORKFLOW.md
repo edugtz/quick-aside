@@ -1,4 +1,4 @@
-# Quick Aside — AI Workflow v0.3
+# Quick Aside — AI Workflow v0.4
 
 This file distinguishes AI used to **build Quick Aside** from AI used **inside Quick Aside at runtime**.
 
@@ -52,6 +52,19 @@ User-operated QA is exceptional. Ask only when a newly changed material property
 Normal Changes do not persist `docs/changes/<id>/` packages or evidence trees. Change-local SPEC/PLAN/TASKS/QA and implementation reports are ephemeral orchestration records unless the user explicitly requests persistence or a durable operational need justifies it.
 
 After required Change-specific automated verification passes, the implementation is commit-ready. The user retains commit, push, merge, and release authority; ChatGPT/orchestrator remains responsible for independent engineering review unless the user chooses another reviewer.
+
+
+### Canonical builder implementation report
+
+Builder reporting is a durable workflow contract, not something each Change prompt may redefine.
+
+- Every builder MUST read and follow `AGENTS.md` → **Builder implementation-report hard rule** before starting implementation.
+- Orchestrator/builder prompts SHOULD reference that canonical rule instead of embedding an alternate report template.
+- The report remains concise, numbered, evidence-first, and Change-specific.
+- Domain-specific evidence headings may be used inside the canonical numbered structure.
+- Do not replace the canonical report with an acceptance matrix, evidence tree, or generic test summary unless the user explicitly changes the reporting contract.
+- A successful builder report ends with `**IMPLEMENTATION COMPLETE — REVIEW PENDING**` and `STOP.` exactly as defined in `AGENTS.md`.
+- A blocked implementation uses the failure/escalation handoff instead and MUST NOT claim implementation complete.
 
 ## 3. Runtime interpretation models
 

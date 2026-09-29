@@ -149,6 +149,73 @@ Treat deterministic tools and direct runtime evidence as stronger than model sel
 - Persist only durable project contracts such as `PROJECT_SPEC`, `ARCHITECTURE`, `ROADMAP`, `ACCEPTANCE_CRITERIA`, `AI_WORKFLOW`, UX/UI references, runbooks, migration docs, and warranted ADRs.
 - Do not create repository-local evidence trees by default. Test output, CI, source/tests, and the implementation report are the normal verification record. Keep a separate artifact only when it has lasting review value that those sources cannot reasonably represent.
 
+
+### Builder implementation-report hard rule
+
+When a builder completes implementation and the required Change-specific automated verification, its final implementation report **MUST** use the canonical Quick Aside format below.
+
+This is a hard workflow contract:
+
+- Builders MUST read this section directly from `AGENTS.md`; orchestration prompts should point here rather than inventing a different report schema.
+- The report MUST be concise, numbered, evidence-oriented, and specific to the active Change.
+- Report only verification that was actually run. Never imply that an unrun full suite, lint gate, device check, or other generic gate passed.
+- Items 4–7 may use domain-specific evidence labels when that is clearer for the Change (for example `Compose/UI test evidence`, `Task action evidence`, `Room/schema evidence`, `Calendar/lifecycle evidence`). Preserve the numbered structure and evidence-first style rather than replacing it with a generic acceptance matrix.
+- Do not add an acceptance-ownership matrix, evidence package, or verbose per-requirement checklist unless the user explicitly requests one.
+- Implementation reports are ephemeral orchestration output by default and MUST NOT be persisted in `docs/changes/` or another evidence tree unless the user explicitly requests repository persistence or a durable operational need justifies it.
+- If implementation is blocked before completion, do not use the completion footer below. Stop at the blocker and follow the failure/escalation handoff rules instead.
+
+Canonical successful-builder format:
+
+```text
+# <CHANGE-ID> IMPLEMENTATION REPORT
+
+1. **Baseline**
+   Verified branch, baseline commit, and relevant starting repository state.
+
+2. **Scope implemented**
+   Concise summary of exactly what the active Change implemented.
+
+3. **Files changed**
+   Only files actually changed, with each file's role. Include useful file/line
+   references when the coding environment can provide them.
+
+4. **Primary changed-behavior evidence**
+   Focused automated evidence for the core behavior introduced or changed.
+   Rename this heading to a more specific domain label when useful.
+
+5. **Directly affected behavior/regression evidence**
+   Focused evidence for directly affected regressions, failure paths, Undo,
+   atomicity, or adjacent invariants justified by the touched boundary.
+   Rename when a more specific evidence label is clearer.
+
+6. **UI/environment/integration evidence**
+   Include only when the active Change actually requires it. Otherwise state
+   briefly that it was not required; do not manufacture generic QA.
+
+7. **Build/static/schema evidence**
+   Applicable build, compile, static, migration, or schema evidence only.
+   State explicitly when schema/dependencies were unchanged if material.
+
+8. **Verification commands/results**
+   Every automated verification command actually run, with exact result/pass
+   count when available and explicit emulator/device target when applicable.
+
+9. **Git diff/status evidence**
+   `git diff --check`, changed-file/diff summary, unexpected-file status, and
+   confirmation that no commit/push was performed unless explicitly authorized.
+
+10. **Remaining gates**
+    Only gates that genuinely remain after implementation verification.
+
+11. **Exact next gate**
+    The single next action, normally user-authorized commit/push followed by
+    independent review of the published committed diff.
+
+**IMPLEMENTATION COMPLETE — REVIEW PENDING**
+
+STOP.
+```
+
 ### Minimum sufficient verification
 
 - Test only the Change delta: changed/new behavior, directly affected regressions when justified, and build/static/schema checks applicable to the changed surface.
