@@ -1,27 +1,9 @@
 # ACTIVE WORK
 
-- Active Change: Corrective — Mandado fast-capture session lifecycle (MINOR remediation)
-- Governance: HIGH-ASSURANCE, focused on regression coverage for `Nuevo` rollback and the stale-session ID guard; no production behavior change unless a test proves a real defect
-- main accepted through: CHG-030
+- Active Change: NONE
+- main accepted through: CHG-030 + Mandado fast-capture session lifecycle corrective
 - CHG-030: COMPLETE — independent review PASS_WITH_NOTES — integrated
-- Manual QA remaining from CHG-030: NONE
+- Mandado fast-capture session lifecycle corrective: COMPLETE — independent review PASS
+- Manual QA remaining: NONE
 - CHG-031: NOT STARTED / NOT RESERVED
-- Corrective status:
-    - Implemented and verified: change-delta JVM/application tests, focused real-Room tests including migration 7→8, focused Compose/emulator coverage, Android-test compile, debug assembly, and exported Room schema `8.json` all pass.
-    - Committed and pushed as `d9a156d` on `fix/mandado-fast-capture-session-lifecycle`.
-    - Independent review: PASS_WITH_NOTES — 0 BLOCKER, 0 MAJOR, 3 MINOR, 0 NOTE.
-    - MINOR remediation in progress:
-        - MINOR 1: add a focused real-Room regression test proving `Nuevo` rolls back completely after production has already finished the stale session and built its replacement.
-        - MINOR 2: add a focused real-Room regression test that isolates the stale-resolution session-ID guard (`stale A → active B` with an equal activity value).
-        - MINOR 3: this operational status update.
-- Scope (implementation, unchanged):
-    - Fast Capture automatically creates a Mandado session when none is active.
-    - An active Mandado with no more than 7 elapsed days of inactivity is reused.
-    - An active Mandado with more than 7 elapsed days of inactivity requires the focused `Continuar / Nuevo` clarification before any list mutation.
-    - Material Mandado activity is persisted and includes session creation, item creation, and completed/pending state changes.
-    - `Nuevo` ends the previous session, creates the new session, and applies the pending CapturePlan atomically.
-    - Canceling the stale-session clarification leaves the persisted Capture intact and performs no Mandado mutation.
-    - Capture execution Undo remains targeted and must preserve unrelated durable list/session data.
-- Durable product contracts: PROJECT_SPEC v0.4, ARCHITECTURE v0.4, ACCEPTANCE_CRITERIA v0.3, UX_UI_REFERENCE v3 updated for Mandado session lifecycle
-- Human QA: NOT REQUIRED; no manual QA pending.
-- Next action: close the two MINOR regression-coverage gaps, run only the affected real-Room verification, publish the remediation, and request focused re-review.
+- Next action: select the next reviewable Change from the accepted roadmap and current repository state
