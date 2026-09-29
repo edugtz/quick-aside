@@ -14,11 +14,13 @@ import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.capture.UndoCapturePlanListExecutionResult
 import com.edu.quickaside.application.lists.ListClock
 import com.edu.quickaside.application.lists.ListItemIdProvider
+import com.edu.quickaside.application.lists.ListSessionIdProvider
 import com.edu.quickaside.domain.capture.CapturePlan
 import com.edu.quickaside.domain.capture.CapturePlanAction
 import com.edu.quickaside.domain.common.ActionLedgerEntryId
 import com.edu.quickaside.domain.common.CaptureId
 import com.edu.quickaside.domain.common.ListItemId
+import com.edu.quickaside.domain.common.ListSessionId
 import com.edu.quickaside.domain.lists.BuiltInListDefinitions
 import com.edu.quickaside.domain.lists.ListItem
 import com.edu.quickaside.domain.tasks.TaskSpace
@@ -114,27 +116,82 @@ class CaptureSubmissionListExecutionDatabaseTest {
     }
 
     @Test
-    fun mandadoWithoutActiveSessionPersistsCaptureAndRejectsWithZeroMutations() = runBlocking {
-        val captureId = CaptureId("pipeline-mandado-rejected")
+    fun mandadoWithoutActiveSessionBootstrapsOneSessionItemsAndLedger() = runBlocking {
+        val captureId = CaptureId("pipeline-mandado-bootstrap")
+        val occurredAt = Instant.parse("2026-09-19T20:05:00Z")
+        val executor = executor(
+            itemIds = listOf("mandado-bootstrap-item"),
+            entryIds = listOf("mandado-bootstrap-ledger"),
+            times = listOf(occurredAt),
+            sessionIds = listOf("mandado-bootstrap-session"),
+        )
         val submission = submission(
             captureId = captureId,
             actions = listOf(mandado("aguacate")),
-            executor = executor(),
+            executor = executor,
         )
 
         val saved = submission.submitVoice("Agrega aguacate al mandado") as
             CaptureSubmissionResult.Saved
-        val rejection = saved.execution as CaptureExecutionOutcome.Rejected.ListItems
+        val receipt = (saved.execution as CaptureExecutionOutcome.Executed.ListItems).receipt
 
-        assertEquals(
-            CapturePlanListExecutionResult.Rejected(
-                actionIndex = 0,
-                reason = CapturePlanListExecutionRejectionReason.NO_ACTIVE_SESSION,
-            ),
-            rejection.result,
-        )
         assertNotNull(database.captureDao().getById(captureId.value))
+        assertEquals(ListSessionId("mandado-bootstrap-session"), receipt.autoCreatedMandadoSessionId)
+        val session = database.listSessionDao().getById("mandado-bootstrap-session")
+        assertNotNull(session)
+        assertNull(session?.endedAtEpochMillis)
+        assertEquals(occurredAt.toEpochMilli(), session?.lastActivityAtEpochMillis)
+        val item = database.listItemDao().getById("mandado-bootstrap-item")
+        assertEquals("mandado-bootstrap-session", item?.listSessionId)
+        val ledger = database.actionLedgerEntryDao().getById("mandado-bootstrap-ledger")
+        assertEquals(captureId.value, ledger?.sourceCaptureId)
+        assertEquals(
+            listOf("mandado-bootstrap-item"),
+            database.actionLedgerMutationDao().getByEntryId("mandado-bootstrap-ledger")
+                .map { it.targetId },
+        )
+    }
+
+    @Test
+    fun staleMandadoPersistsCaptureDefersEveryMutationAndReturnsChoice() = runBlocking {
+        val captureId = CaptureId("pipeline-mandado-stale")
+        val occurredAt = Instant.parse("2026-09-19T20:06:00Z")
+        val staleActivity = occurredAt.minus(java.time.Duration.ofDays(9))
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "pipeline-stale-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+        val executor = executor(
+            itemIds = listOf("pipeline-stale-item"),
+            entryIds = listOf("pipeline-stale-ledger"),
+            times = listOf(occurredAt),
+            sessionIds = listOf("pipeline-stale-new-session"),
+        )
+        val submission = submission(
+            captureId = captureId,
+            actions = listOf(mandado("aguacate")),
+            executor = executor,
+        )
+
+        val saved = submission.submit("Agrega aguacate al mandado") as
+            CaptureSubmissionResult.Saved
+        val requirement = (saved.execution as CaptureExecutionOutcome.RequiresMandadoSessionChoice)
+            .requirement
+
+        assertEquals(ListSessionId("pipeline-stale-session"), requirement.expectedActiveSessionId)
+        assertEquals(staleActivity, requirement.observedLastActivityAt)
+        assertNotNull(database.captureDao().getById(captureId.value))
+        assertNull(database.listItemDao().getById("pipeline-stale-item"))
+        assertTrue(database.listItemDao().getBySessionId("pipeline-stale-session").isEmpty())
         assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+        assertEquals(
+            staleActivity.toEpochMilli(),
+            database.listSessionDao().getById("pipeline-stale-session")?.lastActivityAtEpochMillis,
+        )
     }
 
     @Test
@@ -195,11 +252,13 @@ class CaptureSubmissionListExecutionDatabaseTest {
         itemIds: List<String> = emptyList(),
         entryIds: List<String> = emptyList(),
         times: List<Instant> = emptyList(),
+        sessionIds: List<String> = emptyList(),
     ) = RoomCapturePlanListExecutor(
         database = database,
         itemIdProvider = QueueItemIdProvider(itemIds),
         actionLedgerIdProvider = QueueEntryIdProvider(entryIds),
         clock = QueueClock(times),
+        sessionIdProvider = QueueSessionIdProvider(sessionIds),
     )
 
     private fun compras(text: String) = CapturePlanAction.AddListItem(
@@ -220,6 +279,11 @@ class CaptureSubmissionListExecutionDatabaseTest {
     private class QueueEntryIdProvider(ids: List<String>) : ActionLedgerIdProvider {
         private val values = ArrayDeque(ids.map(::ActionLedgerEntryId))
         override fun nextEntryId(): ActionLedgerEntryId = values.removeFirst()
+    }
+
+    private class QueueSessionIdProvider(ids: List<String>) : ListSessionIdProvider {
+        private val values = ArrayDeque(ids.map(::ListSessionId))
+        override fun nextSessionId(): ListSessionId = values.removeFirst()
     }
 
     private class QueueClock(times: List<Instant>) : ListClock {

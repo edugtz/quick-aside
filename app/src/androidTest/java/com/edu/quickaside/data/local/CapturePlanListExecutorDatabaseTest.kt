@@ -8,12 +8,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.edu.quickaside.application.actions.ActionLedgerIdProvider
 import com.edu.quickaside.application.capture.CapturePlanListExecutionRejectionReason
 import com.edu.quickaside.application.capture.CapturePlanListExecutionResult
+import com.edu.quickaside.application.capture.MandadoSessionChoice
 import com.edu.quickaside.application.capture.UndoCapturePlanListExecutionResult
 import com.edu.quickaside.application.lists.CreateListItemActionResult
 import com.edu.quickaside.application.lists.LIST_ITEM_ACTION_LEDGER_TARGET_TYPE
 import com.edu.quickaside.application.lists.LIST_ITEM_CREATE_ACTION_PAYLOAD_VERSION
 import com.edu.quickaside.application.lists.ListClock
 import com.edu.quickaside.application.lists.ListItemIdProvider
+import com.edu.quickaside.application.lists.ListSessionIdProvider
 import com.edu.quickaside.domain.actions.ActionLedgerOperation
 import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
@@ -27,6 +29,7 @@ import com.edu.quickaside.domain.common.ListSessionId
 import com.edu.quickaside.domain.lists.BuiltInListDefinitions
 import com.edu.quickaside.domain.lists.ListItem
 import com.edu.quickaside.domain.tasks.TaskSpace
+import java.time.Duration
 import java.time.Instant
 import java.util.ArrayDeque
 import java.util.UUID
@@ -147,14 +150,15 @@ class CapturePlanListExecutorDatabaseTest {
     fun mixedMandadoAndComprasActionsPreserveOrderAndSessionSemantics() = runBlocking {
         openFreshDatabase()
         insertSourceCapture()
+        val occurredAt = Instant.parse("2026-09-19T12:03:04Z")
         database.listSessionDao().insert(
             ListSessionEntity(
                 id = "active-mandado-session",
                 listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
-                startedAtEpochMillis = 100,
+                startedAtEpochMillis = occurredAt.minusSeconds(60).toEpochMilli(),
+                lastActivityAtEpochMillis = occurredAt.minusSeconds(60).toEpochMilli(),
             ),
         )
-        val occurredAt = Instant.parse("2026-09-19T12:03:04Z")
 
         val result = executor(
             itemIds = listOf("mandado-item", "compras-item"),
@@ -216,44 +220,6 @@ class CapturePlanListExecutorDatabaseTest {
                 reason = CapturePlanListExecutionRejectionReason.UNSUPPORTED_LIST_DEFINITION_ID,
             ),
             unsupportedListId,
-        )
-        assertEquals(0, itemIds.calls)
-        assertEquals(0, entryIds.calls)
-        assertEquals(0, clock.calls)
-        assertNull(database.listItemDao().getById("unused-item-0"))
-        assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
-        assertTrue(database.actionLedgerMutationDao().getByEntryId("unused-entry").isEmpty())
-    }
-
-    @Test
-    fun noActiveMandadoRejectsWholeBatchAtFailingIndexBeforeIdsOrClock() = runBlocking {
-        openFreshDatabase()
-        insertSourceCapture()
-        database.listSessionDao().insert(
-            ListSessionEntity(
-                id = "ended-mandado-session",
-                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
-                startedAtEpochMillis = 100,
-            ),
-        )
-        assertEquals(1, database.listSessionDao().finishActive("ended-mandado-session", 200))
-        val itemIds = CountingItemIdProvider()
-        val entryIds = CountingEntryIdProvider()
-        val clock = CountingListClock()
-
-        val result = RoomCapturePlanListExecutor(database, itemIds, entryIds, clock).execute(
-            plan(
-                compras("would have been first"),
-                CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo"),
-            ),
-        )
-
-        assertEquals(
-            CapturePlanListExecutionResult.Rejected(
-                actionIndex = 1,
-                reason = CapturePlanListExecutionRejectionReason.NO_ACTIVE_SESSION,
-            ),
-            result,
         )
         assertEquals(0, itemIds.calls)
         assertEquals(0, entryIds.calls)
@@ -781,6 +747,695 @@ class CapturePlanListExecutorDatabaseTest {
         assertNull(database.actionLedgerEntryDao().getById("undo-cancel-entry")?.undoneAtEpochMillis)
     }
 
+    @Test
+    fun noActiveMandadoBootstrapsSessionAndAppliesWholePlanAtomically() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "ended-mandado-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = 100,
+            ),
+        )
+        assertEquals(1, database.listSessionDao().finishActive("ended-mandado-session", 200))
+        val occurredAt = Instant.parse("2026-09-19T12:20:00Z")
+
+        val result = executor(
+            itemIds = listOf("bootstrap-item-1", "bootstrap-item-2"),
+            entryIds = listOf("bootstrap-entry"),
+            times = listOf(occurredAt),
+            sessionIds = listOf("bootstrap-session"),
+        ).execute(
+            plan(
+                CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo"),
+                CapturePlanAction.AddListItem(BuiltInListDefinitions.COMPRAS.id, "limones"),
+            ),
+        ).requireExecuted()
+
+        assertEquals(ListSessionId("bootstrap-session"), result.autoCreatedMandadoSessionId)
+        assertEquals(listOf("bootstrap-item-1", "bootstrap-item-2"), result.items.map { it.id.value })
+        assertEquals(ListSessionId("bootstrap-session"), result.items[0].listSessionId)
+        assertNull(result.items[1].listSessionId)
+        val sessions = database.listSessionDao()
+            .getByDefinitionId(BuiltInListDefinitions.MANDADO.id.value)
+        assertEquals(2, sessions.size)
+        val active = sessions.single { it.endedAtEpochMillis == null }
+        assertEquals("bootstrap-session", active.id)
+        assertEquals(occurredAt.toEpochMilli(), active.startedAtEpochMillis)
+        assertEquals(occurredAt.toEpochMilli(), active.lastActivityAtEpochMillis)
+        val entry = database.actionLedgerEntryDao().getById("bootstrap-entry")
+        assertNotNull(entry)
+        assertEquals("plan-source", entry?.sourceCaptureId)
+        assertEquals(
+            listOf("bootstrap-item-1", "bootstrap-item-2"),
+            database.actionLedgerMutationDao().getByEntryId("bootstrap-entry").map { it.targetId },
+        )
+    }
+
+    @Test
+    fun bootstrapLedgerFailureRollsBackAutoCreatedSessionItemsAndLedger() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        database.close()
+        addTrigger(
+            "CREATE TRIGGER fail_mandado_bootstrap_parent BEFORE INSERT ON action_ledger_entries " +
+                "WHEN NEW.id = 'bootstrap-fail-entry' " +
+                "BEGIN SELECT RAISE(ABORT, 'forced bootstrap failure'); END",
+        )
+        openFreshDatabase()
+
+        val result = executor(
+            itemIds = listOf("bootstrap-fail-item"),
+            entryIds = listOf("bootstrap-fail-entry"),
+            times = listOf(Instant.parse("2026-09-19T12:21:00Z")),
+            sessionIds = listOf("bootstrap-fail-session"),
+        ).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        )
+
+        assertTrue(result is CapturePlanListExecutionResult.Failed)
+        assertNull(database.listSessionDao().getById("bootstrap-fail-session"))
+        assertTrue(
+            database.listSessionDao()
+                .getByDefinitionId(BuiltInListDefinitions.MANDADO.id.value)
+                .isEmpty(),
+        )
+        assertNull(database.listItemDao().getById("bootstrap-fail-item"))
+        assertNull(database.actionLedgerEntryDao().getById("bootstrap-fail-entry"))
+    }
+
+    @Test
+    fun bootstrapCancellationAfterSessionInsertRollsBackEverything() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val action = RoomCapturePlanListExecutor(
+            database = database,
+            itemIdProvider = QueueItemIdProvider(listOf("bootstrap-cancel-item")),
+            actionLedgerIdProvider = object : ActionLedgerIdProvider {
+                override fun nextEntryId(): ActionLedgerEntryId =
+                    throw CancellationException("cancel after session insert")
+            },
+            clock = QueueListClock(listOf(Instant.parse("2026-09-19T12:22:00Z"))),
+            sessionIdProvider = QueueSessionIdProvider(listOf("bootstrap-cancel-session")),
+        )
+        var cancellationCaught = false
+        try {
+            action.execute(
+                plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+            )
+        } catch (_: CancellationException) {
+            cancellationCaught = true
+        }
+
+        assertTrue(cancellationCaught)
+        assertNull(database.listSessionDao().getById("bootstrap-cancel-session"))
+        assertNull(database.listItemDao().getById("bootstrap-cancel-item"))
+        assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+    }
+
+    @Test
+    fun freshActiveMandadoIsReusedAndActivityAdvances() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val occurredAt = Instant.parse("2026-09-19T12:23:00Z")
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "fresh-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = occurredAt.minusSeconds(120).toEpochMilli(),
+                lastActivityAtEpochMillis = occurredAt.minusSeconds(60).toEpochMilli(),
+            ),
+        )
+
+        val result = executor(
+            itemIds = listOf("fresh-item"),
+            entryIds = listOf("fresh-entry"),
+            times = listOf(occurredAt),
+            sessionIds = listOf("must-not-be-used"),
+        ).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ).requireExecuted()
+
+        assertNull(result.autoCreatedMandadoSessionId)
+        assertEquals(ListSessionId("fresh-session"), result.items.single().listSessionId)
+        assertEquals(
+            listOf("fresh-session"),
+            database.listSessionDao()
+                .getByDefinitionId(BuiltInListDefinitions.MANDADO.id.value)
+                .map { it.id },
+        )
+        assertEquals(
+            occurredAt.toEpochMilli(),
+            database.listSessionDao().getById("fresh-session")?.lastActivityAtEpochMillis,
+        )
+    }
+
+    @Test
+    fun exactlySevenDaysOfInactivityStillReusesTheSession() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val occurredAt = Instant.parse("2026-09-19T12:24:00Z")
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "seven-day-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = occurredAt.minus(Duration.ofDays(7)).toEpochMilli(),
+                lastActivityAtEpochMillis = occurredAt.minus(Duration.ofDays(7)).toEpochMilli(),
+            ),
+        )
+
+        val result = executor(
+            itemIds = listOf("seven-day-item"),
+            entryIds = listOf("seven-day-entry"),
+            times = listOf(occurredAt),
+        ).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ).requireExecuted()
+
+        assertEquals(ListSessionId("seven-day-session"), result.items.single().listSessionId)
+        assertNull(result.autoCreatedMandadoSessionId)
+    }
+
+    @Test
+    fun moreThanSevenDaysOfInactivityRequiresChoiceAndWritesNothing() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val occurredAt = Instant.parse("2026-09-19T12:25:00Z")
+        val staleActivity = occurredAt.minus(Duration.ofDays(7)).minusMillis(1)
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "stale-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+
+        val result = executor(
+            itemIds = listOf("stale-item"),
+            entryIds = listOf("stale-entry"),
+            times = listOf(occurredAt),
+            sessionIds = listOf("stale-new-session"),
+        ).execute(
+            plan(
+                CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo"),
+                CapturePlanAction.AddListItem(BuiltInListDefinitions.COMPRAS.id, "limones"),
+            ),
+        )
+
+        assertEquals(
+            CapturePlanListExecutionResult.RequiresMandadoSessionChoice(
+                expectedActiveSessionId = ListSessionId("stale-session"),
+                observedLastActivityAt = staleActivity,
+                plan = plan(
+                    CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo"),
+                    CapturePlanAction.AddListItem(BuiltInListDefinitions.COMPRAS.id, "limones"),
+                ),
+            ),
+            result,
+        )
+        assertNull(database.listItemDao().getById("stale-item"))
+        assertTrue(
+            database.listItemDao()
+                .getContinuousByDefinitionId(BuiltInListDefinitions.COMPRAS.id.value)
+                .isEmpty(),
+        )
+        assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+        val session = database.listSessionDao().getById("stale-session")
+        assertEquals(staleActivity.toEpochMilli(), session?.lastActivityAtEpochMillis)
+        assertNull(session?.endedAtEpochMillis)
+    }
+
+    @Test
+    fun mixedStalePlanContinueKeepsOriginalOrderAfterChoice() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val requirementTime = Instant.parse("2026-09-19T12:25:30Z")
+        val staleActivity = requirementTime.minus(Duration.ofDays(8))
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "mixed-continue-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+        val requirement = executor(times = listOf(requirementTime)).execute(
+            plan(
+                CapturePlanAction.AddListItem(BuiltInListDefinitions.COMPRAS.id, "limones"),
+                CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo"),
+                CapturePlanAction.AddListItem(BuiltInListDefinitions.COMPRAS.id, "sal"),
+            ),
+        ) as CapturePlanListExecutionResult.RequiresMandadoSessionChoice
+        assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+        assertTrue(
+            database.listItemDao()
+                .getContinuousByDefinitionId(BuiltInListDefinitions.COMPRAS.id.value)
+                .isEmpty(),
+        )
+        assertEquals(
+            emptyList<String>(),
+            database.listItemDao().getBySessionId("mixed-continue-session").map { it.id },
+        )
+        val resolvedAt = Instant.parse("2026-09-19T12:26:00Z")
+
+        val result = executor(
+            itemIds = listOf("mixed-compras-1", "mixed-mandado", "mixed-compras-2"),
+            entryIds = listOf("mixed-continue-entry"),
+            times = listOf(resolvedAt),
+        ).resolveMandadoSessionChoice(requirement, MandadoSessionChoice.CONTINUE).requireExecuted()
+
+        assertEquals(
+            listOf("mixed-compras-1", "mixed-mandado", "mixed-compras-2"),
+            result.items.map { it.id.value },
+        )
+        assertNull(result.items[0].listSessionId)
+        assertEquals(ListSessionId("mixed-continue-session"), result.items[1].listSessionId)
+        assertNull(result.items[2].listSessionId)
+        assertEquals(1, database.actionLedgerEntryDao().getRecent(50).size)
+        assertEquals(
+            result.items.map { it.id.value },
+            database.actionLedgerMutationDao().getByEntryId("mixed-continue-entry")
+                .map { it.targetId },
+        )
+    }
+
+    @Test
+    fun continueResolutionReusesExactStaleSessionAndAppliesPlan() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val requirementTime = Instant.parse("2026-09-19T12:26:00Z")
+        val staleActivity = requirementTime.minus(Duration.ofDays(8))
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "continue-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+        val requirement = executor(times = listOf(requirementTime)).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ) as CapturePlanListExecutionResult.RequiresMandadoSessionChoice
+        val resolvedAt = Instant.parse("2026-09-19T12:27:00Z")
+
+        val result = executor(
+            itemIds = listOf("continue-item"),
+            entryIds = listOf("continue-entry"),
+            times = listOf(resolvedAt),
+        ).resolveMandadoSessionChoice(requirement, MandadoSessionChoice.CONTINUE).requireExecuted()
+
+        assertEquals(ListSessionId("continue-session"), result.items.single().listSessionId)
+        assertNull(result.autoCreatedMandadoSessionId)
+        assertEquals(
+            listOf("continue-session"),
+            database.listSessionDao()
+                .getByDefinitionId(BuiltInListDefinitions.MANDADO.id.value)
+                .map { it.id },
+        )
+        assertEquals(
+            resolvedAt.toEpochMilli(),
+            database.listSessionDao().getById("continue-session")?.lastActivityAtEpochMillis,
+        )
+        assertNotNull(database.actionLedgerEntryDao().getById("continue-entry"))
+    }
+
+    @Test
+    fun newResolutionLedgerFailureRollsBackFinishedSessionReplacementItemsAndLedger() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        insertItem("new-rollback-unrelated", "preserve unrelated compras")
+        val requirementTime = Instant.parse("2026-09-19T12:42:00Z")
+        val staleActivity = requirementTime.minus(Duration.ofDays(8))
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "new-rollback-old",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+        val requirement = executor(times = listOf(requirementTime)).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ) as CapturePlanListExecutionResult.RequiresMandadoSessionChoice
+        database.close()
+        addTrigger(
+            "CREATE TRIGGER fail_new_resolution_ledger BEFORE INSERT ON action_ledger_entries " +
+                "WHEN NEW.id = 'new-rollback-entry' " +
+                "BEGIN SELECT RAISE(ABORT, 'forced New resolution ledger failure'); END",
+        )
+        openFreshDatabase()
+
+        // Production reaches this resolution after finishActive(old), replacement
+        // session creation, item creation, and the activity touch. The ledger
+        // failure therefore proves the whole New path rolls back.
+        val result = executor(
+            itemIds = listOf("new-rollback-item"),
+            entryIds = listOf("new-rollback-entry"),
+            times = listOf(Instant.parse("2026-09-19T12:43:00Z")),
+            sessionIds = listOf("new-rollback-replacement"),
+        ).resolveMandadoSessionChoice(requirement, MandadoSessionChoice.NEW)
+
+        assertTrue(result is CapturePlanListExecutionResult.Failed)
+        val old = database.listSessionDao().getById("new-rollback-old")
+        assertNotNull(old)
+        assertNull(old?.endedAtEpochMillis)
+        assertEquals(
+            staleActivity.toEpochMilli(),
+            old?.lastActivityAtEpochMillis,
+        )
+        assertNull(database.listSessionDao().getById("new-rollback-replacement"))
+        assertEquals(
+            listOf("new-rollback-old"),
+            database.listSessionDao()
+                .getByDefinitionId(BuiltInListDefinitions.MANDADO.id.value)
+                .map { it.id },
+        )
+        assertNull(database.listItemDao().getById("new-rollback-item"))
+        assertNull(database.actionLedgerEntryDao().getById("new-rollback-entry"))
+        assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+        assertTrue(database.actionLedgerMutationDao().getByEntryId("new-rollback-entry").isEmpty())
+        assertNotNull(database.listItemDao().getById("new-rollback-unrelated"))
+    }
+
+    @Test
+    fun newResolutionEndsOldSessionAndBuildsExactlyOneNewSessionInOneTransaction() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val requirementTime = Instant.parse("2026-09-19T12:28:00Z")
+        val staleActivity = requirementTime.minus(Duration.ofDays(8))
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "new-resolution-old",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+        val requirement = executor(times = listOf(requirementTime)).execute(
+            plan(
+                CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo"),
+                CapturePlanAction.AddListItem(BuiltInListDefinitions.COMPRAS.id, "limones"),
+            ),
+        ) as CapturePlanListExecutionResult.RequiresMandadoSessionChoice
+        val resolvedAt = Instant.parse("2026-09-19T12:29:00Z")
+
+        val result = executor(
+            itemIds = listOf("new-item-1", "new-item-2"),
+            entryIds = listOf("new-entry"),
+            times = listOf(resolvedAt),
+            sessionIds = listOf("new-resolution-session"),
+        ).resolveMandadoSessionChoice(requirement, MandadoSessionChoice.NEW).requireExecuted()
+
+        assertEquals(ListSessionId("new-resolution-session"), result.autoCreatedMandadoSessionId)
+        assertEquals(listOf("new-item-1", "new-item-2"), result.items.map { it.id.value })
+        assertEquals(ListSessionId("new-resolution-session"), result.items[0].listSessionId)
+        assertNull(result.items[1].listSessionId)
+        val old = database.listSessionDao().getById("new-resolution-old")
+        assertEquals(resolvedAt.toEpochMilli(), old?.endedAtEpochMillis)
+        val sessions = database.listSessionDao()
+            .getByDefinitionId(BuiltInListDefinitions.MANDADO.id.value)
+        assertEquals(2, sessions.size)
+        val active = sessions.single { it.endedAtEpochMillis == null }
+        assertEquals("new-resolution-session", active.id)
+        assertEquals(resolvedAt.toEpochMilli(), active.lastActivityAtEpochMillis)
+        assertEquals(1, database.actionLedgerEntryDao().getRecent(50).size)
+        assertEquals(
+            listOf("new-item-1", "new-item-2"),
+            database.actionLedgerMutationDao().getByEntryId("new-entry").map { it.targetId },
+        )
+    }
+
+    @Test
+    fun obsoleteChoiceIsRejectedAfterActivityChangedWithoutAnyMutation() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val requirementTime = Instant.parse("2026-09-19T12:30:00Z")
+        val staleActivity = requirementTime.minus(Duration.ofDays(8))
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "obsolete-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+        val requirement = executor(times = listOf(requirementTime)).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ) as CapturePlanListExecutionResult.RequiresMandadoSessionChoice
+        assertEquals(1, database.listSessionDao().touchActivity(
+            "obsolete-session",
+            requirementTime.plusSeconds(30).toEpochMilli(),
+        ))
+
+        val result = executor(
+            itemIds = listOf("obsolete-item"),
+            entryIds = listOf("obsolete-entry"),
+            times = listOf(Instant.parse("2026-09-19T12:31:00Z")),
+        ).resolveMandadoSessionChoice(requirement, MandadoSessionChoice.CONTINUE)
+
+        assertEquals(
+            CapturePlanListExecutionResult.MandadoSessionChanged(
+                expectedActiveSessionId = ListSessionId("obsolete-session"),
+            ),
+            result,
+        )
+        assertNull(database.listItemDao().getById("obsolete-item"))
+        assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+        assertNull(database.listSessionDao().getById("obsolete-session")?.endedAtEpochMillis)
+    }
+
+    @Test
+    fun obsoleteNewChoiceIsRejectedWhenTheStaleSessionWasEnded() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val requirementTime = Instant.parse("2026-09-19T12:32:00Z")
+        val staleActivity = requirementTime.minus(Duration.ofDays(8))
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "ended-before-choice",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+        val requirement = executor(times = listOf(requirementTime)).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ) as CapturePlanListExecutionResult.RequiresMandadoSessionChoice
+        assertEquals(1, database.listSessionDao().finishActive(
+            "ended-before-choice",
+            requirementTime.plusSeconds(5).toEpochMilli(),
+        ))
+
+        val result = executor(
+            itemIds = listOf("ended-choice-item"),
+            entryIds = listOf("ended-choice-entry"),
+            times = listOf(Instant.parse("2026-09-19T12:33:00Z")),
+            sessionIds = listOf("unused-new-session"),
+        ).resolveMandadoSessionChoice(requirement, MandadoSessionChoice.NEW)
+
+        assertTrue(result is CapturePlanListExecutionResult.MandadoSessionChanged)
+        assertNull(database.listSessionDao().getById("unused-new-session"))
+        assertNull(database.listItemDao().getById("ended-choice-item"))
+        assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+    }
+
+    @Test
+    fun obsoleteChoiceIsRejectedWhenAnotherSessionIsActiveEvenWithEqualActivity() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val requirementTime = Instant.parse("2026-09-19T12:46:00Z")
+        val staleActivity = requirementTime.minus(Duration.ofDays(8))
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "id-guard-a",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+        val requirement = executor(times = listOf(requirementTime)).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ) as CapturePlanListExecutionResult.RequiresMandadoSessionChoice
+        assertEquals(ListSessionId("id-guard-a"), requirement.expectedActiveSessionId)
+        assertEquals(staleActivity, requirement.observedLastActivityAt)
+
+        val endedAAt = requirementTime.plusSeconds(5)
+        assertEquals(1, database.listSessionDao().finishActive(
+            "id-guard-a",
+            endedAAt.toEpochMilli(),
+        ))
+        // B carries exactly the activity value observed in the old requirement,
+        // so only the expected-session-ID guard can reject the obsolete decision.
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "id-guard-b",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = staleActivity.toEpochMilli(),
+                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+            ),
+        )
+
+        val result = executor(
+            itemIds = listOf("id-guard-item"),
+            entryIds = listOf("id-guard-entry"),
+            times = listOf(Instant.parse("2026-09-19T12:47:00Z")),
+        ).resolveMandadoSessionChoice(requirement, MandadoSessionChoice.CONTINUE)
+
+        assertEquals(
+            CapturePlanListExecutionResult.MandadoSessionChanged(
+                expectedActiveSessionId = ListSessionId("id-guard-a"),
+            ),
+            result,
+        )
+        assertEquals(2, database.listSessionDao()
+            .getByDefinitionId(BuiltInListDefinitions.MANDADO.id.value).size)
+        assertEquals(
+            endedAAt.toEpochMilli(),
+            database.listSessionDao().getById("id-guard-a")?.endedAtEpochMillis,
+        )
+        val sessionB = database.listSessionDao().getById("id-guard-b")
+        assertNotNull(sessionB)
+        assertNull(sessionB?.endedAtEpochMillis)
+        assertEquals(staleActivity.toEpochMilli(), sessionB?.lastActivityAtEpochMillis)
+        assertTrue(database.listItemDao().getBySessionId("id-guard-b").isEmpty())
+        assertNull(database.listItemDao().getById("id-guard-item"))
+        assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+        assertTrue(database.actionLedgerMutationDao().getByEntryId("id-guard-entry").isEmpty())
+    }
+
+    @Test
+    fun undoOfAutoCreatedBootstrapSessionRemovesUnusedActiveSessionOnly() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val occurredAt = Instant.parse("2026-09-19T12:34:00Z")
+        val saved = executor(
+            itemIds = listOf("bootstrap-undo-item"),
+            entryIds = listOf("bootstrap-undo-entry"),
+            times = listOf(occurredAt, Instant.parse("2026-09-19T12:35:00Z")),
+            sessionIds = listOf("bootstrap-undo-session"),
+        ).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ).requireExecuted()
+
+        val undone = RoomCapturePlanListExecutor(
+            database = database,
+            clock = QueueListClock(listOf(Instant.parse("2026-09-19T12:35:00Z"))),
+        ).undoExecution(
+            actionLedgerEntryId = saved.actionLedgerEntryId,
+            expectedItemIds = saved.items.map(ListItem::id),
+            autoCreatedMandadoSessionId = saved.autoCreatedMandadoSessionId,
+        )
+
+        assertTrue(undone is UndoCapturePlanListExecutionResult.Undone)
+        assertNull(database.listItemDao().getById("bootstrap-undo-item"))
+        assertNull(database.listSessionDao().getById("bootstrap-undo-session"))
+    }
+
+    @Test
+    fun undoPreservesAutoCreatedSessionWhenAnUnrelatedItemWasAddedLater() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val saved = executor(
+            itemIds = listOf("kept-session-item"),
+            entryIds = listOf("kept-session-entry"),
+            times = listOf(Instant.parse("2026-09-19T12:36:00Z")),
+            sessionIds = listOf("kept-session"),
+        ).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ).requireExecuted()
+        database.listItemDao().insert(
+            ListItemEntity(
+                id = "unrelated-later-item",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                listSessionId = "kept-session",
+                text = "unrelated later",
+                isCompleted = false,
+                createdAtEpochMillis = 1_000,
+            ),
+        )
+
+        val undone = RoomCapturePlanListExecutor(
+            database = database,
+            clock = QueueListClock(listOf(Instant.parse("2026-09-19T12:37:00Z"))),
+        ).undoExecution(
+            actionLedgerEntryId = saved.actionLedgerEntryId,
+            expectedItemIds = saved.items.map(ListItem::id),
+            autoCreatedMandadoSessionId = saved.autoCreatedMandadoSessionId,
+        )
+
+        assertTrue(undone is UndoCapturePlanListExecutionResult.Undone)
+        assertNotNull(database.listItemDao().getById("unrelated-later-item"))
+        assertNotNull(database.listSessionDao().getById("kept-session"))
+    }
+
+    @Test
+    fun undoPreservesAutoCreatedSessionThatWasEndedAfterExecution() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val saved = executor(
+            itemIds = listOf("ended-session-item"),
+            entryIds = listOf("ended-session-entry"),
+            times = listOf(Instant.parse("2026-09-19T12:38:00Z")),
+            sessionIds = listOf("ended-after-execution"),
+        ).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ).requireExecuted()
+        assertEquals(1, database.listSessionDao().finishActive(
+            "ended-after-execution",
+            Instant.parse("2026-09-19T12:39:00Z").toEpochMilli(),
+        ))
+
+        val undone = RoomCapturePlanListExecutor(
+            database = database,
+            clock = QueueListClock(listOf(Instant.parse("2026-09-19T12:40:00Z"))),
+        ).undoExecution(
+            actionLedgerEntryId = saved.actionLedgerEntryId,
+            expectedItemIds = saved.items.map(ListItem::id),
+            autoCreatedMandadoSessionId = saved.autoCreatedMandadoSessionId,
+        )
+
+        assertTrue(undone is UndoCapturePlanListExecutionResult.Undone)
+        assertNotNull(database.listSessionDao().getById("ended-after-execution"))
+    }
+
+    @Test
+    fun undoOfReusedPreExistingSessionPreservesTheSession() = runBlocking {
+        openFreshDatabase()
+        insertSourceCapture()
+        val occurredAt = Instant.parse("2026-09-19T12:41:00Z")
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "reused-undo-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = occurredAt.minusSeconds(60).toEpochMilli(),
+                lastActivityAtEpochMillis = occurredAt.minusSeconds(60).toEpochMilli(),
+            ),
+        )
+        val saved = executor(
+            itemIds = listOf("reused-undo-item"),
+            entryIds = listOf("reused-undo-entry"),
+            times = listOf(occurredAt),
+        ).execute(
+            plan(CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo")),
+        ).requireExecuted()
+        assertNull(saved.autoCreatedMandadoSessionId)
+
+        val undone = RoomCapturePlanListExecutor(
+            database = database,
+            clock = QueueListClock(listOf(Instant.parse("2026-09-19T12:42:00Z"))),
+        ).undoExecution(
+            actionLedgerEntryId = saved.actionLedgerEntryId,
+            expectedItemIds = saved.items.map(ListItem::id),
+            autoCreatedMandadoSessionId = saved.autoCreatedMandadoSessionId,
+        )
+
+        assertTrue(undone is UndoCapturePlanListExecutionResult.Undone)
+        assertNull(database.listItemDao().getById("reused-undo-item"))
+        assertNotNull(database.listSessionDao().getById("reused-undo-session"))
+    }
+
     private fun openFreshDatabase() {
         database = QuickAsideDatabase.create(context, databaseName)
     }
@@ -817,11 +1472,13 @@ class CapturePlanListExecutorDatabaseTest {
         itemIds: List<String> = emptyList(),
         entryIds: List<String> = emptyList(),
         times: List<Instant> = emptyList(),
+        sessionIds: List<String> = emptyList(),
     ): RoomCapturePlanListExecutor = RoomCapturePlanListExecutor(
         database = database,
         itemIdProvider = QueueItemIdProvider(itemIds),
         actionLedgerIdProvider = QueueEntryIdProvider(entryIds),
         clock = QueueListClock(times),
+        sessionIdProvider = QueueSessionIdProvider(sessionIds),
     )
 
     private fun plan(
@@ -901,6 +1558,12 @@ class CapturePlanListExecutorDatabaseTest {
         private val ids = ArrayDeque(ids)
 
         override fun nextEntryId(): ActionLedgerEntryId = ActionLedgerEntryId(ids.removeFirst())
+    }
+
+    private class QueueSessionIdProvider(ids: List<String>) : ListSessionIdProvider {
+        private val ids = ArrayDeque(ids)
+
+        override fun nextSessionId(): ListSessionId = ListSessionId(ids.removeFirst())
     }
 
     private class QueueListClock(times: List<Instant>) : ListClock {

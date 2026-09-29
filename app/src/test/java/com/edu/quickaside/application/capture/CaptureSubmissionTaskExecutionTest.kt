@@ -8,6 +8,7 @@ import com.edu.quickaside.domain.common.ActionLedgerEntryId
 import com.edu.quickaside.domain.common.CaptureId
 import com.edu.quickaside.domain.common.ListDefinitionId
 import com.edu.quickaside.domain.common.ListItemId
+import com.edu.quickaside.domain.common.ListSessionId
 import com.edu.quickaside.domain.common.TaskId
 import com.edu.quickaside.domain.lists.ListItem
 import com.edu.quickaside.domain.tasks.Task
@@ -391,9 +392,15 @@ class CaptureSubmissionTaskExecutionTest {
             return result
         }
 
+        override suspend fun resolveMandadoSessionChoice(
+            requirement: CapturePlanListExecutionResult.RequiresMandadoSessionChoice,
+            choice: MandadoSessionChoice,
+        ): CapturePlanListExecutionResult = error("Resolution is not used")
+
         override suspend fun undoExecution(
             actionLedgerEntryId: ActionLedgerEntryId,
             expectedItemIds: List<ListItemId>,
+            autoCreatedMandadoSessionId: ListSessionId?,
         ): UndoCapturePlanListExecutionResult = error("Undo is not used")
     }
 }

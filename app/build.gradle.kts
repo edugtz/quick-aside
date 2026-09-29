@@ -39,6 +39,14 @@ android {
     buildFeatures {
         compose = true
     }
+
+    sourceSets {
+        // Exposes the exported Room schemas to instrumentation tests so the
+        // 7 -> 8 migration fixture is built from the real v7 schema artifact.
+        getByName("androidTest") {
+            assets.srcDir("$projectDir/schemas")
+        }
+    }
 }
 
 dependencies {

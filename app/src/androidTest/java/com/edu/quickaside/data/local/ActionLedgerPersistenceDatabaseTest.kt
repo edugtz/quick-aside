@@ -382,6 +382,7 @@ class ActionLedgerPersistenceDatabaseTest {
                 id = ListSessionId("legacy-mandado-session"),
                 listDefinitionId = BuiltInListDefinitions.MANDADO.id,
                 startedAt = Instant.ofEpochMilli(1788436800000),
+                lastActivityAt = Instant.ofEpochMilli(1788436810000),
                 endedAt = Instant.ofEpochMilli(1788436860000),
             ),
             database.listSessionDao().getById("legacy-mandado-session")?.toDomain(),
@@ -443,7 +444,7 @@ class ActionLedgerPersistenceDatabaseTest {
         )
         assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
         assertTrue(database.actionLedgerMutationDao().getByEntryId("legacy-entry").isEmpty())
-        assertEquals(7L, readUserVersion())
+        assertEquals(8L, readUserVersion())
         assertTrue(
             readTables().containsAll(
                 listOf(
@@ -459,6 +460,9 @@ class ActionLedgerPersistenceDatabaseTest {
                 ),
             ),
         )
+        assertTrue(
+            readTableColumnNames("list_sessions").contains("last_activity_at_epoch_millis"),
+        )
         assertEquals(schemaBefore, readLegacySchemaObjects())
 
         database.close()
@@ -470,7 +474,7 @@ class ActionLedgerPersistenceDatabaseTest {
         val saved = store.record(listOf(mutation(targetId = "post-migration-target")))
             as ActionLedgerRecordResult.Saved
         assertEquals(saved.entry, store.getEntry(saved.entry.id))
-        assertEquals(7L, readUserVersion())
+        assertEquals(8L, readUserVersion())
         assertEquals(schemaBefore, readLegacySchemaObjects())
     }
 
@@ -682,6 +686,18 @@ class ActionLedgerPersistenceDatabaseTest {
         }
     }
 
+    private fun readTableColumnNames(tableName: String): List<String> = BundledSQLiteDriver().open(
+        context.getDatabasePath(databaseName).absolutePath,
+    ).use { connection ->
+        connection.prepare("PRAGMA table_info(`$tableName`)").use { statement ->
+            buildList {
+                while (statement.step()) {
+                    add(statement.getText(1))
+                }
+            }
+        }
+    }
+
     private fun readLegacySchemaObjects(): List<SqliteObject> = BundledSQLiteDriver().open(
         context.getDatabasePath(databaseName).absolutePath,
     ).use { connection ->
@@ -756,7 +772,6 @@ class ActionLedgerPersistenceDatabaseTest {
         val LEGACY_SCHEMA_OBJECT_NAMES = setOf(
             "captures",
             "list_definitions",
-            "list_sessions",
             "list_items",
             "notes",
             "structured_logs",

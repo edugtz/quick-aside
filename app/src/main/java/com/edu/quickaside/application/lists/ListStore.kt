@@ -55,6 +55,14 @@ class RandomListIdProvider : ListIdProvider {
     override fun nextItemId(): ListItemId = ListItemId(java.util.UUID.randomUUID().toString())
 }
 
+fun interface ListSessionIdProvider {
+    fun nextSessionId(): ListSessionId
+}
+
+class RandomListSessionIdProvider : ListSessionIdProvider {
+    override fun nextSessionId(): ListSessionId = ListSessionId(java.util.UUID.randomUUID().toString())
+}
+
 data class ListSessionWithItems(
     val session: ListSession,
     val items: List<ListItem>,

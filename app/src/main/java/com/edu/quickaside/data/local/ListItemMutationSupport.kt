@@ -4,6 +4,7 @@ import com.edu.quickaside.domain.common.ListDefinitionId
 import com.edu.quickaside.domain.common.ListSessionId
 import com.edu.quickaside.domain.lists.ListBehavior
 import com.edu.quickaside.domain.lists.ListDefinition
+import java.time.Instant
 
 /** Validation shared by the legacy ListStore path and the ledgered UI path. */
 internal sealed interface ListItemCreateValidation {
@@ -69,4 +70,18 @@ internal suspend fun QuickAsideDatabase.validateListItemCreate(
         definition = definition,
         listSessionId = itemSessionId,
     )
+}
+
+/**
+ * Advances persisted material activity for a session-backed list inside the
+ * caller's write transaction. Continuous items pass a null session ID.
+ */
+internal suspend fun QuickAsideDatabase.touchSessionActivity(
+    listSessionId: ListSessionId?,
+    activityAt: Instant,
+) {
+    if (listSessionId == null) return
+    check(listSessionDao().touchActivity(listSessionId.value, activityAt.toEpochMilli()) == 1) {
+        "Expected exactly one active list session activity update for ${listSessionId.value}"
+    }
 }

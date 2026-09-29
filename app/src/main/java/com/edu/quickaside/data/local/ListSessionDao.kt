@@ -41,4 +41,25 @@ interface ListSessionDao {
         """,
     )
     suspend fun finishActive(id: String, endedAtEpochMillis: Long): Int
+
+    @Query(
+        """
+        UPDATE list_sessions
+        SET last_activity_at_epoch_millis = :activityAtEpochMillis
+        WHERE id = :id AND ended_at_epoch_millis IS NULL
+        """,
+    )
+    suspend fun touchActivity(id: String, activityAtEpochMillis: Long): Int
+
+    @Query(
+        """
+        DELETE FROM list_sessions
+        WHERE id = :id
+          AND ended_at_epoch_millis IS NULL
+          AND NOT EXISTS (
+              SELECT 1 FROM list_items WHERE list_session_id = :id
+          )
+        """,
+    )
+    suspend fun deleteActiveIfEmpty(id: String): Int
 }

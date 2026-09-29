@@ -111,7 +111,7 @@ class TaskPersistenceDatabaseTest {
         assertEquals(updatedPersonal, RoomTaskStore(database).getById(personal.id))
         assertEquals(listOf(updatedPersonal, trabajo), RoomTaskStore(database).readAll())
         database.close()
-        assertEquals(7L, readUserVersion())
+        assertEquals(8L, readUserVersion())
     }
 
     @Test
@@ -203,7 +203,7 @@ class TaskPersistenceDatabaseTest {
         assertLegacyData()
 
         database.close()
-        assertEquals(7L, readUserVersion())
+        assertEquals(8L, readUserVersion())
         assertEquals(
             listOf(
                 ColumnInfo("id", "TEXT", true, 1),
@@ -224,6 +224,10 @@ class TaskPersistenceDatabaseTest {
             taskColumnsBefore,
         )
         assertTrue(readTables().contains("tasks"))
+        assertTrue(
+            readColumns("list_sessions").map { it.name }
+                .contains("last_activity_at_epoch_millis"),
+        )
         assertEquals(schemaBefore, readLegacySchemaObjects())
 
         openProductionDatabase()
@@ -243,7 +247,7 @@ class TaskPersistenceDatabaseTest {
         assertEquals(2, database.taskDao().getAll().size)
 
         database.close()
-        assertEquals(7L, readUserVersion())
+        assertEquals(8L, readUserVersion())
         assertEquals(schemaBefore, readLegacySchemaObjects())
 
         openProductionDatabase()
@@ -262,7 +266,7 @@ class TaskPersistenceDatabaseTest {
         assertEquals(2, database.taskDao().getAll().size)
 
         database.close()
-        assertEquals(7L, readUserVersion())
+        assertEquals(8L, readUserVersion())
         assertEquals(schemaBefore, readLegacySchemaObjects())
 
         openProductionDatabase()
@@ -704,6 +708,7 @@ class TaskPersistenceDatabaseTest {
             id = ListSessionId("legacy-mandado-session"),
             listDefinitionId = BuiltInListDefinitions.MANDADO.id,
             startedAt = Instant.ofEpochMilli(1788436800000),
+            lastActivityAt = Instant.ofEpochMilli(1788436810000),
             endedAt = Instant.ofEpochMilli(1788436860000),
         )
         val LEGACY_MANDADO_ITEM = ListItem(
@@ -768,7 +773,6 @@ class TaskPersistenceDatabaseTest {
         val LEGACY_SCHEMA_OBJECT_NAMES = setOf(
             "captures",
             "list_definitions",
-            "list_sessions",
             "list_items",
             "notes",
             "structured_logs",

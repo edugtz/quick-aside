@@ -20,6 +20,9 @@ data class ListSession(
     val id: ListSessionId,
     val listDefinitionId: ListDefinitionId,
     val startedAt: Instant,
+    // Material activity (creation, item add, completion change) advances this.
+    // It defaults to the creation time for source compatibility.
+    val lastActivityAt: Instant = startedAt,
     val endedAt: Instant? = null,
 )
 

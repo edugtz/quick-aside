@@ -66,6 +66,10 @@ class RoomReversibleListItemActions(
                         ),
                     )
                     database.listItemDao().insert(item.toEntity())
+                    database.touchSessionActivity(
+                        listSessionId = validation.listSessionId,
+                        activityAt = item.createdAt,
+                    )
                     database.actionLedgerEntryDao().insert(entry.toEntity())
                     database.actionLedgerMutationDao().insertAll(entry.toMutationEntities())
                     CreateListItemActionResult.Saved(

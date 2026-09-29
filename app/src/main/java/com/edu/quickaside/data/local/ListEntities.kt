@@ -44,6 +44,8 @@ data class ListSessionEntity(
     val listDefinitionId: String,
     @ColumnInfo(name = "started_at_epoch_millis")
     val startedAtEpochMillis: Long,
+    @ColumnInfo(name = "last_activity_at_epoch_millis")
+    val lastActivityAtEpochMillis: Long = startedAtEpochMillis,
     @ColumnInfo(name = "ended_at_epoch_millis")
     val endedAtEpochMillis: Long? = null,
 )
@@ -102,6 +104,7 @@ fun ListSession.toEntity(): ListSessionEntity = ListSessionEntity(
     id = id.value,
     listDefinitionId = listDefinitionId.value,
     startedAtEpochMillis = startedAt.toEpochMilli(),
+    lastActivityAtEpochMillis = lastActivityAt.toEpochMilli(),
     endedAtEpochMillis = endedAt?.toEpochMilli(),
 )
 
@@ -109,6 +112,7 @@ fun ListSessionEntity.toDomain(): ListSession = ListSession(
     id = ListSessionId(id),
     listDefinitionId = ListDefinitionId(listDefinitionId),
     startedAt = Instant.ofEpochMilli(startedAtEpochMillis),
+    lastActivityAt = Instant.ofEpochMilli(lastActivityAtEpochMillis),
     endedAt = endedAtEpochMillis?.let(Instant::ofEpochMilli),
 )
 

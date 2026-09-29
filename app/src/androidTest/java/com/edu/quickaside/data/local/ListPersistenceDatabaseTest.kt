@@ -71,7 +71,7 @@ class ListPersistenceDatabaseTest {
         )
 
         database.close()
-        assertEquals(7L, readUserVersion())
+        assertEquals(8L, readUserVersion())
         assertTrue(readTables().containsAll(listOf("captures", "list_definitions", "list_sessions", "list_items")))
     }
 
@@ -106,7 +106,7 @@ class ListPersistenceDatabaseTest {
         )
 
         database.close()
-        assertEquals(7L, readUserVersion())
+        assertEquals(8L, readUserVersion())
         assertTrue(readTables().containsAll(listOf("captures", "list_definitions", "list_sessions", "list_items")))
 
         openProductionDatabase()
@@ -126,6 +126,9 @@ class ListPersistenceDatabaseTest {
             clock = QueueListClock(
                 Instant.parse("2026-09-03T10:00:00Z"),
                 Instant.parse("2026-09-03T10:01:00Z"),
+                Instant.parse("2026-09-03T10:02:00Z"),
+                Instant.parse("2026-09-03T10:03:00Z"),
+                Instant.parse("2026-09-03T10:04:00Z"),
                 Instant.parse("2026-09-03T11:00:00Z"),
                 Instant.parse("2026-09-03T12:00:00Z"),
             ),
@@ -152,6 +155,11 @@ class ListPersistenceDatabaseTest {
         assertFalse(toggled.item.isCompleted)
         val completedAgain = store.setItemCompleted(saved.item.id, true) as ItemCompletionResult.Updated
         assertTrue(completedAgain.item.isCompleted)
+        assertEquals(
+            Instant.parse("2026-09-03T10:04:00Z"),
+            database.listSessionDao().getById(created.session.id.value)?.lastActivityAtEpochMillis
+                ?.let(Instant::ofEpochMilli),
+        )
 
         val finished = store.finishActiveSession(BuiltInListDefinitions.MANDADO.id)
             as SessionFinishResult.Finished

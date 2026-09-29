@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.KeyboardVoice
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -43,6 +44,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -63,12 +65,14 @@ import com.edu.quickaside.application.capture.AIProviderException
 import com.edu.quickaside.application.capture.AIProviderFailureReason
 import com.edu.quickaside.application.capture.CaptureInterpretationResult
 import com.edu.quickaside.application.capture.CaptureExecutionOutcome
+import com.edu.quickaside.application.capture.CapturePlanListExecutionResult
 import com.edu.quickaside.application.capture.CapturePlanListExecutor
 import com.edu.quickaside.application.capture.CapturePlanTaskExecutor
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
 import com.edu.quickaside.application.capture.CaptureSubmissionResult
 import com.edu.quickaside.application.capture.CaptureTranscriptCorrector
+import com.edu.quickaside.application.capture.MandadoSessionChoice
 import com.edu.quickaside.application.capture.UndoCapturePlanListExecutionResult
 import com.edu.quickaside.application.capture.UndoCapturePlanTaskExecutionResult
 import com.edu.quickaside.application.gateway.DevicePairer
@@ -155,6 +159,9 @@ fun QuickAsideApp(
     var listRefreshToken by remember { mutableIntStateOf(0) }
     var taskRefreshToken by remember { mutableIntStateOf(0) }
     var pairingRequested by remember { mutableStateOf(false) }
+    var mandadoSessionChoiceRequest by remember {
+        mutableStateOf<CapturePlanListExecutionResult.RequiresMandadoSessionChoice?>(null)
+    }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val requestCapture = { captureRequested = true }
@@ -183,11 +190,46 @@ fun QuickAsideApp(
             pairingRequested = true
         }
     }
+    suspend fun showListExecutionReceipt(receipt: CapturePlanListExecutionResult.Executed) {
+        listRefreshToken += 1
+        snackbarHostState.currentSnackbarData?.dismiss()
+        val snackbarResult = snackbarHostState.showSnackbar(
+            message = if (receipt.items.size == 1) {
+                "Producto agregado"
+            } else {
+                "${receipt.items.size} elementos guardados"
+            },
+            actionLabel = "Deshacer",
+            duration = SnackbarDuration.Long,
+        )
+        if (snackbarResult != SnackbarResult.ActionPerformed) {
+            return
+        }
+
+        val undoResult = try {
+            capturePlanListExecutor?.undoExecution(
+                actionLedgerEntryId = receipt.actionLedgerEntryId,
+                expectedItemIds = receipt.items.map { it.id },
+                autoCreatedMandadoSessionId = receipt.autoCreatedMandadoSessionId,
+            )
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (_: Exception) {
+            null
+        }
+        listRefreshToken += 1
+        snackbarHostState.showSnackbar(
+            if (undoResult is UndoCapturePlanListExecutionResult.Undone) {
+                "Cambio deshecho"
+            } else {
+                "No se pudo deshacer."
+            },
+        )
+    }
     val onCaptureSaved: (CaptureSubmissionResult.Saved, Boolean) -> Unit = { result, closeCapture ->
         onInterpretationObserved(result.interpretation)
         historyRefreshToken += 1
         when (result.execution) {
-            is CaptureExecutionOutcome.Executed.ListItems -> listRefreshToken += 1
             is CaptureExecutionOutcome.Executed.Tasks -> taskRefreshToken += 1
             else -> Unit
         }
@@ -195,43 +237,9 @@ fun QuickAsideApp(
             captureRequested = false
         }
         scope.launch {
-            val execution = result.execution
-            when (execution) {
-                is CaptureExecutionOutcome.Executed.ListItems -> {
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                    val receipt = execution.receipt
-                    val snackbarResult = snackbarHostState.showSnackbar(
-                        message = if (receipt.items.size == 1) {
-                            "Producto agregado"
-                        } else {
-                            "${receipt.items.size} elementos guardados"
-                        },
-                        actionLabel = "Deshacer",
-                        duration = SnackbarDuration.Long,
-                    )
-                    if (snackbarResult != SnackbarResult.ActionPerformed) {
-                        return@launch
-                    }
-
-                    val undoResult = try {
-                        capturePlanListExecutor?.undoExecution(
-                            actionLedgerEntryId = receipt.actionLedgerEntryId,
-                            expectedItemIds = receipt.items.map { it.id },
-                        )
-                    } catch (cancellation: CancellationException) {
-                        throw cancellation
-                    } catch (_: Exception) {
-                        null
-                    }
-                    listRefreshToken += 1
-                    snackbarHostState.showSnackbar(
-                        if (undoResult is UndoCapturePlanListExecutionResult.Undone) {
-                            "Cambio deshecho"
-                        } else {
-                            "No se pudo deshacer."
-                        },
-                    )
-                }
+            when (val execution = result.execution) {
+                is CaptureExecutionOutcome.Executed.ListItems ->
+                    showListExecutionReceipt(execution.receipt)
 
                 is CaptureExecutionOutcome.Executed.Tasks -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
@@ -270,7 +278,37 @@ fun QuickAsideApp(
                     )
                 }
 
+                is CaptureExecutionOutcome.RequiresMandadoSessionChoice -> {
+                    mandadoSessionChoiceRequest = execution.requirement
+                }
+
                 else -> snackbarHostState.showSnackbar(savedCaptureMessage(result))
+            }
+        }
+    }
+    val resolveMandadoSessionChoice: (
+        CapturePlanListExecutionResult.RequiresMandadoSessionChoice,
+        MandadoSessionChoice,
+    ) -> Unit = { requirement, choice ->
+        mandadoSessionChoiceRequest = null
+        val executor = capturePlanListExecutor
+        if (executor == null) {
+            scope.launch { snackbarHostState.showSnackbar("No se pudo aplicar la interpretación") }
+        } else {
+            scope.launch {
+                val result = try {
+                    executor.resolveMandadoSessionChoice(requirement, choice)
+                } catch (cancellation: CancellationException) {
+                    throw cancellation
+                } catch (failure: Exception) {
+                    CapturePlanListExecutionResult.Failed(failure)
+                }
+                when (result) {
+                    is CapturePlanListExecutionResult.Executed -> showListExecutionReceipt(result)
+                    is CapturePlanListExecutionResult.MandadoSessionChanged ->
+                        snackbarHostState.showSnackbar("El mandado cambió. Intenta de nuevo.")
+                    else -> snackbarHostState.showSnackbar("No se pudo aplicar la interpretación")
+                }
             }
         }
     }
@@ -439,6 +477,43 @@ fun QuickAsideApp(
     }
 
     val pairer = devicePairer
+    val pendingMandadoChoice = mandadoSessionChoiceRequest
+    if (pendingMandadoChoice != null) {
+        AlertDialog(
+            onDismissRequest = { mandadoSessionChoiceRequest = null },
+            title = { Text("Mandado anterior") },
+            text = {
+                Text(
+                    "Tu mandado anterior lleva más de 7 días sin actividad. " +
+                        "¿Quieres continuar con él o iniciar uno nuevo?",
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        resolveMandadoSessionChoice(
+                            pendingMandadoChoice,
+                            MandadoSessionChoice.CONTINUE,
+                        )
+                    },
+                ) {
+                    Text("Continuar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        resolveMandadoSessionChoice(
+                            pendingMandadoChoice,
+                            MandadoSessionChoice.NEW,
+                        )
+                    },
+                ) {
+                    Text("Nuevo")
+                }
+            },
+        )
+    }
     if (pairingRequested && pairer != null) {
         GatewayPairingDialog(
             pairer = pairer,
@@ -704,6 +779,9 @@ private fun savedCaptureMessage(result: CaptureSubmissionResult.Saved): String =
     when (result.execution) {
         CaptureExecutionOutcome.NotEligible ->
             "Captura guardada · interpretación lista, sin aplicar"
+
+        is CaptureExecutionOutcome.RequiresMandadoSessionChoice ->
+            "Captura guardada · elige el mandado"
 
         is CaptureExecutionOutcome.Rejected ->
             "Captura guardada · no se pudo aplicar la interpretación"

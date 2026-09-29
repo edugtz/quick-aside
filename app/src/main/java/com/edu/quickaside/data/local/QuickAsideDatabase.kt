@@ -21,7 +21,7 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
         ActionLedgerMutationEntity::class,
         TaskEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = true,
 )
 abstract class QuickAsideDatabase : RoomDatabase() {
@@ -64,6 +64,7 @@ abstract class QuickAsideDatabase : RoomDatabase() {
                 MIGRATION_4_5,
                 MIGRATION_5_6,
                 MIGRATION_6_7,
+                MIGRATION_7_8,
             )
             .addCallback(BuiltInListDefinitionBootstrapper)
             .build()
@@ -245,6 +246,34 @@ abstract class QuickAsideDatabase : RoomDatabase() {
             override suspend fun migrate(connection: SQLiteConnection) {
                 connection.prepare(
                     "ALTER TABLE `tasks` ADD COLUMN `completed_at_epoch_millis` INTEGER",
+                ).use { statement -> statement.step() }
+            }
+        }
+
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override suspend fun migrate(connection: SQLiteConnection) {
+                connection.prepare(
+                    "ALTER TABLE `list_sessions` ADD COLUMN " +
+                        "`last_activity_at_epoch_millis` INTEGER NOT NULL DEFAULT 0",
+                ).use { statement -> statement.step() }
+                // Historical completion toggles were never persisted, so the
+                // deterministic ceiling is the latest durable timestamp that
+                // can actually be recovered: session creation or item creation.
+                connection.prepare(
+                    """
+                    UPDATE `list_sessions`
+                    SET `last_activity_at_epoch_millis` = MAX(
+                        `started_at_epoch_millis`,
+                        COALESCE(
+                            (
+                                SELECT MAX(`created_at_epoch_millis`)
+                                FROM `list_items`
+                                WHERE `list_items`.`list_session_id` = `list_sessions`.`id`
+                            ),
+                            `started_at_epoch_millis`
+                        )
+                    )
+                    """.trimIndent(),
                 ).use { statement -> statement.step() }
             }
         }

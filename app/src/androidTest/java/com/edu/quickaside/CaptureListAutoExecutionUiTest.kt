@@ -1,6 +1,7 @@
 package com.edu.quickaside
 
 import android.content.Context
+import android.view.KeyEvent
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -15,6 +16,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.edu.quickaside.application.actions.ActionLedgerIdProvider
 import com.edu.quickaside.application.capture.CaptureInterpretationResult
 import com.edu.quickaside.application.capture.CaptureInterpreter
@@ -22,9 +24,12 @@ import com.edu.quickaside.application.capture.CapturePlanListExecutionRejectionR
 import com.edu.quickaside.application.capture.CapturePlanListExecutionResult
 import com.edu.quickaside.application.capture.CapturePlanListExecutor
 import com.edu.quickaside.application.capture.CaptureSubmission
+import com.edu.quickaside.application.capture.MandadoSessionChoice
 import com.edu.quickaside.application.capture.UndoCapturePlanListExecutionResult
 import com.edu.quickaside.application.lists.ListClock
 import com.edu.quickaside.application.lists.ListItemIdProvider
+import com.edu.quickaside.application.lists.ListSessionIdProvider
+import com.edu.quickaside.data.local.ListSessionEntity
 import com.edu.quickaside.data.local.QuickAsideDatabase
 import com.edu.quickaside.data.local.RoomCapturePlanListExecutor
 import com.edu.quickaside.data.local.RoomCaptureReader
@@ -35,6 +40,7 @@ import com.edu.quickaside.domain.capture.CapturePlanAction
 import com.edu.quickaside.domain.common.ActionLedgerEntryId
 import com.edu.quickaside.domain.common.CaptureId
 import com.edu.quickaside.domain.common.ListItemId
+import com.edu.quickaside.domain.common.ListSessionId
 import com.edu.quickaside.domain.lists.BuiltInListDefinitions
 import com.edu.quickaside.domain.lists.ListItem
 import com.edu.quickaside.ui.QuickAsideApp
@@ -45,6 +51,8 @@ import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -250,6 +258,194 @@ class CaptureListAutoExecutionUiTest {
         assertEquals(1, captures.count { it.id == "ui-capture" })
     }
 
+    @Test
+    fun globalVoiceCaptureBootstrapsVisibleMandadoWithoutManualStart() {
+        val realExecutor = RoomCapturePlanListExecutor(
+            database = database,
+            itemIdProvider = QueueItemIdProvider(listOf("visible-mandado-item")),
+            actionLedgerIdProvider = QueueEntryIdProvider(listOf("visible-mandado-ledger")),
+            clock = QueueClock(listOf(Instant.parse("2026-09-19T21:10:00Z"))),
+            sessionIdProvider = QueueSessionIdProvider(listOf("visible-mandado-session")),
+        )
+        val factory = FakeSpeechTranscriberFactory()
+        setContent(
+            submission(listOf(mandado("jabón visible")), realExecutor),
+            realExecutor,
+            speechFactory = factory,
+            includeListStore = true,
+        )
+        composeRule.onNode(hasText("Listas") and hasClickAction()).performClick()
+        composeRule.onNodeWithContentDescription("Abrir Mandado").performClick()
+        waitForText("No hay un mandado activo.")
+        composeRule.onNodeWithContentDescription("Iniciar mandado").assertIsDisplayed()
+
+        composeRule.onNodeWithContentDescription("Capturar").performClick()
+        waitForText("Listo para escuchar…")
+        factory.latest().emitFinal("Agrega jabón visible")
+
+        waitForText("Producto agregado")
+        waitForText("jabón visible")
+        val (session, items) = runBlocking {
+            database.listSessionDao().getActiveByDefinitionId("mandado") to
+                database.listItemDao().getBySessionId("visible-mandado-session")
+        }
+        assertEquals("visible-mandado-session", session?.id)
+        assertEquals(listOf("visible-mandado-item"), items.map { it.id })
+    }
+
+    @Test
+    fun staleMandadoChoiceShowsContinueAndNewThenAppliesOnContinueWithUndo() {
+        val requirementTime = Instant.parse("2026-09-19T21:20:00Z")
+        val resolvedAt = Instant.parse("2026-09-19T21:21:00Z")
+        val undoAt = Instant.parse("2026-09-19T21:21:30Z")
+        seedMandadoSession(
+            id = "stale-ui-session",
+            startedAt = requirementTime.minus(java.time.Duration.ofDays(8)),
+        )
+        val realExecutor = RoomCapturePlanListExecutor(
+            database = database,
+            itemIdProvider = QueueItemIdProvider(listOf("stale-ui-item")),
+            actionLedgerIdProvider = QueueEntryIdProvider(listOf("stale-ui-ledger")),
+            clock = QueueClock(listOf(requirementTime, resolvedAt, undoAt)),
+            sessionIdProvider = QueueSessionIdProvider(emptyList()),
+        )
+        setContent(
+            submission(listOf(mandado("jabón stale")), realExecutor),
+            realExecutor,
+            includeListStore = true,
+        )
+
+        submitText("Agrega jabón stale")
+
+        waitForText("Mandado anterior")
+        composeRule.onNodeWithText("Continuar").assertIsDisplayed()
+        composeRule.onNodeWithText("Nuevo").assertIsDisplayed()
+        runBlocking { assertNull(database.listItemDao().getById("stale-ui-item")) }
+
+        composeRule.onNodeWithText("Continuar").performClick()
+
+        waitForText("Producto agregado")
+        runBlocking {
+            assertEquals(
+                "stale-ui-session",
+                database.listSessionDao().getActiveByDefinitionId("mandado")?.id,
+            )
+            assertNotNull(database.listItemDao().getById("stale-ui-item"))
+        }
+
+        composeRule.onNodeWithText("Deshacer").performClick()
+        waitForText("Cambio deshecho")
+        runBlocking {
+            assertNull(database.listItemDao().getById("stale-ui-item"))
+            assertNotNull(database.listSessionDao().getById("stale-ui-session"))
+        }
+    }
+
+    @Test
+    fun staleMandadoChoiceNewEndsOldSessionAndAppliesToReplacementSession() {
+        val requirementTime = Instant.parse("2026-09-19T21:22:00Z")
+        val resolvedAt = Instant.parse("2026-09-19T21:23:00Z")
+        seedMandadoSession(
+            id = "stale-new-old-session",
+            startedAt = requirementTime.minus(java.time.Duration.ofDays(8)),
+        )
+        val realExecutor = RoomCapturePlanListExecutor(
+            database = database,
+            itemIdProvider = QueueItemIdProvider(listOf("stale-new-item")),
+            actionLedgerIdProvider = QueueEntryIdProvider(listOf("stale-new-ledger")),
+            clock = QueueClock(listOf(requirementTime, resolvedAt)),
+            sessionIdProvider = QueueSessionIdProvider(listOf("stale-new-replacement")),
+        )
+        setContent(
+            submission(listOf(mandado("jabón nuevo")), realExecutor),
+            realExecutor,
+            includeListStore = true,
+        )
+
+        submitText("Agrega jabón nuevo")
+        waitForText("Mandado anterior")
+        composeRule.onNodeWithText("Nuevo").performClick()
+
+        waitForText("Producto agregado")
+        runBlocking {
+            assertEquals(
+                resolvedAt.toEpochMilli(),
+                database.listSessionDao().getById("stale-new-old-session")?.endedAtEpochMillis,
+            )
+            assertEquals(
+                "stale-new-replacement",
+                database.listSessionDao().getActiveByDefinitionId("mandado")?.id,
+            )
+            assertEquals(
+                "stale-new-replacement",
+                database.listItemDao().getById("stale-new-item")?.listSessionId,
+            )
+        }
+    }
+
+    @Test
+    fun dismissingStaleMandadoChoiceLeavesSessionAndCaptureUnchanged() {
+        val requirementTime = Instant.parse("2026-09-19T21:24:00Z")
+        val staleActivity = requirementTime.minus(java.time.Duration.ofDays(8))
+        seedMandadoSession(
+            id = "dismissed-stale-session",
+            startedAt = staleActivity,
+        )
+        val realExecutor = RoomCapturePlanListExecutor(
+            database = database,
+            itemIdProvider = QueueItemIdProvider(listOf("dismissed-item")),
+            actionLedgerIdProvider = QueueEntryIdProvider(listOf("dismissed-ledger")),
+            clock = QueueClock(listOf(requirementTime)),
+            sessionIdProvider = QueueSessionIdProvider(emptyList()),
+        )
+        setContent(
+            submission(listOf(mandado("jabón descartado")), realExecutor),
+            realExecutor,
+            includeListStore = true,
+        )
+
+        submitText("Agrega jabón descartado")
+        waitForText("Mandado anterior")
+
+        composeRule.onNodeWithText("Mandado anterior").assertIsDisplayed()
+        InstrumentationRegistry.getInstrumentation()
+            .sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule.onAllNodesWithText("Mandado anterior").fetchSemanticsNodes().isEmpty()
+        }
+
+        runBlocking {
+            assertNotNull(database.captureDao().getById("ui-capture"))
+            assertNull(database.listItemDao().getById("dismissed-item"))
+            assertEquals(
+                staleActivity.toEpochMilli(),
+                database.listSessionDao().getById("dismissed-stale-session")
+                    ?.lastActivityAtEpochMillis,
+            )
+            assertNull(
+                database.listSessionDao().getById("dismissed-stale-session")?.endedAtEpochMillis,
+            )
+            assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+        }
+    }
+
+    private fun seedMandadoSession(
+        id: String,
+        startedAt: Instant,
+        lastActivityAt: Instant = startedAt,
+    ) {
+        runBlocking {
+            database.listSessionDao().insert(
+                ListSessionEntity(
+                    id = id,
+                    listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                    startedAtEpochMillis = startedAt.toEpochMilli(),
+                    lastActivityAtEpochMillis = lastActivityAt.toEpochMilli(),
+                ),
+            )
+        }
+    }
+
     private fun submission(
         actions: List<CapturePlanAction>,
         executor: CapturePlanListExecutor,
@@ -347,9 +543,15 @@ class CaptureListAutoExecutionUiTest {
             return executeResult
         }
 
+        override suspend fun resolveMandadoSessionChoice(
+            requirement: CapturePlanListExecutionResult.RequiresMandadoSessionChoice,
+            choice: MandadoSessionChoice,
+        ): CapturePlanListExecutionResult = error("Resolution is not used")
+
         override suspend fun undoExecution(
             actionLedgerEntryId: ActionLedgerEntryId,
             expectedItemIds: List<ListItemId>,
+            autoCreatedMandadoSessionId: ListSessionId?,
         ): UndoCapturePlanListExecutionResult {
             undoCalls += UndoCall(actionLedgerEntryId, expectedItemIds)
             return undoResult
@@ -364,6 +566,11 @@ class CaptureListAutoExecutionUiTest {
     private class QueueEntryIdProvider(ids: List<String>) : ActionLedgerIdProvider {
         private val values = ArrayDeque(ids.map(::ActionLedgerEntryId))
         override fun nextEntryId(): ActionLedgerEntryId = values.removeFirst()
+    }
+
+    private class QueueSessionIdProvider(ids: List<String>) : ListSessionIdProvider {
+        private val values = ArrayDeque(ids.map(::ListSessionId))
+        override fun nextSessionId(): ListSessionId = values.removeFirst()
     }
 
     private class QueueClock(times: List<Instant>) : ListClock {
