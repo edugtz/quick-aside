@@ -1,4 +1,4 @@
-# Quick Aside — Roadmap v0.3
+# Quick Aside — Roadmap v0.4
 
 Roadmap milestones are product outcomes, not branch/PR units. Each milestone is delivered through small reviewable Changes. The roadmap records product state and dependencies, not test/evidence history.
 
@@ -45,7 +45,14 @@ Implemented/integrated baseline:
 - mixed-family and unsupported plans execute nothing.
 
 CHG-027/028 list execution and Capture wiring are integrated. CHG-029/030 Task
-execution and Capture wiring are integrated. CHG-030 is COMPLETE.
+execution and Capture wiring are integrated. CHG-030 is COMPLETE. The subsequent
+Mandado fast-capture lifecycle corrective is also COMPLETE and independently
+reviewed PASS; it established no-prestart high-confidence Mandado capture and
+reversible local execution as the accepted baseline.
+
+Active selected Change:
+
+- **CHG-031 — Mandado calendar-based weekly rollover** — ACTIVE / implementation not started. It replaces the interim 7-elapsed-day stale-session policy with the accepted calendar workflow: Sunday 00:00 formal period start, Saturday 14:00 rollover, immediate next-period eligibility, no Sunday double-reset, manual Finish blocking re-bootstrap until the next rollover, and durable historical-session visibility.
 
 Still candidate/pending:
 
@@ -146,13 +153,13 @@ Normal-use hardening remains evidence-triggered and is not automatically schedul
 |---|---|
 | M0 | COMPLETE |
 | M1 | SUBSTANTIALLY IMPLEMENTED / NOT BLOCKED |
-| M2 | IN PROGRESS; CHG-030 COMPLETE and integrated; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
+| M2 | IN PROGRESS; CHG-030 + Mandado fast-capture corrective COMPLETE; CHG-031 calendar rollover ACTIVE; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
 | M3 | NOT globally blocked; Google Tasks/Calendar sync and Event execution pending |
 | M4 | NOT globally blocked; reminder-domain/execution/scheduling pending |
 | M5 | NOT blocked |
 | M6 | Final completion blocked by remaining sync/event/reminder capabilities |
 
-CHG-031 is NOT RESERVED. Select the next reviewable Change from the accepted roadmap and current repository state.
+CHG-031 is selected and ACTIVE. Do not reserve or implement CHG-032 until CHG-031 reaches its engineering closeout and the next reviewable Change is selected from the then-current roadmap/repository state.
 
 ## Post-MVP — evidence-triggered candidates
 

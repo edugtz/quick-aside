@@ -1,4 +1,4 @@
-# Quick Aside — AI Workflow v0.2
+# Quick Aside — AI Workflow v0.3
 
 This file distinguishes AI used to **build Quick Aside** from AI used **inside Quick Aside at runtime**.
 
@@ -36,7 +36,14 @@ Prefer deterministic tools (build/tests/lint/static analysis) over builder self-
 
 ### Verification routing
 
-Implementation agents verify the Change delta themselves and report exact commands/results. Default to changed-behavior tests, directly affected regressions when justified, and build/static/schema checks relevant to the changed surface. Full suites, broad lint, and real-device QA require a concrete reason; HIGH-ASSURANCE increases rigor for the affected risk, not generic test count.
+Implementation agents verify the Change delta themselves and report exact commands/results. Verification scope is **only the current Change**: changed/new behavior, directly affected regressions when justified, and build/static/schema checks relevant to the changed surface.
+
+Hard execution rules:
+
+- Do not run full JVM suites, full connected/instrumentation suites, repository-wide lint, broad unrelated regressions, privacy rescans, or other generic “run everything” gates by default. A repository/CI mandate, actual cross-cutting blast radius, concrete failure/reviewer finding, or explicit user request is required to broaden verification.
+- Do not perform routine environment cleanup to manufacture a fresh state. No `git clean`, Gradle `clean`, app-data clearing, Room wiping, credential/identity reset, emulator/device reset, build/cache deletion, or equivalent cleanup unless the active Change requires it or a concrete failure/reviewer finding justifies it. Test-owned disposable fixtures are allowed.
+- QA1 is durable physical environment state. Routine verification uses an explicitly targeted emulator. Unless the active Change explicitly tests install/auth lifecycle and the user explicitly authorizes it, do not uninstall/reinstall Quick Aside on QA1, run `pm clear`, clear app storage, change Android Keystore identity, create/revoke/reset/rotate pairing, generate replacement pairing codes, or run connected/instrumentation tests on QA1.
+- Do not broaden implementation scope with unrelated refactors, future-roadmap features, auth/device lifecycle work, or opportunistic cleanup.
 
 Reuse valid results while the relevant source/config/environment is unchanged. A rerun requires an explicit invalidator. Do not treat a new session/agent, documentation edit, commit/push of identical source, review stage, or a wish for fresher evidence as an invalidator.
 

@@ -1,4 +1,4 @@
-# Quick Aside — Architecture v0.4
+# Quick Aside — Architecture v0.5
 
 Status: accepted implementation baseline derived from current product/UX decisions. Exact Android/API versions are verified only when a Change depends on them. Runtime-AI sections originated 2026-09-12 (`docs/adr/0001-private-remote-ai-runtime.md`, `docs/adr/0002-quick-aside-owned-private-ai-gateway.md`, and `docs/adr/0003-codex-exec-ephemeral-runtime-protocol.md`).
 
@@ -101,16 +101,19 @@ Possible action families:
 `Mandado` = session-based.  
 `Compras` = continuous.
 
-Mandado fast-capture lifecycle is resolved by the Android-owned list execution boundary, not by the remote provider:
+Mandado lifecycle is resolved by the Android-owned list/domain boundary, not by the remote provider. The accepted policy is calendar-based:
 
-- no active Mandado session: the executor creates one and applies the pending Mandado items in the same local atomic operation;
-- active Mandado with material activity within 7 elapsed days: reuse that session;
-- active Mandado with more than 7 elapsed days of inactivity: treat the session as **stale for routing/lifecycle clarification only** and perform no Mandado mutation until the user selects `Continuar` or `Nuevo`;
-- `Continuar` applies the pending items to the existing session;
-- `Nuevo` ends the previous session, creates a new active session, and applies the pending items as one atomic local operation after the user's choice;
-- cancel/no resolution preserves the already-durable Capture and leaves Mandado sessions/items unchanged.
+- the formal weekly period starts Sunday 00:00 local time and has a fixed rollover/cutoff at Saturday 14:00 local time;
+- at the cutoff, the ending-period session becomes ineligible for new items, is ended at the calendar boundary exactly once, and remains queryable with its items as history;
+- immediately after the Saturday 14:00 cutoff, Mandado assignment advances to the next weekly period. Saturday 14:00 through Sunday 00:00 is a next-period staging window, **not** an inactive window; Sunday 00:00 does not rotate again;
+- if the app is not running at the cutoff, the next relevant Mandado read/mutation performs idempotent boundary reconciliation. A background alarm/timer is not required for correctness;
+- passive reads may reconcile an already-crossed boundary so UI/history reflects the correct period, but they must not create an otherwise-empty next-period `ListSession` merely from navigation;
+- the first permitted Mandado mutation for an eligible period may materialize its `ListSession`; session creation plus pending item application must be one atomic local operation and must not produce duplicate active sessions under retry/re-entry;
+- subsequent mutations in the same eligible period reuse that session; historical sessions are never reused across a rollover boundary;
+- manual Finish before the current period cutoff ends the current session and suppresses automatic Mandado bootstrap for the remainder of that period. Eligibility resumes only when the next Saturday 14:00 rollover advances to the following period;
+- the superseded 7-elapsed-day inactivity/stale/`Continuar`-`Nuevo` lifecycle is not part of the current contract.
 
-The stale threshold is not a retention TTL. A stale session remains active and durable until an explicit lifecycle decision is applied. Material activity includes session creation, item creation, and item completion/reopen changes; passive reads/navigation do not count. The activity calculation must be deterministic and testable.
+Calendar evaluation must be deterministic and testable. Time-dependent domain logic should use an injectable clock/time-zone source rather than scattered direct wall-clock reads. Rollover/manual Finish change lifecycle state only; they never delete historical sessions/items.
 
 ### Tasks
 
@@ -332,7 +335,7 @@ Automatic execution is Android-owned and deliberately family-gated:
 - a Capture is durable before interpretation starts;
 - provider output is decoded/validated into `CapturePlan`;
 - validated all-`AddListItem` plans execute through the local list executor;
-- for Mandado, absence of a pre-existing active session is a lifecycle-bootstrap case rather than a reason to require manual preparation before high-confidence Capture; stale-session ambiguity is resolved before any list mutation;
+- for Mandado, the executor first reconciles the accepted weekly calendar boundary, then targets only the eligible current/next-period session; absence of a materialized session is a bootstrap case unless the current period was manually finished, and no age-based stale clarification is used;
 - validated all-`CreateTask` plans execute through the local Task executor;
 - mixed-family or unsupported plans execute nothing, with no splitting, subsetting, or reordering;
 - successful local mutations are represented through the Action Ledger and targeted Undo;

@@ -1,4 +1,4 @@
-# Quick Aside — Project Spec v0.4
+# Quick Aside — Project Spec v0.5
 
 Status: **Accepted baseline for personal MVP design**  
 Product owner: user  
@@ -94,16 +94,17 @@ Initial list definitions:
 - **Mandado** — session-based list with historical sessions.
 - **Compras** — continuous list.
 
-Mandado lifecycle for fast Capture:
+Mandado calendar lifecycle for fast Capture:
 
-- Management remains explicit: opening `Listas`/`Mandado` does not itself create, end, or rotate a session; manual Start/Finish remains available.
-- A validated high-confidence `AddListItem` Capture targeting Mandado must not require the user to pre-start a session.
-- If no Mandado session is active, Quick Aside creates exactly one active Mandado session and applies the captured Mandado items as one local operation.
-- If an active Mandado has material activity within the last **7 elapsed days**, Capture reuses that session.
-- If the active Mandado has **more than 7 elapsed days of inactivity**, Quick Aside does not apply the pending Mandado mutation yet. It asks the smallest focused lifecycle question: **Continuar** the existing Mandado or start **Nuevo**.
-- `Continuar` reuses the existing active session. `Nuevo` ends the previous session, creates a new active Mandado session, and then applies the pending Mandado items as one local operation. Cancel leaves the durable Capture intact and does not mutate Mandado sessions or items.
-- Material activity for the stale-session threshold includes session creation, adding an item, and changing an item's completed/pending state. Merely opening Mandado, navigating the app, or viewing history does not reset the threshold.
-- Staleness is not expiration: crossing the 7-day threshold never silently ends, deletes, or prunes a Mandado session. Historical sessions remain independently retrievable.
+- Mandado is governed by a fixed weekly calendar workflow, not by elapsed inactivity. The formal weekly period starts **Sunday 00:00 local time** and reaches its rollover/cutoff at **Saturday 14:00 local time**.
+- At Saturday 14:00, the Mandado for the ending period is no longer eligible for new items. It is closed at the boundary and remains durably available with its items in Mandado history.
+- The Saturday 14:00 cutoff immediately advances Mandado to the **next** weekly period. There is no inactive window: captures after Saturday 14:00 belong to the next Mandado even though that period's formal Sunday 00:00 start has not yet arrived. Sunday 00:00 therefore does **not** cause a second reset/rollover.
+- A validated high-confidence `AddListItem` Capture targeting Mandado must not require the user to pre-start a session. If the eligible current/next-period session has not yet been materialized, Quick Aside creates exactly one session and applies the captured Mandado items atomically as one local operation.
+- Within the same eligible weekly period, subsequent Mandado captures reuse that session. A session from an earlier period is never reused merely because it remains the most recent historical session.
+- Quick Aside does not require a background timer/alarm to fire at Saturday 14:00. If the app was not running, the next relevant Mandado access/mutation reconciles the crossed boundary idempotently so the prior session is historical and subsequent mutations target the next period. Passive viewing must not create an otherwise-empty next-period session solely to make the calendar state current.
+- Manual `Terminar mandado` remains available as an exceptional explicit action. If the user finishes the current Mandado before its Saturday 14:00 cutoff, that session becomes historical and the remainder of that period is closed: Fast Capture MUST NOT auto-create/reopen another Mandado until the next Saturday 14:00 rollover advances eligibility to the following period.
+- The previous interim **7 elapsed days / stale session / Continuar-Nuevo** age policy is superseded. Age/inactivity does not decide Mandado lifecycle and no age-based lifecycle clarification is required.
+- Calendar rollover and manual Finish never delete Mandado data. Historical sessions and their items remain independently retrievable.
 
 Future list types are allowed by the data model but are not MVP UI scope unless needed by real use.
 

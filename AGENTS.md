@@ -35,6 +35,18 @@ Use `software-project-orchestrator` proportional governance:
 
 The user retains product, commit, push, merge, and release authority unless explicitly delegated.
 
+
+## Repository/device safety and Change-scope hard rule
+
+These are hard constraints, not cleanup preferences:
+
+- Work is limited to the **current active Change**. Builders/reviewers MUST NOT add unrelated refactors, future-roadmap work, opportunistic cleanup, auth/device lifecycle work, or other “while we are here” changes.
+- Routine work MUST NOT reset or clean developer/device state merely to obtain a “clean” test environment. Do not run `git clean`, delete working-state data, clear Room/app storage, wipe credentials/identity, reset emulator/device state, delete build/caches, or run Gradle `clean` unless the active Change itself requires that operation or a concrete failure/reviewer finding makes it necessary. Disposable test fixtures/databases that are created and owned by the test are allowed.
+- The physical QA1 Android phone is **durable environment state**, not disposable test infrastructure. Unless the active Change explicitly tests the installation/auth lifecycle **and the user explicitly authorizes it**, agents MUST NOT uninstall/reinstall Quick Aside, run `pm clear`, clear app storage, regenerate/delete/rotate Android Keystore identity, create/revoke/reset/rotate pairing, generate replacement pairing codes, or otherwise mutate QA1 auth state.
+- Routine connected/instrumentation verification MUST target an emulator explicitly (for example with `ANDROID_SERIAL`). Never rely on ambiguous ADB device selection when more than one device/emulator is connected. Do not run connected/instrumentation tests on QA1 by default.
+- Full JVM suites, full connected/instrumentation suites, repository-wide lint, broad unrelated regressions, privacy rescans, and other generic “run everything” gates MUST NOT be run by default. They require a repository/CI mandate, an actual cross-cutting blast radius, a concrete failure/reviewer finding, or the user's explicit request.
+- Required automated verification is limited to tests for changed/new behavior, directly affected regressions when justified, and build/static/schema checks applicable to the changed surface.
+
 ## UI/UX hard rule
 
 Any change that creates or materially alters UI/UX MUST, before implementation:
@@ -146,6 +158,6 @@ Treat deterministic tools and direct runtime evidence as stronger than model sel
 - Use commit SHA/diff and existing provenance to establish identity. Create a special source manifest only when it materially improves a high-risk review; never create one by default.
 - Give each acceptance property one owner gate. Real-environment checks prove only the device/network/service behavior that deterministic checks cannot prove; they do not repeat Room/JVM/Compose invariants.
 - User-operated QA is exceptional. Request it only when a newly changed material property genuinely needs human or unavailable external interaction and no reasonable automated substitute exists. Before asking, state the changed property, why automation is insufficient, and the single minimal human action.
-- QA1 pairing on the physical Android phone is durable environment state. Never revoke/reset/delete it as test, evidence, acceptance, or Change cleanup. Routine connected verification uses an emulator.
+- QA1 pairing, installed-app state, Android Keystore identity, and app data on the physical Android phone are durable environment state. Never revoke/reset/delete/recreate pairing, uninstall/reinstall the app, run `pm clear`, clear app storage, rotate/regenerate identity, or use QA1 for routine connected tests. Alter those states only when the active Change explicitly tests that lifecycle and the user explicitly authorizes it.
 - Once implementation and required Change-specific automated verification pass, the Change is commit-ready. The user retains commit, push, merge, and release authority unless explicitly delegated.
 - Independent review evaluates the committed diff, relevant tests, durable contracts, and the implementation report. Review may request new execution only for a concrete uncovered risk or invalidated prior result.

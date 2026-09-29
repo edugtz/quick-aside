@@ -1,4 +1,4 @@
-# Quick Aside — Global Acceptance Criteria v0.3
+# Quick Aside — Global Acceptance Criteria v0.4
 
 These are product-wide gates. Active changes add narrower acceptance scenarios.
 
@@ -26,15 +26,17 @@ These are product-wide gates. Active changes add narrower acceptance scenarios.
 
 ## List lifecycle
 
-- Mandado remains session-based with independently retrievable historical sessions; Compras remains continuous.
-- A valid high-confidence Capture targeting Mandado does not require the user to manually start a Mandado session first.
-- With no active Mandado, applying the Capture creates exactly one active session and its captured Mandado items atomically; failure/cancellation cannot leave a partial session/item result.
-- With an active Mandado whose last material activity is no more than 7 elapsed days old, Capture reuses that session.
-- With an active Mandado whose last material activity is more than 7 elapsed days old, Quick Aside performs no Mandado mutation until it obtains the focused `Continuar` / `Nuevo` lifecycle choice.
-- `Continuar` reuses the existing Mandado. `Nuevo` ends the old session, creates the new active session, and applies the pending captured items as one atomic local operation.
-- Canceling the stale-session question leaves the original Capture durable and leaves Mandado sessions/items unchanged.
-- The 7-day stale threshold never silently expires, ends, deletes, or prunes durable Mandado data. Passive reads/navigation do not count as material activity.
-- Automated Mandado mutations continue to provide targeted reversible feedback without deleting or altering unrelated list data.
+- Mandado remains session-based with independently retrievable historical sessions; Compras remains continuous and is unaffected by Mandado rollover.
+- Mandado's formal weekly period starts Sunday 00:00 local time and reaches its fixed rollover/cutoff at Saturday 14:00 local time.
+- Before Saturday 14:00 (for example Saturday 13:59:59), the current period's Mandado remains eligible and is reused.
+- At Saturday 14:00 exactly, the ending-period Mandado becomes ineligible for new items, is ended at that boundary exactly once, and remains durably retrievable in history with its items.
+- Immediately after Saturday 14:00, Mandado assignment belongs to the next weekly period. There is no inactive window. A capture at Saturday 14:00 or later may materialize/use the next-period Mandado; Sunday 00:00 must not cause a second rollover or create another session.
+- A valid high-confidence Capture targeting an eligible Mandado period does not require manual `Iniciar mandado`. If that period has no materialized session, applying the Capture creates exactly one session and its Mandado items atomically; failure/cancellation cannot leave a partial or duplicate session/item result.
+- If the app was not running when Saturday 14:00 passed, the next relevant Mandado access/mutation reconciles the boundary idempotently and yields the same lifecycle result as if the app had been running at the cutoff. Correctness does not depend on a background timer firing.
+- Passive navigation/history viewing must not create an empty next-period Mandado solely because it was opened, although an already-crossed boundary may be reconciled so the old session is represented as historical.
+- Manual `Terminar mandado` before the weekly cutoff ends the current Mandado and makes it historical. For the remainder of that period, Fast Capture must not auto-create/reopen another Mandado. Automatic eligibility resumes only at the next Saturday 14:00 rollover.
+- The superseded 7-elapsed-day inactivity/stale/`Continuar`-`Nuevo` policy is not an acceptance path. Age/inactivity alone never selects or revives a Mandado session.
+- Calendar rollover, manual Finish, automated mutation, and Undo must not delete or alter unrelated historical Mandado data. Automated Mandado mutations continue to provide targeted reversible feedback where applicable.
 
 ## Google Tasks
 
@@ -117,6 +119,14 @@ Default verification is the minimum sufficient delta:
 
 Do **not** automatically require full JVM suites, full connected suites, unrelated regressions, repository-wide lint, broad privacy rescans, or physical-device acceptance. HIGH-ASSURANCE strengthens verification of the affected risk, provenance, failure-path coverage, and independent review; it does not mean maximizing test count or human involvement.
 
+Hard scope/environment rules:
+
+- Verification and implementation are limited to the current Change. Do not broaden work into unrelated refactors, future roadmap scope, device/auth lifecycle work, or opportunistic cleanup.
+- Do not run full JVM suites, full connected/instrumentation suites, repository-wide lint, broad unrelated regressions, or equivalent “run everything” gates unless repository/CI policy, actual cross-cutting blast radius, a concrete failure/reviewer finding, or the user explicitly requires them.
+- Do not clean/reset developer or device state merely to get a fresh test run. `git clean`, Gradle `clean`, app-data/Room clearing, credential/identity reset, emulator/device wiping, build/cache deletion, and equivalent cleanup require a Change-specific need or concrete failure/reviewer justification. Test-owned disposable fixtures are allowed.
+- QA1 physical-device state is durable. Unless the active Change explicitly tests install/auth lifecycle and the user explicitly authorizes it, do not uninstall/reinstall Quick Aside on QA1, run `pm clear`, clear app storage, alter Android Keystore identity, create/revoke/reset/rotate pairing, generate replacement pairing codes, or run routine connected/instrumentation tests on QA1.
+- Routine connected verification targets an emulator explicitly; when multiple ADB targets exist, select the intended emulator/device explicitly rather than relying on default ADB selection.
+
 A model statement that something works is not evidence. The implementation agent must report exact automated verification commands and results.
 
 ### Verification ownership and reuse
@@ -150,7 +160,7 @@ User-operated QA is exceptional. Request it only when the Change modifies a mate
 
 Voice support, Android use, networking, or physical-device availability alone do not make human QA mandatory. Reuse historical acceptance for unchanged subsystems.
 
-QA1 pairing on the physical Android phone is durable environment state. Never revoke, reset, or delete it during routine testing, evidence cleanup, acceptance cleanup, or Change closeout. Alter it only when the active work explicitly tests pairing/revocation/key rotation or another auth-lifecycle behavior.
+QA1 pairing, installed-app state, app data, and Android Keystore identity on the physical Android phone are durable environment state. Never revoke/reset/delete/recreate pairing, uninstall/reinstall the app, run `pm clear`, clear app storage, or rotate/regenerate identity during routine testing, evidence cleanup, acceptance cleanup, or Change closeout. Alter those states only when the active work explicitly tests that lifecycle and the user explicitly authorizes it.
 
 ### Documentation and evidence
 
