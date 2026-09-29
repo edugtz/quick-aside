@@ -29,6 +29,7 @@ import com.edu.quickaside.application.capture.UndoCapturePlanListExecutionResult
 import com.edu.quickaside.application.lists.ListClock
 import com.edu.quickaside.application.lists.ListItemIdProvider
 import com.edu.quickaside.application.lists.ListSessionIdProvider
+import com.edu.quickaside.data.local.ListItemEntity
 import com.edu.quickaside.data.local.ListSessionEntity
 import com.edu.quickaside.data.local.QuickAsideDatabase
 import com.edu.quickaside.data.local.RoomCapturePlanListExecutor
@@ -264,7 +265,12 @@ class CaptureListAutoExecutionUiTest {
             database = database,
             itemIdProvider = QueueItemIdProvider(listOf("visible-mandado-item")),
             actionLedgerIdProvider = QueueEntryIdProvider(listOf("visible-mandado-ledger")),
-            clock = QueueClock(listOf(Instant.parse("2026-09-19T21:10:00Z"))),
+            clock = QueueClock(
+                listOf(
+                    Instant.parse("2026-09-19T21:10:00Z"),
+                    Instant.parse("2026-09-19T21:10:30Z"),
+                ),
+            ),
             sessionIdProvider = QueueSessionIdProvider(listOf("visible-mandado-session")),
         )
         val factory = FakeSpeechTranscriberFactory()
@@ -278,6 +284,18 @@ class CaptureListAutoExecutionUiTest {
         composeRule.onNodeWithContentDescription("Abrir Mandado").performClick()
         waitForText("No hay un mandado activo.")
         composeRule.onNodeWithContentDescription("Iniciar mandado").assertIsDisplayed()
+        runBlocking {
+            database.listItemDao().insert(
+                ListItemEntity(
+                    id = "unrelated-durable-item",
+                    listDefinitionId = BuiltInListDefinitions.COMPRAS.id.value,
+                    listSessionId = null,
+                    text = "producto ajeno",
+                    isCompleted = false,
+                    createdAtEpochMillis = 1_000,
+                ),
+            )
+        }
 
         composeRule.onNodeWithContentDescription("Capturar").performClick()
         waitForText("Listo para escuchar…")
@@ -285,12 +303,38 @@ class CaptureListAutoExecutionUiTest {
 
         waitForText("Producto agregado")
         waitForText("jabón visible")
-        val (session, items) = runBlocking {
-            database.listSessionDao().getActiveByDefinitionId("mandado") to
-                database.listItemDao().getBySessionId("visible-mandado-session")
+        runBlocking {
+            assertEquals(
+                "visible-mandado-session",
+                database.listSessionDao().getActiveByDefinitionId("mandado")?.id,
+            )
+            assertEquals(
+                listOf("visible-mandado-session"),
+                database.listSessionDao().getByDefinitionId("mandado").map { it.id },
+            )
+            assertEquals(
+                "visible-mandado-session",
+                database.listItemDao().getById("visible-mandado-item")?.listSessionId,
+            )
+            assertEquals(
+                listOf("visible-mandado-item"),
+                database.listItemDao().getBySessionId("visible-mandado-session").map { it.id },
+            )
         }
-        assertEquals("visible-mandado-session", session?.id)
-        assertEquals(listOf("visible-mandado-item"), items.map { it.id })
+        composeRule.onNodeWithText("Deshacer").assertIsDisplayed()
+
+        composeRule.onNodeWithText("Deshacer").performClick()
+        waitForText("Cambio deshecho")
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule.onAllNodesWithText("jabón visible").fetchSemanticsNodes().isEmpty()
+        }
+        runBlocking {
+            assertNull(database.listItemDao().getById("visible-mandado-item"))
+            assertNull(database.listSessionDao().getById("visible-mandado-session"))
+            assertTrue(database.listSessionDao().getByDefinitionId("mandado").isEmpty())
+            assertNotNull(database.listItemDao().getById("unrelated-durable-item"))
+            assertNotNull(database.captureDao().getById("ui-capture"))
+        }
     }
 
     @Test
