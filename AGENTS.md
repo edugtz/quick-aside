@@ -33,7 +33,7 @@ Use `software-project-orchestrator` proportional governance:
 - STANDARD: normal features, bugs, integrations, UI flows, persistence, or multi-file changes.
 - HIGH-ASSURANCE: auth/permissions, data-loss risk, migrations, destructive archive/prune, sync correctness/idempotency, live VPS/network/runtime changes, release/cutover, or platform behavior requiring real-device evidence.
 
-The user retains product, commit, push, merge, and release authority unless explicitly delegated.
+The user retains product, merge, and release authority by default. Successful builders may receive delegated commit/push authority under the successful-publication workflow below; the user retains merge, protected-branch, release, and intervention authority.
 
 
 ## Repository/device safety and Change-scope hard rule
@@ -46,7 +46,7 @@ These are hard constraints, not cleanup preferences:
 - Connected/instrumentation verification MUST always select one exact target explicitly, preferably with `ANDROID_SERIAL`; an emulator is the default. Before any connected run, inspect `adb devices -l` and identify the intended target. When QA1 is explicitly authorized, use the exact connected Oppo serial and only focused Change-specific filters. Do not rely on ambiguous ADB selection or `-Pandroid.injected.device.serial` as the target-selection mechanism.
 - On QA1, unless the active Change explicitly tests that lifecycle **and a separate mutation authorization is provided**, agents MUST NOT uninstall/reinstall Quick Aside, run `pm clear`, clear app storage, wipe/reset the device, regenerate/delete/rotate Android Keystore identity, create/revoke/reset/delete/rotate pairing, generate replacement pairing codes, or otherwise mutate durable auth/device/install state. If QA1 has an auth, pairing, or install-state problem, STOP AND REPORT; do not repair it. User-operated/manual QA is separate and is not implied by automated QA1 authorization.
 - Full JVM suites, full connected/instrumentation suites, repository-wide lint, broad unrelated regressions, privacy rescans, and other generic “run everything” gates MUST NOT be run by default. They require a repository/CI mandate, an actual cross-cutting blast radius, a concrete failure/reviewer finding, or the user's explicit request.
-- Required automated verification is limited to tests for changed/new behavior, directly affected regressions when justified, and build/static/schema checks applicable to the changed surface.
+- THE ACTIVE CHANGE OWNS ITS VERIFICATION. Required automated verification is limited to focused tests for behavior introduced or changed by the active Change, focused directly affected regressions only when there is a concrete Change-specific reason, and applicable build/static/schema checks. Do not execute a historical test class or suite merely because an earlier Change created it, the current Change touches the same method, it offers generic regression confidence, or it was prior evidence; touching the same production method alone is insufficient. Reuse prior-Change evidence for unchanged behavior. A prior-Change test/class may run only for a concrete observed failure, reviewer finding, genuine cross-cutting blast radius, repository/CI policy, or explicit user request.
 
 ## UI/UX hard rule
 
@@ -203,23 +203,40 @@ Canonical successful-builder format:
 
 9. **Git diff/status evidence**
    `git diff --check`, changed-file/diff summary, unexpected-file status, and
-   confirmation that no commit/push was performed unless explicitly authorized.
+   branch, published commit SHA/message, push result, confirmation that only the
+   declared feature branch changed, and confirmation that main/dev were untouched.
 
 10. **Remaining gates**
     Only gates that genuinely remain after implementation verification.
 
 11. **Exact next gate**
-    The single next action, normally user-authorized commit/push followed by
-    independent review of the published committed diff.
+    The single next action: independent review of the published committed diff.
 
 **IMPLEMENTATION COMPLETE — REVIEW PENDING**
 
 STOP.
 ```
 
+### Successful builder publication and protected branches
+
+When implementation is complete, all required active-Change gates pass, only expected Change-scoped files are present, and the current branch exactly matches the declared feature branch, the builder MUST publish the successful Change before the final report.
+
+Before publishing:
+
+- inspect `git status --short` and `git branch --show-current`;
+- require the exact declared feature branch, not `main`, `dev`, detached, empty, or mismatched state;
+- verify that no unexpected files are present;
+- stage only expected files;
+- inspect `git diff --cached --stat`, `git diff --cached --name-only`, and `git diff --cached --check`;
+- create an appropriate commit;
+- push only the same feature branch (`git push origin "$branch"` if upstream exists, otherwise `git push -u origin "$branch"`).
+
+Never push `main` or `dev`; never use force/force-with-lease or protected-branch refspecs. If work is partial or blocked, a required gate is missing or failing, unexpected files exist, the branch mismatches, or state is uncertain, do not stage, commit, or push; stop and report and require user intervention. The user retains merge, release, protected-branch, and intervention authority.
+
 ### Minimum sufficient verification
 
-- Test only the Change delta: changed/new behavior, directly affected regressions when justified, and build/static/schema checks applicable to the changed surface.
+- The active Change owns its verification: test changed/new behavior, directly affected regressions only for a concrete Change-specific reason, and applicable build/static/schema checks. Historical test classes or suites are not automatic gates merely because an earlier Change created them, the current Change touches the same method, or they offer generic confidence; touching the same production method alone is insufficient.
+- A prior-Change test/class may run only for a concrete observed failure, reviewer finding, genuine cross-cutting blast radius, repository/CI policy, or explicit user request. Do not reopen accepted Changes merely to re-prove unchanged behavior.
 - Full JVM/connected suites, broad unrelated regressions, repository-wide lint, and real-device QA are not automatic gates. Require a repository/CI rule, justified cross-cutting blast radius, a concrete failure/reviewer finding, or explicit user request.
 - The implementation agent runs the required automated checks and reports exact commands/results.
 - Reuse valid PASS results while the relevant source/config/environment remains unchanged. A new session/agent, HIGH-ASSURANCE, commit/push of identical source, documentation edits, review stage, or desire for fresher timestamps is not an invalidator.
@@ -227,5 +244,5 @@ STOP.
 - Give each acceptance property one owner gate. Real-environment checks prove only the device/network/service behavior that deterministic checks cannot prove; they do not repeat Room/JVM/Compose invariants.
 - User-operated QA is exceptional. Request it only when a newly changed material property genuinely needs human or unavailable external interaction and no reasonable automated substitute exists. Before asking, state the changed property, why automation is insufficient, and the single minimal human action.
 - QA1 pairing, installed-app state, Android Keystore identity, and app data on the physical Android phone are durable environment state. QA1 connected/instrumentation tests require explicit authorization for the active Change, an exact target, and focused filters; emulator verification remains the default. That authorization never permits destructive mutation. Unless the active Change explicitly tests the lifecycle and separate mutation authorization is provided, never revoke/reset/delete/recreate/rotate pairing, uninstall/reinstall the app, run `pm clear`, clear app storage, wipe/reset the device, or alter Keystore/auth/install state. Stop and report any QA1 auth, pairing, or install-state problem. Manual QA requires separate authorization.
-- Once implementation and required Change-specific automated verification pass, the Change is commit-ready. The user retains commit, push, merge, and release authority unless explicitly delegated.
-- Independent review evaluates the committed diff, relevant tests, durable contracts, and the implementation report. Review may request new execution only for a concrete uncovered risk or invalidated prior result.
+- Once implementation and required active-Change verification pass, the builder must publish successful work under Successful builder publication and protected branches above. Independent review evaluates the published committed diff, relevant tests, durable contracts, and the implementation report. Review may request new execution only for a concrete uncovered risk or invalidated prior result.
+- For partial or blocked work, do not use the successful completion footer and do not commit or push; stop and require user intervention.

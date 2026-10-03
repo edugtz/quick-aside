@@ -131,6 +131,10 @@ A model statement that something works is not evidence. The implementation agent
 
 ### Verification ownership and reuse
 
+THE ACTIVE CHANGE OWNS ITS VERIFICATION. Required evidence is limited to focused automated tests for behavior introduced or changed by the active Change, focused directly affected regressions only for a concrete Change-specific reason, and applicable build/static/schema checks. Do not execute a historical test class or suite merely because an earlier Change created it, the current Change touches the same method, it offers generic regression confidence, or it was prior evidence; touching the same production method alone is insufficient.
+
+A prior-Change test/class may run only for a concrete observed failure, reviewer finding, genuine cross-cutting blast radius, repository/CI policy, or explicit user request. Reuse prior-Change evidence for unchanged behavior and do not reopen accepted Changes merely to re-prove it.
+
 For every nontrivial Change, define in orchestration context which gate owns each acceptance property. Use the strongest inexpensive gate that actually proves the property; do not make multiple gates re-prove the same invariant unless they cover a distinct failure mode.
 
 A passed result remains valid while the facts it depends on remain unchanged. Rerun only when there is a concrete invalidator, such as:
@@ -168,4 +172,4 @@ Normal Changes do not create `docs/changes/<id>/` packages or evidence trees by 
 
 Persist repository documentation only when the Change alters a durable project contract. Keep a separate evidence artifact only when it has lasting review value that cannot reasonably be represented by source/tests, CI, or the implementation report.
 
-Once the implementation and required Change-specific automated verification are complete, the Change is commit-ready. Optional manual QA, documentation polish, and independent review do not delay that provenance checkpoint. The user retains commit/push/merge/release authority.
+Once the implementation and required active-Change verification are complete, successful work follows the builder publication workflow in `AGENTS.md` and `docs/AI_WORKFLOW.md`. Optional manual QA, documentation polish, and independent review do not invalidate that provenance checkpoint. The user retains merge/release/protected-branch/intervention authority; delegated commit/push authority is limited to that workflow.

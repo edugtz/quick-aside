@@ -52,7 +52,7 @@ reversible local execution as the accepted baseline.
 
 Active selected Change:
 
-- **CHG-031 — Mandado calendar-based weekly rollover** — ACTIVE / implementation not started. It replaces the interim 7-elapsed-day stale-session policy with the accepted calendar workflow: Sunday 00:00 formal period start, Saturday 14:00 rollover, immediate next-period eligibility, no Sunday double-reset, manual Finish blocking re-bootstrap until the next rollover, and durable historical-session visibility.
+- **CHG-031 — Mandado calendar-based weekly rollover** — COMPLETE / independent review `PASS_WITH_NOTES`. Published functional commit: `4608d71708464ad83330f07c4bda953153ff5c0d`. It replaced the interim 7-elapsed-day stale-session policy with the accepted calendar workflow: Sunday 00:00 formal period start, Saturday 14:00 rollover, immediate next-period eligibility, no Sunday double-reset, manual Finish blocking re-bootstrap until the next rollover, and durable historical-session visibility.
 
 Still candidate/pending:
 
@@ -153,13 +153,17 @@ Normal-use hardening remains evidence-triggered and is not automatically schedul
 |---|---|
 | M0 | COMPLETE |
 | M1 | SUBSTANTIALLY IMPLEMENTED / NOT BLOCKED |
-| M2 | IN PROGRESS; CHG-030 + Mandado fast-capture corrective COMPLETE; CHG-031 calendar rollover ACTIVE; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
+| M2 | IN PROGRESS; CHG-030 + Mandado fast-capture corrective COMPLETE; CHG-031 calendar rollover COMPLETE; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
 | M3 | NOT globally blocked; Google Tasks/Calendar sync and Event execution pending |
 | M4 | NOT globally blocked; reminder-domain/execution/scheduling pending |
 | M5 | NOT blocked |
 | M6 | Final completion blocked by remaining sync/event/reminder capabilities |
 
-CHG-031 is selected and ACTIVE. Do not reserve or implement CHG-032 until CHG-031 reaches its engineering closeout and the next reviewable Change is selected from the then-current roadmap/repository state.
+CHG-031 is COMPLETE with independent review PASS_WITH_NOTES and engineering
+closeout complete. Active Change selection is now NONE. Select the next
+reviewable Change from the then-current roadmap/repository state; do not
+reserve or declare CHG-032 ACTIVE merely because it is the next numeric
+identifier.
 
 ## Post-MVP — evidence-triggered candidates
 

@@ -18,7 +18,7 @@ Responsibilities:
 - review findings;
 - final `PASS` / `PASS_WITH_NOTES` / `BLOCKED` engineering verdict.
 
-The user owns product decisions and merge/release authority by default.
+The user owns product, merge, release, protected-branch, and intervention authority. Successful builders may publish feature-branch commits/pushes only under the successful-builder publication workflow below.
 
 ## 2. Implementation routing
 
@@ -36,7 +36,7 @@ Prefer deterministic tools (build/tests/lint/static analysis) over builder self-
 
 ### Verification routing
 
-Implementation agents verify the Change delta themselves and report exact commands/results. Verification scope is **only the current Change**: changed/new behavior, directly affected regressions when justified, and build/static/schema checks relevant to the changed surface.
+Implementation agents verify the Change delta themselves and report exact commands/results. THE ACTIVE CHANGE OWNS ITS VERIFICATION: scope is **only the current Change**—changed/new behavior, directly affected regressions only when there is a concrete Change-specific reason, and build/static/schema checks relevant to the changed surface. Do not execute a historical test class or suite merely because an earlier Change created it, the current Change touches the same method, it offers generic regression confidence, or it was prior evidence; touching the same production method alone is insufficient. Reuse prior-Change evidence for unchanged behavior. A prior-Change test/class may run only for a concrete observed failure, reviewer finding, genuine cross-cutting blast radius, repository/CI policy, or explicit user request.
 
 Hard execution rules:
 
@@ -52,7 +52,7 @@ User-operated QA is exceptional. Ask only when a newly changed material property
 
 Normal Changes do not persist `docs/changes/<id>/` packages or evidence trees. Change-local SPEC/PLAN/TASKS/QA and implementation reports are ephemeral orchestration records unless the user explicitly requests persistence or a durable operational need justifies it.
 
-After required Change-specific automated verification passes, the implementation is commit-ready. The user retains commit, push, merge, and release authority; ChatGPT/orchestrator remains responsible for independent engineering review unless the user chooses another reviewer.
+After required active-Change verification passes, a successful builder must publish under the successful-builder publication workflow below. Independent review evaluates the published committed diff unless the user chooses another reviewer.
 
 
 ### Canonical builder implementation report
@@ -64,8 +64,17 @@ Builder reporting is a durable workflow contract, not something each Change prom
 - The report remains concise, numbered, evidence-first, and Change-specific.
 - Domain-specific evidence headings may be used inside the canonical numbered structure.
 - Do not replace the canonical report with an acceptance matrix, evidence tree, or generic test summary unless the user explicitly changes the reporting contract.
+- A successful builder report describes the published implementation; its Git evidence includes the exact feature branch, published commit SHA and message, push result, confirmation that only the feature branch changed, and confirmation that `main`/`dev` were untouched.
 - A successful builder report ends with `**IMPLEMENTATION COMPLETE — REVIEW PENDING**` and `STOP.` exactly as defined in `AGENTS.md`.
-- A blocked implementation uses the failure/escalation handoff instead and MUST NOT claim implementation complete.
+- A blocked or partial implementation uses the failure/escalation handoff instead, has no successful footer, and has no commit or push; user intervention is required.
+
+### Successful builder publication
+
+When implementation is complete, all required active-Change gates pass, only expected Change-scoped files are present, and the current branch exactly matches the declared feature branch, the builder has delegated authority to publish the successful Change before the final report.
+
+The builder must inspect `git status --short` and `git branch --show-current`; require the exact feature branch and reject `main`, `dev`, detached, empty, mismatched, partial, or uncertain state; verify no unexpected files; stage only expected files; inspect `git diff --cached --stat`, `git diff --cached --name-only`, and `git diff --cached --check`; create an appropriate commit; and push only the same feature branch with `git push origin "$branch"` or `git push -u origin "$branch"` when no upstream exists.
+
+Never push `main` or `dev`, and never use force/force-with-lease or protected-branch refspecs. If a required gate is missing or failing, work is blocked/partial, unexpected files exist, or branch/state is uncertain, do not stage, commit, or push; stop and report and require user intervention. The user retains merge, release, protected-branch, and intervention authority.
 
 ## 3. Runtime interpretation models
 
