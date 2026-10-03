@@ -55,6 +55,22 @@ internal suspend fun QuickAsideDatabase.reconcileMandadoSession(
 }
 
 /**
+ * Reconciles the Mandado calendar at [at] and reports whether [listSessionId]
+ * still identifies the active Mandado session afterward. A null or historical
+ * session can never accept an item mutation.
+ *
+ * The caller must already be inside a Room write transaction.
+ */
+internal suspend fun QuickAsideDatabase.mandadoSessionRemainsActive(
+    listSessionId: String?,
+    policy: MandadoCalendarPolicy,
+    at: Instant,
+): Boolean {
+    val reconciliation = reconcileMandadoSession(policy, at)
+    return listSessionId != null && reconciliation.activeSession?.id == listSessionId
+}
+
+/**
  * Manual Finish is represented by the latest ended session in the current
  * logical period. Calendar rollover makes that historical session stop
  * blocking bootstrap without requiring a schema flag.

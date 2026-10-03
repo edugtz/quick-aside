@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.edu.quickaside.application.capture.CapturePlanListExecutionRejectionReason
 import com.edu.quickaside.application.capture.CapturePlanListExecutionResult
 import com.edu.quickaside.application.lists.CreateListItemActionResult
+import com.edu.quickaside.application.lists.ItemCompletionResult
 import com.edu.quickaside.application.lists.ListClock
 import com.edu.quickaside.application.lists.ListIdProvider
 import com.edu.quickaside.application.lists.ListItemIdProvider
@@ -27,6 +28,7 @@ import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -99,7 +101,8 @@ class MandadoCalendarLifecycleDatabaseTest {
         val startedAt = local("2026-10-02T10:00:00")
         val finishedAt = local("2026-10-02T11:00:00")
         val afterFinish = local("2026-10-02T12:00:00")
-        val nextCutoff = local("2026-10-10T14:00:00")
+        val beforeNextCutoff = local("2026-10-03T13:59:59")
+        val nextCutoff = local("2026-10-03T14:00:00")
         val clock = MutableCalendarClock(startedAt, zone)
         val calendarPolicy = MandadoCalendarPolicy(clock = clock, zoneId = zone)
         val store = RoomListStore(
@@ -160,11 +163,25 @@ class MandadoCalendarLifecycleDatabaseTest {
         assertTrue(database.listItemDao().getBySessionId("manual-session").isEmpty())
         assertEquals(1, database.listSessionDao().getByDefinitionId("mandado").size)
 
+        clock.current = beforeNextCutoff
+        assertEquals(
+            SessionStartResult.PeriodClosed,
+            store.startSession(BuiltInListDefinitions.MANDADO.id),
+        )
+        assertEquals(1, database.listSessionDao().getByDefinitionId("mandado").size)
+
         clock.current = nextCutoff
         val next = store.startSession(BuiltInListDefinitions.MANDADO.id)
             as SessionStartResult.Created
         assertEquals(ListSessionId("next-period-session"), next.session.id)
         assertEquals(nextCutoff, next.session.startedAt)
+        assertEquals(2, database.listSessionDao().getByDefinitionId("mandado").size)
+
+        assertEquals(
+            SessionStartResult.Existing(next.session),
+            store.startSession(BuiltInListDefinitions.MANDADO.id),
+        )
+        assertEquals(2, database.listSessionDao().getByDefinitionId("mandado").size)
     }
 
     @Test
@@ -309,6 +326,65 @@ class MandadoCalendarLifecycleDatabaseTest {
                 ?.let(Instant::ofEpochMilli),
         )
         assertTrue(database.listItemDao().getBySessionId("old-session").isEmpty())
+    }
+
+    @Test
+    fun completionAndToggleRejectAfterCutoffWithoutTouchingHistoricalSession() = runBlocking {
+        val oldStartedAt = local("2026-09-27T09:00:00")
+        val cutoff = local("2026-10-03T14:00:00")
+        val afterCutoff = local("2026-10-04T00:00:00")
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "old-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = oldStartedAt.toEpochMilli(),
+                lastActivityAtEpochMillis = oldStartedAt.toEpochMilli(),
+            ),
+        )
+        database.listItemDao().insert(
+            ListItemEntity(
+                id = "old-item",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                listSessionId = "old-session",
+                text = "Leche",
+                isCompleted = false,
+                createdAtEpochMillis = oldStartedAt.toEpochMilli(),
+            ),
+        )
+        val clock = MutableCalendarClock(cutoff, zone)
+        val store = RoomListStore(
+            database = database,
+            clock = clock,
+            mandadoCalendarPolicy = MandadoCalendarPolicy(clock = clock, zoneId = zone),
+        )
+
+        assertEquals(
+            ItemCompletionResult.SessionNotActive,
+            store.setItemCompleted(ListItemId("old-item"), true),
+        )
+        assertEquals(
+            cutoff,
+            database.listSessionDao().getById("old-session")?.endedAtEpochMillis
+                ?.let(Instant::ofEpochMilli),
+        )
+
+        clock.current = afterCutoff
+        assertEquals(
+            ItemCompletionResult.SessionNotActive,
+            store.toggleItemCompleted(ListItemId("old-item")),
+        )
+
+        assertEquals(false, database.listItemDao().getById("old-item")?.isCompleted)
+        assertEquals(
+            oldStartedAt.toEpochMilli(),
+            database.listSessionDao().getById("old-session")?.lastActivityAtEpochMillis,
+        )
+        assertEquals(1, database.listSessionDao().getByDefinitionId("mandado").size)
+        val history = store.readRecentSessions(BuiltInListDefinitions.MANDADO.id)
+        assertEquals(listOf(ListSessionId("old-session")), history.map { it.session.id })
+        assertEquals(cutoff, history.single().session.endedAt)
+        assertEquals(listOf(ListItemId("old-item")), history.single().items.map { it.id })
+        assertFalse(history.single().items.single().isCompleted)
     }
 
     private suspend fun executeMandado(

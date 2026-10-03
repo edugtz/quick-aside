@@ -300,12 +300,23 @@ class RoomListStore(
                 // activity is fabricated.
                 return@withWriteTransaction ItemCompletionResult.Updated(existing.toDomain())
             }
+            val activityAt = clock.now()
+            if (
+                existing.listDefinitionId == BuiltInListDefinitions.MANDADO.id.value &&
+                !database.mandadoSessionRemainsActive(
+                    listSessionId = existing.listSessionId,
+                    policy = mandadoCalendarPolicy,
+                    at = activityAt,
+                )
+            ) {
+                return@withWriteTransaction ItemCompletionResult.SessionNotActive
+            }
             check(database.listItemDao().setCompleted(listItemId.value, isCompleted) == 1) {
                 "Expected exactly one list item completion update"
             }
             database.touchSessionActivity(
                 listSessionId = existing.listSessionId?.let(::ListSessionId),
-                activityAt = clock.now(),
+                activityAt = activityAt,
             )
             val item = database.listItemDao().getById(listItemId.value)
                 ?: error("Completed list item disappeared after update")
@@ -321,6 +332,17 @@ class RoomListStore(
         database.withWriteTransaction {
             val existing = database.listItemDao().getById(listItemId.value)
                 ?: return@withWriteTransaction ItemCompletionResult.Missing
+            val activityAt = clock.now()
+            if (
+                existing.listDefinitionId == BuiltInListDefinitions.MANDADO.id.value &&
+                !database.mandadoSessionRemainsActive(
+                    listSessionId = existing.listSessionId,
+                    policy = mandadoCalendarPolicy,
+                    at = activityAt,
+                )
+            ) {
+                return@withWriteTransaction ItemCompletionResult.SessionNotActive
+            }
             val updated = database.listItemDao().setCompleted(
                 id = listItemId.value,
                 isCompleted = !existing.isCompleted,
@@ -328,7 +350,7 @@ class RoomListStore(
             check(updated == 1) { "Expected exactly one list item completion update" }
             database.touchSessionActivity(
                 listSessionId = existing.listSessionId?.let(::ListSessionId),
-                activityAt = clock.now(),
+                activityAt = activityAt,
             )
             val item = database.listItemDao().getById(listItemId.value)
                 ?: error("Toggled list item disappeared after update")

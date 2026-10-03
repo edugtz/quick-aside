@@ -199,6 +199,28 @@ class MandadoUiTest {
     }
 
     @Test
+    fun addRejectedByLifecycleInvalidSessionReloadsAndClearsStaleMandado() {
+        store.activeSession = session("stale-session")
+        actions.createResult = CreateListItemActionResult.SessionNotActive
+        actions.onCreate = { store.activeSession = null }
+        setContent(store)
+        openMandado()
+        waitForText("Aún no hay productos.")
+
+        composeRule.onNode(hasSetTextAction()).performTextInput("Leche")
+        composeRule.onNodeWithContentDescription("Agregar producto").performClick()
+
+        waitForText("Este mandado ya no está activo.")
+        waitForText("No hay un mandado activo.")
+        composeRule.onNodeWithText("Aún no hay productos.").assertDoesNotExist()
+        composeRule.onNodeWithContentDescription("Agregar producto").assertDoesNotExist()
+        composeRule.onNodeWithText("Producto agregado").assertDoesNotExist()
+        composeRule.onNodeWithText("Leche").assertDoesNotExist()
+        assertTrue(store.startCalls.isEmpty())
+        assertEquals(0, store.createdSessionCount)
+    }
+
+    @Test
     fun undoFailureReloadsVisibleStateAndShowsConciseError() {
         store.activeSession = session("active-session")
         actions.undoResult = UndoListItemCreateResult.Failed(IllegalStateException("unavailable"))

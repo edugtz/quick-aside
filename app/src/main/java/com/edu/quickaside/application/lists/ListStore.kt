@@ -122,6 +122,9 @@ sealed interface AddListItemResult {
 sealed interface ItemCompletionResult {
     data class Updated(val item: ListItem) : ItemCompletionResult
 
+    /** The item's Mandado session is no longer the active current-period session. */
+    data object SessionNotActive : ItemCompletionResult
+
     data object Missing : ItemCompletionResult
 
     data class Failed(val cause: Exception) : ItemCompletionResult

@@ -262,11 +262,16 @@ fun MandadoScreen(
                             showCreateReceipt(result)
                         }
 
-                        CreateListItemActionResult.BlankText,
-                        CreateListItemActionResult.MissingDefinition,
                         CreateListItemActionResult.NoActiveSession,
                         CreateListItemActionResult.MissingSession,
                         CreateListItemActionResult.SessionNotActive,
+                        -> {
+                            loadState()
+                            showFeedback("Este mandado ya no está activo.")
+                        }
+
+                        CreateListItemActionResult.BlankText,
+                        CreateListItemActionResult.MissingDefinition,
                         CreateListItemActionResult.SessionDefinitionMismatch,
                         CreateListItemActionResult.SessionNotAllowed,
                         is CreateListItemActionResult.Failed,
@@ -304,6 +309,7 @@ fun MandadoScreen(
                         }
 
                         ItemCompletionResult.Missing,
+                        ItemCompletionResult.SessionNotActive,
                         is ItemCompletionResult.Failed,
                         -> showFeedback("No se pudo actualizar el producto.")
                     }

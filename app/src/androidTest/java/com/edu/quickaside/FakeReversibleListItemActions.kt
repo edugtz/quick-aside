@@ -26,6 +26,7 @@ class FakeReversibleListItemActions : ReversibleListItemActions {
     val undoCalls = mutableListOf<UndoCall>()
     var createResult: CreateListItemActionResult? = null
     var undoResult: UndoListItemCreateResult? = null
+    var onCreate: (() -> Unit)? = null
     var onUndo: ((ListItemId) -> Unit)? = null
 
     override suspend fun create(
@@ -34,6 +35,7 @@ class FakeReversibleListItemActions : ReversibleListItemActions {
         listSessionId: ListSessionId?,
     ): CreateListItemActionResult {
         createCalls += CreateCall(listDefinitionId, text, listSessionId)
+        onCreate?.invoke()
         createResult?.let { return it }
         val itemId = ListItemId("created-item-" + createCalls.size)
         return CreateListItemActionResult.Saved(

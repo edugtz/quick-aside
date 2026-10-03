@@ -233,6 +233,7 @@ fun ComprasScreen(
                         }
 
                         ItemCompletionResult.Missing,
+                        ItemCompletionResult.SessionNotActive,
                         is ItemCompletionResult.Failed,
                         -> showFeedback("No se pudo actualizar el producto.")
                     }
