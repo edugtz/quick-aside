@@ -208,10 +208,17 @@ fun MandadoScreen(
 
                         SessionStartResult.MissingDefinition,
                         SessionStartResult.NotSessionBased,
+                        SessionStartResult.PeriodClosed,
                         is SessionStartResult.Failed,
                         -> {
                             state = MandadoState.NoActiveSession
-                            showFeedback("No se pudo iniciar el mandado.")
+                            showFeedback(
+                                if (result == SessionStartResult.PeriodClosed) {
+                                    "Este mandado ya terminó para este periodo."
+                                } else {
+                                    "No se pudo iniciar el mandado."
+                                },
+                            )
                         }
                     }
                 }

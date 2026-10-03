@@ -153,23 +153,34 @@ class CaptureSubmissionListExecutionDatabaseTest {
     }
 
     @Test
-    fun staleMandadoPersistsCaptureDefersEveryMutationAndReturnsChoice() = runBlocking {
-        val captureId = CaptureId("pipeline-mandado-stale")
-        val occurredAt = Instant.parse("2026-09-19T20:06:00Z")
-        val staleActivity = occurredAt.minus(java.time.Duration.ofDays(9))
+    fun mandadoCaptureAfterSkippedCutoffReconcilesAndExecutesNextPeriod() = runBlocking {
+        val captureId = CaptureId("pipeline-mandado-rollover")
+        val zone = java.time.ZoneId.of("America/Mexico_City")
+        val occurredAt = java.time.LocalDateTime
+            .parse("2026-10-03T14:00:00")
+            .atZone(zone)
+            .toInstant()
+        val previousPeriodStartedAt = java.time.LocalDateTime
+            .parse("2026-09-27T10:00:00")
+            .atZone(zone)
+            .toInstant()
         database.listSessionDao().insert(
             ListSessionEntity(
-                id = "pipeline-stale-session",
+                id = "pipeline-old-session",
                 listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
-                startedAtEpochMillis = staleActivity.toEpochMilli(),
-                lastActivityAtEpochMillis = staleActivity.toEpochMilli(),
+                startedAtEpochMillis = previousPeriodStartedAt.toEpochMilli(),
+                lastActivityAtEpochMillis = previousPeriodStartedAt.toEpochMilli(),
             ),
         )
         val executor = executor(
-            itemIds = listOf("pipeline-stale-item"),
-            entryIds = listOf("pipeline-stale-ledger"),
+            itemIds = listOf("pipeline-next-item"),
+            entryIds = listOf("pipeline-next-ledger"),
             times = listOf(occurredAt),
-            sessionIds = listOf("pipeline-stale-new-session"),
+            sessionIds = listOf("pipeline-next-session"),
+            mandadoCalendarPolicy = com.edu.quickaside.domain.lists.MandadoCalendarPolicy(
+                clock = java.time.Clock.fixed(occurredAt, zone),
+                zoneId = zone,
+            ),
         )
         val submission = submission(
             captureId = captureId,
@@ -179,18 +190,24 @@ class CaptureSubmissionListExecutionDatabaseTest {
 
         val saved = submission.submit("Agrega aguacate al mandado") as
             CaptureSubmissionResult.Saved
-        val requirement = (saved.execution as CaptureExecutionOutcome.RequiresMandadoSessionChoice)
-            .requirement
+        val receipt = (saved.execution as CaptureExecutionOutcome.Executed.ListItems).receipt
 
-        assertEquals(ListSessionId("pipeline-stale-session"), requirement.expectedActiveSessionId)
-        assertEquals(staleActivity, requirement.observedLastActivityAt)
         assertNotNull(database.captureDao().getById(captureId.value))
-        assertNull(database.listItemDao().getById("pipeline-stale-item"))
-        assertTrue(database.listItemDao().getBySessionId("pipeline-stale-session").isEmpty())
-        assertTrue(database.actionLedgerEntryDao().getRecent(50).isEmpty())
+        assertEquals(ListSessionId("pipeline-next-session"), receipt.autoCreatedMandadoSessionId)
         assertEquals(
-            staleActivity.toEpochMilli(),
-            database.listSessionDao().getById("pipeline-stale-session")?.lastActivityAtEpochMillis,
+            occurredAt.toEpochMilli(),
+            database.listSessionDao().getById("pipeline-old-session")?.endedAtEpochMillis,
+        )
+        assertEquals(
+            "pipeline-next-session",
+            database.listItemDao().getById("pipeline-next-item")?.listSessionId,
+        )
+        assertEquals(
+            listOf("pipeline-old-session", "pipeline-next-session"),
+            database.listSessionDao()
+                .getByDefinitionId(BuiltInListDefinitions.MANDADO.id.value)
+                .sortedBy { it.startedAtEpochMillis }
+                .map { it.id },
         )
     }
 
@@ -253,12 +270,15 @@ class CaptureSubmissionListExecutionDatabaseTest {
         entryIds: List<String> = emptyList(),
         times: List<Instant> = emptyList(),
         sessionIds: List<String> = emptyList(),
+        mandadoCalendarPolicy: com.edu.quickaside.domain.lists.MandadoCalendarPolicy =
+            com.edu.quickaside.domain.lists.MandadoCalendarPolicy(),
     ) = RoomCapturePlanListExecutor(
         database = database,
         itemIdProvider = QueueItemIdProvider(itemIds),
         actionLedgerIdProvider = QueueEntryIdProvider(entryIds),
         clock = QueueClock(times),
         sessionIdProvider = QueueSessionIdProvider(sessionIds),
+        mandadoCalendarPolicy = mandadoCalendarPolicy,
     )
 
     private fun compras(text: String) = CapturePlanAction.AddListItem(

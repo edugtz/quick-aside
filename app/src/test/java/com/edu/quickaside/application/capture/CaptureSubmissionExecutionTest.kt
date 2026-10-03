@@ -173,39 +173,6 @@ class CaptureSubmissionExecutionTest {
     }
 
     @Test
-    fun staleMandadoExecutionMapsToFocusedChoiceOutcomeWithoutApplying() = runBlocking {
-        val requirement = CapturePlanListExecutionResult.RequiresMandadoSessionChoice(
-            expectedActiveSessionId = ListSessionId("stale-session"),
-            observedLastActivityAt = capturedAt.minusSeconds(60),
-            plan = plan(mandado("aguacate")),
-        )
-        val saved = submission(
-            interpreter = CaptureInterpreter {
-                CaptureInterpretationResult.Success(requirement.plan)
-            },
-            executor = RecordingExecutor(requirement),
-        ).submitVoice("Agrega aguacate") as CaptureSubmissionResult.Saved
-
-        assertEquals(captureId, saved.capture.id)
-        assertEquals(
-            CaptureExecutionOutcome.RequiresMandadoSessionChoice(requirement),
-            saved.execution,
-        )
-    }
-
-    @Test
-    fun sessionChangedResultIsRepresentableAsAnHonestNonAppliedListOutcome() {
-        val changed = CapturePlanListExecutionResult.MandadoSessionChanged(
-            expectedActiveSessionId = ListSessionId("obsolete-session"),
-        )
-
-        assertEquals(
-            CaptureExecutionOutcome.Rejected.ListItems(changed),
-            CaptureExecutionOutcome.Rejected.ListItems(changed),
-        )
-    }
-
-    @Test
     fun executorFailureKeepsCaptureSavedWithoutClaimingExecution() = runBlocking {
         val failure = CapturePlanListExecutionResult.Failed(IllegalStateException("write failed"))
         val saved = submission(
@@ -227,11 +194,6 @@ class CaptureSubmissionExecutionTest {
             override suspend fun execute(plan: CapturePlan): CapturePlanListExecutionResult {
                 throw cancellation
             }
-
-            override suspend fun resolveMandadoSessionChoice(
-                requirement: CapturePlanListExecutionResult.RequiresMandadoSessionChoice,
-                choice: MandadoSessionChoice,
-            ): CapturePlanListExecutionResult = error("Resolution is not used")
 
             override suspend fun undoExecution(
                 actionLedgerEntryId: ActionLedgerEntryId,
@@ -315,11 +277,6 @@ class CaptureSubmissionExecutionTest {
             onExecute()
             return result
         }
-
-        override suspend fun resolveMandadoSessionChoice(
-            requirement: CapturePlanListExecutionResult.RequiresMandadoSessionChoice,
-            choice: MandadoSessionChoice,
-        ): CapturePlanListExecutionResult = error("Resolution is not used")
 
         override suspend fun undoExecution(
             actionLedgerEntryId: ActionLedgerEntryId,

@@ -12,8 +12,10 @@ import com.edu.quickaside.application.lists.SessionStartResult
 import com.edu.quickaside.domain.common.ListItemId
 import com.edu.quickaside.domain.common.ListSessionId
 import com.edu.quickaside.domain.lists.BuiltInListDefinitions
+import com.edu.quickaside.domain.lists.MandadoCalendarPolicy
+import java.time.Clock
 import java.time.Instant
-import java.util.ArrayDeque
+import java.time.ZoneOffset
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -49,57 +51,59 @@ class MandadoHistoryRoomIntegrationTest {
     @Test
     fun completedSessionsRemainOrderedAttachedAndDurableAlongsideAnActiveSession() = runBlocking {
         database = QuickAsideDatabase.create(context, databaseName)
+        val clock = MutableHistoryClock(Instant.parse("2026-09-01T10:00:00Z"))
         val store = RoomListStore(
             database = database,
             idProvider = QueueListIdProvider(
                 sessionIds = listOf("session-a", "session-b", "session-c"),
                 itemIds = listOf("a-milk", "a-bread", "b-eggs", "c-coffee"),
             ),
-            clock = QueueListClock(
-                Instant.parse("2026-09-01T10:00:00Z"),
-                Instant.parse("2026-09-01T10:01:00Z"),
-                Instant.parse("2026-09-01T10:02:00Z"),
-                Instant.parse("2026-09-01T10:30:00Z"),
-                Instant.parse("2026-09-02T12:00:00Z"),
-                Instant.parse("2026-09-02T12:01:00Z"),
-                Instant.parse("2026-09-02T12:30:00Z"),
-                Instant.parse("2026-09-03T15:00:00Z"),
-                Instant.parse("2026-09-03T15:01:00Z"),
-            ),
+            clock = clock,
+            mandadoCalendarPolicy = MandadoCalendarPolicy(clock = clock, zoneId = ZoneOffset.UTC),
         )
 
+        clock.current = Instant.parse("2026-09-01T10:00:00Z")
         val sessionA = (store.startSession(BuiltInListDefinitions.MANDADO.id)
             as SessionStartResult.Created).session
+        clock.current = Instant.parse("2026-09-01T10:01:00Z")
         val aMilk = (store.addItem(
             listDefinitionId = BuiltInListDefinitions.MANDADO.id,
             text = "Leche",
             listSessionId = sessionA.id,
         ) as AddListItemResult.Saved).item
+        clock.current = Instant.parse("2026-09-01T10:02:00Z")
         val aBread = (store.addItem(
             listDefinitionId = BuiltInListDefinitions.MANDADO.id,
             text = "Pan",
             listSessionId = sessionA.id,
         ) as AddListItemResult.Saved).item
+        clock.current = Instant.parse("2026-09-01T10:03:00Z")
         assertTrue(store.setItemCompleted(aMilk.id, true) is ItemCompletionResult.Updated)
+        clock.current = Instant.parse("2026-09-01T10:30:00Z")
         assertTrue(
             store.finishActiveSession(BuiltInListDefinitions.MANDADO.id)
                 is SessionFinishResult.Finished,
         )
 
+        clock.current = Instant.parse("2026-09-07T12:00:00Z")
         val sessionB = (store.startSession(BuiltInListDefinitions.MANDADO.id)
             as SessionStartResult.Created).session
+        clock.current = Instant.parse("2026-09-07T12:01:00Z")
         val bEggs = (store.addItem(
             listDefinitionId = BuiltInListDefinitions.MANDADO.id,
             text = "Huevos",
             listSessionId = sessionB.id,
         ) as AddListItemResult.Saved).item
+        clock.current = Instant.parse("2026-09-07T12:30:00Z")
         assertTrue(
             store.finishActiveSession(BuiltInListDefinitions.MANDADO.id)
                 is SessionFinishResult.Finished,
         )
 
+        clock.current = Instant.parse("2026-09-14T15:00:00Z")
         val sessionC = (store.startSession(BuiltInListDefinitions.MANDADO.id)
             as SessionStartResult.Created).session
+        clock.current = Instant.parse("2026-09-14T15:01:00Z")
         val cCoffee = (store.addItem(
             listDefinitionId = BuiltInListDefinitions.MANDADO.id,
             text = "Café",
@@ -145,7 +149,13 @@ class MandadoHistoryRoomIntegrationTest {
 
         database.close()
         database = QuickAsideDatabase.create(context, databaseName)
-        val reopenedStore = RoomListStore(database)
+        val reopenedStore = RoomListStore(
+            database = database,
+            mandadoCalendarPolicy = MandadoCalendarPolicy(
+                clock = Clock.fixed(Instant.parse("2026-09-14T15:01:00Z"), ZoneOffset.UTC),
+                zoneId = ZoneOffset.UTC,
+            ),
+        )
         val afterReopen = reopenedStore.readRecentSessions(BuiltInListDefinitions.MANDADO.id)
 
         assertEquals(
@@ -176,11 +186,15 @@ class MandadoHistoryRoomIntegrationTest {
         override fun nextItemId(): ListItemId = ListItemId(itemIds.removeFirst())
     }
 
-    private class QueueListClock(times: List<Instant>) : ListClock {
-        private val times = ArrayDeque(times)
+    private class MutableHistoryClock(
+        var current: Instant,
+    ) : Clock(), ListClock {
+        override fun getZone(): ZoneOffset = ZoneOffset.UTC
 
-        constructor(vararg times: Instant) : this(times.toList())
+        override fun withZone(zone: java.time.ZoneId): Clock = this
 
-        override fun now(): Instant = times.removeFirst()
+        override fun instant(): Instant = current
+
+        override fun now(): Instant = current
     }
 }

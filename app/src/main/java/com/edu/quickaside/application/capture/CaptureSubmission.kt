@@ -41,14 +41,6 @@ sealed interface CaptureExecutionOutcome {
         ) : Executed
     }
 
-    /**
-     * A validated Mandado plan needs the user's focused `Continuar` / `Nuevo`
-     * lifecycle decision before any list mutation happens.
-     */
-    data class RequiresMandadoSessionChoice(
-        val requirement: CapturePlanListExecutionResult.RequiresMandadoSessionChoice,
-    ) : CaptureExecutionOutcome
-
     sealed interface Rejected : CaptureExecutionOutcome {
         data class ListItems(
             val result: CapturePlanListExecutionResult,
@@ -57,11 +49,10 @@ sealed interface CaptureExecutionOutcome {
                 require(
                     result is CapturePlanListExecutionResult.UnsupportedAction ||
                         result is CapturePlanListExecutionResult.Rejected ||
-                        result is CapturePlanListExecutionResult.MandadoSessionChanged ||
                         result is CapturePlanListExecutionResult.MissingSourceCapture,
                 ) {
                     "Rejected.ListItems accepts only UnsupportedAction, Rejected, " +
-                        "MandadoSessionChanged, or MissingSourceCapture"
+                        "or MissingSourceCapture"
                 }
             }
         }
@@ -180,15 +171,11 @@ class CaptureSubmission(
             is CapturePlanListExecutionResult.Executed ->
                 CaptureExecutionOutcome.Executed.ListItems(result)
 
-            is CapturePlanListExecutionResult.RequiresMandadoSessionChoice ->
-                CaptureExecutionOutcome.RequiresMandadoSessionChoice(result)
-
             is CapturePlanListExecutionResult.Failed ->
                 CaptureExecutionOutcome.Failed.ListItems(result)
 
             is CapturePlanListExecutionResult.UnsupportedAction,
             is CapturePlanListExecutionResult.Rejected,
-            is CapturePlanListExecutionResult.MandadoSessionChanged,
             CapturePlanListExecutionResult.MissingSourceCapture,
             -> CaptureExecutionOutcome.Rejected.ListItems(result)
         }

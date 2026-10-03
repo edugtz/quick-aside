@@ -39,6 +39,7 @@ import com.edu.quickaside.data.remote.gateway.HttpsUrlConnectionGatewayTransport
 import com.edu.quickaside.data.remote.gateway.Qa1RequestAuthenticator
 import com.edu.quickaside.data.remote.gateway.QuickAsideGatewayAIProvider
 import com.edu.quickaside.data.remote.gateway.QuickAsideGatewayPairer
+import com.edu.quickaside.domain.lists.MandadoCalendarPolicy
 
 class QuickAsideApplication : Application() {
     val database: QuickAsideDatabase by lazy {
@@ -68,6 +69,10 @@ class QuickAsideApplication : Application() {
         )
     }
 
+    private val mandadoCalendarPolicy: MandadoCalendarPolicy by lazy {
+        MandadoCalendarPolicy()
+    }
+
     val captureInterpreter: CaptureInterpreter by lazy {
         ProviderCaptureInterpreter(
             provider = aiProvider,
@@ -76,7 +81,10 @@ class QuickAsideApplication : Application() {
     }
 
     val capturePlanListExecutor: CapturePlanListExecutor by lazy {
-        RoomCapturePlanListExecutor(database)
+        RoomCapturePlanListExecutor(
+            database = database,
+            mandadoCalendarPolicy = mandadoCalendarPolicy,
+        )
     }
 
     val capturePlanTaskExecutor: CapturePlanTaskExecutor by lazy {
@@ -104,11 +112,17 @@ class QuickAsideApplication : Application() {
     }
 
     val listStore: ListStore by lazy {
-        RoomListStore(database)
+        RoomListStore(
+            database = database,
+            mandadoCalendarPolicy = mandadoCalendarPolicy,
+        )
     }
 
     val reversibleListItemActions: ReversibleListItemActions by lazy {
-        RoomReversibleListItemActions(database)
+        RoomReversibleListItemActions(
+            database = database,
+            mandadoCalendarPolicy = mandadoCalendarPolicy,
+        )
     }
 
     val memoryStore: MemoryStore by lazy {

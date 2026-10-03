@@ -117,15 +117,15 @@ Default verification is the minimum sufficient delta:
 - visual checks for material UI changes, normally on the emulator;
 - real-device checks only for newly changed device/platform behavior that reasonable automation cannot establish.
 
-Do **not** automatically require full JVM suites, full connected suites, unrelated regressions, repository-wide lint, broad privacy rescans, or physical-device acceptance. HIGH-ASSURANCE strengthens verification of the affected risk, provenance, failure-path coverage, and independent review; it does not mean maximizing test count or human involvement.
+Do **not** automatically require full JVM suites, full connected suites, unrelated regressions, repository-wide lint, broad privacy rescans, or broad physical-device acceptance. HIGH-ASSURANCE strengthens verification of the affected risk, provenance, failure-path coverage, and independent review; it does not mean maximizing test count or human involvement.
 
 Hard scope/environment rules:
 
 - Verification and implementation are limited to the current Change. Do not broaden work into unrelated refactors, future roadmap scope, device/auth lifecycle work, or opportunistic cleanup.
 - Do not run full JVM suites, full connected/instrumentation suites, repository-wide lint, broad unrelated regressions, or equivalent “run everything” gates unless repository/CI policy, actual cross-cutting blast radius, a concrete failure/reviewer finding, or the user explicitly requires them.
 - Do not clean/reset developer or device state merely to get a fresh test run. `git clean`, Gradle `clean`, app-data/Room clearing, credential/identity reset, emulator/device wiping, build/cache deletion, and equivalent cleanup require a Change-specific need or concrete failure/reviewer justification. Test-owned disposable fixtures are allowed.
-- QA1 physical-device state is durable. Unless the active Change explicitly tests install/auth lifecycle and the user explicitly authorizes it, do not uninstall/reinstall Quick Aside on QA1, run `pm clear`, clear app storage, alter Android Keystore identity, create/revoke/reset/rotate pairing, generate replacement pairing codes, or run routine connected/instrumentation tests on QA1.
-- Routine connected verification targets an emulator explicitly; when multiple ADB targets exist, select the intended emulator/device explicitly rather than relying on default ADB selection.
+- QA1 physical-device state is durable. Focused automated connected/instrumentation tests on QA1 are allowed only when the user explicitly authorizes the active Change. Emulator verification remains the default. Before any connected run, inspect `adb devices -l` and select one exact target, preferably with `ANDROID_SERIAL`; do not rely on ambiguous ADB selection or `-Pandroid.injected.device.serial`.
+- QA1 test authorization never authorizes destructive state changes. Unless the active Change explicitly tests install/auth lifecycle and separate mutation authorization is provided, do not uninstall/reinstall Quick Aside, run `pm clear`, clear app storage, wipe/reset the device, alter Android Keystore identity, create/revoke/reset/delete/rotate pairing, or generate replacement pairing codes. If QA1 has an auth, pairing, or install-state problem, stop and report rather than repairing it. Manual/user-operated QA is separate from automated QA1 authorization.
 
 A model statement that something works is not evidence. The implementation agent must report exact automated verification commands and results.
 
@@ -160,7 +160,7 @@ User-operated QA is exceptional. Request it only when the Change modifies a mate
 
 Voice support, Android use, networking, or physical-device availability alone do not make human QA mandatory. Reuse historical acceptance for unchanged subsystems.
 
-QA1 pairing, installed-app state, app data, and Android Keystore identity on the physical Android phone are durable environment state. Never revoke/reset/delete/recreate pairing, uninstall/reinstall the app, run `pm clear`, clear app storage, or rotate/regenerate identity during routine testing, evidence cleanup, acceptance cleanup, or Change closeout. Alter those states only when the active work explicitly tests that lifecycle and the user explicitly authorizes it.
+QA1 pairing, installed-app state, app data, and Android Keystore identity on the physical Android phone are durable environment state. Focused automated QA1 connected/instrumentation tests require explicit active-Change authorization, an exact target, and focused filters; emulator verification remains the default. That authorization never permits destructive mutation. Unless the active work explicitly tests the lifecycle and separate mutation authorization is provided, never revoke/reset/delete/recreate/rotate pairing, uninstall/reinstall the app, run `pm clear`, clear app storage, wipe/reset the device, or alter auth/install/identity state. Stop and report QA1 auth, pairing, or install-state problems. Manual/user-operated QA requires separate authorization.
 
 ### Documentation and evidence
 

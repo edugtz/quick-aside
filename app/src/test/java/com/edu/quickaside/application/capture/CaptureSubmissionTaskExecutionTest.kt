@@ -392,11 +392,6 @@ class CaptureSubmissionTaskExecutionTest {
             return result
         }
 
-        override suspend fun resolveMandadoSessionChoice(
-            requirement: CapturePlanListExecutionResult.RequiresMandadoSessionChoice,
-            choice: MandadoSessionChoice,
-        ): CapturePlanListExecutionResult = error("Resolution is not used")
-
         override suspend fun undoExecution(
             actionLedgerEntryId: ActionLedgerEntryId,
             expectedItemIds: List<ListItemId>,

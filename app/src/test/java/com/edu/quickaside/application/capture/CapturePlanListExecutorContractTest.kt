@@ -1,13 +1,9 @@
 package com.edu.quickaside.application.capture
 
 import com.edu.quickaside.domain.capture.CapturePlan
-import com.edu.quickaside.domain.capture.CapturePlanAction
 import com.edu.quickaside.domain.common.ActionLedgerEntryId
-import com.edu.quickaside.domain.common.CaptureId
 import com.edu.quickaside.domain.common.ListItemId
 import com.edu.quickaside.domain.common.ListDefinitionId
-import com.edu.quickaside.domain.common.ListSessionId
-import com.edu.quickaside.domain.lists.BuiltInListDefinitions
 import com.edu.quickaside.domain.lists.ListItem
 import java.time.Instant
 import org.junit.Assert.assertEquals
@@ -95,52 +91,4 @@ class CapturePlanListExecutorContractTest {
         assertEquals(null, result.autoCreatedMandadoSessionId)
     }
 
-    @Test
-    fun staleMandadoChoiceRequirementCarriesExactSessionActivityAndPlan() {
-        val plan = CapturePlan(
-            sourceCaptureId = CaptureId("capture"),
-            actions = listOf(
-                CapturePlanAction.AddListItem(BuiltInListDefinitions.MANDADO.id, "pollo"),
-            ),
-        )
-        val observed = Instant.parse("2026-09-19T12:00:00Z")
-        val requirement = CapturePlanListExecutionResult.RequiresMandadoSessionChoice(
-            expectedActiveSessionId = ListSessionId("stale-session"),
-            observedLastActivityAt = observed,
-            plan = plan,
-        )
-
-        assertEquals(ListSessionId("stale-session"), requirement.expectedActiveSessionId)
-        assertEquals(observed, requirement.observedLastActivityAt)
-        assertEquals(plan, requirement.plan)
-        assertEquals(
-            listOf(MandadoSessionChoice.CONTINUE, MandadoSessionChoice.NEW),
-            MandadoSessionChoice.entries,
-        )
-    }
-
-    @Test
-    fun staleMandadoChoiceRequirementRejectsPlansWithoutMandadoActions() {
-        assertThrows(IllegalArgumentException::class.java) {
-            CapturePlanListExecutionResult.RequiresMandadoSessionChoice(
-                expectedActiveSessionId = ListSessionId("stale-session"),
-                observedLastActivityAt = Instant.parse("2026-09-19T12:00:00Z"),
-                plan = CapturePlan(
-                    sourceCaptureId = CaptureId("capture"),
-                    actions = listOf(
-                        CapturePlanAction.AddListItem(BuiltInListDefinitions.COMPRAS.id, "leche"),
-                    ),
-                ),
-            )
-        }
-    }
-
-    @Test
-    fun sessionChangedResultRetainsTheExpectedSessionIdentity() {
-        val changed = CapturePlanListExecutionResult.MandadoSessionChanged(
-            expectedActiveSessionId = ListSessionId("obsolete-session"),
-        )
-
-        assertEquals(ListSessionId("obsolete-session"), changed.expectedActiveSessionId)
-    }
 }

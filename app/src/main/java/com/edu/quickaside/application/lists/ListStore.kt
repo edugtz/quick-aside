@@ -73,6 +73,9 @@ sealed interface SessionStartResult {
 
     data class Existing(val session: ListSession) : SessionStartResult
 
+    /** The current logical Mandado period was manually finished already. */
+    data object PeriodClosed : SessionStartResult
+
     data object MissingDefinition : SessionStartResult
 
     data object NotSessionBased : SessionStartResult

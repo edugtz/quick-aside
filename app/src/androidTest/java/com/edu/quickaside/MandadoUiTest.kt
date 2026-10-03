@@ -124,6 +124,20 @@ class MandadoUiTest {
     }
 
     @Test
+    fun manuallyClosedPeriodReportsThatMandadoCannotStartAgainYet() {
+        store.startResult = SessionStartResult.PeriodClosed
+        setContent(store)
+        openMandado()
+        waitForText("No hay un mandado activo.")
+
+        composeRule.onNodeWithContentDescription("Iniciar mandado").performClick()
+
+        waitForText("Este mandado ya terminó para este periodo.")
+        composeRule.onNodeWithText("Aún no hay productos.").assertDoesNotExist()
+        assertEquals(0, store.createdSessionCount)
+    }
+
+    @Test
     fun exactItemTextUsesReversibleBoundaryShowsReceiptAndUndoRemovesExactItem() {
         store.activeSession = session("active-session")
         setContent(store)

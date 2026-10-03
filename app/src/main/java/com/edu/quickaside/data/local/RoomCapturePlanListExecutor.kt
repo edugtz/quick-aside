@@ -6,7 +6,6 @@ import com.edu.quickaside.application.actions.RandomActionLedgerIdProvider
 import com.edu.quickaside.application.capture.CapturePlanListExecutionRejectionReason
 import com.edu.quickaside.application.capture.CapturePlanListExecutionResult
 import com.edu.quickaside.application.capture.CapturePlanListExecutor
-import com.edu.quickaside.application.capture.MandadoSessionChoice
 import com.edu.quickaside.application.capture.UndoCapturePlanListExecutionResult
 import com.edu.quickaside.application.lists.LIST_ITEM_ACTION_LEDGER_TARGET_TYPE
 import com.edu.quickaside.application.lists.LIST_ITEM_CREATE_ACTION_PAYLOAD_VERSION
@@ -26,10 +25,10 @@ import com.edu.quickaside.domain.common.ActionLedgerEntryId
 import com.edu.quickaside.domain.common.ListItemId
 import com.edu.quickaside.domain.common.ListSessionId
 import com.edu.quickaside.domain.lists.BuiltInListDefinitions
+import com.edu.quickaside.domain.lists.MandadoCalendarPolicy
 import com.edu.quickaside.domain.lists.ListBehavior
 import com.edu.quickaside.domain.lists.ListItem
 import com.edu.quickaside.domain.lists.ListSession
-import java.time.Duration
 import java.time.Instant
 import kotlinx.coroutines.CancellationException
 
@@ -39,24 +38,12 @@ class RoomCapturePlanListExecutor(
     private val actionLedgerIdProvider: ActionLedgerIdProvider = RandomActionLedgerIdProvider(),
     private val clock: ListClock = ListClock { Instant.now() },
     private val sessionIdProvider: ListSessionIdProvider = RandomListSessionIdProvider(),
+    private val mandadoCalendarPolicy: MandadoCalendarPolicy = MandadoCalendarPolicy(),
 ) : CapturePlanListExecutor {
     override suspend fun execute(plan: CapturePlan): CapturePlanListExecutionResult {
         validatePlanShape(plan)?.let { return it }
         return runPlan {
-            executePlan(plan = plan, resolution = null)
-        }
-    }
-
-    override suspend fun resolveMandadoSessionChoice(
-        requirement: CapturePlanListExecutionResult.RequiresMandadoSessionChoice,
-        choice: MandadoSessionChoice,
-    ): CapturePlanListExecutionResult {
-        validatePlanShape(requirement.plan)?.let { return it }
-        return runPlan {
-            executePlan(
-                plan = requirement.plan,
-                resolution = StaleMandadoResolution(requirement = requirement, choice = choice),
-            )
+            executePlan(plan = plan)
         }
     }
 
@@ -189,7 +176,6 @@ class RoomCapturePlanListExecutor(
      */
     private suspend fun executePlan(
         plan: CapturePlan,
-        resolution: StaleMandadoResolution?,
     ): CapturePlanListExecutionResult {
         if (database.captureDao().getById(plan.sourceCaptureId.value) == null) {
             return CapturePlanListExecutionResult.MissingSourceCapture
@@ -240,61 +226,24 @@ class RoomCapturePlanListExecutor(
         var autoCreatedMandadoSessionId: ListSessionId? = null
 
         if (hasSessionBackedActions) {
-            val activeEntity = database.listSessionDao()
-                .getActiveByDefinitionId(BuiltInListDefinitions.MANDADO.id.value)
-
-            when {
-                activeEntity == null -> {
-                    if (resolution != null) {
-                        return CapturePlanListExecutionResult.MandadoSessionChanged(
-                            expectedActiveSessionId = resolution.requirement.expectedActiveSessionId,
-                        )
-                    }
-                    // Bootstrap is written together with the items below.
-                }
-
-                resolution == null -> {
-                    if (isStale(activeEntity.lastActivityAtEpochMillis, occurredAt)) {
-                        return CapturePlanListExecutionResult.RequiresMandadoSessionChoice(
-                            expectedActiveSessionId = ListSessionId(activeEntity.id),
-                            observedLastActivityAt = Instant.ofEpochMilli(
-                                activeEntity.lastActivityAtEpochMillis,
-                            ),
-                            plan = plan,
-                        )
-                    }
-                    resolvedMandadoSessionId = ListSessionId(activeEntity.id)
-                }
-
-                else -> {
-                    if (
-                        activeEntity.id != resolution.requirement.expectedActiveSessionId.value ||
-                        activeEntity.lastActivityAtEpochMillis !=
-                        resolution.requirement.observedLastActivityAt.toEpochMilli()
-                    ) {
-                        return CapturePlanListExecutionResult.MandadoSessionChanged(
-                            expectedActiveSessionId = resolution.requirement.expectedActiveSessionId,
-                        )
-                    }
-                    when (resolution.choice) {
-                        MandadoSessionChoice.CONTINUE -> {
-                            resolvedMandadoSessionId = ListSessionId(activeEntity.id)
-                        }
-
-                        MandadoSessionChoice.NEW -> {
-                            check(
-                                database.listSessionDao().finishActive(
-                                    id = activeEntity.id,
-                                    endedAtEpochMillis = occurredAt.toEpochMilli(),
-                                ) == 1,
-                            ) {
-                                "Expected exactly one stale Mandado session finish during New"
-                            }
-                            // The replacement session is created below, in this
-                            // same transaction, before its items.
-                        }
-                    }
-                }
+            val reconciliation = database.reconcileMandadoSession(
+                policy = mandadoCalendarPolicy,
+                at = occurredAt,
+            )
+            val activeEntity = reconciliation.activeSession
+            if (activeEntity != null) {
+                resolvedMandadoSessionId = ListSessionId(activeEntity.id)
+            } else if (database.isMandadoPeriodClosed(
+                    policy = mandadoCalendarPolicy,
+                    currentPeriod = reconciliation.currentPeriod,
+                )
+            ) {
+                return CapturePlanListExecutionResult.Rejected(
+                    actionIndex = validatedActions.indexOfFirst {
+                        it.action.listDefinitionId == BuiltInListDefinitions.MANDADO.id
+                    },
+                    reason = CapturePlanListExecutionRejectionReason.MANDADO_PERIOD_CLOSED,
+                )
             }
         }
 
@@ -379,20 +328,8 @@ class RoomCapturePlanListExecutor(
         )
     }
 
-    private fun isStale(lastActivityAtEpochMillis: Long, now: Instant): Boolean =
-        now.toEpochMilli() - lastActivityAtEpochMillis > MANDADO_STALE_THRESHOLD_MILLIS
-
     private data class ValidatedListAction(
         val action: CapturePlanAction.AddListItem,
         val behavior: ListBehavior,
     )
-
-    private data class StaleMandadoResolution(
-        val requirement: CapturePlanListExecutionResult.RequiresMandadoSessionChoice,
-        val choice: MandadoSessionChoice,
-    )
-
-    private companion object {
-        val MANDADO_STALE_THRESHOLD_MILLIS: Long = Duration.ofDays(7).toMillis()
-    }
 }

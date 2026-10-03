@@ -19,6 +19,8 @@ import com.edu.quickaside.domain.common.ListDefinitionId
 import com.edu.quickaside.domain.common.ListItemId
 import com.edu.quickaside.domain.common.ListSessionId
 import com.edu.quickaside.domain.common.ActionLedgerEntryId
+import com.edu.quickaside.domain.lists.BuiltInListDefinitions
+import com.edu.quickaside.domain.lists.MandadoCalendarPolicy
 import com.edu.quickaside.domain.lists.ListItem
 import java.time.Instant
 import kotlinx.coroutines.CancellationException
@@ -28,6 +30,7 @@ class RoomReversibleListItemActions(
     private val itemIdProvider: ListItemIdProvider = RandomListItemIdProvider(),
     private val actionLedgerIdProvider: ActionLedgerIdProvider = RandomActionLedgerIdProvider(),
     private val clock: ListClock = ListClock { Instant.now() },
+    private val mandadoCalendarPolicy: MandadoCalendarPolicy = MandadoCalendarPolicy(),
 ) : ReversibleListItemActions {
     override suspend fun create(
         listDefinitionId: ListDefinitionId,
@@ -35,13 +38,16 @@ class RoomReversibleListItemActions(
         listSessionId: ListSessionId?,
     ): CreateListItemActionResult = try {
         database.withWriteTransaction {
+            val occurredAt = clock.now()
+            if (listDefinitionId == BuiltInListDefinitions.MANDADO.id) {
+                database.reconcileMandadoSession(mandadoCalendarPolicy, occurredAt)
+            }
             when (val validation = database.validateListItemCreate(
                 listDefinitionId = listDefinitionId,
                 text = text,
                 listSessionId = listSessionId,
             )) {
                 is ListItemCreateValidation.Valid -> {
-                    val occurredAt = clock.now()
                     val item = ListItem(
                         id = itemIdProvider.nextItemId(),
                         listDefinitionId = validation.definition.id,

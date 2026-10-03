@@ -19,7 +19,10 @@ import com.edu.quickaside.domain.common.ListItemId
 import com.edu.quickaside.domain.common.ListSessionId
 import com.edu.quickaside.domain.lists.BuiltInListDefinitions
 import com.edu.quickaside.domain.lists.ListItem
+import com.edu.quickaside.domain.lists.MandadoCalendarPolicy
+import java.time.Clock
 import java.time.Instant
+import java.time.ZoneOffset
 import java.util.ArrayDeque
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
@@ -117,12 +120,13 @@ class ListPersistenceDatabaseTest {
     @Test
     fun mandadoSessionLifecyclePreservesHistoryAndItems() = runBlocking {
         openFreshDatabase()
+        val idProvider = QueueListIdProvider(
+            sessionIds = listOf("session-first", "session-second"),
+            itemIds = listOf("item-first"),
+        )
         val store = RoomListStore(
             database = database,
-            idProvider = QueueListIdProvider(
-                sessionIds = listOf("session-first", "session-second"),
-                itemIds = listOf("item-first"),
-            ),
+            idProvider = idProvider,
             clock = QueueListClock(
                 Instant.parse("2026-09-03T10:00:00Z"),
                 Instant.parse("2026-09-03T10:01:00Z"),
@@ -131,6 +135,10 @@ class ListPersistenceDatabaseTest {
                 Instant.parse("2026-09-03T10:04:00Z"),
                 Instant.parse("2026-09-03T11:00:00Z"),
                 Instant.parse("2026-09-03T12:00:00Z"),
+            ),
+            mandadoCalendarPolicy = MandadoCalendarPolicy(
+                clock = Clock.fixed(Instant.parse("2026-09-03T12:00:00Z"), ZoneOffset.UTC),
+                zoneId = ZoneOffset.UTC,
             ),
         )
 
@@ -178,11 +186,22 @@ class ListPersistenceDatabaseTest {
             store.finishActiveSession(BuiltInListDefinitions.MANDADO.id),
         )
 
-        val next = store.startSession(BuiltInListDefinitions.MANDADO.id) as SessionStartResult.Created
+        val nextPeriod = Instant.parse("2026-09-10T11:00:00Z")
+        val nextStore = RoomListStore(
+            database = database,
+            idProvider = idProvider,
+            clock = ListClock { nextPeriod },
+            mandadoCalendarPolicy = MandadoCalendarPolicy(
+                clock = Clock.fixed(nextPeriod, ZoneOffset.UTC),
+                zoneId = ZoneOffset.UTC,
+            ),
+        )
+        val next = nextStore.startSession(BuiltInListDefinitions.MANDADO.id)
+            as SessionStartResult.Created
         assertNotEquals(created.session.id, next.session.id)
         assertEquals(
             listOf(next.session.id, created.session.id),
-            store.readRecentSessions(BuiltInListDefinitions.MANDADO.id).map { it.session.id },
+            nextStore.readRecentSessions(BuiltInListDefinitions.MANDADO.id).map { it.session.id },
         )
     }
 
@@ -282,18 +301,23 @@ class ListPersistenceDatabaseTest {
     @Test
     fun currentItemsUseCreatedTimeThenIdOrderingAndSessionHistoryUsesNewestStartFirst() = runBlocking {
         openFreshDatabase()
+        val idProvider = QueueListIdProvider(
+            sessionIds = listOf("history-a", "history-b"),
+            itemIds = listOf("item-b", "item-a"),
+        )
         val store = RoomListStore(
             database = database,
-            idProvider = QueueListIdProvider(
-                sessionIds = listOf("history-a", "history-b"),
-                itemIds = listOf("item-b", "item-a"),
-            ),
+            idProvider = idProvider,
             clock = QueueListClock(
                 Instant.parse("2026-09-03T10:00:00Z"),
                 Instant.parse("2026-09-03T12:01:00Z"),
                 Instant.parse("2026-09-03T12:00:00Z"),
                 Instant.parse("2026-09-03T13:00:00Z"),
                 Instant.parse("2026-09-03T11:00:00Z"),
+            ),
+            mandadoCalendarPolicy = MandadoCalendarPolicy(
+                clock = Clock.fixed(Instant.parse("2026-09-03T13:00:00Z"), ZoneOffset.UTC),
+                zoneId = ZoneOffset.UTC,
             ),
         )
 
@@ -309,11 +333,21 @@ class ListPersistenceDatabaseTest {
         )
 
         assertTrue(store.finishActiveSession(BuiltInListDefinitions.MANDADO.id) is SessionFinishResult.Finished)
-        val secondSession = (store.startSession(BuiltInListDefinitions.MANDADO.id)
+        val nextPeriod = Instant.parse("2026-09-10T11:00:00Z")
+        val nextStore = RoomListStore(
+            database = database,
+            idProvider = idProvider,
+            clock = ListClock { nextPeriod },
+            mandadoCalendarPolicy = MandadoCalendarPolicy(
+                clock = Clock.fixed(nextPeriod, ZoneOffset.UTC),
+                zoneId = ZoneOffset.UTC,
+            ),
+        )
+        val secondSession = (nextStore.startSession(BuiltInListDefinitions.MANDADO.id)
             as SessionStartResult.Created).session
         assertEquals(
             listOf(secondSession.id, firstSession.id),
-            store.readRecentSessions(BuiltInListDefinitions.MANDADO.id).map { it.session.id },
+            nextStore.readRecentSessions(BuiltInListDefinitions.MANDADO.id).map { it.session.id },
         )
     }
 

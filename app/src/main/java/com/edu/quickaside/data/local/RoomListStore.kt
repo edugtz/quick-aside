@@ -16,6 +16,8 @@ import com.edu.quickaside.domain.lists.ListBehavior
 import com.edu.quickaside.domain.lists.ListDefinition
 import com.edu.quickaside.domain.lists.ListItem
 import com.edu.quickaside.domain.lists.ListSession
+import com.edu.quickaside.domain.lists.BuiltInListDefinitions
+import com.edu.quickaside.domain.lists.MandadoCalendarPolicy
 import java.time.Instant
 import androidx.room3.withReadTransaction
 import androidx.room3.withWriteTransaction
@@ -25,22 +27,27 @@ class RoomListStore(
     private val database: QuickAsideDatabase,
     private val idProvider: ListIdProvider = RandomListIdProvider(),
     private val clock: ListClock = ListClock { Instant.now() },
+    private val mandadoCalendarPolicy: MandadoCalendarPolicy = MandadoCalendarPolicy(),
 ) : ListStore {
     override suspend fun readBuiltInDefinitions(): List<ListDefinition> = database.withReadTransaction {
         BuiltInListDefinitionsForStore.readFrom(database.listDefinitionDao())
     }
 
     override suspend fun getActiveSession(listDefinitionId: ListDefinitionId): ListSession? =
-        database.withReadTransaction {
+        database.withWriteTransaction {
             val definition = database.listDefinitionDao().getById(listDefinitionId.value)
                 ?.toDomain()
-                ?: return@withReadTransaction null
+                ?: return@withWriteTransaction null
             if (definition.behavior != ListBehavior.SESSION_BASED) {
-                return@withReadTransaction null
+                return@withWriteTransaction null
             }
-            database.listSessionDao()
-                .getActiveByDefinitionId(definition.id.value)
-                ?.toDomain()
+            val active = if (definition.id == BuiltInListDefinitions.MANDADO.id) {
+                database.reconcileMandadoSession(mandadoCalendarPolicy, mandadoCalendarPolicy.now())
+                    .activeSession
+            } else {
+                database.listSessionDao().getActiveByDefinitionId(definition.id.value)
+            }
+            active?.toDomain()
         }
 
     override suspend fun startSession(listDefinitionId: ListDefinitionId): SessionStartResult = try {
@@ -52,17 +59,36 @@ class RoomListStore(
                 return@withWriteTransaction SessionStartResult.NotSessionBased
             }
 
-            val active = database.listSessionDao()
+            val knownActive = database.listSessionDao()
                 .getActiveByDefinitionId(definition.id.value)
-                ?.toDomain()
+            val reconciliation = if (definition.id == BuiltInListDefinitions.MANDADO.id) {
+                database.reconcileMandadoSession(mandadoCalendarPolicy, mandadoCalendarPolicy.now())
+            } else {
+                null
+            }
+            val active = if (definition.id == BuiltInListDefinitions.MANDADO.id) {
+                reconciliation?.activeSession?.toDomain()
+            } else {
+                knownActive?.toDomain()
+            }
             if (active != null) {
                 return@withWriteTransaction SessionStartResult.Existing(active)
             }
+            if (
+                definition.id == BuiltInListDefinitions.MANDADO.id &&
+                database.isMandadoPeriodClosed(
+                    policy = mandadoCalendarPolicy,
+                    currentPeriod = checkNotNull(reconciliation).currentPeriod,
+                )
+            ) {
+                return@withWriteTransaction SessionStartResult.PeriodClosed
+            }
 
+            val occurredAt = clock.now()
             val session = ListSession(
                 id = idProvider.nextSessionId(),
                 listDefinitionId = definition.id,
-                startedAt = clock.now(),
+                startedAt = occurredAt,
             )
             database.listSessionDao().insert(session.toEntity())
             SessionStartResult.Created(session)
@@ -82,10 +108,20 @@ class RoomListStore(
                 return@withWriteTransaction SessionFinishResult.NotSessionBased
             }
 
-            val active = database.listSessionDao()
+            val knownActive = database.listSessionDao()
                 .getActiveByDefinitionId(definition.id.value)
                 ?: return@withWriteTransaction SessionFinishResult.NoActiveSession
-            finishSessionInTransaction(active.toDomain(), definition)
+            val active = if (definition.id == BuiltInListDefinitions.MANDADO.id) {
+                database.reconcileMandadoSession(
+                    mandadoCalendarPolicy,
+                    mandadoCalendarPolicy.now(),
+                ).activeSession
+                    ?: return@withWriteTransaction SessionFinishResult.NoActiveSession
+            } else {
+                knownActive
+            }
+            val occurredAt = clock.now()
+            finishSessionInTransaction(active.toDomain(), definition, occurredAt)
         }
     } catch (cancellation: CancellationException) {
         throw cancellation
@@ -95,15 +131,21 @@ class RoomListStore(
 
     override suspend fun finishSession(listSessionId: ListSessionId): SessionFinishResult = try {
         database.withWriteTransaction {
-            val sessionEntity = database.listSessionDao().getById(listSessionId.value)
+            val initialSession = database.listSessionDao().getById(listSessionId.value)
                 ?: return@withWriteTransaction SessionFinishResult.MissingSession
-            val session = sessionEntity.toDomain()
-            val definition = database.listDefinitionDao().getById(session.listDefinitionId.value)
+            val initialDomain = initialSession.toDomain()
+            val definition = database.listDefinitionDao().getById(initialDomain.listDefinitionId.value)
                 ?.toDomain()
                 ?: return@withWriteTransaction SessionFinishResult.MissingDefinition
             if (definition.behavior != ListBehavior.SESSION_BASED) {
                 return@withWriteTransaction SessionFinishResult.NotSessionBased
             }
+            if (definition.id == BuiltInListDefinitions.MANDADO.id) {
+                database.reconcileMandadoSession(mandadoCalendarPolicy, mandadoCalendarPolicy.now())
+            }
+            val session = database.listSessionDao().getById(listSessionId.value)
+                ?.toDomain()
+                ?: return@withWriteTransaction SessionFinishResult.MissingSession
             finishSessionInTransaction(session, definition)
         }
     } catch (cancellation: CancellationException) {
@@ -113,14 +155,20 @@ class RoomListStore(
     }
 
     override suspend fun readSession(listSessionId: ListSessionId): ListSessionWithItems? =
-        database.withReadTransaction {
-            val session = database.listSessionDao().getById(listSessionId.value)
+        database.withWriteTransaction {
+            val initialSession = database.listSessionDao().getById(listSessionId.value)
                 ?.toDomain()
-                ?: return@withReadTransaction null
-            val definition = requireDefinition(session.listDefinitionId)
+                ?: return@withWriteTransaction null
+            val definition = requireDefinition(initialSession.listDefinitionId)
             check(definition.behavior == ListBehavior.SESSION_BASED) {
                 "A continuous list cannot own a session"
             }
+            if (definition.id == BuiltInListDefinitions.MANDADO.id) {
+                database.reconcileMandadoSession(mandadoCalendarPolicy, mandadoCalendarPolicy.now())
+            }
+            val session = database.listSessionDao().getById(listSessionId.value)
+                ?.toDomain()
+                ?: return@withWriteTransaction null
             ListSessionWithItems(
                 session = session,
                 items = database.listItemDao().getBySessionId(session.id.value)
@@ -130,12 +178,15 @@ class RoomListStore(
 
     override suspend fun readRecentSessions(
         listDefinitionId: ListDefinitionId,
-    ): List<ListSessionWithItems> = database.withReadTransaction {
+    ): List<ListSessionWithItems> = database.withWriteTransaction {
         val definition = database.listDefinitionDao().getById(listDefinitionId.value)
             ?.toDomain()
-            ?: return@withReadTransaction emptyList()
+            ?: return@withWriteTransaction emptyList()
         check(definition.behavior == ListBehavior.SESSION_BASED) {
             "Continuous lists do not have session history"
+        }
+        if (definition.id == BuiltInListDefinitions.MANDADO.id) {
+            database.reconcileMandadoSession(mandadoCalendarPolicy, mandadoCalendarPolicy.now())
         }
         database.listSessionDao().getByDefinitionId(definition.id.value).map { entity ->
             val session = entity.toDomain()
@@ -148,10 +199,13 @@ class RoomListStore(
     }
 
     override suspend fun readCurrentItems(listDefinitionId: ListDefinitionId): List<ListItem> =
-        database.withReadTransaction {
+        database.withWriteTransaction {
             val definition = database.listDefinitionDao().getById(listDefinitionId.value)
                 ?.toDomain()
-                ?: return@withReadTransaction emptyList()
+                ?: return@withWriteTransaction emptyList()
+            if (definition.id == BuiltInListDefinitions.MANDADO.id) {
+                database.reconcileMandadoSession(mandadoCalendarPolicy, mandadoCalendarPolicy.now())
+            }
             when (definition.behavior) {
                 ListBehavior.CONTINUOUS -> database.listItemDao()
                     .getContinuousByDefinitionId(definition.id.value)
@@ -168,8 +222,8 @@ class RoomListStore(
 
                 ListBehavior.SESSION_BASED -> {
                     val active = database.listSessionDao()
-                        .getActiveByDefinitionId(definition.id.value)
-                        ?: return@withReadTransaction emptyList()
+                    .getActiveByDefinitionId(definition.id.value)
+                        ?: return@withWriteTransaction emptyList()
                     database.listItemDao().getBySessionId(active.id).map { entity ->
                         entity.toDomain().also { validateSessionItem(it, active.toDomain()) }
                     }
@@ -188,6 +242,10 @@ class RoomListStore(
 
         return try {
             database.withWriteTransaction {
+                val occurredAt = clock.now()
+                if (listDefinitionId == BuiltInListDefinitions.MANDADO.id) {
+                    database.reconcileMandadoSession(mandadoCalendarPolicy, occurredAt)
+                }
                 when (val validation = database.validateListItemCreate(
                     listDefinitionId = listDefinitionId,
                     text = text,
@@ -200,7 +258,7 @@ class RoomListStore(
                             text = text,
                             listSessionId = validation.listSessionId,
                             isCompleted = false,
-                            createdAt = clock.now(),
+                            createdAt = occurredAt,
                         )
                         database.listItemDao().insert(item.toEntity())
                         database.touchSessionActivity(
@@ -290,6 +348,7 @@ class RoomListStore(
     private suspend fun finishSessionInTransaction(
         session: ListSession,
         definition: ListDefinition,
+        endedAt: Instant = clock.now(),
     ): SessionFinishResult {
         if (session.endedAt != null) {
             return SessionFinishResult.AlreadyEnded
@@ -297,7 +356,6 @@ class RoomListStore(
         check(session.listDefinitionId == definition.id) {
             "List session belongs to a different definition"
         }
-        val endedAt = clock.now()
         check(database.listSessionDao().finishActive(session.id.value, endedAt.toEpochMilli()) == 1) {
             "Expected exactly one active list session finish update"
         }
