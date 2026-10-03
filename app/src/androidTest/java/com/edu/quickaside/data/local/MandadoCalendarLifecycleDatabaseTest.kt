@@ -387,6 +387,59 @@ class MandadoCalendarLifecycleDatabaseTest {
         assertFalse(history.single().items.single().isCompleted)
     }
 
+    @Test
+    fun idempotentCompletionAtCutoffReconcilesOldMandadoWithoutChangingItem() = runBlocking {
+        val oldStartedAt = local("2026-09-27T09:00:00")
+        val cutoff = local("2026-10-03T14:00:00")
+        database.listSessionDao().insert(
+            ListSessionEntity(
+                id = "old-session",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                startedAtEpochMillis = oldStartedAt.toEpochMilli(),
+                lastActivityAtEpochMillis = oldStartedAt.toEpochMilli(),
+            ),
+        )
+        database.listItemDao().insert(
+            ListItemEntity(
+                id = "old-item",
+                listDefinitionId = BuiltInListDefinitions.MANDADO.id.value,
+                listSessionId = "old-session",
+                text = "Leche",
+                isCompleted = false,
+                createdAtEpochMillis = oldStartedAt.toEpochMilli(),
+            ),
+        )
+        val clock = MutableCalendarClock(cutoff, zone)
+        val store = RoomListStore(
+            database = database,
+            clock = clock,
+            mandadoCalendarPolicy = MandadoCalendarPolicy(clock = clock, zoneId = zone),
+        )
+
+        assertEquals(
+            ItemCompletionResult.SessionNotActive,
+            store.setItemCompleted(ListItemId("old-item"), false),
+        )
+
+        assertNull(store.getActiveSession(BuiltInListDefinitions.MANDADO.id))
+        assertEquals(1, database.listSessionDao().getByDefinitionId("mandado").size)
+        assertEquals(
+            cutoff,
+            database.listSessionDao().getById("old-session")?.endedAtEpochMillis
+                ?.let(Instant::ofEpochMilli),
+        )
+        assertEquals(
+            oldStartedAt.toEpochMilli(),
+            database.listSessionDao().getById("old-session")?.lastActivityAtEpochMillis,
+        )
+        assertEquals(false, database.listItemDao().getById("old-item")?.isCompleted)
+
+        val history = store.readRecentSessions(BuiltInListDefinitions.MANDADO.id)
+        assertEquals(listOf(ListSessionId("old-session")), history.map { it.session.id })
+        assertEquals(listOf(ListItemId("old-item")), history.single().items.map { it.id })
+        assertFalse(history.single().items.single().isCompleted)
+    }
+
     private suspend fun executeMandado(
         occurredAt: Instant,
         itemId: String,

@@ -158,21 +158,22 @@ class ListSessionActivityDatabaseTest {
         val startedAt = Instant.parse("2026-09-19T10:00:00Z")
         val itemAt = Instant.parse("2026-09-19T10:01:00Z")
         val completedAt = Instant.parse("2026-09-19T10:02:00Z")
+        val idempotentAt = Instant.parse("2026-09-19T10:03:00Z")
         val store = RoomListStore(
             database = database,
             idProvider = QueueListIdProvider(
                 sessionIds = listOf("activity-session"),
                 itemIds = listOf("activity-item"),
             ),
-            clock = QueueListClock(listOf(startedAt, itemAt, completedAt)),
+            clock = QueueListClock(listOf(startedAt, itemAt, completedAt, idempotentAt)),
         )
         store.startSession(BuiltInListDefinitions.MANDADO.id) as SessionStartResult.Created
         val saved = store.addItem(BuiltInListDefinitions.MANDADO.id, "pollo")
             as AddListItemResult.Saved
         store.setItemCompleted(saved.item.id, true) as ItemCompletionResult.Updated
 
-        // A third clock value is deliberately not available: the idempotent write
-        // must neither update the item nor consume the clock.
+        // Boundary validation obtains a deterministic instant, but the idempotent
+        // write must neither update the item nor fabricate session activity.
         val repeated = store.setItemCompleted(saved.item.id, true)
             as ItemCompletionResult.Updated
 

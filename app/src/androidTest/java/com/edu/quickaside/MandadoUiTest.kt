@@ -221,6 +221,28 @@ class MandadoUiTest {
     }
 
     @Test
+    fun completionRejectedByLifecycleReloadsAndClearsStaleMandado() {
+        store.activeSession = session("stale-session")
+        store.items = listOf(item("milk", "Leche"))
+        store.completionResult = ItemCompletionResult.SessionNotActive
+        store.onCompletion = { store.activeSession = null }
+        setContent(store)
+        openMandado()
+        waitForText("Leche")
+
+        composeRule.onNodeWithContentDescription("Marcar Leche como completado").performClick()
+
+        composeRule.waitUntil(timeoutMillis = 5_000) { store.completionCalls.size == 1 }
+        assertEquals(ListItemId("milk") to true, store.completionCalls.single())
+        waitForText("Este mandado ya no está activo.")
+        waitForText("No hay un mandado activo.")
+        composeRule.onNodeWithText("Leche").assertDoesNotExist()
+        composeRule.onNodeWithContentDescription("Desmarcar Leche").assertDoesNotExist()
+        assertTrue(store.startCalls.isEmpty())
+        assertEquals(0, store.createdSessionCount)
+    }
+
+    @Test
     fun undoFailureReloadsVisibleStateAndShowsConciseError() {
         store.activeSession = session("active-session")
         actions.undoResult = UndoListItemCreateResult.Failed(IllegalStateException("unavailable"))
@@ -395,6 +417,7 @@ private class FakeMandadoListStore : ListStore {
     )
     var addResult: AddListItemResult? = null
     var completionResult: ItemCompletionResult? = null
+    var onCompletion: (() -> Unit)? = null
     var finishResult: SessionFinishResult? = null
     var createdSessionCount = 0
 
@@ -463,7 +486,10 @@ private class FakeMandadoListStore : ListStore {
     ): ItemCompletionResult {
         completionCalls += listItemId to isCompleted
         val configuredResult = completionResult
-        if (configuredResult != null) return configuredResult
+        if (configuredResult != null) {
+            onCompletion?.invoke()
+            return configuredResult
+        }
         val existing = items.single { it.id == listItemId }
         val updated = existing.copy(isCompleted = isCompleted)
         items = items.map { if (it.id == listItemId) updated else it }

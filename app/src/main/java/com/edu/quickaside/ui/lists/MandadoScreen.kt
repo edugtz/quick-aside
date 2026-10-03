@@ -308,8 +308,12 @@ fun MandadoScreen(
                             }
                         }
 
+                        ItemCompletionResult.SessionNotActive -> {
+                            loadState()
+                            showFeedback("Este mandado ya no está activo.")
+                        }
+
                         ItemCompletionResult.Missing,
-                        ItemCompletionResult.SessionNotActive,
                         is ItemCompletionResult.Failed,
                         -> showFeedback("No se pudo actualizar el producto.")
                     }

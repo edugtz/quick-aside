@@ -295,11 +295,6 @@ class RoomListStore(
         database.withWriteTransaction {
             val existing = database.listItemDao().getById(listItemId.value)
                 ?: return@withWriteTransaction ItemCompletionResult.Missing
-            if (existing.isCompleted == isCompleted) {
-                // Idempotent request: no completion state changed, so no material
-                // activity is fabricated.
-                return@withWriteTransaction ItemCompletionResult.Updated(existing.toDomain())
-            }
             val activityAt = clock.now()
             if (
                 existing.listDefinitionId == BuiltInListDefinitions.MANDADO.id.value &&
@@ -310,6 +305,11 @@ class RoomListStore(
                 )
             ) {
                 return@withWriteTransaction ItemCompletionResult.SessionNotActive
+            }
+            if (existing.isCompleted == isCompleted) {
+                // Idempotent request: boundary validation still occurs, but no
+                // completion state or material activity is fabricated.
+                return@withWriteTransaction ItemCompletionResult.Updated(existing.toDomain())
             }
             check(database.listItemDao().setCompleted(listItemId.value, isCompleted) == 1) {
                 "Expected exactly one list item completion update"
