@@ -6,6 +6,7 @@
 - CHG-031: **COMPLETE / integrated** — independent review **PASS_WITH_NOTES**; engineering closeout complete.
 - CHG-032: **COMPLETE / independent review PASS / integrated** — ordered local Note/Structured Log execution, one atomic Action Ledger entry, and targeted atomic Undo. Implementation `9eba7167af0613cf3fd94b53a9a83d30fdbb93f7`; its accepted executor evidence remains valid.
 - CHG-033 branch: `chg/033-memory-fast-capture-wiring`.
+- Published implementation commit: `592114bbc4d4eb0f658ad31b45661f1555bf02dc` — `feat: wire memory plans into fast capture`; pushed successfully to `origin/chg/033-memory-fast-capture-wiring`. Only the declared feature branch was published; main/dev were untouched.
 - Implementation: **COMPLETE**; required CHG-033 owner verification **COMPLETE**.
 - Owner evidence: `CaptureSubmissionMemoryExecutionTest` **8/8 PASS**; `CaptureMemoryAutoExecutionUiTest` **12/12 PASS** on `emulator-5554` (`CHG028_Room_API35`, API 35). Android-test compile, debug assemble, and `git diff --check` **PASS**. No historical/full suites or lint ran.
 - Scope: normal text/voice Capture routes plans composed exclusively of `CreateNote` / `CreateStructuredLog` through the application-owned Memory executor, with ordered targeted Undo receipts and Notes/Structured Logs refresh. Mixed-family/unsupported plans execute nothing.
