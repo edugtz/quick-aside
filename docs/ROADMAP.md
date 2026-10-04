@@ -41,6 +41,7 @@ Implemented/integrated baseline:
 - CHG-028 normal text/voice auto-execution for validated all-`AddListItem` plans;
 - CHG-029 local Task execution foundation;
 - CHG-030 normal text/voice auto-execution for validated all-`CreateTask` plans;
+- CHG-032 local Memory execution foundation — COMPLETE on `chg/032-memory-execution-foundation` (protected-branch integration pending): ordered `CreateNote` / `CreateStructuredLog` execution, one atomic Action Ledger entry, and targeted atomic Undo;
 - supported list and Task execution paths use targeted Undo;
 - mixed-family and unsupported plans execute nothing.
 
@@ -48,15 +49,22 @@ CHG-027/028 list execution and Capture wiring are integrated. CHG-029/030 Task
 execution and Capture wiring are integrated. CHG-030 is COMPLETE. The subsequent
 Mandado fast-capture lifecycle corrective is also COMPLETE and independently
 reviewed PASS; it established no-prestart high-confidence Mandado capture and
-reversible local execution as the accepted baseline.
+reversible local execution as the accepted baseline. CHG-032 local Memory
+execution foundation is COMPLETE with independent review PASS; CaptureSubmission
+routing and normal text/voice Memory execution (Fast Capture Memory wiring)
+remain separate future work.
 
 Completed and integrated:
 
 - **CHG-031 — Mandado calendar-based weekly rollover** — COMPLETE / integrated / independent review `PASS_WITH_NOTES`. Published functional commit: `4608d71708464ad83330f07c4bda953153ff5c0d`. It replaced the interim 7-elapsed-day stale-session policy with the accepted calendar workflow: Sunday 00:00 formal period start, Saturday 14:00 rollover, immediate next-period eligibility, no Sunday double-reset, manual Finish blocking re-bootstrap until the next rollover, and durable historical-session visibility.
 
+Completed, not yet integrated into `main`:
+
+- **CHG-032 — Local Memory Capture execution foundation** — COMPLETE / independent review `PASS` (0 BLOCKER / 0 MAJOR / 0 MINOR / 0 NOTE) on `chg/032-memory-execution-foundation`. Implementation commit: `9eba7167af0613cf3fd94b53a9a83d30fdbb93f7`. It implements provider-independent, ordered `CreateNote` / `CreateStructuredLog` execution with one atomic Action Ledger entry and targeted atomic Undo. CaptureSubmission routing and normal Fast Capture Memory execution remain separate future work.
+
 Active selected Change:
 
-- **CHG-032 — Local Memory Capture execution foundation** — selected under M2; implementation and required verification COMPLETE, independent review pending. Ordered Note/Structured Log execution and targeted Undo only; CaptureSubmission wiring and normal Fast Capture Memory execution remain separate work.
+- **NONE** — once CHG-032 is present on `main`, select the next reviewable Change from the accepted roadmap and repository state.
 
 Still candidate/pending:
 
@@ -157,15 +165,19 @@ Normal-use hardening remains evidence-triggered and is not automatically schedul
 |---|---|
 | M0 | COMPLETE |
 | M1 | SUBSTANTIALLY IMPLEMENTED / NOT BLOCKED |
-| M2 | IN PROGRESS; CHG-030 + Mandado fast-capture corrective COMPLETE; CHG-031 calendar rollover COMPLETE / integrated; CHG-032 local Memory execution foundation selected; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
+| M2 | IN PROGRESS; CHG-030 + Mandado fast-capture corrective COMPLETE; CHG-031 calendar rollover COMPLETE / integrated; CHG-032 local Memory execution foundation COMPLETE, protected-branch integration pending; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
 | M3 | NOT globally blocked; Google Tasks/Calendar sync and Event execution pending |
 | M4 | NOT globally blocked; reminder-domain/execution/scheduling pending |
 | M5 | NOT blocked |
 | M6 | Final completion blocked by remaining sync/event/reminder capabilities |
 
 CHG-031 is COMPLETE / integrated with independent review PASS_WITH_NOTES and
-engineering closeout complete. CHG-032 is explicitly selected by the user as
-the next reviewable local Memory execution foundation Change.
+engineering closeout complete. CHG-032 is COMPLETE with independent review PASS
+and engineering closeout complete; ordered Note/Structured Log execution and
+targeted Undo are implemented, while normal Fast Capture Memory wiring remains
+separate future work. Protected-branch integration of CHG-032 into `main` is the
+next user action; afterward select the next reviewable Change from the accepted
+roadmap and repository state.
 
 ## Post-MVP — evidence-triggered candidates
 
