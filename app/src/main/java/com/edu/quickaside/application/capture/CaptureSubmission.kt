@@ -6,6 +6,7 @@ import com.edu.quickaside.domain.capture.CaptureInput
 import com.edu.quickaside.domain.capture.CapturePlan
 import com.edu.quickaside.domain.capture.CapturePlanAction
 import com.edu.quickaside.domain.common.CaptureId
+import com.edu.quickaside.domain.tasks.TaskSpace
 import java.time.Instant
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
@@ -124,6 +125,22 @@ class CaptureSubmission(
 
     suspend fun submitVoice(originalTranscript: String): CaptureSubmissionResult = submitInput(
         input = CaptureInput.Voice(originalTranscript),
+    )
+
+    suspend fun resolveTaskSpaceClarification(
+        clarification: CaptureClarification.TaskSpace,
+        selectedSpace: TaskSpace,
+    ): CaptureExecutionOutcome = executeEligibleTaskPlan(
+        CapturePlan(
+            sourceCaptureId = clarification.sourceCaptureId,
+            actions = listOf(
+                CapturePlanAction.CreateTask(
+                    space = selectedSpace,
+                    title = clarification.title,
+                    dueDate = clarification.dueDate,
+                ),
+            ),
+        ),
     )
 
     private suspend fun submitInput(input: CaptureInput): CaptureSubmissionResult {

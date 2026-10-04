@@ -333,7 +333,12 @@ QAG-004H preserves that path and its persistence-first boundary.
 Automatic execution is Android-owned and deliberately family-gated:
 
 - a Capture is durable before interpretation starts;
-- provider output is decoded/validated into `CapturePlan`;
+- provider output is decoded/validated into a `CapturePlan`, an explicit `Unsupported` outcome (no actions and no clarification), or a trusted Task-space clarification;
+- Task-space clarification carries Android-owned `sourceCaptureId`, validated proposed title using the existing Task/CapturePlan limits, and optional due date; the provider supplies neither Capture identity nor arbitrary question/UI copy;
+- no Task/List/Memory mutation or Action Ledger entry occurs before a clarification choice. Choosing the local `TaskSpace` constructs exactly one `CreateTask` plan preserving provenance/title/date and calls the existing Task executor once;
+- the application-level stock Material choice dialog is consumed synchronously before resolution starts, preventing repeated taps; successful resolution uses the existing Task receipt, exact ledger/Task IDs for Undo, and Pendientes refresh after execution and Undo attempts;
+- dismissing/backing out preserves the original Capture without mutation. Pending clarification is in-memory only: no Room change, persisted queue, or process-death restoration;
+- CHG-034 is provider-neutral/local only: gateway wire, provider output schema, prompt, and runtime remain unchanged and action-list based. Live gateway CLARIFY emission is separate future work;
 - validated all-`AddListItem` plans execute through the local list executor;
 - for Mandado, the executor first reconciles the accepted weekly calendar boundary, then targets only the eligible current/next-period session; absence of a materialized session is a bootstrap case unless the current period was manually finished, and no age-based stale clarification is used;
 - validated all-`CreateTask` plans execute through the local Task executor;
@@ -344,6 +349,19 @@ Automatic execution is Android-owned and deliberately family-gated:
 - Google Tasks sync, Calendar/Event execution, reminders, and other action families are separate boundaries and are not implied by local execution.
 
 The gateway/provider cannot directly mutate Room, Google Tasks, Google Calendar, or reminders.
+
+Current application flow:
+
+```text
+Capture -> persist first -> interpretation
+    -> validated plan -> existing eligible family executor
+    -> Unsupported -> neutral receipt, no mutation
+    -> Task-space clarification -> local Trabajo/Personal choice
+        -> deterministic one-Task plan -> existing Task executor
+        -> existing receipt / targeted Undo / Pendientes refresh
+```
+
+High-confidence plans retain direct execution without a confirmation step.
 
 ### Local-first failure behavior
 

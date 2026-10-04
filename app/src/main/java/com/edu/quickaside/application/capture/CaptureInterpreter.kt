@@ -18,6 +18,12 @@ sealed interface CaptureInterpretationResult {
 
     data object BlankInput : CaptureInterpretationResult
 
+    data object Unsupported : CaptureInterpretationResult
+
+    data class ClarificationRequired(
+        val clarification: CaptureClarification.TaskSpace,
+    ) : CaptureInterpretationResult
+
     data class InvalidPlan(
         val issues: List<CapturePlanValidationIssue>,
     ) : CaptureInterpretationResult {
@@ -70,6 +76,27 @@ class ProviderCaptureInterpreter(
             throw cancellation
         } catch (failure: Exception) {
             return CaptureInterpretationResult.ProviderFailure(failure)
+        }
+
+        when (val clarification = candidate.clarification) {
+            is AIClarificationCandidate.TaskSpace -> {
+                val issues = validator.validateTaskTitle(clarification.title)
+                return if (issues.isEmpty()) {
+                    CaptureInterpretationResult.ClarificationRequired(
+                        CaptureClarification.TaskSpace(
+                            sourceCaptureId = capture.id,
+                            title = clarification.title,
+                            dueDate = clarification.dueDate,
+                        ),
+                    )
+                } else {
+                    CaptureInterpretationResult.InvalidPlan(issues)
+                }
+            }
+            null -> Unit
+        }
+        if (candidate.actions.isEmpty()) {
+            return CaptureInterpretationResult.Unsupported
         }
 
         val validation = validator.validate(

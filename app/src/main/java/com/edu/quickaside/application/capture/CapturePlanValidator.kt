@@ -80,25 +80,7 @@ class CapturePlanValidator {
                     }
 
                     is CapturePlanActionDraft.CreateTask -> {
-                        if (action.title.isBlank()) {
-                            add(
-                                CapturePlanValidationIssue.Action(
-                                    actionIndex = index,
-                                    reason = CapturePlanValidationReason.BLANK_TASK_TITLE,
-                                ),
-                            )
-                        } else if (!CapturePlanContract.isWithinCharacterLimit(
-                                action.title,
-                                CapturePlanContract.MAX_TASK_TITLE_CHARS,
-                            )
-                        ) {
-                            add(
-                                CapturePlanValidationIssue.Action(
-                                    actionIndex = index,
-                                    reason = CapturePlanValidationReason.TASK_TITLE_TOO_LONG,
-                                ),
-                            )
-                        }
+                        addAll(validateTaskTitle(action.title, index))
                     }
 
                     is CapturePlanActionDraft.CreateNote -> {
@@ -202,6 +184,32 @@ class CapturePlanValidator {
                 actions = draft.actions.map(::toValidatedAction),
             ),
         )
+    }
+
+    /** Shared Task field semantics for action drafts and Task-space clarification. */
+    internal fun validateTaskTitle(
+        title: String,
+        actionIndex: Int = 0,
+    ): List<CapturePlanValidationIssue> = buildList {
+        if (title.isBlank()) {
+            add(
+                CapturePlanValidationIssue.Action(
+                    actionIndex = actionIndex,
+                    reason = CapturePlanValidationReason.BLANK_TASK_TITLE,
+                ),
+            )
+        } else if (!CapturePlanContract.isWithinCharacterLimit(
+                title,
+                CapturePlanContract.MAX_TASK_TITLE_CHARS,
+            )
+        ) {
+            add(
+                CapturePlanValidationIssue.Action(
+                    actionIndex = actionIndex,
+                    reason = CapturePlanValidationReason.TASK_TITLE_TOO_LONG,
+                ),
+            )
+        }
     }
 
     private fun toValidatedAction(action: CapturePlanActionDraft): CapturePlanAction =

@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.KeyboardVoice
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -63,6 +64,8 @@ import androidx.compose.ui.unit.dp
 import com.edu.quickaside.application.capture.AIProviderException
 import com.edu.quickaside.application.capture.AIProviderFailureReason
 import com.edu.quickaside.application.capture.CaptureInterpretationResult
+import com.edu.quickaside.application.capture.CaptureClarification
+import com.edu.quickaside.application.capture.CapturePlanTaskExecutionResult
 import com.edu.quickaside.application.capture.CaptureExecutionOutcome
 import com.edu.quickaside.application.capture.CapturePlanListExecutionResult
 import com.edu.quickaside.application.capture.CapturePlanListExecutor
@@ -89,6 +92,7 @@ import com.edu.quickaside.application.tasks.ReversibleTaskActions
 import com.edu.quickaside.application.tasks.TaskStore
 import com.edu.quickaside.domain.capture.Capture
 import com.edu.quickaside.domain.capture.CaptureInput
+import com.edu.quickaside.domain.tasks.TaskSpace
 import com.edu.quickaside.ui.gateway.GatewayPairingDialog
 import com.edu.quickaside.ui.memory.CaptureTimestampFormatter
 import com.edu.quickaside.ui.memory.NoteTimestampFormatter
@@ -161,6 +165,7 @@ fun QuickAsideApp(
     var listRefreshToken by remember { mutableIntStateOf(0) }
     var taskRefreshToken by remember { mutableIntStateOf(0) }
     var memoryRefreshToken by remember { mutableIntStateOf(0) }
+    var pendingClarification by remember { mutableStateOf<CaptureClarification.TaskSpace?>(null) }
     var pairingRequested by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -226,58 +231,63 @@ fun QuickAsideApp(
             },
         )
     }
+    suspend fun showTaskExecutionReceipt(receipt: CapturePlanTaskExecutionResult.Executed) {
+        taskRefreshToken += 1
+        snackbarHostState.currentSnackbarData?.dismiss()
+        val snackbarResult = snackbarHostState.showSnackbar(
+            message = if (receipt.tasks.size == 1) {
+                "Pendiente guardado"
+            } else {
+                "${receipt.tasks.size} pendientes guardados"
+            },
+            actionLabel = "Deshacer",
+            duration = SnackbarDuration.Long,
+        )
+        if (snackbarResult != SnackbarResult.ActionPerformed) {
+            return
+        }
+
+        val undoResult = try {
+            capturePlanTaskExecutor?.undoExecution(
+                actionLedgerEntryId = receipt.actionLedgerEntryId,
+                expectedTaskIds = receipt.tasks.map { it.id },
+            )
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (_: Exception) {
+            null
+        } finally {
+            taskRefreshToken += 1
+        }
+        snackbarHostState.showSnackbar(
+            if (undoResult is UndoCapturePlanTaskExecutionResult.Undone) {
+                "Cambio deshecho"
+            } else {
+                "No se pudo deshacer."
+            },
+        )
+    }
     val onCaptureSaved: (CaptureSubmissionResult.Saved, Boolean) -> Unit = { result, closeCapture ->
         onInterpretationObserved(result.interpretation)
         historyRefreshToken += 1
         when (result.execution) {
-            is CaptureExecutionOutcome.Executed.Tasks -> taskRefreshToken += 1
             is CaptureExecutionOutcome.Executed.Memory -> memoryRefreshToken += 1
             else -> Unit
         }
         if (closeCapture) {
             captureRequested = false
         }
-        scope.launch {
+        val clarification = result.interpretation as? CaptureInterpretationResult.ClarificationRequired
+        if (clarification != null) {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            pendingClarification = clarification.clarification
+        } else scope.launch {
             when (val execution = result.execution) {
                 is CaptureExecutionOutcome.Executed.ListItems ->
                     showListExecutionReceipt(execution.receipt)
 
-                is CaptureExecutionOutcome.Executed.Tasks -> {
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                    val receipt = execution.receipt
-                    val snackbarResult = snackbarHostState.showSnackbar(
-                        message = if (receipt.tasks.size == 1) {
-                            "Pendiente guardado"
-                        } else {
-                            "${receipt.tasks.size} pendientes guardados"
-                        },
-                        actionLabel = "Deshacer",
-                        duration = SnackbarDuration.Long,
-                    )
-                    if (snackbarResult != SnackbarResult.ActionPerformed) {
-                        return@launch
-                    }
-
-                    val undoResult = try {
-                        capturePlanTaskExecutor?.undoExecution(
-                            actionLedgerEntryId = receipt.actionLedgerEntryId,
-                            expectedTaskIds = receipt.tasks.map { it.id },
-                        )
-                    } catch (cancellation: CancellationException) {
-                        throw cancellation
-                    } catch (_: Exception) {
-                        null
-                    } finally {
-                        taskRefreshToken += 1
-                    }
-                    snackbarHostState.showSnackbar(
-                        if (undoResult is UndoCapturePlanTaskExecutionResult.Undone) {
-                            "Cambio deshecho"
-                        } else {
-                            "No se pudo deshacer."
-                        },
-                    )
-                }
+                is CaptureExecutionOutcome.Executed.Tasks ->
+                    showTaskExecutionReceipt(execution.receipt)
 
                 is CaptureExecutionOutcome.Executed.Memory -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
@@ -486,6 +496,34 @@ fun QuickAsideApp(
                 onBackToMemoryHistory = backFromMemoryRoute,
             )
         }
+    }
+
+    val clarification = pendingClarification
+    if (clarification != null) {
+        val selectSpace: (TaskSpace) -> Unit = { selectedSpace ->
+            // Consume synchronously before launching: even a stale rapid-tap callback is inert.
+            if (pendingClarification === clarification) {
+                pendingClarification = null
+                scope.launch {
+                    when (val outcome = captureSubmission.resolveTaskSpaceClarification(clarification, selectedSpace)) {
+                        is CaptureExecutionOutcome.Executed.Tasks -> showTaskExecutionReceipt(outcome.receipt)
+                        else -> snackbarHostState.showSnackbar(
+                            "Captura guardada · no se pudo aplicar la interpretación",
+                        )
+                    }
+                }
+            }
+        }
+        AlertDialog(
+            onDismissRequest = { pendingClarification = null },
+            title = { Text("¿Dónde guardo “${clarification.title}”?") },
+            confirmButton = {
+                TextButton(onClick = { selectSpace(TaskSpace.TRABAJO) }) { Text("Trabajo") }
+            },
+            dismissButton = {
+                TextButton(onClick = { selectSpace(TaskSpace.PERSONAL) }) { Text("Personal") }
+            },
+        )
     }
 
     val pairer = devicePairer
@@ -771,8 +809,11 @@ private fun savedCaptureMessage(result: CaptureSubmissionResult.Saved): String =
 private fun savedCaptureMessage(interpretation: CaptureInterpretationResult?): String =
     when (interpretation) {
         null -> "Captura guardada"
-        is CaptureInterpretationResult.Success ->
-            "Captura guardada · interpretación lista, sin aplicar"
+        is CaptureInterpretationResult.Success,
+        CaptureInterpretationResult.Unsupported,
+        -> "Captura guardada · interpretación lista, sin aplicar"
+        is CaptureInterpretationResult.ClarificationRequired ->
+            error("Clarification Captures use the focused choice dialog")
         CaptureInterpretationResult.BlankInput ->
             "Captura guardada · sin interpretación"
         is CaptureInterpretationResult.InvalidPlan ->

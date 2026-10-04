@@ -46,6 +46,20 @@ When confidence is insufficient, ask the **smallest focused question** needed to
 
 Do not open a full editor unless necessary or explicitly requested.
 
+CHG-034 implements the first provider-neutral clarification type: Task-space
+(`Trabajo` / `Personal`). Proposed title and optional due date are locally
+validated, with the actual Android-owned source Capture identity attached.
+The Capture is saved first; no Task or Action Ledger entry is created before
+selection. A choice constructs one local Task plan and reuses Task execution,
+receipt, targeted Undo, and Pendientes refresh. Dismissal keeps the Capture
+without applying a Task. Pending clarification is local/in-memory only, with
+no persisted queue or process-death restoration.
+
+The gateway wire/prompt/runtime remain action-list based and do not emit
+CLARIFY yet. This foundation does not make live runtime ambiguity produce a
+dialog; actual gateway-side emission is separate future work. The broader
+minimal-clarification product requirement remains unchanged.
+
 ### Receipt
 
 Feedback adapts to capture complexity:
@@ -281,6 +295,8 @@ Current supported automatic execution is intentionally narrower than the full `C
 - validated all-`CreateTask` plans execute locally with targeted reversible behavior;
 - validated plans composed exclusively of `CreateNote` / `CreateStructuredLog` actions execute locally as one ordered Memory family through normal text/voice Capture (CHG-033), with targeted Undo;
 - mixed-family or unsupported plans execute nothing, with no splitting, subsetting, or reordering;
+- an empty provider action result is explicitly `Unsupported`, with neutral saved-without-applying feedback rather than an invalid-plan/provider-failure message;
+- a valid provider-neutral Task-space clarification waits for the user's deterministic choice before local Task execution (CHG-034);
 - Google Tasks synchronization, Event execution, reminder execution, and other action families remain separate future work.
 
 The Capture is persisted before remote interpretation or local plan execution, and the remote result is validated locally. Provider/gateway code never directly mutates Room, Google Tasks, Google Calendar, or reminders.

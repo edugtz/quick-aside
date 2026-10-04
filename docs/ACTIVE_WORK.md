@@ -1,20 +1,19 @@
 # ACTIVE WORK
 
-- Active Change: **NONE**.
-- Closed Change: **CHG-033 — Fast Capture Memory execution wiring — COMPLETE** (STANDARD).
-- main accepted through **CHG-032**, baseline `897d8e13afadd980c59a2a7151ecb2a846344966` (`docs: close CHG-032 after review`).
-- CHG-031: **COMPLETE / integrated** — independent review **PASS_WITH_NOTES**; engineering closeout complete.
-- CHG-032: **COMPLETE / independent review PASS / integrated** — ordered local Note/Structured Log execution, one atomic Action Ledger entry, and targeted atomic Undo. Implementation `9eba7167af0613cf3fd94b53a9a83d30fdbb93f7`; its accepted executor evidence remains valid.
-- CHG-033 branch: `chg/033-memory-fast-capture-wiring`.
-- Published implementation commit: `592114bbc4d4eb0f658ad31b45661f1555bf02dc` — `feat: wire memory plans into fast capture`; pushed successfully to `origin/chg/033-memory-fast-capture-wiring`. Only the declared feature branch was published; main/dev were untouched.
-- Published implementation/handoff HEAD before closeout: `1c66e0986f38a637ccf9218b58574e1e7be7aeef` — `docs: record CHG-033 publication and review handoff`.
-- Implementation: **COMPLETE**; required CHG-033 verification **COMPLETE**.
-- Owner evidence: `CaptureSubmissionMemoryExecutionTest` **8/8 PASS**; `CaptureMemoryAutoExecutionUiTest` **12/12 PASS** on `emulator-5554` (`CHG028_Room_API35`, API 35). Android-test compile, debug assemble, and `git diff --check` **PASS**. No historical/full suites or lint ran.
-- Scope: normal text/voice Capture routes plans composed exclusively of `CreateNote` / `CreateStructuredLog` through the application-owned Memory executor, with ordered targeted Undo receipts and Notes/Structured Logs refresh. Mixed-family/unsupported plans execute nothing.
-- UX boundary: existing Capture → lightweight snackbar → continue flow, immediate `Deshacer`, and global Capture from Memoria. No layout/navigation change; the CHG-033 Compose owner gate owns UI behavior. Separate screenshot/manual QA: **NONE**.
-- Verification scope: `CaptureSubmissionMemoryExecutionTest`, `CaptureMemoryAutoExecutionUiTest` on explicitly selected `emulator-5554`, Android-test compile, debug assemble, and `git diff --check`.
-- No Room schema/migration/dependency/provider/auth change. QA1 was not used or altered. Room database version remains **8**.
-- Independent review: **PASS**; findings: **0 BLOCKER / 0 MAJOR / 0 MINOR / 0 NOTE**. Manual QA remaining: **NONE**. No CHG-033 engineering gates remain.
-- CHG-033 emulator evidence remains accepted under its applicable policy and is **NOT being rerun**; no evidence was invalidated. QA1-first verification applies beginning with CHG-034 and is non-retroactive. This documentation-only closeout requires no tests/build/lint, emulator, QA1, or manual QA.
-- Protected-branch integration into main remains pending and user-owned; CHG-033 is accepted on its feature branch, not yet on main. CHG-034 is not active.
-- Next action: **Integrate accepted CHG-033 into main, then open CHG-034.**
+- main accepted through **CHG-033**, baseline `49852895e92084a2ff304bc4e0f01269ae7b0def` (`docs: close CHG-033 and make QA1 verification default`).
+- CHG-033: **COMPLETE / independent review PASS / integrated**. Its accepted evidence remains valid; no rerun is required.
+- Active Change: **CHG-034 — Task-space clarification foundation**.
+- Governance: **STANDARD**.
+- Declared feature branch: `chg/034-task-space-clarification-foundation`.
+- Implementation: **COMPLETE**; required CHG-034 owner verification: **COMPLETE**. Independent review: **PENDING**.
+- Publication: verified implementation ready for feature-branch publication; exact implementation commit will be recorded in the publication handoff.
+- Reused valid host evidence: `ProviderCaptureInterpreterClarificationTest` **7/7 PASS**; `CaptureSubmissionTaskSpaceClarificationTest` **7/7 PASS**; `:app:compileDebugAndroidTestKotlin`, `:app:assembleDebug`, and `git diff --check` **PASS**. These gates were not rerun on resume; their source/config/environment had no invalidator.
+- Final QA1 UI owner evidence: `CaptureTaskSpaceClarificationUiTest` **9/9 PASS**, zero failures/errors/skips, on exact `ANDROID_SERIAL=adb-3B163C00N4V00000-KztNrU._adb-tls-connect._tcp` (OPPO CPH2791, Android 16). Only the focused owner class was rerun after the user unlocked QA1; no production/test source correction was needed.
+- Previous environmental QA1 attempt: **6/9 PASS, 3 failed** with `No compose hierarchies found` in the voice, rapid-callback, and rejected-resolution cases. Diagnostics established a sleeping/locked screen and Activity transitioning from RESUMED to PAUSED. The user corrected that external device state; the final focused run passed.
+- UI evidence covers text/voice question and choices, zero execution/success before selection, Trabajo/Personal forwarding, rapid-callback protection while execution is suspended, back dismissal preserving the Capture, failure/rejection without success/Undo, exact targeted Undo and honest Undo failure, Pendientes refresh after execution/Undo, repeated STT final-event protection, and neutral Unsupported feedback.
+- UX boundary: one stock Material3 AlertDialog with locally authored question and Trabajo/Personal choices; no navigation/Capture/branding redesign. Canonical written UX and v3 visual were inspected before implementation; high-confidence plans keep direct execution, and existing Task receipt/Undo/refresh are shared.
+- Scope: provider-neutral Task-space candidate; trusted Android-owned Capture identity with validated title and optional due date; deterministic local one-Task resolution through the existing executor; explicit Unsupported for no actions/no clarification.
+- Directly invalidated historical fixture: `CaptureInterpreterTest` now expects Unsupported for empty provider actions; its historical suite was not executed. The new CHG-034 owner tests own the changed semantics.
+- Pending clarification is local/in-memory only. Room database version remains **8**; entities, migrations, schemas, dependencies, and auth/pairing are unchanged. Gateway Python, wire/provider output schema, prompt, and runtime remain unchanged. Actual gateway CLARIFY emission is separate future work.
+- QA1 data/auth/pairing/identity were preserved. No cleanup/reset/repair, emulator fallback, full/historical suite, lint, or manual QA. Manual QA: **NONE**.
+- Next gate: **independent review of the published committed diff**. Main/dev integration and release remain user-owned.

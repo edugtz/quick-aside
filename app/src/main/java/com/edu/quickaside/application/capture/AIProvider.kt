@@ -2,10 +2,11 @@ package com.edu.quickaside.application.capture
 
 import com.edu.quickaside.domain.capture.CapturePlanActionDraft
 import java.time.Instant
+import java.time.LocalDate
 
 /**
  * Provider-neutral interpretation boundary. Implementations return only
- * untrusted draft actions; Capture provenance belongs to the interpreter.
+ * untrusted draft actions or one clarification; Capture provenance belongs to the interpreter.
  */
 fun interface AIProvider {
     suspend fun interpret(request: AIInterpretationRequest): AIInterpretationCandidate
@@ -23,8 +24,23 @@ data class AIInterpretationRequest(
  * uses draft actions until CapturePlanValidator accepts them.
  */
 data class AIInterpretationCandidate(
-    val actions: List<CapturePlanActionDraft>,
-)
+    val actions: List<CapturePlanActionDraft> = emptyList(),
+    val clarification: AIClarificationCandidate? = null,
+) {
+    init {
+        require(clarification == null || actions.isEmpty()) {
+            "Provider output cannot contain both actions and clarification"
+        }
+    }
+}
+
+/** Proposed Task data only; no Capture identity, space choice, or provider-authored UI copy. */
+sealed interface AIClarificationCandidate {
+    data class TaskSpace(
+        val title: String,
+        val dueDate: LocalDate? = null,
+    ) : AIClarificationCandidate
+}
 
 class AIProviderException(
     val reason: AIProviderFailureReason,

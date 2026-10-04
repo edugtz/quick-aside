@@ -209,20 +209,12 @@ class CaptureInterpreterTest {
     }
 
     @Test
-    fun emptyProviderActionListReturnsInvalidPlanWithEmptyActionsIssue() = runBlocking {
+    fun emptyProviderActionListReturnsUnsupported() = runBlocking {
         val provider = RecordingProvider(AIInterpretationCandidate(emptyList()))
 
         val result = interpreter(provider).interpret(textCapture("Sin acciones"))
 
-        val invalid = result as CaptureInterpretationResult.InvalidPlan
-        assertEquals(
-            listOf(
-                CapturePlanValidationIssue.Plan(
-                    CapturePlanValidationReason.EMPTY_ACTIONS,
-                ),
-            ),
-            invalid.issues,
-        )
+        assertEquals(CaptureInterpretationResult.Unsupported, result)
     }
 
     @Test
