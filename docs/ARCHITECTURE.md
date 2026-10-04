@@ -337,6 +337,8 @@ Automatic execution is Android-owned and deliberately family-gated:
 - validated all-`AddListItem` plans execute through the local list executor;
 - for Mandado, the executor first reconciles the accepted weekly calendar boundary, then targets only the eligible current/next-period session; absence of a materialized session is a bootstrap case unless the current period was manually finished, and no age-based stale clarification is used;
 - validated all-`CreateTask` plans execute through the local Task executor;
+- validated plans composed exclusively of `CreateNote` / `CreateStructuredLog` actions execute as one ordered Memory family through the application-owned local Memory executor, shared by CaptureSubmission and UI targeted Undo (CHG-033);
+- Memory success receipts forward the exact ledger ID and ordered targets to Undo; Notes/Structured Logs refresh after execution and every Undo attempt, while Search remains a query snapshot;
 - mixed-family or unsupported plans execute nothing, with no splitting, subsetting, or reordering;
 - successful local mutations are represented through the Action Ledger and targeted Undo;
 - Google Tasks sync, Calendar/Event execution, reminders, and other action families are separate boundaries and are not implied by local execution.

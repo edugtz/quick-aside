@@ -127,7 +127,7 @@ class CaptureListAutoExecutionUiTest {
         val executor = RecordingExecutor(executed("unused", "unused"))
         setContent(
             submission(
-                listOf(CapturePlanAction.CreateNote("Pagar luz")),
+                listOf(CapturePlanAction.UndoLast),
                 executor,
             ),
             executor,

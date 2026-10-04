@@ -66,6 +66,9 @@ import com.edu.quickaside.application.capture.CaptureInterpretationResult
 import com.edu.quickaside.application.capture.CaptureExecutionOutcome
 import com.edu.quickaside.application.capture.CapturePlanListExecutionResult
 import com.edu.quickaside.application.capture.CapturePlanListExecutor
+import com.edu.quickaside.application.capture.CapturePlanMemoryExecutor
+import com.edu.quickaside.application.capture.CreatedMemoryRecord
+import com.edu.quickaside.application.capture.UndoCapturePlanMemoryExecutionResult
 import com.edu.quickaside.application.capture.CapturePlanTaskExecutor
 import com.edu.quickaside.application.capture.CaptureReader
 import com.edu.quickaside.application.capture.CaptureSubmission
@@ -128,6 +131,7 @@ fun QuickAsideApp(
     captureReader: CaptureReader,
     capturePlanListExecutor: CapturePlanListExecutor? = null,
     capturePlanTaskExecutor: CapturePlanTaskExecutor? = null,
+    capturePlanMemoryExecutor: CapturePlanMemoryExecutor? = null,
     listStore: ListStore? = null,
     reversibleListItemActions: ReversibleListItemActions? = null,
     taskStore: TaskStore? = null,
@@ -156,6 +160,7 @@ fun QuickAsideApp(
     var historyRefreshToken by remember { mutableIntStateOf(0) }
     var listRefreshToken by remember { mutableIntStateOf(0) }
     var taskRefreshToken by remember { mutableIntStateOf(0) }
+    var memoryRefreshToken by remember { mutableIntStateOf(0) }
     var pairingRequested by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -226,6 +231,7 @@ fun QuickAsideApp(
         historyRefreshToken += 1
         when (result.execution) {
             is CaptureExecutionOutcome.Executed.Tasks -> taskRefreshToken += 1
+            is CaptureExecutionOutcome.Executed.Memory -> memoryRefreshToken += 1
             else -> Unit
         }
         if (closeCapture) {
@@ -266,6 +272,46 @@ fun QuickAsideApp(
                     }
                     snackbarHostState.showSnackbar(
                         if (undoResult is UndoCapturePlanTaskExecutionResult.Undone) {
+                            "Cambio deshecho"
+                        } else {
+                            "No se pudo deshacer."
+                        },
+                    )
+                }
+
+                is CaptureExecutionOutcome.Executed.Memory -> {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    val receipt = execution.receipt
+                    val snackbarResult = snackbarHostState.showSnackbar(
+                        message = if (receipt.records.size == 1) {
+                            when (receipt.records.single()) {
+                                is CreatedMemoryRecord.Note -> "Nota guardada"
+                                is CreatedMemoryRecord.StructuredLog -> "Registro guardado"
+                            }
+                        } else {
+                            "${receipt.records.size} elementos guardados en Memoria"
+                        },
+                        actionLabel = "Deshacer",
+                        duration = SnackbarDuration.Long,
+                    )
+                    if (snackbarResult != SnackbarResult.ActionPerformed) {
+                        return@launch
+                    }
+
+                    val undoResult = try {
+                        capturePlanMemoryExecutor?.undoExecution(
+                            actionLedgerEntryId = receipt.actionLedgerEntryId,
+                            expectedTargets = receipt.records.map { it.target },
+                        )
+                    } catch (cancellation: CancellationException) {
+                        throw cancellation
+                    } catch (_: Exception) {
+                        null
+                    } finally {
+                        memoryRefreshToken += 1
+                    }
+                    snackbarHostState.showSnackbar(
+                        if (undoResult is UndoCapturePlanMemoryExecutionResult.Undone) {
                             "Cambio deshecho"
                         } else {
                             "No se pudo deshacer."
@@ -408,6 +454,7 @@ fun QuickAsideApp(
                 snackbarHostState = snackbarHostState,
                 listRefreshToken = listRefreshToken,
                 taskRefreshToken = taskRefreshToken,
+                memoryRefreshToken = memoryRefreshToken,
                 listStore = listStore,
                 reversibleListItemActions = reversibleListItemActions,
                 taskStore = taskStore,
@@ -473,6 +520,7 @@ private fun ManagementScreen(
     snackbarHostState: SnackbarHostState,
     listRefreshToken: Int,
     taskRefreshToken: Int,
+    memoryRefreshToken: Int,
     listStore: ListStore?,
     reversibleListItemActions: ReversibleListItemActions?,
     taskStore: TaskStore?,
@@ -578,6 +626,7 @@ private fun ManagementScreen(
 
             MemoryRoute.Notes -> NotesScreen(
                 padding = padding,
+                refreshToken = memoryRefreshToken,
                 memoryStore = memoryStore,
                 timestampFormatter = noteTimestampFormatter,
                 snackbarHostState = snackbarHostState,
@@ -586,6 +635,7 @@ private fun ManagementScreen(
 
             MemoryRoute.StructuredLogs -> StructuredLogsScreen(
                 padding = padding,
+                refreshToken = memoryRefreshToken,
                 memoryStore = memoryStore,
                 timestampFormatter = noteTimestampFormatter,
                 snackbarHostState = snackbarHostState,

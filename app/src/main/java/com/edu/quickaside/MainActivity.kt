@@ -16,6 +16,7 @@ class MainActivity : ComponentActivity() {
                     captureSubmission = app.captureSubmission,
                     capturePlanListExecutor = app.capturePlanListExecutor,
                     capturePlanTaskExecutor = app.capturePlanTaskExecutor,
+                    capturePlanMemoryExecutor = app.capturePlanMemoryExecutor,
                     captureReader = app.captureReader,
                     listStore = app.listStore,
                     reversibleListItemActions = app.reversibleListItemActions,

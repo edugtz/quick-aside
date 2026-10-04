@@ -144,7 +144,7 @@ class CaptureSubmissionTaskExecutionTest {
         val saved = submission(
             interpreter = CaptureInterpreter {
                 CaptureInterpretationResult.Success(
-                    plan(CapturePlanAction.CreateNote("Guardar como nota")),
+                    plan(CapturePlanAction.UndoLast),
                 )
             },
             listExecutor = listExecutor,

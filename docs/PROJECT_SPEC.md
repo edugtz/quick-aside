@@ -279,6 +279,7 @@ Current supported automatic execution is intentionally narrower than the full `C
 
 - validated all-`AddListItem` plans execute locally with targeted reversible behavior;
 - validated all-`CreateTask` plans execute locally with targeted reversible behavior;
+- validated plans composed exclusively of `CreateNote` / `CreateStructuredLog` actions execute locally as one ordered Memory family through normal text/voice Capture (CHG-033), with targeted Undo;
 - mixed-family or unsupported plans execute nothing, with no splitting, subsetting, or reordering;
 - Google Tasks synchronization, Event execution, reminder execution, and other action families remain separate future work.
 

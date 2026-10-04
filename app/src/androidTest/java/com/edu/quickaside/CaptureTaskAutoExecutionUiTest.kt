@@ -161,7 +161,7 @@ class CaptureTaskAutoExecutionUiTest {
     fun unsupportedPlanShowsNotAppliedCopyWithoutUndoOrExecutorCalls() {
         val executor = RecordingTaskExecutor(executed("unused", "unused"))
         setContent(
-            submission(listOf(CapturePlanAction.CreateNote("Sólo nota")), executor),
+            submission(listOf(CapturePlanAction.UndoLast), executor),
             executor,
             FakeTaskStore(),
         )

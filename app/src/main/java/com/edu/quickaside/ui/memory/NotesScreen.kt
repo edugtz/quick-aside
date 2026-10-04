@@ -64,6 +64,7 @@ fun NotesScreen(
     onBack: () -> Unit,
     timestampFormatter: NoteTimestampFormatter = NoteTimestampFormatter(),
     snackbarHostState: SnackbarHostState,
+    refreshToken: Int = 0,
 ) {
     BackHandler { onBack() }
 
@@ -74,7 +75,7 @@ fun NotesScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(memoryStore, retryToken) {
+    LaunchedEffect(memoryStore, retryToken, refreshToken) {
         state = NotesState.Loading
         val store = memoryStore
         state = if (store == null) {

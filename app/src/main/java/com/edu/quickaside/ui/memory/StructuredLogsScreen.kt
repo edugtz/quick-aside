@@ -73,6 +73,7 @@ fun StructuredLogsScreen(
     onBack: () -> Unit,
     timestampFormatter: NoteTimestampFormatter = NoteTimestampFormatter(),
     snackbarHostState: SnackbarHostState,
+    refreshToken: Int = 0,
 ) {
     BackHandler { onBack() }
 
@@ -86,7 +87,7 @@ fun StructuredLogsScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(memoryStore, retryToken) {
+    LaunchedEffect(memoryStore, retryToken, refreshToken) {
         state = StructuredLogsState.Loading
         val store = memoryStore
         state = if (store == null) {

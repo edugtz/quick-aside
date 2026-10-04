@@ -28,10 +28,14 @@ sealed interface CaptureExecutionOutcome {
     /** Interpretation was absent or did not produce a validated CapturePlan. */
     data object NoValidPlan : CaptureExecutionOutcome
 
-    /** A validated plan contained actions from more than one executable family. */
+    /** A validated plan contained unsupported actions or more than one executable family. */
     data object NotEligible : CaptureExecutionOutcome
 
     sealed interface Executed : CaptureExecutionOutcome {
+        data class Memory(
+            val receipt: CapturePlanMemoryExecutionResult.Executed,
+        ) : Executed
+
         data class ListItems(
             val receipt: CapturePlanListExecutionResult.Executed,
         ) : Executed
@@ -71,9 +75,28 @@ sealed interface CaptureExecutionOutcome {
                 }
             }
         }
+
+        data class Memory(
+            val result: CapturePlanMemoryExecutionResult,
+        ) : Rejected {
+            init {
+                require(
+                    result is CapturePlanMemoryExecutionResult.UnsupportedAction ||
+                        result is CapturePlanMemoryExecutionResult.Rejected ||
+                        result is CapturePlanMemoryExecutionResult.RejectedPlan ||
+                        result is CapturePlanMemoryExecutionResult.MissingSourceCapture,
+                ) {
+                    "Rejected.Memory accepts only UnsupportedAction, Rejected, RejectedPlan, or MissingSourceCapture"
+                }
+            }
+        }
     }
 
     sealed interface Failed : CaptureExecutionOutcome {
+        data class Memory(
+            val result: CapturePlanMemoryExecutionResult.Failed,
+        ) : Failed
+
         data class ListItems(
             val result: CapturePlanListExecutionResult.Failed,
         ) : Failed
@@ -89,6 +112,7 @@ class CaptureSubmission(
     private val interpreter: CaptureInterpreter? = null,
     private val listExecutor: CapturePlanListExecutor? = null,
     private val taskExecutor: CapturePlanTaskExecutor? = null,
+    private val memoryExecutor: CapturePlanMemoryExecutor? = null,
     private val idProvider: () -> CaptureId = {
         CaptureId(UUID.randomUUID().toString())
     },
@@ -147,6 +171,10 @@ class CaptureSubmission(
 
             plan.actions.all { it is CapturePlanAction.CreateTask } ->
                 executeEligibleTaskPlan(plan)
+
+            plan.actions.all {
+                it is CapturePlanAction.CreateNote || it is CapturePlanAction.CreateStructuredLog
+            } -> executeEligibleMemoryPlan(plan)
 
             else -> CaptureExecutionOutcome.NotEligible
         }
@@ -208,6 +236,36 @@ class CaptureSubmission(
             is CapturePlanTaskExecutionResult.RejectedPlan,
             CapturePlanTaskExecutionResult.MissingSourceCapture,
             -> CaptureExecutionOutcome.Rejected.Tasks(result)
+        }
+    }
+
+    private suspend fun executeEligibleMemoryPlan(
+        plan: CapturePlan,
+    ): CaptureExecutionOutcome {
+        val executor = memoryExecutor ?: return CaptureExecutionOutcome.Failed.Memory(
+            CapturePlanMemoryExecutionResult.Failed(
+                IllegalStateException("Eligible Memory CapturePlan has no configured executor"),
+            ),
+        )
+        val result = try {
+            executor.execute(plan)
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (failure: Exception) {
+            CapturePlanMemoryExecutionResult.Failed(failure)
+        }
+        return when (result) {
+            is CapturePlanMemoryExecutionResult.Executed ->
+                CaptureExecutionOutcome.Executed.Memory(result)
+
+            is CapturePlanMemoryExecutionResult.Failed ->
+                CaptureExecutionOutcome.Failed.Memory(result)
+
+            is CapturePlanMemoryExecutionResult.UnsupportedAction,
+            is CapturePlanMemoryExecutionResult.Rejected,
+            is CapturePlanMemoryExecutionResult.RejectedPlan,
+            CapturePlanMemoryExecutionResult.MissingSourceCapture,
+            -> CaptureExecutionOutcome.Rejected.Memory(result)
         }
     }
 }

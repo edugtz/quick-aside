@@ -105,8 +105,6 @@ class CaptureSubmissionExecutionTest {
     @Test
     fun everyUnsupportedActionFamilyIsSavedWithoutExecutorInvocation() = runBlocking {
         val unsupportedActions = listOf(
-            CapturePlanAction.CreateNote("Nota"),
-            CapturePlanAction.CreateStructuredLog(mapOf("peso" to "210 lbs")),
             CapturePlanAction.UndoLast,
         )
         val executor = RecordingExecutor(executedReceipt("unused", "unused"))
