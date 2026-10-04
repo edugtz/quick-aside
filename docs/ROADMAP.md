@@ -28,7 +28,7 @@ Implemented foundation includes:
 
 Status: **IN PROGRESS**
 
-Implemented/integrated baseline:
+Implemented baseline (CHG-033 is accepted on its feature branch; main integration pending):
 
 - typed `CapturePlan` schema + validator;
 - provider-independent `CaptureInterpreter` / `AIProvider`;
@@ -42,7 +42,7 @@ Implemented/integrated baseline:
 - CHG-029 local Task execution foundation;
 - CHG-030 normal text/voice auto-execution for validated all-`CreateTask` plans;
 - CHG-032 local Memory execution foundation — COMPLETE / reviewed PASS / integrated: ordered `CreateNote` / `CreateStructuredLog` execution, one atomic Action Ledger entry, and targeted atomic Undo;
-- CHG-033 normal text/voice auto-execution for validated plans composed exclusively of `CreateNote` / `CreateStructuredLog`, with Notes/Structured Logs refresh — implementation COMPLETE, independent review pending;
+- CHG-033 normal text/voice auto-execution for validated plans composed exclusively of `CreateNote` / `CreateStructuredLog`, with Notes/Structured Logs refresh — COMPLETE / independent review PASS on the accepted feature branch; targeted Undo and Notes/Structured Logs refresh complete; main integration pending;
 - supported List, Task, and Memory execution paths use targeted Undo;
 - mixed-family and unsupported plans execute nothing.
 
@@ -52,8 +52,9 @@ Mandado fast-capture lifecycle corrective is also COMPLETE and independently
 reviewed PASS; it established no-prestart high-confidence Mandado capture and
 reversible local execution as the accepted baseline. CHG-032 local Memory
 execution foundation is COMPLETE / independently reviewed PASS / integrated.
-CHG-033 Fast Capture Memory wiring is implemented and verified on its feature
-branch; independent review and user-owned integration remain pending.
+CHG-033 Fast Capture Memory wiring is COMPLETE / independently reviewed PASS
+on its accepted feature branch; protected-branch integration into main remains
+pending and user-owned.
 
 Completed and integrated:
 
@@ -61,9 +62,13 @@ Completed and integrated:
 
 - **CHG-032 — Local Memory Capture execution foundation** — COMPLETE / independent review `PASS` / integrated into `main` at accepted baseline `897d8e13afadd980c59a2a7151ecb2a846344966`. Implementation commit: `9eba7167af0613cf3fd94b53a9a83d30fdbb93f7`. It implements provider-independent, ordered `CreateNote` / `CreateStructuredLog` execution with one atomic Action Ledger entry and targeted atomic Undo. CHG-033 adds the normal Fast Capture wiring on its feature branch.
 
-Active selected Change:
+Completed; main integration pending:
 
-- **CHG-033 — Fast Capture Memory execution wiring** — STANDARD; implementation and required owner verification COMPLETE on `chg/033-memory-fast-capture-wiring`; independent review pending. Normal text/voice Capture executes eligible pure Memory-family plans with lightweight receipts, ordered targeted Undo, and Memory-view refresh. Mixed-family/unsupported plans still execute nothing; Google sync, Calendar, and reminders are not included.
+- **CHG-033 — Fast Capture Memory execution wiring** — COMPLETE / independent review PASS on `chg/033-memory-fast-capture-wiring`. Normal text/voice Fast Capture supports eligible pure Memory-family `CreateNote` / `CreateStructuredLog` plans with lightweight receipts, targeted Undo, and Notes/Structured Logs refresh. Protected-branch integration into main remains pending. Mixed-family/unsupported plans still execute nothing; Google sync, Calendar, and reminders are not included.
+
+Active selected Change: **NONE**. Integrate accepted CHG-033 into main, then open
+CHG-034. The next intended reviewable slice is low-confidence clarification; it
+is not active or implemented.
 
 Still candidate/pending:
 
@@ -164,7 +169,7 @@ Normal-use hardening remains evidence-triggered and is not automatically schedul
 |---|---|
 | M0 | COMPLETE |
 | M1 | SUBSTANTIALLY IMPLEMENTED / NOT BLOCKED |
-| M2 | IN PROGRESS; CHG-030 + Mandado fast-capture corrective COMPLETE; CHG-031 calendar rollover COMPLETE / integrated; CHG-032 local Memory execution foundation COMPLETE / integrated; CHG-033 Fast Capture Memory wiring implemented / review pending; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
+| M2 | IN PROGRESS; CHG-030 + Mandado fast-capture corrective COMPLETE; CHG-031 calendar rollover COMPLETE / integrated; CHG-032 local Memory execution foundation COMPLETE / integrated; CHG-033 Fast Capture Memory wiring COMPLETE / review PASS / main integration pending; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
 | M3 | NOT globally blocked; Google Tasks/Calendar sync and Event execution pending |
 | M4 | NOT globally blocked; reminder-domain/execution/scheduling pending |
 | M5 | NOT blocked |
@@ -172,9 +177,9 @@ Normal-use hardening remains evidence-triggered and is not automatically schedul
 
 CHG-031 is COMPLETE / integrated with independent review PASS_WITH_NOTES and
 engineering closeout complete. CHG-032 is COMPLETE / integrated with independent
-review PASS. CHG-033 now wires that Memory foundation into normal Capture on its
-feature branch; independent review is the next gate. Protected-branch integration
-remains user-owned.
+review PASS. CHG-033 is COMPLETE / independently reviewed PASS and wires that
+Memory foundation into normal Capture on its accepted feature branch.
+Protected-branch integration into main remains pending and user-owned.
 
 ## Post-MVP — evidence-triggered candidates
 
