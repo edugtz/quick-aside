@@ -6,7 +6,7 @@
 - Governance: **STANDARD**.
 - Declared feature branch: `chg/034-task-space-clarification-foundation`.
 - Implementation: **COMPLETE**; required CHG-034 owner verification: **COMPLETE**. Independent review: **PENDING**.
-- Publication: verified implementation ready for feature-branch publication; exact implementation commit will be recorded in the publication handoff.
+- Published implementation commit: `b9da130842dfb073271c5616cadfea1fda3d3581` — `feat: add task-space clarification foundation`; push to `origin/chg/034-task-space-clarification-foundation` **SUCCESS**. Only the declared feature branch was changed; main/dev were untouched. This documentation handoff records the published implementation identity; independent review remains pending.
 - Reused valid host evidence: `ProviderCaptureInterpreterClarificationTest` **7/7 PASS**; `CaptureSubmissionTaskSpaceClarificationTest` **7/7 PASS**; `:app:compileDebugAndroidTestKotlin`, `:app:assembleDebug`, and `git diff --check` **PASS**. These gates were not rerun on resume; their source/config/environment had no invalidator.
 - Final QA1 UI owner evidence: `CaptureTaskSpaceClarificationUiTest` **9/9 PASS**, zero failures/errors/skips, on exact `ANDROID_SERIAL=adb-3B163C00N4V00000-KztNrU._adb-tls-connect._tcp` (OPPO CPH2791, Android 16). Only the focused owner class was rerun after the user unlocked QA1; no production/test source correction was needed.
 - Previous environmental QA1 attempt: **6/9 PASS, 3 failed** with `No compose hierarchies found` in the voice, rapid-callback, and rejected-resolution cases. Diagnostics established a sleeping/locked screen and Activity transitioning from RESUMED to PAUSED. The user corrected that external device state; the final focused run passed.
