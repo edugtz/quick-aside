@@ -10,6 +10,9 @@ interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(note: NoteEntity)
 
+    @Query("DELETE FROM notes WHERE id = :id")
+    suspend fun deleteById(id: String): Int
+
     @Query("SELECT * FROM notes WHERE id = :id")
     suspend fun getById(id: String): NoteEntity?
 
@@ -37,6 +40,9 @@ interface NoteDao {
 interface StructuredLogDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(log: StructuredLogEntity)
+
+    @Query("DELETE FROM structured_logs WHERE id = :id")
+    suspend fun deleteById(id: String): Int
 
     @Query("SELECT * FROM structured_logs WHERE id = :id")
     suspend fun getById(id: String): StructuredLogEntity?
@@ -71,6 +77,9 @@ interface StructuredLogDao {
 
 @Dao
 interface StructuredLogFieldDao {
+    @Query("DELETE FROM structured_log_fields WHERE structured_log_id = :structuredLogId")
+    suspend fun deleteByStructuredLogId(structuredLogId: String): Int
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertAll(fields: List<StructuredLogFieldEntity>)
 

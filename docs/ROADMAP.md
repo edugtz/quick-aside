@@ -50,9 +50,13 @@ Mandado fast-capture lifecycle corrective is also COMPLETE and independently
 reviewed PASS; it established no-prestart high-confidence Mandado capture and
 reversible local execution as the accepted baseline.
 
+Completed and integrated:
+
+- **CHG-031 — Mandado calendar-based weekly rollover** — COMPLETE / integrated / independent review `PASS_WITH_NOTES`. Published functional commit: `4608d71708464ad83330f07c4bda953153ff5c0d`. It replaced the interim 7-elapsed-day stale-session policy with the accepted calendar workflow: Sunday 00:00 formal period start, Saturday 14:00 rollover, immediate next-period eligibility, no Sunday double-reset, manual Finish blocking re-bootstrap until the next rollover, and durable historical-session visibility.
+
 Active selected Change:
 
-- **CHG-031 — Mandado calendar-based weekly rollover** — COMPLETE / independent review `PASS_WITH_NOTES`. Published functional commit: `4608d71708464ad83330f07c4bda953153ff5c0d`. It replaced the interim 7-elapsed-day stale-session policy with the accepted calendar workflow: Sunday 00:00 formal period start, Saturday 14:00 rollover, immediate next-period eligibility, no Sunday double-reset, manual Finish blocking re-bootstrap until the next rollover, and durable historical-session visibility.
+- **CHG-032 — Local Memory Capture execution foundation** — selected under M2; implementation and required verification COMPLETE, independent review pending. Ordered Note/Structured Log execution and targeted Undo only; CaptureSubmission wiring and normal Fast Capture Memory execution remain separate work.
 
 Still candidate/pending:
 
@@ -153,17 +157,15 @@ Normal-use hardening remains evidence-triggered and is not automatically schedul
 |---|---|
 | M0 | COMPLETE |
 | M1 | SUBSTANTIALLY IMPLEMENTED / NOT BLOCKED |
-| M2 | IN PROGRESS; CHG-030 + Mandado fast-capture corrective COMPLETE; CHG-031 calendar rollover COMPLETE; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
+| M2 | IN PROGRESS; CHG-030 + Mandado fast-capture corrective COMPLETE; CHG-031 calendar rollover COMPLETE / integrated; CHG-032 local Memory execution foundation selected; remaining interpretation/policy/UX and evidence-triggered runtime work pending |
 | M3 | NOT globally blocked; Google Tasks/Calendar sync and Event execution pending |
 | M4 | NOT globally blocked; reminder-domain/execution/scheduling pending |
 | M5 | NOT blocked |
 | M6 | Final completion blocked by remaining sync/event/reminder capabilities |
 
-CHG-031 is COMPLETE with independent review PASS_WITH_NOTES and engineering
-closeout complete. Active Change selection is now NONE. Select the next
-reviewable Change from the then-current roadmap/repository state; do not
-reserve or declare CHG-032 ACTIVE merely because it is the next numeric
-identifier.
+CHG-031 is COMPLETE / integrated with independent review PASS_WITH_NOTES and
+engineering closeout complete. CHG-032 is explicitly selected by the user as
+the next reviewable local Memory execution foundation Change.
 
 ## Post-MVP — evidence-triggered candidates
 
